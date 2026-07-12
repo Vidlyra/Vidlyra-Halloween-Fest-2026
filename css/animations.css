@@ -63,20 +63,32 @@ animation:lightningFlash .35s;
 @keyframes lightningFlash{
 
 0%{
-
 opacity:0;
+}
 
+10%{
+opacity:1;
 }
 
 20%{
+opacity:.4;
+}
 
-opacity:.9;
+30%{
+opacity:1;
+}
 
+40%{
+opacity:.2;
 }
 
 100%{
-
 opacity:0;
+}
 
 }
+
+.flash{
+
+animation:lightningFlash .8s;
 }
