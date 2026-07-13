@@ -135,26 +135,23 @@ radial-gradient(circle at top,#300000,#090909 70%);
 
 .moon{
 
-position:absolute;
+transition:.3s;
 
-width:260px;
+}
 
-height:260px;
-
-border-radius:50%;
-
-background:#d90000;
-
-top:60px;
-
-left:50%;
-
-transform:translateX(-50%);
+.moon.flash{
 
 box-shadow:
-0 0 40px red,
-0 0 80px crimson,
-0 0 140px darkred;
+
+0 0 50px red,
+
+0 0 100px crimson,
+
+0 0 180px red,
+
+0 0 250px orange;
+
+transform:translateX(-50%) scale(1.08);
 
 }
 
@@ -230,4 +227,73 @@ pointer-events:none;
 
 .lightning{
     z-index:5;
+}
+.lightning-svg{
+
+position:absolute;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+pointer-events:none;
+
+z-index:20;
+
+overflow:visible;
+
+}
+
+.lightning-line{
+
+stroke:white;
+
+stroke-width:5;
+
+fill:none;
+
+stroke-linecap:round;
+
+stroke-linejoin:round;
+
+filter:drop-shadow(0 0 15px white);
+
+opacity:0;
+
+}
+.fog{
+
+transition:.3s;
+
+}
+
+.fog.flash{
+
+opacity:1;
+
+filter:blur(35px) brightness(2);
+
+}
+.shake{
+
+animation:shake .4s;
+
+}
+
+@keyframes shake{
+
+0%{transform:translate(0,0);}
+
+20%{transform:translate(-5px,4px);}
+
+40%{transform:translate(5px,-4px);}
+
+60%{transform:translate(-4px,2px);}
+
+80%{transform:translate(4px,-2px);}
+
+100%{transform:translate(0,0);}
+
 }
