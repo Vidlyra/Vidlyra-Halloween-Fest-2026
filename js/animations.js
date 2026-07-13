@@ -1,4 +1,3 @@
-console.log("Animations Loaded");
 const lightning = document.querySelector(".lightning");
 
 function flashLightning(){
@@ -7,18 +6,12 @@ function flashLightning(){
 
     setTimeout(()=>{
         lightning.classList.remove("flash");
-    },350);
+    },800);
 
 }
 
 setInterval(()=>{
 
-    const random=Math.random();
+    flashLightning();
 
-    if(random>0.80){
-
-        flashLightning();
-
-    }
-
-},2500);
+},5000);
