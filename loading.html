@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Loading...</title>
+<title>Vidlyra Halloween Fest 2026 - Loading</title>
 
 <link rel="stylesheet" href="css/loading.css">
 
@@ -15,6 +15,7 @@
 
 <body>
 
+<!-- Background -->
 <div class="background">
 
     <div class="red-glow"></div>
@@ -28,6 +29,8 @@
     <div id="particles"></div>
 
 </div>
+
+<!-- Portal -->
 <div id="portalContainer">
 
     <div id="portalGlow"></div>
@@ -35,26 +38,41 @@
     <div id="portalRing"></div>
 
 </div>
+
+<!-- Loading Content -->
 <div class="container">
 
-<h1>VIDLYRA</h1>
+    <h1>VIDLYRA</h1>
 
-<h2>Halloween Fest 2026</h2>
+    <h2>Halloween Fest 2026</h2>
 
-<p id="status">Initializing Halloween Realm...</p>
+    <p id="status">
+        Initializing Halloween Realm...
+    </p>
 
-<div class="progress">
+    <div class="progress">
 
-<div class="bar" id="bar"></div>
+        <div class="bar" id="bar"></div>
+
+    </div>
+
+    <div id="percent">
+        0%
+    </div>
 
 </div>
 
-<div id="percent">0%</div>
+<!-- Audio -->
+<audio id="thunder" preload="auto">
+    <source src="assets/thunder.mp3" type="audio/mpeg">
+</audio>
 
-</div>
+<audio id="wind" loop preload="auto">
+    <source src="assets/wind.mp3" type="audio/mpeg">
+</audio>
 
+<!-- JavaScript -->
 <script src="js/loading.js"></script>
 
 </body>
-
 </html>
