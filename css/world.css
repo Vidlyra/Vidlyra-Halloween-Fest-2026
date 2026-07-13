@@ -641,3 +641,105 @@ width:100%;
 }
 
 }
+/* Rain */
+
+#rain{
+position:absolute;
+inset:0;
+overflow:hidden;
+}
+
+.drop{
+position:absolute;
+top:-30px;
+width:2px;
+height:18px;
+background:rgba(255,255,255,.5);
+animation:rainFall linear infinite;
+}
+
+@keyframes rainFall{
+to{
+transform:translateY(120vh);
+}
+}
+
+/* Particles */
+
+#particles{
+position:absolute;
+inset:0;
+overflow:hidden;
+}
+
+.particle{
+position:absolute;
+width:3px;
+height:3px;
+border-radius:50%;
+background:#ff4d00;
+box-shadow:0 0 10px red;
+animation:particleFloat linear infinite;
+}
+
+@keyframes particleFloat{
+0%{
+transform:translateY(110vh);
+opacity:0;
+}
+20%{
+opacity:1;
+}
+100%{
+transform:translateY(-20vh);
+opacity:0;
+}
+}
+
+/* Bats */
+
+#bats{
+position:absolute;
+inset:0;
+overflow:hidden;
+}
+
+.bat{
+position:absolute;
+font-size:20px;
+animation:fly linear infinite;
+}
+
+@keyframes fly{
+0%{
+transform:translateX(-120px);
+}
+100%{
+transform:translateX(120vw);
+}
+}
+
+/* Lightning */
+
+.lightning{
+position:absolute;
+inset:0;
+background:white;
+opacity:0;
+pointer-events:none;
+transition:.2s;
+}
+
+/* Shake */
+
+.shake{
+animation:shake .3s;
+}
+
+@keyframes shake{
+0%{transform:translate(0,0);}
+25%{transform:translate(-3px,2px);}
+50%{transform:translate(3px,-2px);}
+75%{transform:translate(-2px,2px);}
+100%{transform:translate(0,0);}
+}
