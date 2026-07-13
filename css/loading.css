@@ -436,3 +436,50 @@ box-shadow:
 0 0 100px red;
 
 }
+.portalOpen{
+
+animation:portalOpen 2s forwards;
+
+}
+
+@keyframes portalOpen{
+
+0%{
+
+width:0;
+
+height:0;
+
+opacity:0;
+
+}
+
+30%{
+
+width:150px;
+
+height:150px;
+
+opacity:1;
+
+}
+
+60%{
+
+width:500px;
+
+height:500px;
+
+}
+
+100%{
+
+width:2500px;
+
+height:2500px;
+
+opacity:1;
+
+}
+
+}
