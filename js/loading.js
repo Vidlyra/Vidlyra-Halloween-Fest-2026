@@ -1,3 +1,4 @@
+const portal=document.getElementById("portalContainer");
 const bar = document.getElementById("bar");
 
 const percent = document.getElementById("percent");
@@ -99,16 +100,16 @@ status.innerHTML=messages[4];
 
 if(progress==100){
 
-status.innerHTML=messages[5];
+status.innerHTML="The Veil Has Opened...";
 
 clearInterval(loader);
+
+portal.classList.add("portalOpen");
 
 setTimeout(()=>{
 
 window.location="home.html";
 
-},1200);
+},2200);
 
 }
-
-},50);
