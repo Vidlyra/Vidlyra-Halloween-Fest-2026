@@ -1,4 +1,4 @@
-const thunder=new Audio("assets/audio/thunder.mp3");
+const thunder=new Audio("assets/thunder.mp3");
 
 thunder.volume=.35;
 const svg=document.querySelector(".lightning-svg");
