@@ -220,14 +220,42 @@ function playLightning(){
 
 function fadeToWorld(){
 
-    document.body.style.transition="opacity 1s";
+    document.body.style.transition="opacity .8s";
 
-    document.body.style.opacity="0";
+document.body.style.opacity="0";
 
-    setTimeout(()=>{
+setTimeout(()=>{
 
-        window.location.href="home.html";
+window.location.href="home.html";
 
-    },1000);
+},800);
 
 }
+document.body.animate(
+
+[
+{
+transform:"scale(1)"
+},
+
+{
+transform:"scale(1.25)"
+},
+
+{
+transform:"scale(2.8)"
+}
+
+],
+
+{
+
+duration:2200,
+
+fill:"forwards",
+
+easing:"ease-in"
+
+}
+
+);
