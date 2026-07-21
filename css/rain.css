@@ -1,0 +1,69 @@
+/* ==========================================
+   RAIN
+========================================== */
+
+#rain{
+
+    position:absolute;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:30;
+
+}
+
+.rain-drop{
+
+    position:absolute;
+
+    top:-40px;
+
+    width:2px;
+
+    background:
+    linear-gradient(
+
+        transparent,
+
+        rgba(255,255,255,.85)
+
+    );
+
+    transform:rotate(15deg);
+
+    animation:
+        rainFall linear infinite;
+
+}
+
+@keyframes rainFall{
+
+    from{
+
+        transform:
+
+            translateY(-50px)
+
+            translateX(0)
+
+            rotate(15deg);
+
+    }
+
+    to{
+
+        transform:
+
+            translateY(110vh)
+
+            translateX(-60px)
+
+            rotate(15deg);
+
+    }
+
+}
