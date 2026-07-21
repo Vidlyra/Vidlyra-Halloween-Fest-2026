@@ -482,3 +482,56 @@
     }
 
 }
+/* ==========================================
+   LEAVES
+========================================== */
+
+.leaf{
+
+    position:absolute;
+
+    top:-80px;
+
+    pointer-events:none;
+
+    opacity:.9;
+
+    animation:
+        leafFall linear infinite,
+        leafSpin 5s linear infinite;
+
+}
+
+@keyframes leafFall{
+
+    from{
+
+        transform:
+            translate(0,-80px);
+
+    }
+
+    to{
+
+        transform:
+            translate(-180px,110vh);
+
+    }
+
+}
+
+@keyframes leafSpin{
+
+    from{
+
+        rotate:0deg;
+
+    }
+
+    to{
+
+        rotate:360deg;
+
+    }
+
+}
