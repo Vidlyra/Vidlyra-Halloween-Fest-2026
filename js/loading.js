@@ -160,8 +160,74 @@ const loader=setInterval(()=>{
 // Part 2 will replace this.
 // ==========================================================
 
+// ==========================================================
+// PORTAL SEQUENCE
+// ==========================================================
+
 function startPortalSequence(){
 
-    console.log("Portal sequence...");
+    // Stop loading updates
+    status.innerHTML = "The Veil Has Opened...";
+
+    // Open Portal
+    portal.classList.add("portalOpen");
+
+    // Start Lightning
+    playLightning();
+
+    // Wait then enter world
+    setTimeout(()=>{
+
+        fadeToWorld();
+
+    },2200);
+
+}
+// ==========================================================
+// LIGHTNING
+// ==========================================================
+
+function playLightning(){
+
+    if(!lightning) return;
+
+    lightning.classList.add("flash");
+
+    document.body.classList.add("shake");
+
+    if(thunder){
+
+        thunder.currentTime=0;
+
+        thunder.volume=.35;
+
+        thunder.play().catch(()=>{});
+
+    }
+
+    setTimeout(()=>{
+
+        lightning.classList.remove("flash");
+
+        document.body.classList.remove("shake");
+
+    },450);
+
+}
+// ==========================================================
+// FADE TO HOME
+// ==========================================================
+
+function fadeToWorld(){
+
+    document.body.style.transition="opacity 1s";
+
+    document.body.style.opacity="0";
+
+    setTimeout(()=>{
+
+        window.location.href="home.html";
+
+    },1000);
 
 }
