@@ -249,3 +249,16 @@
     }
 
 }
+@media (max-width:768px){
+
+    .pumpkin{
+
+        width:170px;
+
+        right:-70px;
+
+        bottom:0;
+
+    }
+
+}
