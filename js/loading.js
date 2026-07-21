@@ -1,115 +1,167 @@
-const portal=document.getElementById("portalContainer");
+/* ==========================================================
+   VIDLYRA HALLOWEEN FEST 2026
+   Loading Engine v1.0
+========================================================== */
+
+"use strict";
+
+// ==========================================================
+// ELEMENTS
+// ==========================================================
+
 const bar = document.getElementById("bar");
-
 const percent = document.getElementById("percent");
-
 const status = document.getElementById("status");
-// Lightning
 
-const lightning=document.querySelector(".lightning");
+const portal = document.getElementById("portalContainer");
 
-setInterval(()=>{
+const lightning = document.querySelector(".lightning");
 
-if(Math.random()>.6){
+const particles = document.getElementById("particles");
 
-lightning.classList.add("flash");
+const thunder = document.getElementById("thunder");
+const wind = document.getElementById("wind");
 
-document.body.classList.add("shake");
+// ==========================================================
+// LOADING MESSAGES
+// ==========================================================
 
-setTimeout(()=>{
-
-lightning.classList.remove("flash");
-
-document.body.classList.remove("shake");
-
-},350);
-
-}
-
-},4000);
-
-
-// Particles
-
-const particles=document.getElementById("particles");
-
-for(let i=0;i<300;i++){
-
-const p=document.createElement("div");
-
-p.className="particle";
-
-p.style.left=Math.random()*100+"vw";
-
-p.style.animationDuration=(6+Math.random()*8)+"s";
-
-p.style.animationDelay=Math.random()*8+"s";
-
-particles.appendChild(p);
-
-}
 const messages = [
 
 "Initializing Halloween Realm...",
 
+"Scanning Ancient Ruins...",
+
 "Summoning Shadow Bats...",
 
-"Awakening Ancient Spirits...",
+"Awakening Forgotten Spirits...",
 
 "Opening the Veil...",
 
-"Preparing Haunted World...",
+"Charging the Portal...",
 
-"Welcome, Spirit Hunter..."
+"Entering the Haunted Realm..."
 
 ];
 
+// ==========================================================
+// SETTINGS
+// ==========================================================
+
 let progress = 0;
 
-const loader = setInterval(()=>{
+let finished = false;
 
-progress++;
+const LOADING_SPEED = 45;
 
-bar.style.width = progress + "%";
+// ==========================================================
+// AUDIO
+// ==========================================================
 
-percent.innerHTML = progress + "%";
+document.addEventListener("click", () => {
 
-if(progress==20){
+    if (wind) {
 
-status.innerHTML=messages[1];
+        wind.volume = 0.25;
+
+        wind.play().catch(() => {});
+
+    }
+
+}, { once:true });
+
+// ==========================================================
+// PARTICLES
+// ==========================================================
+
+function createParticles(){
+
+    if(!particles) return;
+
+    for(let i=0;i<300;i++){
+
+        const p=document.createElement("div");
+
+        p.className="particle";
+
+        p.style.left=Math.random()*100+"vw";
+
+        p.style.top=Math.random()*100+"vh";
+
+        p.style.animationDuration=
+        (6+Math.random()*8)+"s";
+
+        p.style.animationDelay=
+        Math.random()*6+"s";
+
+        particles.appendChild(p);
+
+    }
 
 }
 
-if(progress==40){
+createParticles();
 
-status.innerHTML=messages[2];
+// ==========================================================
+// UPDATE MESSAGE
+// ==========================================================
+
+function updateMessage(value){
+
+    if(value>=15)
+        status.innerHTML=messages[1];
+
+    if(value>=30)
+        status.innerHTML=messages[2];
+
+    if(value>=50)
+        status.innerHTML=messages[3];
+
+    if(value>=70)
+        status.innerHTML=messages[4];
+
+    if(value>=90)
+        status.innerHTML=messages[5];
 
 }
 
-if(progress==60){
+// ==========================================================
+// LOADING BAR
+// ==========================================================
 
-status.innerHTML=messages[3];
+const loader=setInterval(()=>{
 
-}
+    if(finished) return;
 
-if(progress==80){
+    progress++;
 
-status.innerHTML=messages[4];
+    bar.style.width=progress+"%";
 
-}
+    percent.innerHTML=progress+"%";
 
-if(progress==100){
+    updateMessage(progress);
 
-status.innerHTML="The Veil Has Opened...";
+    if(progress>=100){
 
-clearInterval(loader);
+        finished=true;
 
-portal.classList.add("portalOpen");
+        clearInterval(loader);
 
-setTimeout(()=>{
+        status.innerHTML=messages[6];
 
-window.location="home.html";
+        startPortalSequence();
 
-},2200);
+    }
+
+},LOADING_SPEED);
+
+// ==========================================================
+// PLACEHOLDER
+// Part 2 will replace this.
+// ==========================================================
+
+function startPortalSequence(){
+
+    console.log("Portal sequence...");
 
 }
