@@ -1,30 +1,52 @@
-const rain = document.getElementById("rain");
+/* ==========================================
+   VIDLYRA RAIN SYSTEM
+========================================== */
 
-const TOTAL_DROPS = 220;
+class RainSystem {
 
-for(let i = 0; i < TOTAL_DROPS; i++){
+    constructor(){
 
-    const drop = document.createElement("div");
+        this.container = document.getElementById("rain");
 
-    drop.className = "raindrop";
+        this.totalDrops =
+            window.innerWidth < 768 ? 180 : 350;
 
-    drop.style.left = Math.random()*100 + "%";
+    }
 
-    drop.style.animationDuration =
-        (0.5 + Math.random()*0.8) + "s";
+    create(){
 
-    drop.style.animationDelay =
-        Math.random()*2 + "s";
+        for(let i=0;i<this.totalDrops;i++){
 
-    drop.style.opacity =
-        0.2 + Math.random()*0.6;
+            const drop=document.createElement("div");
 
-    drop.style.height =
-        (12 + Math.random()*28) + "px";
+            drop.className="rain-drop";
 
-    drop.style.transform =
-        `rotate(${12 + Math.random()*8}deg)`;
+            drop.style.left=Math.random()*100+"%";
 
-    rain.appendChild(drop);
+            drop.style.animationDelay=
+                Math.random()*2+"s";
+
+            drop.style.animationDuration=
+                (0.5+Math.random()*0.7)+"s";
+
+            drop.style.opacity=
+                0.2+Math.random()*0.5;
+
+            drop.style.height=
+                10+Math.random()*25+"px";
+
+            this.container.appendChild(drop);
+
+        }
+
+    }
 
 }
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+    const rain=new RainSystem();
+
+    rain.create();
+
+});
