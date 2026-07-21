@@ -483,3 +483,116 @@ opacity:1;
 }
 
 }
+/* =====================================
+   Portal
+===================================== */
+
+#portalContainer{
+
+position:fixed;
+
+left:50%;
+
+top:50%;
+
+transform:translate(-50%,-50%);
+
+width:0;
+
+height:0;
+
+opacity:0;
+
+pointer-events:none;
+
+z-index:999;
+
+}
+
+#portalGlow{
+
+position:absolute;
+
+inset:0;
+
+border-radius:50%;
+
+background:radial-gradient(circle,
+
+rgba(255,60,0,.9),
+
+rgba(255,0,0,.4),
+
+transparent 70%);
+
+filter:blur(20px);
+
+}
+
+#portalRing{
+
+position:absolute;
+
+inset:0;
+
+border-radius:50%;
+
+border:6px solid crimson;
+
+box-shadow:
+
+0 0 30px red,
+
+0 0 80px crimson,
+
+0 0 150px red;
+
+}
+
+.portalOpen{
+
+animation:portalOpen 2s forwards;
+
+}
+
+@keyframes portalOpen{
+
+0%{
+
+width:0;
+
+height:0;
+
+opacity:0;
+
+}
+
+25%{
+
+width:150px;
+
+height:150px;
+
+opacity:1;
+
+}
+
+60%{
+
+width:500px;
+
+height:500px;
+
+}
+
+100%{
+
+width:2500px;
+
+height:2500px;
+
+opacity:1;
+
+}
+
+}
