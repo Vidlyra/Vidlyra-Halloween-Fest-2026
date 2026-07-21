@@ -480,3 +480,104 @@ animation:lightningFlash .8s;
     }
 
 }
+/* ===============================
+   BATS
+================================ */
+
+.bat{
+
+    position:absolute;
+
+    left:-120px;
+
+    pointer-events:none;
+
+    opacity:.85;
+
+    animation:
+        flyAcross linear infinite,
+        flap .45s ease-in-out infinite;
+
+    transform-origin:center;
+
+}
+
+.bat.reverse{
+
+    left:auto;
+
+    right:-120px;
+
+    transform:scaleX(-1);
+
+    animation:
+        flyBack linear infinite,
+        flap .45s ease-in-out infinite;
+
+}
+
+/* Left → Right */
+
+@keyframes flyAcross{
+
+    from{
+
+        transform:
+            translateX(0);
+
+    }
+
+    to{
+
+        transform:
+            translateX(calc(100vw + 240px));
+
+    }
+
+}
+
+/* Right → Left */
+
+@keyframes flyBack{
+
+    from{
+
+        transform:
+            translateX(0)
+            scaleX(-1);
+
+    }
+
+    to{
+
+        transform:
+            translateX(calc(-100vw - 240px))
+            scaleX(-1);
+
+    }
+
+}
+
+/* Wing flap */
+
+@keyframes flap{
+
+    0%{
+
+        margin-top:0;
+
+    }
+
+    50%{
+
+        margin-top:-6px;
+
+    }
+
+    100%{
+
+        margin-top:0;
+
+    }
+
+}
