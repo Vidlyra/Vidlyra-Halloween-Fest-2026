@@ -1,27 +1,251 @@
-@media(max-width:768px){
+/* ==========================================
+   LARGE DESKTOP (1600px+)
+========================================== */
 
-.hero h1{
+@media (min-width:1600px){
 
-font-size:42px;
+    .castle{
+        width:700px;
+    }
+
+    .event-logo{
+        width:280px;
+    }
+
+    .hero h1{
+        font-size:5rem;
+    }
+
+}
+
+/* ==========================================
+   LAPTOP
+========================================== */
+
+@media (max-width:1200px){
+
+    .castle{
+        width:50vw;
+    }
+
+    .event-logo{
+        width:200px;
+    }
+
+    .hero h1{
+        font-size:3.5rem;
+    }
 
 }
 
-.hero h2{
+/* ==========================================
+   TABLET
+========================================== */
 
-font-size:24px;
+@media (max-width:900px){
+
+    .castle{
+
+        width:60vw;
+
+        bottom:18%;
+
+    }
+
+    .forest{
+
+        height:42%;
+
+    }
+
+    .ghost{
+
+        width:70px;
+
+    }
+
+    .event-logo{
+
+        width:170px;
+
+    }
+
+    .hero{
+
+        width:90%;
+
+        bottom:40px;
+
+    }
+
+    .hero h1{
+
+        font-size:3rem;
+
+        letter-spacing:4px;
+
+    }
+
+    .hero h2{
+
+        font-size:1.6rem;
+
+    }
+
+    .hero p{
+
+        font-size:1rem;
+
+    }
+
+    .web{
+
+        width:160px;
+
+    }
+
+    .spider{
+
+        width:55px;
+
+    }
 
 }
 
-.hero p{
+/* ==========================================
+   MOBILE
+========================================== */
 
-font-size:16px;
+@media (max-width:600px){
+
+    .castle{
+
+        width:78vw;
+
+        bottom:20%;
+
+    }
+
+    .forest{
+
+        height:36%;
+
+    }
+
+    .event-logo{
+
+        width:140px;
+
+        top:15px;
+
+    }
+
+    .ghost{
+
+        width:55px;
+
+    }
+
+    .ghost1{
+
+        left:6%;
+
+    }
+
+    .ghost2{
+
+        right:6%;
+
+    }
+
+    .web{
+
+        width:110px;
+
+    }
+
+    .spider{
+
+        width:42px;
+
+        right:12%;
+
+    }
+
+    .hero{
+
+        width:92%;
+
+        bottom:25px;
+
+        padding:0 15px;
+
+    }
+
+    .hero h1{
+
+        font-size:2.2rem;
+
+        letter-spacing:2px;
+
+    }
+
+    .hero h2{
+
+        font-size:1.2rem;
+
+    }
+
+    .hero p{
+
+        font-size:.95rem;
+
+        margin:15px 0;
+
+    }
+
+    #enterBtn{
+
+        width:100%;
+
+        max-width:320px;
+
+        padding:15px;
+
+        font-size:1rem;
+
+    }
 
 }
 
-button{
+/* ==========================================
+   SMALL MOBILE
+========================================== */
 
-width:90%;
+@media (max-width:380px){
 
-}
+    .hero h1{
+
+        font-size:1.8rem;
+
+    }
+
+    .hero h2{
+
+        font-size:1rem;
+
+    }
+
+    .hero p{
+
+        display:none;
+
+    }
+
+    .castle{
+
+        width:85vw;
+
+    }
 
 }
