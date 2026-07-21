@@ -214,48 +214,35 @@ function playLightning(){
     },450);
 
 }
-// ==========================================================
-// FADE TO HOME
-// ==========================================================
-
 function fadeToWorld(){
 
-    document.body.style.transition="opacity .8s";
+    document.body.animate(
 
-document.body.style.opacity="0";
+        [
+            { transform:"scale(1)" },
+            { transform:"scale(1.25)" },
+            { transform:"scale(2.8)" }
+        ],
 
-setTimeout(()=>{
+        {
+            duration:2200,
+            fill:"forwards",
+            easing:"ease-in"
+        }
 
-window.location.href="home.html";
+    );
 
-},800);
+    setTimeout(()=>{
 
-}
-document.body.animate(
+        document.body.style.transition="opacity .8s";
+        document.body.style.opacity="0";
 
-[
-{
-transform:"scale(1)"
-},
+    },1200);
 
-{
-transform:"scale(1.25)"
-},
+    setTimeout(()=>{
 
-{
-transform:"scale(2.8)"
-}
+        window.location.href="home.html";
 
-],
-
-{
-
-duration:2200,
-
-fill:"forwards",
-
-easing:"ease-in"
+    },2000);
 
 }
-
-);
