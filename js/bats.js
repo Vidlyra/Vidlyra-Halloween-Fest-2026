@@ -1,40 +1,70 @@
-const batContainer = document.getElementById("batContainer");
+/* ==========================================
+   VIDLYRA BAT SYSTEM
+========================================== */
 
-const BAT_IMAGES = [
-    "assets/images/bat.svg.png",
-    "assets/images/bat1.svg.png"
-];
+class BatSystem {
 
-const BAT_COUNT = 50;
+    constructor(){
 
-for(let i=0;i<BAT_COUNT;i++){
+        this.container = document.getElementById("batContainer");
 
-    const bat=document.createElement("img");
+        this.images = [
+            "assets/images/bat 1.svg",
+            "assets/images/bat 2.svg",
+            "assets/images/bat 3.svg"
+        ];
 
-    bat.src=BAT_IMAGES[
-        Math.floor(Math.random()*BAT_IMAGES.length)
-    ];
-
-    bat.className="bat";
-
-    const size=20+Math.random()*35;
-
-    bat.style.width=size+"px";
-
-    bat.style.top=(5+Math.random()*45)+"%";
-
-    const duration=10+Math.random()*15;
-
-    bat.style.animationDuration=duration+"s";
-
-    bat.style.animationDelay=(-Math.random()*duration)+"s";
-
-    if(Math.random()>0.5){
-
-        bat.classList.add("reverse");
+        this.count =
+            window.innerWidth < 768 ? 20 : 40;
 
     }
 
-    batContainer.appendChild(bat);
+    init(){
+
+        for(let i=0;i<this.count;i++){
+
+            this.createBat();
+
+        }
+
+    }
+
+    createBat(){
+
+        const bat=document.createElement("img");
+
+        bat.src=this.images[
+            Math.floor(Math.random()*this.images.length)
+        ];
+
+        bat.className="bat";
+
+        const size=20+Math.random()*35;
+
+        bat.style.width=size+"px";
+
+        bat.style.top=(5+Math.random()*45)+"%";
+
+        const duration=10+Math.random()*12;
+
+        bat.style.animationDuration=duration+"s";
+
+        bat.style.animationDelay=(-Math.random()*duration)+"s";
+
+        if(Math.random()>0.5){
+
+            bat.classList.add("reverse");
+
+        }
+
+        this.container.appendChild(bat);
+
+    }
 
 }
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+    new BatSystem().init();
+
+});
