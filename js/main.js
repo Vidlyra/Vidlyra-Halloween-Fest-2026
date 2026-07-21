@@ -48,9 +48,11 @@ const World = {
 
     start(){
 
-        console.log("World Loaded");
+    console.log("World Loaded");
 
-    },
+    console.log("Rain System Ready");
+
+}
 
     enterWorld(){
 
