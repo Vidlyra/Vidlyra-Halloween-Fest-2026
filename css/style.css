@@ -1,529 +1,420 @@
+/* ==========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   STYLE.CSS
+========================================== */
+
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    background:#000;
+
 }
 
 body{
 
-font-family:Arial, sans-serif;
-
-background:#050505;
-
-color:white;
-
-height:100vh;
-
-overflow:hidden;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-position:relative;
+    position:relative;
 
 }
+
+/* ==========================================
+   BACKGROUND
+========================================== */
 
 .background{
 
-position:absolute;
+    position:fixed;
 
-width:100%;
+    inset:0;
 
-height:100%;
+    background:
+        url("../assets/images/background 1.png")
+        center center;
 
-background:radial-gradient(circle,#32002e,#050505);
+    background-size:cover;
 
-z-index:-2;
+    background-repeat:no-repeat;
+
+    z-index:1;
+
+}
+
+/* Second Background */
+
+.background-layer{
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        url("../assets/images/background 2.png")
+        center center;
+
+    background-size:cover;
+
+    background-repeat:no-repeat;
+
+    opacity:.45;
+
+    z-index:2;
 
 }
 
-.overlay{
+/* ==========================================
+   CLOUDS
+========================================== */
 
-position:absolute;
+.cloud{
 
-width:100%;
+    position:absolute;
 
-height:100%;
+    top:0;
 
-background:rgba(0,0,0,.45);
+    width:130%;
 
-z-index:-1;
+    height:35%;
+
+    background:
+        url("../assets/images/cloud.svg")
+        center center;
+
+    background-size:contain;
+
+    background-repeat:repeat-x;
+
+    opacity:.35;
+
+    z-index:3;
 
 }
+
+.cloud1{
+
+    left:-15%;
+
+}
+
+.cloud2{
+
+    left:-10%;
+
+    top:8%;
+
+    opacity:.20;
+
+}
+
+/* ==========================================
+   CASTLE
+========================================== */
+
+.castle{
+
+    position:absolute;
+
+    bottom:15%;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:42vw;
+
+    max-width:750px;
+
+    min-width:300px;
+
+    aspect-ratio:1/1;
+
+    background:
+        url("../assets/images/castle.png")
+        center bottom;
+
+    background-size:contain;
+
+    background-repeat:no-repeat;
+
+    z-index:6;
+
+}
+
+/* ==========================================
+   FOREST
+========================================== */
+
+.forest{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:100%;
+
+    height:48%;
+
+    background:
+        url("../assets/images/forest.svg.png")
+        bottom center;
+
+    background-size:cover;
+
+    background-repeat:no-repeat;
+
+    z-index:5;
+
+}
+
+/* ==========================================
+   FOG
+========================================== */
+
+.fog{
+
+    position:absolute;
+
+    width:180%;
+
+    height:32%;
+
+    background:
+        url("../assets/images/fog.svg.png")
+        repeat-x;
+
+    background-size:contain;
+
+    pointer-events:none;
+
+}
+
+.fog-back{
+
+    bottom:16%;
+
+    opacity:.28;
+
+    z-index:7;
+
+}
+
+.fog-front{
+
+    bottom:0;
+
+    opacity:.45;
+
+    z-index:10;
+
+}
+
+/* ==========================================
+   SPIDER WEBS
+========================================== */
+
+.web{
+
+    position:absolute;
+
+    width:240px;
+
+    z-index:20;
+
+}
+
+.web-left{
+
+    top:0;
+
+    left:0;
+
+}
+
+.web-right{
+
+    top:0;
+
+    right:0;
+
+}
+
+/* ==========================================
+   SPIDER
+========================================== */
+
+.spider{
+
+    position:absolute;
+
+    top:0;
+
+    right:18%;
+
+    width:70px;
+
+    z-index:21;
+
+}
+
+/* ==========================================
+   EVENT LOGO
+========================================== */
+
+.event-logo{
+
+    position:absolute;
+
+    top:25px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:220px;
+
+    z-index:25;
+
+}
+
+/* ==========================================
+   GHOSTS
+========================================== */
+
+.ghost{
+
+    position:absolute;
+
+    width:90px;
+
+    z-index:15;
+
+}
+
+.ghost1{
+
+    left:12%;
+
+    bottom:20%;
+
+}
+
+.ghost2{
+
+    right:14%;
+
+    bottom:26%;
+
+}
+
+/* ==========================================
+   EFFECT CONTAINERS
+========================================== */
+
+#batContainer,
+#leafContainer,
+#rain,
+#lightning{
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+}
+
+#batContainer{z-index:30;}
+#leafContainer{z-index:31;}
+#rain{z-index:32;}
+#lightning{z-index:33;}
+
+/* ==========================================
+   HERO
+========================================== */
 
 .hero{
 
-text-align:center;
+    position:absolute;
+
+    left:50%;
+
+    bottom:60px;
+
+    transform:translateX(-50%);
+
+    text-align:center;
+
+    z-index:50;
 
 }
 
 .hero h1{
 
-font-size:70px;
+    color:#ff8c00;
 
-letter-spacing:10px;
+    font-size:4rem;
 
-color:#ff6b00;
+    letter-spacing:8px;
 
-text-shadow:0 0 20px #ff6b00;
+    text-shadow:
+        0 0 15px #ff6a00,
+        0 0 35px #ff2a00;
 
 }
 
 .hero h2{
 
-font-size:36px;
+    color:#ffffff;
 
-margin-top:10px;
+    margin-top:10px;
+
+    font-size:2rem;
 
 }
 
 .hero p{
 
-margin-top:15px;
+    margin:20px 0;
 
-font-size:20px;
+    color:#dddddd;
 
-opacity:.8;
-
-}
-
-button{
-
-margin-top:40px;
-
-padding:18px 45px;
-
-font-size:18px;
-
-border:none;
-
-border-radius:40px;
-
-background:#ff6b00;
-
-color:white;
-
-cursor:pointer;
-
-transition:.4s;
+    font-size:1.1rem;
 
 }
 
-button:hover{
+#enterBtn{
 
-transform:scale(1.08);
+    padding:16px 40px;
 
-box-shadow:0 0 30px orange;
+    border:none;
 
-}
-.background{
+    border-radius:40px;
 
-position:absolute;
+    background:#ff6a00;
 
-width:100%;
+    color:#fff;
 
-height:100%;
+    font-size:1rem;
 
-overflow:hidden;
+    cursor:pointer;
 
-background:
-radial-gradient(circle at top,#300000,#090909 70%);
-}
-
-.moon{
-
-transition:.3s;
+    transition:.3s;
 
 }
 
-.moon.flash{
+#enterBtn:hover{
 
-box-shadow:
-
-0 0 50px red,
-
-0 0 100px crimson,
-
-0 0 180px red,
-
-0 0 250px orange;
-
-transform:translateX(-50%) scale(1.08);
-
-}
-
-.fog{
-
-position:absolute;
-
-width:250%;
-
-height:300px;
-
-left:-50%;
-
-background:
-radial-gradient(circle at 20% 50%, rgba(255,255,255,0.18), transparent 30%),
-radial-gradient(circle at 50% 40%, rgba(255,255,255,0.14), transparent 35%),
-radial-gradient(circle at 80% 60%, rgba(255,255,255,0.16), transparent 30%);
-
-filter:blur(45px);
-
-opacity:0.8;
-
-}
-.fog1{
-
-bottom:0;
-
-animation:fogMove 30s linear infinite;
-
-}
-
-.fog2{
-
-bottom:120px;
-
-opacity:0.5;
-
-animation:fogMoveReverse 40s linear infinite;
-
-}
-
-.embers{
-
-position:absolute;
-
-width:100%;
-
-height:100%;
-
-pointer-events:none;
-
-}
-
-.lightning{
-
-position:absolute;
-
-width:100%;
-
-height:100%;
-
-background:white;
-
-opacity:0;
-
-pointer-events:none;
-
-}
-.hero{
-    position:relative;
-    z-index:10;
-}
-
-.lightning{
-    z-index:5;
-}
-.lightning-svg{
-
-position:absolute;
-
-top:0;
-left:0;
-
-width:100%;
-height:100%;
-
-pointer-events:none;
-
-z-index:20;
-
-overflow:visible;
-
-}
-
-.lightning-line{
-
-stroke:white;
-
-stroke-width:5;
-
-fill:none;
-
-stroke-linecap:round;
-
-stroke-linejoin:round;
-
-filter:drop-shadow(0 0 15px white);
-
-opacity:0;
-
-}
-.fog{
-
-transition:.3s;
-
-}
-
-.fog.flash{
-
-opacity:1;
-
-filter:blur(35px) brightness(2);
-
-}
-.shake{
-
-animation:shake .4s;
-
-}
-
-@keyframes shake{
-
-0%{transform:translate(0,0);}
-
-20%{transform:translate(-5px,4px);}
-
-40%{transform:translate(5px,-4px);}
-
-60%{transform:translate(-4px,2px);}
-
-80%{transform:translate(4px,-2px);}
-
-100%{transform:translate(0,0);}
-
-}
-.castle{
-
-position:absolute;
-
-bottom:140px;
-
-left:50%;
-
-transform:translateX(-50%);
-
-width:320px;
-
-height:260px;
-
-background:black;
-
-clip-path:polygon(
-10% 100%,
-10% 55%,
-20% 55%,
-20% 35%,
-30% 35%,
-30% 55%,
-40% 55%,
-40% 15%,
-50% 0,
-60% 15%,
-60% 55%,
-70% 55%,
-70% 30%,
-80% 30%,
-80% 55%,
-90% 55%,
-90% 100%
-);
-
-opacity:.95;
-
-}
-.forest{
-
-position:absolute;
-
-bottom:0;
-
-width:100%;
-
-height:180px;
-
-background:
-repeating-linear-gradient(
-
-90deg,
-
-transparent 0 40px,
-
-black 40px 55px
-
-);
-
-clip-path:polygon(
-
-0 100%,
-
-5% 55%,
-
-10% 100%,
-
-15% 45%,
-
-20% 100%,
-
-25% 35%,
-
-30% 100%,
-
-35% 40%,
-
-40% 100%,
-
-45% 50%,
-
-50% 100%,
-
-55% 35%,
-
-60% 100%,
-
-65% 45%,
-
-70% 100%,
-
-75% 40%,
-
-80% 100%,
-
-85% 50%,
-
-90% 100%,
-
-95% 40%,
-
-100% 100%
-
-);
-
-}
-.eyes{
-
-position:absolute;
-
-width:12px;
-
-height:12px;
-
-background:red;
-
-border-radius:50%;
-
-box-shadow:0 0 18px red;
-
-animation:blink 6s infinite;
-
-}
-
-.left{
-
-bottom:100px;
-
-left:18%;
-
-}
-
-.right{
-
-bottom:150px;
-
-right:22%;
-
-}
-
-@keyframes blink{
-
-0%,94%,100%{
-
-opacity:1;
-
-}
-
-95%,99%{
-
-opacity:0;
-
-}
-
-}
-#rain{
-
-position:absolute;
-
-width:100%;
-
-height:100%;
-
-overflow:hidden;
-
-}
-
-.drop{
-
-position:absolute;
-
-top:-30px;
-
-width:2px;
-
-height:18px;
-
-background:rgba(255,255,255,.55);
-
-animation:rain linear infinite;
-
-}
-
-@keyframes rain{
-
-to{
-
-transform:translateY(120vh);
-
-}
-
-}
-#bats{
-
-position:absolute;
-
-width:100%;
-
-height:100%;
-
-overflow:hidden;
-
-}
-
-.bat{
-
-position:absolute;
-
-font-size:20px;
-
-animation:fly linear infinite;
-
-}
-
-@keyframes fly{
-
-0%{
-
-transform:translateX(-120px);
-
-}
-
-100%{
-
-transform:translateX(120vw);
-
-}
+    transform:scale(1.05);
 
 }
