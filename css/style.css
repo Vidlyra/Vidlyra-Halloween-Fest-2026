@@ -418,3 +418,24 @@ body{
     transform:scale(1.05);
 
 }
+/* ===========================
+   PUMPKIN
+=========================== */
+
+.pumpkin{
+
+    position:absolute;
+
+    right:30px;
+
+    bottom:10px;
+
+    width:200px;
+
+    z-index:12;
+
+    pointer-events:none;
+
+    user-select:none;
+
+}
