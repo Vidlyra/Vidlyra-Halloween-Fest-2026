@@ -1,65 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vidlyra Halloween Fest 2026</title>
 
-<link rel="stylesheet" href="css/world.css">
-<link rel="stylesheet" href="css/animations.css">
-<link rel="stylesheet" href="css/responsive.css">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Vidlyra Halloween Fest 2026</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
 </head>
 
 <body>
 
-<!-- Background -->
-<div class="background"></div>
+    <!-- Background -->
+    <div class="background"></div>
+    <div class="background-layer"></div>
 
-<!-- Clouds -->
-<div class="cloud cloud1"></div>
-<div class="cloud cloud2"></div>
+    <!-- Clouds -->
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
 
-<!-- Forest -->
-<div class="forest"></div>
+    <!-- Forest -->
+    <div class="forest"></div>
 
-<!-- Castle -->
-<div class="castle"></div>
+    <!-- Castle -->
+    <div class="castle"></div>
 
-<!-- Fog -->
-<div class="fog fog1"></div>
-<div class="fog fog2"></div>
+    <!-- Fog -->
+    <div class="fog fog-back"></div>
+    <div class="fog fog-front"></div>
 
-<!-- Pumpkins -->
-<img src="assets/images/pumpkin.png.png" class="pumpkin left" alt="">
-<img src="assets/images/pumpkin1.png.png" class="pumpkin right" alt="">
+    <!-- Spider Webs -->
+    <img src="assets/images/spider web.svg"
+         class="web web-left"
+         alt="Spider Web">
 
-<!-- Ghosts -->
-<div class="ghost ghost1"></div>
-<div class="ghost ghost2"></div>
+    <img src="assets/images/spider web 2.svg"
+         class="web web-right"
+         alt="Spider Web">
 
-<!-- Leaves -->
-<div id="leafContainer"></div>
+    <!-- Hanging Spider -->
+    <img src="assets/images/Spider.svg"
+         class="spider"
+         alt="Spider">
 
-<!-- Bats -->
-<div id="batContainer"></div>
+    <!-- Halloween Logo -->
+    <img src="assets/images/Halloween.svg"
+         class="event-logo"
+         alt="Halloween">
 
-<!-- Rain -->
-<div id="rain"></div>
+    <!-- Ghosts -->
+    <img src="assets/images/ghost.svg"
+         class="ghost ghost1"
+         alt="Ghost">
 
-<!-- Lightning -->
-<svg id="lightning" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+    <img src="assets/images/ghost 1.svg"
+         class="ghost ghost2"
+         alt="Ghost">
 
-<!-- Logo -->
-<div class="logo">
-    VIDLYRA HALLOWEEN FEST 2026
-</div>
+    <!-- Dynamic Effects -->
+    <div id="batContainer"></div>
+    <div id="leafContainer"></div>
+    <div id="rain"></div>
+    <svg id="lightning"></svg>
 
-<script src="js/main.js"></script>
-<script src="js/lightning.js"></script>
-<script src="js/rain.js"></script>
-<script src="js/bats.js"></script>
-<script src="js/leaves.js"></script>
-<script src="js/ghosts.js"></script>
+    <!-- Hero -->
+    <section class="hero">
+
+        <h1>VIDLYRA</h1>
+
+        <h2>Halloween Fest 2026</h2>
+
+        <p>
+            Enter the haunted world where every shadow hides a mystery.
+        </p>
+
+        <button id="enterBtn">
+            Enter the World
+        </button>
+
+    </section>
+
+    <script src="js/main.js"></script>
 
 </body>
+
 </html>
