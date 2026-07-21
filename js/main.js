@@ -1,26 +1,66 @@
-const enterButton = document.getElementById("enterButton");
+/* ==========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   MAIN CONTROLLER
+========================================== */
 
-enterButton.addEventListener("click", () => {
+const World = {
 
-alert("Welcome to Vidlyra Halloween Fest 2026!");
+    init(){
 
-});
-const button=document.getElementById("enterButton");
+        console.log("🎃 Vidlyra Halloween Fest 2026");
 
-button.addEventListener("mouseenter",()=>{
+        this.cache();
 
-button.style.transform="scale(1.1)";
+        this.bindEvents();
 
-});
+        this.start();
 
-button.addEventListener("mouseleave",()=>{
+    },
 
-button.style.transform="scale(1)";
+    cache(){
 
-});
+        this.enterButton =
+            document.getElementById("enterBtn");
 
-button.addEventListener("click",()=>{
+        this.background =
+            document.querySelector(".background");
 
-alert("The Haunted Realm is opening...");
+        this.castle =
+            document.querySelector(".castle");
 
-});
+        this.hero =
+            document.querySelector(".hero");
+
+    },
+
+    bindEvents(){
+
+        if(this.enterButton){
+
+            this.enterButton.addEventListener(
+                "click",
+                () => this.enterWorld()
+            );
+
+        }
+
+    },
+
+    start(){
+
+        console.log("World Loaded");
+
+    },
+
+    enterWorld(){
+
+        console.log("Entering Halloween World...");
+
+    }
+
+};
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => World.init()
+);
