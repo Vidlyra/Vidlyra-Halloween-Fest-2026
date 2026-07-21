@@ -92,3 +92,293 @@ opacity:0;
 
 animation:lightningFlash .8s;
 }
+/* ==========================================
+   CLOUDS
+========================================== */
+
+@keyframes cloudMove1{
+
+    from{
+        transform:translateX(-8%);
+    }
+
+    to{
+        transform:translateX(8%);
+    }
+
+}
+
+@keyframes cloudMove2{
+
+    from{
+        transform:translateX(10%);
+    }
+
+    to{
+        transform:translateX(-10%);
+    }
+
+}
+
+
+/* ==========================================
+   FOG
+========================================== */
+
+@keyframes fogMove1{
+
+    from{
+        transform:translateX(0);
+    }
+
+    to{
+        transform:translateX(-20%);
+    }
+
+}
+
+@keyframes fogMove2{
+
+    from{
+        transform:translateX(-20%);
+    }
+
+    to{
+        transform:translateX(0);
+    }
+
+}
+
+
+/* ==========================================
+   GHOST FLOAT
+========================================== */
+
+@keyframes ghostFloat{
+
+    0%{
+        transform:translateY(0px);
+    }
+
+    25%{
+        transform:translateY(-12px);
+    }
+
+    50%{
+        transform:translateY(-25px);
+    }
+
+    75%{
+        transform:translateY(-10px);
+    }
+
+    100%{
+        transform:translateY(0px);
+    }
+
+}
+
+.ghost1{
+
+    animation:ghostFloat 6s ease-in-out infinite;
+
+}
+
+.ghost2{
+
+    animation:ghostFloat 8s ease-in-out infinite;
+    animation-delay:2s;
+
+}
+
+
+/* ==========================================
+   PUMPKIN GLOW
+========================================== */
+
+@keyframes flicker{
+
+    0%{
+
+        filter:
+            drop-shadow(0 0 6px orange);
+
+    }
+
+    20%{
+
+        filter:
+            drop-shadow(0 0 16px orange);
+
+    }
+
+    40%{
+
+        filter:
+            drop-shadow(0 0 10px gold);
+
+    }
+
+    60%{
+
+        filter:
+            drop-shadow(0 0 22px orange);
+
+    }
+
+    80%{
+
+        filter:
+            drop-shadow(0 0 8px orange);
+
+    }
+
+    100%{
+
+        filter:
+            drop-shadow(0 0 15px gold);
+
+    }
+
+}
+
+
+/* ==========================================
+   CASTLE
+========================================== */
+
+@keyframes castleGlow{
+
+    0%{
+
+        filter:
+            brightness(1);
+
+    }
+
+    50%{
+
+        filter:
+            brightness(1.08);
+
+    }
+
+    100%{
+
+        filter:
+            brightness(1);
+
+    }
+
+}
+
+.castle{
+
+    animation:castleGlow 5s infinite;
+
+}
+
+
+/* ==========================================
+   FOREST
+========================================== */
+
+@keyframes forestWind{
+
+    0%{
+
+        transform:translateX(0);
+
+    }
+
+    50%{
+
+        transform:translateX(3px);
+
+    }
+
+    100%{
+
+        transform:translateX(0);
+
+    }
+
+}
+
+.forest{
+
+    animation:forestWind 8s ease-in-out infinite;
+
+}
+
+
+/* ==========================================
+   LOGO
+========================================== */
+
+@keyframes logoGlow{
+
+    0%{
+
+        text-shadow:
+        0 0 8px orange,
+        0 0 18px red;
+
+    }
+
+    50%{
+
+        text-shadow:
+        0 0 20px orange,
+        0 0 40px red;
+
+    }
+
+    100%{
+
+        text-shadow:
+        0 0 8px orange,
+        0 0 18px red;
+
+    }
+
+}
+
+.logo{
+
+    animation:logoGlow 3s infinite;
+
+}
+
+
+/* ==========================================
+   BACKGROUND
+========================================== */
+
+@keyframes backgroundPulse{
+
+    0%{
+
+        filter:brightness(.95);
+
+    }
+
+    50%{
+
+        filter:brightness(1);
+
+    }
+
+    100%{
+
+        filter:brightness(.95);
+
+    }
+
+}
+
+.background{
+
+    animation:backgroundPulse 10s ease-in-out infinite;
+
+}
