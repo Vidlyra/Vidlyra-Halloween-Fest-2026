@@ -2,20 +2,21 @@
    VIDLYRA RAIN SYSTEM
 ========================================== */
 
-class RainSystem {
+class Rain {
 
     constructor(){
 
-        this.container = document.getElementById("rain");
+        this.container =
+            document.getElementById("rain");
 
-        this.totalDrops =
-            window.innerWidth < 768 ? 180 : 350;
+        this.count =
+            window.innerWidth < 768 ? 180 : 400;
 
     }
 
-    create(){
+    init(){
 
-        for(let i=0;i<this.totalDrops;i++){
+        for(let i=0;i<this.count;i++){
 
             const drop=document.createElement("div");
 
@@ -23,17 +24,17 @@ class RainSystem {
 
             drop.style.left=Math.random()*100+"%";
 
-            drop.style.animationDelay=
-                Math.random()*2+"s";
-
-            drop.style.animationDuration=
-                (0.5+Math.random()*0.7)+"s";
+            drop.style.height=
+                12+Math.random()*22+"px";
 
             drop.style.opacity=
-                0.2+Math.random()*0.5;
+                0.2+Math.random()*0.8;
 
-            drop.style.height=
-                10+Math.random()*25+"px";
+            drop.style.animationDuration=
+                (0.45+Math.random()*0.5)+"s";
+
+            drop.style.animationDelay=
+                (-Math.random()*2)+"s";
 
             this.container.appendChild(drop);
 
@@ -45,8 +46,6 @@ class RainSystem {
 
 document.addEventListener("DOMContentLoaded",()=>{
 
-    const rain=new RainSystem();
-
-    rain.create();
+    new Rain().init();
 
 });
