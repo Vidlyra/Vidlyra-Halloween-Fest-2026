@@ -1,5 +1,5 @@
 /* ==========================================
-   RAIN
+   VIDLYRA RAIN
 ========================================== */
 
 #rain{
@@ -12,7 +12,7 @@
 
     pointer-events:none;
 
-    z-index:30;
+    z-index:28;
 
 }
 
@@ -20,23 +20,22 @@
 
     position:absolute;
 
-    top:-40px;
+    top:-120px;
 
     width:2px;
 
-    background:
-    linear-gradient(
+    border-radius:2px;
 
+    background:linear-gradient(
         transparent,
-
-        rgba(255,255,255,.85)
-
+        rgba(255,255,255,.9)
     );
 
-    transform:rotate(15deg);
+    transform:rotate(18deg);
 
-    animation:
-        rainFall linear infinite;
+    opacity:.75;
+
+    animation:rainFall linear infinite;
 
 }
 
@@ -45,24 +44,16 @@
     from{
 
         transform:
-
-            translateY(-50px)
-
-            translateX(0)
-
-            rotate(15deg);
+            translate3d(0,-100px,0)
+            rotate(18deg);
 
     }
 
     to{
 
         transform:
-
-            translateY(110vh)
-
-            translateX(-60px)
-
-            rotate(15deg);
+            translate3d(-160px,120vh,0)
+            rotate(18deg);
 
     }
 
