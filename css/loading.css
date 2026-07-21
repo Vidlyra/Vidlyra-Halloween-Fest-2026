@@ -530,3 +530,52 @@ opacity:.6;
 }
 
 }
+/* ======================================
+   Portal Open Animation
+====================================== */
+
+.portalOpen{
+
+opacity:1 !important;
+
+animation:portalExpand 2.2s ease-out forwards;
+
+}
+
+@keyframes portalExpand{
+
+0%{
+
+transform:translate(-50%,-50%) scale(0);
+
+opacity:0;
+
+filter:blur(20px);
+
+}
+
+20%{
+
+transform:translate(-50%,-50%) scale(.4);
+
+opacity:1;
+
+}
+
+50%{
+
+transform:translate(-50%,-50%) scale(1);
+
+filter:blur(0);
+
+}
+
+100%{
+
+transform:translate(-50%,-50%) scale(8);
+
+opacity:1;
+
+}
+
+}
