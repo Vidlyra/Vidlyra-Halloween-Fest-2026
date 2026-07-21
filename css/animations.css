@@ -382,3 +382,47 @@ animation:lightningFlash .8s;
     animation:backgroundPulse 10s ease-in-out infinite;
 
 }
+/* ===================================
+   RAIN
+=================================== */
+
+.raindrop{
+
+    position:absolute;
+
+    top:-80px;
+
+    width:2px;
+
+    background:
+    linear-gradient(
+        transparent,
+        rgba(255,255,255,.9)
+    );
+
+    animation:
+        rainFall linear infinite;
+
+}
+
+@keyframes rainFall{
+
+    from{
+
+        transform:
+            translateY(-100px)
+            translateX(0)
+            rotate(15deg);
+
+    }
+
+    to{
+
+        transform:
+            translateY(120vh)
+            translateX(-60px)
+            rotate(15deg);
+
+    }
+
+}
