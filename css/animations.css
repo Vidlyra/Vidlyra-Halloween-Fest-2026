@@ -389,3 +389,96 @@
         forestMove 10s ease-in-out infinite;
 
 }
+/* ==========================================
+   BAT SYSTEM
+========================================== */
+
+.bat{
+
+    position:absolute;
+
+    left:-120px;
+
+    pointer-events:none;
+
+    animation:
+        flyRight linear infinite,
+        flap .45s ease-in-out infinite;
+
+    transform-origin:center;
+
+    opacity:.9;
+
+}
+
+.bat.reverse{
+
+    left:auto;
+
+    right:-120px;
+
+    transform:scaleX(-1);
+
+    animation:
+        flyLeft linear infinite,
+        flap .45s ease-in-out infinite;
+
+}
+
+@keyframes flyRight{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(calc(100vw + 250px));
+
+    }
+
+}
+
+@keyframes flyLeft{
+
+    from{
+
+        transform:
+            translateX(0)
+            scaleX(-1);
+
+    }
+
+    to{
+
+        transform:
+            translateX(calc(-100vw - 250px))
+            scaleX(-1);
+
+    }
+
+}
+
+@keyframes flap{
+
+    0%{
+
+        margin-top:0;
+
+    }
+
+    50%{
+
+        margin-top:-5px;
+
+    }
+
+    100%{
+
+        margin-top:0;
+
+    }
+
+}
