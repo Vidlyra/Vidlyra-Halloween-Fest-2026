@@ -619,3 +619,52 @@ body{
     animation:portalPulse 2s infinite;
 
 }
+/* ==========================================
+   LIGHTNING GLOW
+========================================== */
+
+.castle,
+.forest,
+.fog,
+.ghost,
+.pumpkin{
+
+    transition:
+        filter .25s ease,
+        opacity .25s ease;
+
+}
+
+.lightning-active .castle{
+
+    filter:
+        brightness(2.2)
+        drop-shadow(0 0 25px #ffffff);
+
+}
+
+.lightning-active .forest{
+
+    filter:brightness(1.6);
+
+}
+
+.lightning-active .fog{
+
+    filter:brightness(1.8);
+
+}
+
+.lightning-active .ghost{
+
+    filter:
+        brightness(2)
+        drop-shadow(0 0 20px #9ffcff);
+
+}
+
+.lightning-active .pumpkin{
+
+    filter:brightness(1.4);
+
+}
