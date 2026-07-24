@@ -66,3 +66,26 @@ document.addEventListener(
     "DOMContentLoaded",
     () => World.init()
 );
+const bgMusic = document.getElementById("bgMusic");
+const buttonSound = document.getElementById("buttonSound");
+
+const enterBtn = document.getElementById("enterBtn");
+
+enterBtn.addEventListener("click", () => {
+
+    buttonSound.currentTime = 0;
+    buttonSound.play();
+
+    bgMusic.volume = 0.35;
+
+    bgMusic.play();
+
+});
+const thunder =
+    document.getElementById("thunderSound");
+
+thunder.currentTime = 0;
+
+thunder.volume = 0.7;
+
+thunder.play();
