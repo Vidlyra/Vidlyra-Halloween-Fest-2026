@@ -28,7 +28,9 @@ const World = {
         this.bgMusic = document.getElementById("bgMusic");
 
         this.buttonSound = document.getElementById("buttonSound");
+
         this.portal = document.getElementById("portal");
+
     },
 
     bindEvents() {
@@ -48,132 +50,91 @@ const World = {
     start() {
 
         console.log("🌍 World Loaded");
-
         console.log("🌧 Rain System Ready");
-
         console.log("🦇 Bat System Ready");
-
         console.log("🍂 Leaf System Ready");
 
     },
 
-    enterWorld(){
+    enterWorld() {
 
-    console.log("Entering Halloween World...");
+        console.log("🎮 Entering Halloween World...");
 
-    if(this.buttonSound){
-
-        this.buttonSound.currentTime = 0;
-
-        this.buttonSound.play();
-
-    }
-
-    this.portal.classList.add("active");
-
-    setTimeout(()=>{
-
-        if(this.bgMusic){
-
-            this.bgMusic.volume=0;
-
-            this.bgMusic.play();
-
-            let volume=0;
-
-            const fade=setInterval(()=>{
-
-                volume+=0.02;
-
-                if(volume>=0.35){
-
-                    volume=0.35;
-
-                    clearInterval(fade);
-
-                }
-
-                this.bgMusic.volume=volume;
-
-            },100);
-
-        }
-
-    },800);
-
-    setTimeout(()=>{
-
-        this.portal.classList.remove("active");
-
-    },2200);
-
-}
-
-        /* -----------------------------
-           Button Click Sound
-        ------------------------------ */
-
-        if (this.buttonSound) {
-
-            this.buttonSound.currentTime = 0;
-
-            this.buttonSound.volume = 0.5;
-
-            this.buttonSound.play().catch(error => {
-
-                console.log(error);
-
-            });
-
-        }
-
-        /* -----------------------------
-           Background Music
-        ------------------------------ */
-
-        if (this.bgMusic && this.bgMusic.paused) {
-
-            this.bgMusic.volume = 0;
-
-            this.bgMusic.play().then(() => {
-
-                let volume = 0;
-
-                const fade = setInterval(() => {
-
-                    volume += 0.02;
-
-                    if (volume >= 0.35) {
-
-                        volume = 0.35;
-
-                        clearInterval(fade);
-
-                    }
-
-                    this.bgMusic.volume = volume;
-
-                }, 100);
-
-            }).catch(error => {
-
-                console.log(error);
-
-            });
-
-        }
-
-        /* -----------------------------
-           Optional Button Animation
-        ------------------------------ */
-
+        // Prevent multiple clicks
         if (this.enterButton) {
 
             this.enterButton.disabled = true;
-
             this.enterButton.innerHTML = "Entering...";
 
         }
+
+        // Button Sound
+        if (this.buttonSound) {
+
+            this.buttonSound.currentTime = 0;
+            this.buttonSound.volume = 0.5;
+
+            this.buttonSound.play().catch(console.error);
+
+        }
+
+        // Show Portal
+        if (this.portal) {
+
+            this.portal.classList.add("active");
+
+        }
+
+        // Start Music
+        setTimeout(() => {
+
+            if (this.bgMusic && this.bgMusic.paused) {
+
+                this.bgMusic.volume = 0;
+
+                this.bgMusic.play().then(() => {
+
+                    let volume = 0;
+
+                    const fade = setInterval(() => {
+
+                        volume += 0.02;
+
+                        if (volume >= 0.35) {
+
+                            volume = 0.35;
+
+                            clearInterval(fade);
+
+                        }
+
+                        this.bgMusic.volume = volume;
+
+                    }, 100);
+
+                }).catch(console.error);
+
+            }
+
+        }, 800);
+
+        // Hide Portal
+        setTimeout(() => {
+
+            if (this.portal) {
+
+                this.portal.classList.remove("active");
+
+            }
+
+            if (this.enterButton) {
+
+                this.enterButton.innerHTML = "Welcome!";
+                this.enterButton.disabled = false;
+
+            }
+
+        }, 2200);
 
     }
 
