@@ -641,3 +641,88 @@
     }
 
 }
+/* ==========================================
+   SPIDER DROP
+========================================== */
+
+@keyframes spiderDrop{
+
+    0%{
+
+        top:-220px;
+
+    }
+
+    15%{
+
+        top:0;
+
+    }
+
+    55%{
+
+        top:0;
+
+    }
+
+    70%{
+
+        top:-220px;
+
+    }
+
+    100%{
+
+        top:-220px;
+
+    }
+
+}
+
+/* ==========================================
+   SPIDER SWING
+========================================== */
+
+@keyframes spiderSwing{
+
+    0%{
+
+        transform:
+            translateX(-50%)
+            rotate(-8deg);
+
+    }
+
+    25%{
+
+        transform:
+            translateX(-50%)
+            rotate(5deg);
+
+    }
+
+    50%{
+
+        transform:
+            translateX(-50%)
+            rotate(10deg);
+
+    }
+
+    75%{
+
+        transform:
+            translateX(-50%)
+            rotate(-5deg);
+
+    }
+
+    100%{
+
+        transform:
+            translateX(-50%)
+            rotate(-8deg);
+
+    }
+
+}
