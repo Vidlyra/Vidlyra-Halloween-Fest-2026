@@ -702,3 +702,62 @@ body{
     }
 
 }
+/* ==========================================
+   HIDDEN EYES
+========================================== */
+
+#eyesContainer{
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:16;
+
+}
+
+.eye-pair{
+
+    position:absolute;
+
+    width:26px;
+
+    height:10px;
+
+    opacity:0;
+
+    animation:eyesBlink 6s ease-in-out forwards;
+
+}
+
+.eye{
+
+    position:absolute;
+
+    width:6px;
+
+    height:6px;
+
+    border-radius:50%;
+
+    background:#ff3030;
+
+    box-shadow:
+        0 0 6px #ff0000,
+        0 0 12px #ff4444;
+
+}
+
+.eye.left{
+
+    left:0;
+
+}
+
+.eye.right{
+
+    right:0;
+
+}
