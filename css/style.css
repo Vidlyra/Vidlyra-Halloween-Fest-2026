@@ -761,3 +761,30 @@ body{
     right:0;
 
 }
+/* ==========================================
+   CINEMATIC CAMERA
+========================================== */
+
+.world{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    transform-origin:center center;
+
+    transition:
+        transform 2s ease,
+        filter 2s ease;
+
+}
+
+.world.enter{
+
+    transform:scale(1.08);
+
+    filter:brightness(1.05);
+
+}
