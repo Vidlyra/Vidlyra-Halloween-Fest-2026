@@ -547,3 +547,75 @@ body{
     animation:fireflyMove linear infinite;
 
 }
+/* ==========================================
+   PORTAL
+========================================== */
+
+#portal{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#000;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:.8s;
+
+    z-index:9999;
+
+}
+
+#portal.active{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+.portal-ring{
+
+    width:120px;
+
+    height:120px;
+
+    border-radius:50%;
+
+    border:6px solid #ff7b00;
+
+    box-shadow:
+        0 0 30px #ff6a00,
+        0 0 60px #ff3300,
+        0 0 120px #ff9900;
+
+    animation:portalSpin 4s linear infinite;
+
+}
+
+.portal-glow{
+
+    position:absolute;
+
+    width:160px;
+
+    height:160px;
+
+    border-radius:50%;
+
+    background:radial-gradient(circle,
+        rgba(255,120,0,.7),
+        transparent 70%);
+
+    animation:portalPulse 2s infinite;
+
+}
