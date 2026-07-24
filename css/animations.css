@@ -867,3 +867,30 @@
     }
 
 }
+@keyframes pumpkinGlow{
+
+    0%{
+
+        filter:
+            brightness(1)
+            drop-shadow(0 0 6px orange);
+
+    }
+
+    50%{
+
+        filter:
+            brightness(1.25)
+            drop-shadow(0 0 18px #ff7b00);
+
+    }
+
+    100%{
+
+        filter:
+            brightness(1)
+            drop-shadow(0 0 6px orange);
+
+    }
+
+}
