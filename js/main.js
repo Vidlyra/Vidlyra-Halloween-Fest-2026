@@ -25,11 +25,13 @@ const World = {
 
         this.hero = document.querySelector(".hero");
 
+        this.portal = document.getElementById("portal");
+
+        this.world = document.querySelector(".world");
+
         this.bgMusic = document.getElementById("bgMusic");
 
         this.buttonSound = document.getElementById("buttonSound");
-
-        this.portal = document.getElementById("portal");
 
     },
 
@@ -51,8 +53,10 @@ const World = {
 
         console.log("🌍 World Loaded");
         console.log("🌧 Rain System Ready");
+        console.log("⚡ Lightning Ready");
         console.log("🦇 Bat System Ready");
         console.log("🍂 Leaf System Ready");
+        console.log("🎵 Audio Ready");
 
     },
 
@@ -60,10 +64,11 @@ const World = {
 
         console.log("🎮 Entering Halloween World...");
 
-        // Prevent multiple clicks
+        // Prevent double click
         if (this.enterButton) {
 
             this.enterButton.disabled = true;
+
             this.enterButton.innerHTML = "Entering...";
 
         }
@@ -72,20 +77,36 @@ const World = {
         if (this.buttonSound) {
 
             this.buttonSound.currentTime = 0;
+
             this.buttonSound.volume = 0.5;
 
-            this.buttonSound.play().catch(console.error);
+            this.buttonSound.play().catch(error => {
+
+                console.log(error);
+
+            });
 
         }
 
-        // Show Portal
+        // Portal Animation
         if (this.portal) {
 
             this.portal.classList.add("active");
 
         }
 
-        // Start Music
+        // Camera Zoom
+        if (this.world) {
+
+            setTimeout(() => {
+
+                this.world.classList.add("enter");
+
+            }, 500);
+
+        }
+
+        // Background Music Fade In
         setTimeout(() => {
 
             if (this.bgMusic && this.bgMusic.paused) {
@@ -112,13 +133,17 @@ const World = {
 
                     }, 100);
 
-                }).catch(console.error);
+                }).catch(error => {
+
+                    console.log(error);
+
+                });
 
             }
 
         }, 800);
 
-        // Hide Portal
+        // Remove Portal
         setTimeout(() => {
 
             if (this.portal) {
@@ -127,14 +152,20 @@ const World = {
 
             }
 
+        }, 2200);
+
+        // Restore Button
+        setTimeout(() => {
+
             if (this.enterButton) {
 
-                this.enterButton.innerHTML = "Welcome!";
                 this.enterButton.disabled = false;
+
+                this.enterButton.innerHTML = "Welcome!";
 
             }
 
-        }, 2200);
+        }, 2500);
 
     }
 
