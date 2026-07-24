@@ -89,3 +89,15 @@ thunder.currentTime = 0;
 thunder.volume = 0.7;
 
 thunder.play();
+const bgMusic = document.getElementById("bgMusic");
+const enterBtn = document.getElementById("enterBtn");
+
+enterBtn.addEventListener("click", () => {
+
+    bgMusic.volume = 0.35;
+
+    bgMusic.play().catch(error => {
+        console.log("Autoplay prevented:", error);
+    });
+
+});
