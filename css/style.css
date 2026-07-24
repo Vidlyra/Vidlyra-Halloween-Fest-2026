@@ -151,10 +151,6 @@ body{
 
 }
 
-/* ==========================================
-   FOREST
-========================================== */
-
 .forest{
 
     position:absolute;
@@ -163,15 +159,14 @@ body{
     bottom:0;
 
     width:100%;
-    height:auto;
+    height:45vh;
 
-    display:block;
+    background:url("../assets/images/forest.svg.png")
+        no-repeat bottom center;
+
+    background-size:100% 220%;
 
     z-index:5;
-
-    pointer-events:none;
-
-    user-select:none;
 
 }
 /* ==========================================
