@@ -217,35 +217,44 @@ body{
 }
 
 /* ==========================================
-   SPIDER WEBS
+   SPIDER
 ========================================== */
 
-.web{
+.spider-rope{
 
     position:absolute;
 
-    width:240px;
+    top:35px;
 
-    z-index:20;
+    left:60px;
 
-}
+    width:2px;
 
-.web-left{
+    height:180px;
 
-    top:0;
+    background:rgba(255,255,255,.35);
 
-    left:0;
+    transform-origin:top center;
 
-}
-
-.web-right{
-
-    top:0;
-
-    right:0;
+    animation:ropeSwing 6s ease-in-out infinite;
 
 }
 
+.spider{
+
+    position:absolute;
+
+    bottom:-55px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:60px;
+
+    height:auto;
+
+}
 /* ==========================================
    HANGING SPIDER
 ========================================== */
@@ -289,6 +298,25 @@ body{
     pointer-events:none;
 
     user-select:none;
+
+}
+/* ==========================================
+   RIGHT WEB CONTAINER
+========================================== */
+
+.web-right-container{
+
+    position:absolute;
+
+    top:0;
+
+    right:0;
+
+    width:220px;
+
+    height:280px;
+
+    z-index:20;
 
 }
 
