@@ -106,12 +106,14 @@ class Lightning {
         document.body.classList.add("flash");
 
         document.body.classList.add("shake");
+        
+        document.body.classList.add("lightning-active");
 
         setTimeout(()=>{
 
-            document.body.classList.remove("flash");
+    document.body.classList.remove("lightning-active");
 
-        },180);
+        },220);
 
         setTimeout(()=>{
 
