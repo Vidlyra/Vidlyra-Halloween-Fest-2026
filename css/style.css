@@ -215,7 +215,25 @@ body{
     z-index:10;
 
 }
+/* ==========================================
+   RIGHT WEB CONTAINER
+========================================== */
 
+.web-right-container{
+
+    position:absolute;
+
+    top:0;
+
+    right:0;
+
+    width:220px;
+
+    height:280px;
+
+    z-index:20;
+
+}
 /* ==========================================
    SPIDER
 ========================================== */
@@ -300,25 +318,7 @@ body{
     user-select:none;
 
 }
-/* ==========================================
-   RIGHT WEB CONTAINER
-========================================== */
 
-.web-right-container{
-
-    position:absolute;
-
-    top:0;
-
-    right:0;
-
-    width:220px;
-
-    height:280px;
-
-    z-index:20;
-
-}
 
 /* ==========================================
    EVENT LOGO
