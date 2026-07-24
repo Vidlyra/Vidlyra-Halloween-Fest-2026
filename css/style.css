@@ -509,3 +509,41 @@ body{
     animation:emberFloat linear infinite;
 
 }
+/* ==========================================
+   FIREFLIES
+========================================== */
+
+#fireflies{
+
+    position:absolute;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:17;
+
+}
+
+.firefly{
+
+    position:absolute;
+
+    width:6px;
+
+    height:6px;
+
+    border-radius:50%;
+
+    background:#ffe66d;
+
+    box-shadow:
+        0 0 10px #fff59d,
+        0 0 20px #ffd54f,
+        0 0 30px #ffeb3b;
+
+    animation:fireflyMove linear infinite;
+
+}
