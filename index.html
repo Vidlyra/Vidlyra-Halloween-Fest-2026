@@ -70,7 +70,27 @@
     <div id="batContainer"></div>
     <div id="leafContainer"></div>
     <div id="rain"></div>
-    <svg id="lightning"></svg>
+    <svg id="lightning">
+
+    <defs>
+
+        <filter id="glow">
+
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+
+            <feMerge>
+
+                <feMergeNode in="blur"/>
+
+                <feMergeNode in="SourceGraphic"/>
+
+            </feMerge>
+
+        </filter>
+
+    </defs>
+
+</svg>
 
     <!-- Hero -->
     <section class="hero">
