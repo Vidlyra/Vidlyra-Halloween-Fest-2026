@@ -788,3 +788,38 @@ body{
     filter:brightness(1.05);
 
 }
+.pumpkin{
+
+    animation:
+        pumpkinGlow 2s ease-in-out infinite;
+
+    filter:
+        drop-shadow(0 0 12px #ff8c00);
+
+}
+.cloud1{
+
+    animation:
+        cloudMove 90s linear infinite;
+
+}
+
+.cloud2{
+
+    animation:
+        cloudMove 130s linear infinite;
+
+}
+.fog-front{
+
+    animation:
+        fogMove 35s linear infinite;
+
+}
+
+.fog-back{
+
+    animation:
+        fogMove 50s linear infinite;
+
+}
