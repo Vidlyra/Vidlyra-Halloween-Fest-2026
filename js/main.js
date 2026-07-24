@@ -101,3 +101,34 @@ enterBtn.addEventListener("click", () => {
     });
 
 });
+function fadeInMusic(audio) {
+
+    audio.volume = 0;
+
+    audio.play();
+
+    let volume = 0;
+
+    const fade = setInterval(() => {
+
+        volume += 0.02;
+
+        if (volume >= 0.35) {
+
+            volume = 0.35;
+
+            clearInterval(fade);
+
+        }
+
+        audio.volume = volume;
+
+    }, 100);
+
+}
+
+enterBtn.addEventListener("click", () => {
+
+    fadeInMusic(bgMusic);
+
+});
