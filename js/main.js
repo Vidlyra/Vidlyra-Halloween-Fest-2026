@@ -19,19 +19,22 @@ const World = {
 
     cache(){
 
-        this.enterButton =
-            document.getElementById("enterBtn");
+    this.enterButton =
+        document.getElementById("enterBtn");
 
-        this.background =
-            document.querySelector(".background");
+    this.background =
+        document.querySelector(".background");
 
-        this.castle =
-            document.querySelector(".castle");
+    this.castle =
+        document.querySelector(".castle");
 
-        this.hero =
-            document.querySelector(".hero");
+    this.hero =
+        document.querySelector(".hero");
 
-    },
+    this.bgMusic =
+        document.getElementById("bgMusic");
+
+}
 
     bindEvents(){
 
@@ -56,56 +59,20 @@ const World = {
 
     enterWorld(){
 
-        console.log("Entering Halloween World...");
+    console.log("Entering Halloween World...");
 
-    }
+    this.startBackgroundMusic();
 
-};
+}
+startBackgroundMusic(){
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => World.init()
-);
-const bgMusic = document.getElementById("bgMusic");
-const buttonSound = document.getElementById("buttonSound");
+    if(!this.bgMusic) return;
 
-const enterBtn = document.getElementById("enterBtn");
+    this.bgMusic.volume = 0;
 
-enterBtn.addEventListener("click", () => {
-
-    buttonSound.currentTime = 0;
-    buttonSound.play();
-
-    bgMusic.volume = 0.35;
-
-    bgMusic.play();
-
-});
-const thunder =
-    document.getElementById("thunderSound");
-
-thunder.currentTime = 0;
-
-thunder.volume = 0.7;
-
-thunder.play();
-const bgMusic = document.getElementById("bgMusic");
-const enterBtn = document.getElementById("enterBtn");
-
-enterBtn.addEventListener("click", () => {
-
-    bgMusic.volume = 0.35;
-
-    bgMusic.play().catch(error => {
-        console.log("Autoplay prevented:", error);
+    this.bgMusic.play().catch(() => {
+        console.log("Music autoplay blocked.");
     });
-
-});
-function fadeInMusic(audio) {
-
-    audio.volume = 0;
-
-    audio.play();
 
     let volume = 0;
 
@@ -113,7 +80,7 @@ function fadeInMusic(audio) {
 
         volume += 0.02;
 
-        if (volume >= 0.35) {
+        if(volume >= 0.35){
 
             volume = 0.35;
 
@@ -121,14 +88,14 @@ function fadeInMusic(audio) {
 
         }
 
-        audio.volume = volume;
+        this.bgMusic.volume = volume;
 
-    }, 100);
+    },100);
 
 }
+};
 
-enterBtn.addEventListener("click", () => {
-
-    fadeInMusic(bgMusic);
-
-});
+document.addEventListener(
+    "DOMContentLoaded",
+    () => World.init()
+);
