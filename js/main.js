@@ -28,7 +28,7 @@ const World = {
         this.bgMusic = document.getElementById("bgMusic");
 
         this.buttonSound = document.getElementById("buttonSound");
-
+        this.portal = document.getElementById("portal");
     },
 
     bindEvents() {
@@ -57,9 +57,57 @@ const World = {
 
     },
 
-    enterWorld() {
+    enterWorld(){
 
-        console.log("🎮 Entering Halloween World...");
+    console.log("Entering Halloween World...");
+
+    if(this.buttonSound){
+
+        this.buttonSound.currentTime = 0;
+
+        this.buttonSound.play();
+
+    }
+
+    this.portal.classList.add("active");
+
+    setTimeout(()=>{
+
+        if(this.bgMusic){
+
+            this.bgMusic.volume=0;
+
+            this.bgMusic.play();
+
+            let volume=0;
+
+            const fade=setInterval(()=>{
+
+                volume+=0.02;
+
+                if(volume>=0.35){
+
+                    volume=0.35;
+
+                    clearInterval(fade);
+
+                }
+
+                this.bgMusic.volume=volume;
+
+            },100);
+
+        }
+
+    },800);
+
+    setTimeout(()=>{
+
+        this.portal.classList.remove("active");
+
+    },2200);
+
+}
 
         /* -----------------------------
            Button Click Sound
