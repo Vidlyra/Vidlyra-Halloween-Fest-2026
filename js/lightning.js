@@ -61,3 +61,134 @@ function randomLightning(){
 }
 
 randomLightning();
+/* ==========================================
+   VIDLYRA LIGHTNING SYSTEM
+========================================== */
+
+class Lightning {
+
+    constructor(){
+
+        this.svg = document.getElementById("lightning");
+
+        this.thunder = document.getElementById("thunderSound");
+
+        this.flash = null;
+
+        this.start();
+
+    }
+
+    start(){
+
+        this.schedule();
+
+    }
+
+    schedule(){
+
+        const delay = 5000 + Math.random() * 8000;
+
+        setTimeout(()=>{
+
+            this.strike();
+
+            this.schedule();
+
+        },delay);
+
+    }
+
+    strike(){
+
+        this.createBolt();
+
+        document.body.classList.add("flash");
+
+        document.body.classList.add("shake");
+
+        setTimeout(()=>{
+
+            document.body.classList.remove("flash");
+
+        },180);
+
+        setTimeout(()=>{
+
+            document.body.classList.remove("shake");
+
+        },350);
+
+        if(this.thunder){
+
+            this.thunder.currentTime = 0;
+
+            this.thunder.volume = 0.8;
+
+            setTimeout(()=>{
+
+                this.thunder.play();
+
+            },400);
+
+        }
+
+    }
+
+    createBolt(){
+
+        this.svg.innerHTML="";
+
+        const path=document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+        );
+
+        const startX =
+            Math.random()*window.innerWidth;
+
+        let d=`M ${startX} 0`;
+
+        let x=startX;
+
+        let y=0;
+
+        while(y<window.innerHeight*0.8){
+
+            x+=Math.random()*80-40;
+
+            y+=40+Math.random()*40;
+
+            d+=` L ${x} ${y}`;
+
+        }
+
+        path.setAttribute("d",d);
+
+        path.setAttribute("stroke","#ffffff");
+
+        path.setAttribute("stroke-width","4");
+
+        path.setAttribute("fill","none");
+
+        path.setAttribute("stroke-linecap","round");
+
+        path.setAttribute("filter","url(#glow)");
+
+        this.svg.appendChild(path);
+
+        setTimeout(()=>{
+
+            this.svg.innerHTML="";
+
+        },180);
+
+    }
+
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+    new Lightning();
+
+});
