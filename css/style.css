@@ -247,10 +247,10 @@ body{
 }
 
 /* ==========================================
-   SPIDER
+   HANGING SPIDER
 ========================================== */
 
-.spider{
+.spider-rope{
 
     position:absolute;
 
@@ -258,9 +258,37 @@ body{
 
     right:18%;
 
+    width:2px;
+
+    height:220px;
+
+    background:rgba(255,255,255,.25);
+
+    transform-origin:top center;
+
+    animation:ropeSwing 7s ease-in-out infinite;
+
+    z-index:22;
+
+}
+
+.spider{
+
+    position:absolute;
+
+    bottom:-70px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
     width:70px;
 
-    z-index:21;
+    height:auto;
+
+    pointer-events:none;
+
+    user-select:none;
 
 }
 
