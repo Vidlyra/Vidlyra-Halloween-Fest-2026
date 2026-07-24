@@ -33,6 +33,8 @@ const World = {
 
     this.bgMusic =
         document.getElementById("bgMusic");
+    this.buttonSound =
+    document.getElementById("buttonSound");
 
 }
 
@@ -60,42 +62,44 @@ const World = {
     enterWorld(){
 
     console.log("Entering Halloween World...");
+       
+   if(this.buttonSound){
 
-    this.startBackgroundMusic();
+    this.buttonSound.currentTime = 0;
 
-}
-startBackgroundMusic(){
-
-    if(!this.bgMusic) return;
-
-    this.bgMusic.volume = 0;
-
-    this.bgMusic.play().catch(() => {
-        console.log("Music autoplay blocked.");
-    });
-
-    let volume = 0;
-
-    const fade = setInterval(() => {
-
-        volume += 0.02;
-
-        if(volume >= 0.35){
-
-            volume = 0.35;
-
-            clearInterval(fade);
-
-        }
-
-        this.bgMusic.volume = volume;
-
-    },100);
+    this.buttonSound.play();
 
 }
-};
+    if(this.bgMusic){
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => World.init()
-);
+        this.bgMusic.volume = 0;
+
+        this.bgMusic.play().then(() => {
+
+            let volume = 0;
+
+            const fade = setInterval(() => {
+
+                volume += 0.02;
+
+                if(volume >= 0.35){
+
+                    volume = 0.35;
+
+                    clearInterval(fade);
+
+                }
+
+                this.bgMusic.volume = volume;
+
+            },100);
+
+        }).catch(error => {
+
+            console.log(error);
+
+        });
+
+    }
+
+}
