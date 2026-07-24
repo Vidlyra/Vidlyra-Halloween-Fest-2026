@@ -235,67 +235,42 @@ body{
 
 }
 /* ==========================================
-   SPIDER
+   SPIDER SYSTEM
 ========================================== */
 
-.spider-rope{
+.spider-container{
 
     position:absolute;
 
-    top:35px;
+    top:-220px;
 
-    left:60px;
+    right:75px;
 
-    width:2px;
+    width:80px;
 
-    height:180px;
+    height:320px;
 
-    background:rgba(255,255,255,.35);
+    z-index:22;
 
-    transform-origin:top center;
-
-    animation:ropeSwing 6s ease-in-out infinite;
+    animation:spiderDrop 18s ease-in-out infinite;
 
 }
 
-.spider{
+.spider-thread{
 
     position:absolute;
-
-    bottom:-55px;
 
     left:50%;
 
-    transform:translateX(-50%);
-
-    width:60px;
-
-    height:auto;
-
-}
-/* ==========================================
-   HANGING SPIDER
-========================================== */
-
-.spider-rope{
-
-    position:absolute;
-
     top:0;
-
-    right:18%;
 
     width:2px;
 
     height:220px;
 
-    background:rgba(255,255,255,.25);
+    transform:translateX(-50%);
 
-    transform-origin:top center;
-
-    animation:ropeSwing 7s ease-in-out infinite;
-
-    z-index:22;
+    background:rgba(255,255,255,.35);
 
 }
 
@@ -303,22 +278,19 @@ body{
 
     position:absolute;
 
-    bottom:-70px;
+    top:210px;
 
     left:50%;
 
     transform:translateX(-50%);
 
-    width:70px;
+    width:65px;
 
-    height:auto;
+    transform-origin:top center;
 
-    pointer-events:none;
-
-    user-select:none;
+    animation:spiderSwing 4s ease-in-out infinite;
 
 }
-
 
 /* ==========================================
    EVENT LOGO
