@@ -5,101 +5,134 @@
 
 const World = {
 
-    init(){
+    init() {
 
         console.log("🎃 Vidlyra Halloween Fest 2026");
 
         this.cache();
-
         this.bindEvents();
-
         this.start();
 
     },
 
-    cache(){
+    cache() {
 
-    this.enterButton =
-        document.getElementById("enterBtn");
+        this.enterButton = document.getElementById("enterBtn");
 
-    this.background =
-        document.querySelector(".background");
+        this.background = document.querySelector(".background");
 
-    this.castle =
-        document.querySelector(".castle");
+        this.castle = document.querySelector(".castle");
 
-    this.hero =
-        document.querySelector(".hero");
+        this.hero = document.querySelector(".hero");
 
-    this.bgMusic =
-        document.getElementById("bgMusic");
-    this.buttonSound =
-    document.getElementById("buttonSound");
+        this.bgMusic = document.getElementById("bgMusic");
 
-}
+        this.buttonSound = document.getElementById("buttonSound");
 
-    bindEvents(){
+    },
 
-        if(this.enterButton){
+    bindEvents() {
 
-            this.enterButton.addEventListener(
-                "click",
-                () => this.enterWorld()
-            );
+        if (this.enterButton) {
+
+            this.enterButton.addEventListener("click", () => {
+
+                this.enterWorld();
+
+            });
 
         }
 
     },
 
-    start(){
+    start() {
 
-    console.log("World Loaded");
+        console.log("🌍 World Loaded");
 
-    console.log("Rain System Ready");
+        console.log("🌧 Rain System Ready");
 
-}
+        console.log("🦇 Bat System Ready");
 
-    enterWorld(){
+        console.log("🍂 Leaf System Ready");
 
-    console.log("Entering Halloween World...");
-       
-   if(this.buttonSound){
+    },
 
-    this.buttonSound.currentTime = 0;
+    enterWorld() {
 
-    this.buttonSound.play();
+        console.log("🎮 Entering Halloween World...");
 
-}
-    if(this.bgMusic){
+        /* -----------------------------
+           Button Click Sound
+        ------------------------------ */
 
-        this.bgMusic.volume = 0;
+        if (this.buttonSound) {
 
-        this.bgMusic.play().then(() => {
+            this.buttonSound.currentTime = 0;
 
-            let volume = 0;
+            this.buttonSound.volume = 0.5;
 
-            const fade = setInterval(() => {
+            this.buttonSound.play().catch(error => {
 
-                volume += 0.02;
+                console.log(error);
 
-                if(volume >= 0.35){
+            });
 
-                    volume = 0.35;
+        }
 
-                    clearInterval(fade);
+        /* -----------------------------
+           Background Music
+        ------------------------------ */
 
-                }
+        if (this.bgMusic && this.bgMusic.paused) {
 
-                this.bgMusic.volume = volume;
+            this.bgMusic.volume = 0;
 
-            },100);
+            this.bgMusic.play().then(() => {
 
-        }).catch(error => {
+                let volume = 0;
 
-            console.log(error);
+                const fade = setInterval(() => {
 
-        });
+                    volume += 0.02;
+
+                    if (volume >= 0.35) {
+
+                        volume = 0.35;
+
+                        clearInterval(fade);
+
+                    }
+
+                    this.bgMusic.volume = volume;
+
+                }, 100);
+
+            }).catch(error => {
+
+                console.log(error);
+
+            });
+
+        }
+
+        /* -----------------------------
+           Optional Button Animation
+        ------------------------------ */
+
+        if (this.enterButton) {
+
+            this.enterButton.disabled = true;
+
+            this.enterButton.innerHTML = "Entering...";
+
+        }
 
     }
 
-}
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    World.init();
+
+});
