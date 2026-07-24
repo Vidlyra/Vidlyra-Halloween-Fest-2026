@@ -14,8 +14,11 @@ class BatSystem {
             "assets/images/bat 3.svg"
         ];
 
-        this.count =
-            window.innerWidth < 768 ? 20 : 40;
+       // Desktop : 24 bats
+      // Mobile  : 12 bats
+
+this.count =
+    window.innerWidth < 768 ? 12 : 24;
 
     }
 
@@ -39,13 +42,12 @@ class BatSystem {
 
         bat.className="bat";
 
-        const size=20+Math.random()*35;
+        const size = 18 + Math.random() * 20;
 
         bat.style.width=size+"px";
 
-        bat.style.top=(5+Math.random()*45)+"%";
-
-        const duration=10+Math.random()*12;
+        bat.style.top = (8 + Math.random() * 35) + "%";
+        const duration = 14 + Math.random() * 10;
 
         bat.style.animationDuration=duration+"s";
 
