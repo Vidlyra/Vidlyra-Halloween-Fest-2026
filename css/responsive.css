@@ -262,3 +262,20 @@
     }
 
 }
+@media (max-width:768px){
+
+    .spider-rope{
+
+        right:12%;
+
+        height:160px;
+
+    }
+
+    .spider{
+
+        width:50px;
+
+    }
+
+}
