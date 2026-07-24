@@ -726,3 +726,44 @@
     }
 
 }
+/* ==========================================
+   EMBERS
+========================================== */
+
+@keyframes emberFloat{
+
+    0%{
+
+        transform:
+            translateY(0)
+            translateX(0)
+            scale(.6);
+
+        opacity:0;
+
+    }
+
+    10%{
+
+        opacity:1;
+
+    }
+
+    80%{
+
+        opacity:.8;
+
+    }
+
+    100%{
+
+        transform:
+            translateY(-350px)
+            translateX(80px)
+            scale(1.2);
+
+        opacity:0;
+
+    }
+
+}
