@@ -604,3 +604,40 @@
     100%{transform:translate(0,0);}
 
 }
+/* ==========================================
+   SPIDER SWING
+========================================== */
+
+@keyframes ropeSwing{
+
+    0%{
+
+        transform:rotate(-8deg);
+
+    }
+
+    25%{
+
+        transform:rotate(5deg);
+
+    }
+
+    50%{
+
+        transform:rotate(10deg);
+
+    }
+
+    75%{
+
+        transform:rotate(-5deg);
+
+    }
+
+    100%{
+
+        transform:rotate(-8deg);
+
+    }
+
+}
