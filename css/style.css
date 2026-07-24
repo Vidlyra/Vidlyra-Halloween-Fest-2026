@@ -668,3 +668,37 @@ body{
     filter:brightness(1.4);
 
 }
+.pumpkin{
+
+    animation:
+        pumpkinGlow 2s ease-in-out infinite;
+
+}
+.ghost{
+
+    animation:
+        ghostFloat 5s ease-in-out infinite;
+
+}
+
+@keyframes ghostFloat{
+
+    0%{
+
+        transform:translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateY(-12px);
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+    }
+
+}
