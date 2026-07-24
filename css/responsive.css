@@ -279,3 +279,14 @@
     }
 
 }
+@media (max-width:768px){
+
+    .spider-container{
+
+        right:25px;
+
+        transform:scale(.8);
+
+    }
+
+}
