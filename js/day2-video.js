@@ -1,20 +1,60 @@
-const video =
-document.getElementById("introVideo");
+/* ==========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 2 VIDEO
+========================================== */
 
-const overlay =
-document.getElementById("videoOverlay");
+const video = document.getElementById("introVideo");
 
-const enterButton =
-document.getElementById("enterWell");
+const overlay = document.getElementById("videoOverlay");
 
-video.addEventListener("ended",()=>{
+const enterButton = document.getElementById("enterWell");
 
-    overlay.classList.add("show");
+const skipButton = document.getElementById("skipBtn");
 
-});
+/* -------------------------
+Video Finished
+-------------------------- */
 
-enterButton.addEventListener("click",()=>{
+if(video){
 
-    window.location.href="day2-game.html";
+    video.addEventListener("ended",()=>{
 
-});
+        overlay.classList.add("show");
+
+    });
+
+}
+
+/* -------------------------
+Enter Game
+-------------------------- */
+
+if(enterButton){
+
+    enterButton.addEventListener("click",()=>{
+
+        window.location.href="day2-game.html";
+
+    });
+
+}
+
+/* -------------------------
+Skip Intro
+-------------------------- */
+
+if(skipButton){
+
+    skipButton.addEventListener("click",()=>{
+
+        if(video){
+
+            video.pause();
+
+        }
+
+        window.location.href="day2-game.html";
+
+    });
+
+}
