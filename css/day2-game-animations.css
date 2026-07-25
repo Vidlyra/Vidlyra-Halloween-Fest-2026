@@ -1,21 +1,21 @@
-/* ==========================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 2 ANIMATIONS
-========================================== */
+/* =====================================================
+VIDLYRA HALLOWEEN FEST 2026
+DAY 2 ANIMATIONS
+===================================================== */
 
-/* ==========================
+/* =====================================================
 FOG
-========================== */
+===================================================== */
 
 .fog{
 
-    animation:fogMove 30s linear infinite;
+    animation:fogMove 35s linear infinite;
 
 }
 
 .fog-front{
 
-    animation-duration:22s;
+    animation-duration:24s;
 
 }
 
@@ -23,33 +23,65 @@ FOG
 
     0%{
 
-        transform:translateX(-8%);
+        transform:translateX(-10%);
 
     }
 
     50%{
 
-        transform:translateX(4%);
+        transform:translateX(5%);
 
     }
 
     100%{
 
-        transform:translateX(-8%);
+        transform:translateX(-10%);
 
     }
 
 }
 
-/* ==========================
+/* =====================================================
+CASTLE
+===================================================== */
+
+.castle{
+
+    animation:castleGlow 6s ease-in-out infinite;
+
+}
+
+@keyframes castleGlow{
+
+    0%{
+
+        filter:brightness(.9);
+
+    }
+
+    50%{
+
+        filter:brightness(1.12);
+
+    }
+
+    100%{
+
+        filter:brightness(.9);
+
+    }
+
+}
+
+/* =====================================================
 BLUE FIRE
-========================== */
+===================================================== */
 
 .fire{
 
     transform-origin:center bottom;
 
-    animation:fireFlicker 1.8s ease-in-out infinite;
+    animation:fireFlicker 1.6s ease-in-out infinite;
 
 }
 
@@ -73,7 +105,7 @@ BLUE FIRE
 
         transform:scale(1.08);
 
-        filter:brightness(1.5);
+        filter:brightness(1.6);
 
     }
 
@@ -87,167 +119,9 @@ BLUE FIRE
 
 }
 
-/* ==========================
-WATER RIPPLE
-========================== */
-
-.ripple{
-
-    animation:ripple 2.5s ease-in-out infinite;
-
-}
-
-@keyframes ripple{
-
-    0%{
-
-        transform:translateX(-50%) scale(.9);
-
-        opacity:.5;
-
-    }
-
-    50%{
-
-        transform:translateX(-50%) scale(1.05);
-
-        opacity:1;
-
-    }
-
-    100%{
-
-        transform:translateX(-50%) scale(.9);
-
-        opacity:.5;
-
-    }
-
-}
-
-/* ==========================
-RUNES
-========================== */
-
-.rune{
-
-    animation:runeGlow 2s ease-in-out infinite;
-
-}
-
-.rune2{
-
-    animation-delay:.6s;
-
-}
-
-.rune3{
-
-    animation-delay:1.2s;
-
-}
-
-@keyframes runeGlow{
-
-    0%{
-
-        transform:scale(1);
-
-        filter:drop-shadow(0 0 0px cyan);
-
-    }
-
-    50%{
-
-        transform:scale(1.12);
-
-        filter:drop-shadow(0 0 18px cyan);
-
-    }
-
-    100%{
-
-        transform:scale(1);
-
-        filter:drop-shadow(0 0 0px cyan);
-
-    }
-
-}
-
-/* ==========================
-GHOST
-========================== */
-
-.ghost{
-
-    animation:ghostFloat 4s ease-in-out infinite;
-
-}
-
-@keyframes ghostFloat{
-
-    0%{
-
-        transform:translate(-50%,0);
-
-    }
-
-    50%{
-
-        transform:translate(-50%,-18px);
-
-    }
-
-    100%{
-
-        transform:translate(-50%,0);
-
-    }
-
-}
-
-/* ==========================
-MAGIC CRYSTAL
-========================== */
-
-.crystal{
-
-    animation:crystalFloat 3s ease-in-out infinite;
-
-}
-
-@keyframes crystalFloat{
-
-    0%{
-
-        transform:translate(-50%,0);
-
-        filter:drop-shadow(0 0 10px cyan);
-
-    }
-
-    50%{
-
-        transform:translate(-50%,-15px);
-
-        filter:drop-shadow(0 0 30px cyan);
-
-    }
-
-    100%{
-
-        transform:translate(-50%,0);
-
-        filter:drop-shadow(0 0 10px cyan);
-
-    }
-
-}
-
-/* ==========================
+/* =====================================================
 CANDLES
-========================== */
+===================================================== */
 
 .candle{
 
@@ -283,17 +157,418 @@ CANDLES
 
 }
 
-/* ==========================
-CASTLE
-========================== */
+/* =====================================================
+WATER RIPPLE
+===================================================== */
 
-.castle{
+.ripple{
 
-    animation:castleGlow 6s ease-in-out infinite;
+    animation:ripple 2.8s ease-in-out infinite;
 
 }
 
-@keyframes castleGlow{
+@keyframes ripple{
+
+    0%{
+
+        transform:translateX(-50%) scale(.88);
+
+        opacity:.5;
+
+    }
+
+    50%{
+
+        transform:translateX(-50%) scale(1.08);
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        transform:translateX(-50%) scale(.88);
+
+        opacity:.5;
+
+    }
+
+}
+/* =====================================================
+RUNES
+===================================================== */
+
+.rune{
+
+    animation:runeGlow 2s ease-in-out infinite;
+
+    transform-origin:center;
+
+}
+
+.rune1{
+
+    animation-delay:0s;
+
+}
+
+.rune2{
+
+    animation-delay:.7s;
+
+}
+
+.rune3{
+
+    animation-delay:1.4s;
+
+}
+
+@keyframes runeGlow{
+
+    0%{
+
+        transform:scale(1);
+
+        filter:
+
+        drop-shadow(0 0 0px cyan);
+
+    }
+
+    50%{
+
+        transform:scale(1.15);
+
+        filter:
+
+        drop-shadow(0 0 22px cyan)
+
+        brightness(1.5);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+        filter:
+
+        drop-shadow(0 0 0px cyan);
+
+    }
+
+}
+
+/* =====================================================
+GHOST
+===================================================== */
+
+.ghost{
+
+    animation:
+
+    ghostFloat 5s ease-in-out infinite,
+
+    ghostFade 6s ease-in-out infinite;
+
+}
+
+@keyframes ghostFloat{
+
+    0%{
+
+        transform:
+
+        translate(-50%,0px);
+
+    }
+
+    25%{
+
+        transform:
+
+        translate(-52%,-12px);
+
+    }
+
+    50%{
+
+        transform:
+
+        translate(-50%,-22px);
+
+    }
+
+    75%{
+
+        transform:
+
+        translate(-48%,-12px);
+
+    }
+
+    100%{
+
+        transform:
+
+        translate(-50%,0px);
+
+    }
+
+}
+
+@keyframes ghostFade{
+
+    0%{
+
+        opacity:.75;
+
+    }
+
+    50%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        opacity:.75;
+
+    }
+
+}
+
+/* =====================================================
+MAGIC CRYSTAL
+===================================================== */
+
+.crystal{
+
+    animation:
+
+    crystalFloat 3s ease-in-out infinite,
+
+    crystalGlow 2.5s ease-in-out infinite;
+
+}
+
+@keyframes crystalFloat{
+
+    0%{
+
+        transform:
+
+        translate(-50%,0);
+
+    }
+
+    50%{
+
+        transform:
+
+        translate(-50%,-18px);
+
+    }
+
+    100%{
+
+        transform:
+
+        translate(-50%,0);
+
+    }
+
+}
+
+@keyframes crystalGlow{
+
+    0%{
+
+        filter:
+
+        drop-shadow(0 0 12px cyan);
+
+    }
+
+    50%{
+
+        filter:
+
+        drop-shadow(0 0 38px cyan)
+
+        brightness(1.8);
+
+    }
+
+    100%{
+
+        filter:
+
+        drop-shadow(0 0 12px cyan);
+
+    }
+
+}
+
+/* =====================================================
+PLAYER
+===================================================== */
+
+#player{
+
+    animation:
+
+    playerIdle 2.5s ease-in-out infinite;
+
+}
+
+@keyframes playerIdle{
+
+    0%{
+
+        transform:translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateY(-4px);
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* =====================================================
+PLAYER SHADOW
+===================================================== */
+
+#playerShadow{
+
+    animation:
+
+    shadowPulse 2.5s ease-in-out infinite;
+
+}
+
+@keyframes shadowPulse{
+
+    0%{
+
+        transform:scale(1);
+
+        opacity:.35;
+
+    }
+
+    50%{
+
+        transform:scale(.9);
+
+        opacity:.22;
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+        opacity:.35;
+
+    }
+
+}
+
+/* =====================================================
+PUMPKIN
+===================================================== */
+
+.pumpkin{
+
+    animation:
+
+    pumpkinBreath 4s ease-in-out infinite;
+
+}
+
+@keyframes pumpkinBreath{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.04);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+/* =====================================================
+WITCH HAT
+===================================================== */
+
+.witch{
+
+    animation:
+
+    witchSwing 5s ease-in-out infinite;
+
+    transform-origin:center bottom;
+
+}
+
+@keyframes witchSwing{
+
+    0%{
+
+        transform:rotate(-2deg);
+
+    }
+
+    50%{
+
+        transform:rotate(2deg);
+
+    }
+
+    100%{
+
+        transform:rotate(-2deg);
+
+    }
+
+}
+
+/* =====================================================
+SKULL
+===================================================== */
+
+.skull{
+
+    animation:
+
+    skullGlow 3s ease-in-out infinite;
+
+}
+
+@keyframes skullGlow{
 
     0%{
 
@@ -303,7 +578,11 @@ CASTLE
 
     50%{
 
-        filter:brightness(1.1);
+        filter:
+
+        brightness(1.5)
+
+        drop-shadow(0 0 15px #66ddff);
 
     }
 
@@ -314,52 +593,9 @@ CASTLE
     }
 
 }
-
-/* ==========================
-INTRO
-========================== */
-
-.intro-content{
-
-    animation:introFade 5s ease;
-
-}
-
-@keyframes introFade{
-
-    0%{
-
-        opacity:0;
-
-        transform:translateY(25px);
-
-    }
-
-    20%{
-
-        opacity:1;
-
-        transform:translateY(0);
-
-    }
-
-    80%{
-
-        opacity:1;
-
-    }
-
-    100%{
-
-        opacity:0;
-
-    }
-
-}
-
-/* ==========================
+/* =====================================================
 MISSION PANEL
-========================== */
+===================================================== */
 
 .mission-panel{
 
@@ -371,51 +607,202 @@ MISSION PANEL
 
     0%{
 
-        box-shadow:0 0 8px rgba(0,180,255,.3);
+        box-shadow:0 0 8px rgba(0,200,255,.25);
 
     }
 
     50%{
 
-        box-shadow:0 0 22px rgba(0,180,255,.7);
+        box-shadow:0 0 28px rgba(0,200,255,.75);
 
     }
 
     100%{
 
-        box-shadow:0 0 8px rgba(0,180,255,.3);
+        box-shadow:0 0 8px rgba(0,200,255,.25);
 
     }
 
 }
 
-/* ==========================
-FLASH
-========================== */
+/* =====================================================
+OBJECTIVE
+===================================================== */
 
-#flash{
+#objective{
 
-    position:fixed;
-
-    inset:0;
-
-    background:white;
-
-    opacity:0;
-
-    pointer-events:none;
-
-    z-index:99999;
+    animation:objectivePulse 3s ease-in-out infinite;
 
 }
+
+@keyframes objectivePulse{
+
+    0%{
+
+        transform:translateX(-50%) scale(1);
+
+    }
+
+    50%{
+
+        transform:translateX(-50%) scale(1.02);
+
+    }
+
+    100%{
+
+        transform:translateX(-50%) scale(1);
+
+    }
+
+}
+
+/* =====================================================
+INTERACTION PROMPT
+===================================================== */
+
+#interactionPrompt.show{
+
+    animation:promptBounce 1.2s ease infinite;
+
+}
+
+@keyframes promptBounce{
+
+    0%{
+
+        transform:translateX(-50%) translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateX(-50%) translateY(-6px);
+
+    }
+
+    100%{
+
+        transform:translateX(-50%) translateY(0);
+
+    }
+
+}
+
+/* =====================================================
+MISSION COMPLETE
+===================================================== */
+
+#missionComplete.show{
+
+    animation:missionAppear .8s ease;
+
+}
+
+@keyframes missionAppear{
+
+    0%{
+
+        opacity:0;
+
+        transform:scale(.8);
+
+    }
+
+    60%{
+
+        opacity:1;
+
+        transform:scale(1.05);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+/* =====================================================
+DAY COMPLETE
+===================================================== */
+
+#dayComplete.show{
+
+    animation:dayCompleteFade 1.2s ease;
+
+}
+
+@keyframes dayCompleteFade{
+
+    0%{
+
+        opacity:0;
+
+        transform:scale(.95);
+
+    }
+
+    100%{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+}
+
+/* =====================================================
+NEXT BUTTON
+===================================================== */
+
+#nextBtn,
+#continueDay3{
+
+    animation:buttonPulse 2.5s ease-in-out infinite;
+
+}
+
+@keyframes buttonPulse{
+
+    0%{
+
+        box-shadow:0 0 10px cyan;
+
+    }
+
+    50%{
+
+        box-shadow:0 0 30px cyan;
+
+        transform:scale(1.05);
+
+    }
+
+    100%{
+
+        box-shadow:0 0 10px cyan;
+
+        transform:scale(1);
+
+    }
+
+}
+
+/* =====================================================
+FLASH
+===================================================== */
 
 #flash.active{
 
-    animation:flash .4s ease;
+    animation:screenFlash .45s ease;
 
 }
 
-@keyframes flash{
+@keyframes screenFlash{
 
     0%{
 
@@ -425,7 +812,7 @@ FLASH
 
     40%{
 
-        opacity:.85;
+        opacity:.9;
 
     }
 
@@ -434,5 +821,149 @@ FLASH
         opacity:0;
 
     }
+
+}
+
+/* =====================================================
+SCREEN SHAKE
+===================================================== */
+
+.shake{
+
+    animation:screenShake .12s linear 10;
+
+}
+
+@keyframes screenShake{
+
+    0%{
+
+        transform:translate(0,0);
+
+    }
+
+    25%{
+
+        transform:translate(-5px,3px);
+
+    }
+
+    50%{
+
+        transform:translate(5px,-3px);
+
+    }
+
+    75%{
+
+        transform:translate(-4px,-2px);
+
+    }
+
+    100%{
+
+        transform:translate(0,0);
+
+    }
+
+}
+
+/* =====================================================
+SCREEN GLOW
+===================================================== */
+
+#screenGlow{
+
+    animation:screenGlowPulse 6s ease-in-out infinite;
+
+}
+
+@keyframes screenGlowPulse{
+
+    0%{
+
+        opacity:.15;
+
+    }
+
+    50%{
+
+        opacity:.45;
+
+    }
+
+    100%{
+
+        opacity:.15;
+
+    }
+
+}
+
+/* =====================================================
+FADE SCREEN
+===================================================== */
+
+#fadeScreen.active{
+
+    animation:fadeBlack 1s forwards;
+
+}
+
+@keyframes fadeBlack{
+
+    from{
+
+        opacity:0;
+
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+/* =====================================================
+LOADER
+===================================================== */
+
+.loaderCircle{
+
+    animation:loaderSpin 1s linear infinite;
+
+}
+
+@keyframes loaderSpin{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+/* =====================================================
+REDUCE MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce){
+
+*{
+
+    animation:none !important;
+
+    transition:none !important;
+
+}
 
 }
