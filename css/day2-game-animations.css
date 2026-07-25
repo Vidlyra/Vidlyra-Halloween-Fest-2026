@@ -1,0 +1,438 @@
+/* ==========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 2 ANIMATIONS
+========================================== */
+
+/* ==========================
+FOG
+========================== */
+
+.fog{
+
+    animation:fogMove 30s linear infinite;
+
+}
+
+.fog-front{
+
+    animation-duration:22s;
+
+}
+
+@keyframes fogMove{
+
+    0%{
+
+        transform:translateX(-8%);
+
+    }
+
+    50%{
+
+        transform:translateX(4%);
+
+    }
+
+    100%{
+
+        transform:translateX(-8%);
+
+    }
+
+}
+
+/* ==========================
+BLUE FIRE
+========================== */
+
+.fire{
+
+    transform-origin:center bottom;
+
+    animation:fireFlicker 1.8s ease-in-out infinite;
+
+}
+
+.fire-right{
+
+    animation-delay:.5s;
+
+}
+
+@keyframes fireFlicker{
+
+    0%{
+
+        transform:scale(1);
+
+        filter:brightness(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.08);
+
+        filter:brightness(1.5);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+        filter:brightness(1);
+
+    }
+
+}
+
+/* ==========================
+WATER RIPPLE
+========================== */
+
+.ripple{
+
+    animation:ripple 2.5s ease-in-out infinite;
+
+}
+
+@keyframes ripple{
+
+    0%{
+
+        transform:translateX(-50%) scale(.9);
+
+        opacity:.5;
+
+    }
+
+    50%{
+
+        transform:translateX(-50%) scale(1.05);
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        transform:translateX(-50%) scale(.9);
+
+        opacity:.5;
+
+    }
+
+}
+
+/* ==========================
+RUNES
+========================== */
+
+.rune{
+
+    animation:runeGlow 2s ease-in-out infinite;
+
+}
+
+.rune2{
+
+    animation-delay:.6s;
+
+}
+
+.rune3{
+
+    animation-delay:1.2s;
+
+}
+
+@keyframes runeGlow{
+
+    0%{
+
+        transform:scale(1);
+
+        filter:drop-shadow(0 0 0px cyan);
+
+    }
+
+    50%{
+
+        transform:scale(1.12);
+
+        filter:drop-shadow(0 0 18px cyan);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+        filter:drop-shadow(0 0 0px cyan);
+
+    }
+
+}
+
+/* ==========================
+GHOST
+========================== */
+
+.ghost{
+
+    animation:ghostFloat 4s ease-in-out infinite;
+
+}
+
+@keyframes ghostFloat{
+
+    0%{
+
+        transform:translate(-50%,0);
+
+    }
+
+    50%{
+
+        transform:translate(-50%,-18px);
+
+    }
+
+    100%{
+
+        transform:translate(-50%,0);
+
+    }
+
+}
+
+/* ==========================
+MAGIC CRYSTAL
+========================== */
+
+.crystal{
+
+    animation:crystalFloat 3s ease-in-out infinite;
+
+}
+
+@keyframes crystalFloat{
+
+    0%{
+
+        transform:translate(-50%,0);
+
+        filter:drop-shadow(0 0 10px cyan);
+
+    }
+
+    50%{
+
+        transform:translate(-50%,-15px);
+
+        filter:drop-shadow(0 0 30px cyan);
+
+    }
+
+    100%{
+
+        transform:translate(-50%,0);
+
+        filter:drop-shadow(0 0 10px cyan);
+
+    }
+
+}
+
+/* ==========================
+CANDLES
+========================== */
+
+.candle{
+
+    animation:candleGlow 2s ease-in-out infinite;
+
+}
+
+.candle-right{
+
+    animation-delay:.8s;
+
+}
+
+@keyframes candleGlow{
+
+    0%{
+
+        filter:brightness(.9);
+
+    }
+
+    50%{
+
+        filter:brightness(1.35);
+
+    }
+
+    100%{
+
+        filter:brightness(.9);
+
+    }
+
+}
+
+/* ==========================
+CASTLE
+========================== */
+
+.castle{
+
+    animation:castleGlow 6s ease-in-out infinite;
+
+}
+
+@keyframes castleGlow{
+
+    0%{
+
+        filter:brightness(.9);
+
+    }
+
+    50%{
+
+        filter:brightness(1.1);
+
+    }
+
+    100%{
+
+        filter:brightness(.9);
+
+    }
+
+}
+
+/* ==========================
+INTRO
+========================== */
+
+.intro-content{
+
+    animation:introFade 5s ease;
+
+}
+
+@keyframes introFade{
+
+    0%{
+
+        opacity:0;
+
+        transform:translateY(25px);
+
+    }
+
+    20%{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+    80%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
+
+/* ==========================
+MISSION PANEL
+========================== */
+
+.mission-panel{
+
+    animation:panelGlow 4s ease-in-out infinite;
+
+}
+
+@keyframes panelGlow{
+
+    0%{
+
+        box-shadow:0 0 8px rgba(0,180,255,.3);
+
+    }
+
+    50%{
+
+        box-shadow:0 0 22px rgba(0,180,255,.7);
+
+    }
+
+    100%{
+
+        box-shadow:0 0 8px rgba(0,180,255,.3);
+
+    }
+
+}
+
+/* ==========================
+FLASH
+========================== */
+
+#flash{
+
+    position:fixed;
+
+    inset:0;
+
+    background:white;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    z-index:99999;
+
+}
+
+#flash.active{
+
+    animation:flash .4s ease;
+
+}
+
+@keyframes flash{
+
+    0%{
+
+        opacity:0;
+
+    }
+
+    40%{
+
+        opacity:.85;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
