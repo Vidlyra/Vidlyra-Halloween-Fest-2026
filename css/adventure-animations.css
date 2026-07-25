@@ -1,0 +1,395 @@
+@keyframes missionGlow{
+
+    0%{
+
+        box-shadow:0 0 10px orange;
+
+    }
+
+    50%{
+
+        box-shadow:0 0 25px #ff9900;
+
+    }
+
+    100%{
+
+        box-shadow:0 0 10px orange;
+
+    }
+
+}
+
+.mission-panel{
+
+    animation:missionGlow 3s infinite;
+
+}
+/* ==========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   ADVENTURE ANIMATIONS
+========================================== */
+
+/* ==========================================
+   CLOUDS
+========================================== */
+
+.cloud1{
+
+    animation:cloudMove1 90s linear infinite;
+
+}
+
+.cloud2{
+
+    animation:cloudMove2 120s linear infinite;
+
+}
+
+@keyframes cloudMove1{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(220px);
+
+    }
+
+}
+
+@keyframes cloudMove2{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(-260px);
+
+    }
+
+}
+
+/* ==========================================
+   FOG
+========================================== */
+
+.fog-back{
+
+    animation:fogBack 45s linear infinite;
+
+}
+
+.fog-front{
+
+    animation:fogFront 28s linear infinite;
+
+}
+
+@keyframes fogBack{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(-220px);
+
+    }
+
+}
+
+@keyframes fogFront{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(260px);
+
+    }
+
+}
+
+/* ==========================================
+   CASTLE
+========================================== */
+
+.castle{
+
+    animation:castleGlow 5s ease-in-out infinite;
+
+}
+
+@keyframes castleGlow{
+
+    0%{
+
+        filter:brightness(1);
+
+    }
+
+    50%{
+
+        filter:
+            brightness(1.15)
+            drop-shadow(0 0 25px rgba(255,170,0,.5));
+
+    }
+
+    100%{
+
+        filter:brightness(1);
+
+    }
+
+}
+
+/* ==========================================
+   PLAYER
+========================================== */
+
+#player{
+
+    animation:playerIdle 2.5s ease-in-out infinite;
+
+}
+
+@keyframes playerIdle{
+
+    0%{
+
+        transform:translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateY(-8px);
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ==========================================
+   GHOST
+========================================== */
+
+.ghost{
+
+    animation:ghostFloat 5s ease-in-out infinite;
+
+}
+
+@keyframes ghostFloat{
+
+    0%{
+
+        transform:translateY(0);
+
+        opacity:.9;
+
+    }
+
+    50%{
+
+        transform:translateY(-18px);
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+        opacity:.9;
+
+    }
+
+}
+
+/* ==========================================
+   SPIDER
+========================================== */
+
+.spider{
+
+    transform-origin:top center;
+
+    animation:spiderSwing 4s ease-in-out infinite;
+
+}
+
+@keyframes spiderSwing{
+
+    0%{
+
+        transform:rotate(-8deg);
+
+    }
+
+    50%{
+
+        transform:rotate(8deg);
+
+    }
+
+    100%{
+
+        transform:rotate(-8deg);
+
+    }
+
+}
+
+/* ==========================================
+   PUMPKIN
+========================================== */
+
+.pumpkin{
+
+    animation:pumpkinGlow 2s ease-in-out infinite;
+
+}
+
+@keyframes pumpkinGlow{
+
+    0%{
+
+        filter:
+            drop-shadow(0 0 6px orange);
+
+    }
+
+    50%{
+
+        filter:
+            drop-shadow(0 0 25px #ff9900)
+            drop-shadow(0 0 50px #ff6600);
+
+    }
+
+    100%{
+
+        filter:
+            drop-shadow(0 0 6px orange);
+
+    }
+
+}
+
+/* ==========================================
+   MISSION PANEL
+========================================== */
+
+.mission-panel{
+
+    animation:missionGlow 3s ease-in-out infinite;
+
+}
+
+@keyframes missionGlow{
+
+    0%{
+
+        box-shadow:0 0 10px rgba(255,140,0,.25);
+
+    }
+
+    50%{
+
+        box-shadow:0 0 30px rgba(255,140,0,.7);
+
+    }
+
+    100%{
+
+        box-shadow:0 0 10px rgba(255,140,0,.25);
+
+    }
+
+}
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+#continueBtn{
+
+    animation:buttonPulse 2s infinite;
+
+}
+
+@keyframes buttonPulse{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.05);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+/* ==========================================
+   MISSION POPUP
+========================================== */
+
+#missionComplete.show{
+
+    animation:popupAppear .6s ease;
+
+}
+
+@keyframes popupAppear{
+
+    from{
+
+        transform:scale(.8);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:scale(1);
+
+        opacity:1;
+
+    }
+
+}
