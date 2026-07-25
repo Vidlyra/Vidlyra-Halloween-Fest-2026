@@ -1,0 +1,95 @@
+#videoOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    background:rgba(0,0,0,.55);
+
+    backdrop-filter:blur(8px);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:1s;
+
+    z-index:100;
+
+}
+
+#videoOverlay.show{
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+#videoOverlay h1{
+
+    color:#49d9ff;
+
+    font-size:4rem;
+
+    text-shadow:0 0 25px cyan;
+
+}
+
+#videoOverlay h2{
+
+    color:white;
+
+    margin-top:15px;
+
+    font-size:2rem;
+
+}
+
+#videoOverlay p{
+
+    color:#ddd;
+
+    margin:25px 0;
+
+    font-size:1.2rem;
+
+}
+
+#enterWell{
+
+    padding:18px 45px;
+
+    border:none;
+
+    border-radius:50px;
+
+    background:#00b7ff;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:1.1rem;
+
+    box-shadow:0 0 25px cyan;
+
+    transition:.3s;
+
+}
+
+#enterWell:hover{
+
+    transform:scale(1.08);
+
+}
