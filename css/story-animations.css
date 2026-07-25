@@ -1,0 +1,293 @@
+/* ==========================================
+   STORY TITLE
+========================================== */
+
+.story h1{
+
+    animation:titleFade 2s ease forwards;
+
+}
+
+.story h2{
+
+    opacity:0;
+
+    animation:subTitleFade 2s ease forwards;
+
+    animation-delay:.6s;
+
+}
+
+/* ==========================================
+   STORY TEXT
+========================================== */
+
+#storyText{
+
+    opacity:0;
+
+    animation:textFade 2s ease forwards;
+
+    animation-delay:1.5s;
+
+}
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+#nextBtn{
+
+    opacity:0;
+
+    animation:
+
+        buttonAppear 1s ease forwards,
+
+        buttonGlow 2.5s ease-in-out infinite;
+
+    animation-delay:
+
+        5s,
+
+        6s;
+
+}
+
+/* ==========================================
+   CLOUDS
+========================================== */
+
+.cloud1{
+
+    animation:cloudMove1 90s linear infinite;
+
+}
+
+.cloud2{
+
+    animation:cloudMove2 120s linear infinite;
+
+}
+
+/* ==========================================
+   FOG
+========================================== */
+
+.fog-back{
+
+    animation:fogMoveBack 40s linear infinite;
+
+}
+
+.fog-front{
+
+    animation:fogMoveFront 28s linear infinite;
+
+}
+
+/* ==========================================
+   CASTLE
+========================================== */
+
+.castle{
+
+    animation:castleGlow 5s ease-in-out infinite;
+
+}
+
+/* ==========================================
+   KEYFRAMES
+========================================== */
+
+@keyframes titleFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(-40px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes subTitleFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes textFade{
+
+    from{
+
+        opacity:0;
+
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+@keyframes buttonAppear{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes buttonGlow{
+
+    0%{
+
+        box-shadow:0 0 15px orange;
+
+    }
+
+    50%{
+
+        box-shadow:
+
+            0 0 35px orange,
+
+            0 0 60px #ff6600;
+
+    }
+
+    100%{
+
+        box-shadow:0 0 15px orange;
+
+    }
+
+}
+
+@keyframes castleGlow{
+
+    0%{
+
+        filter:brightness(1);
+
+    }
+
+    50%{
+
+        filter:
+
+            brightness(1.15)
+
+            drop-shadow(0 0 18px rgba(255,170,0,.5));
+
+    }
+
+    100%{
+
+        filter:brightness(1);
+
+    }
+
+}
+
+@keyframes cloudMove1{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(180px);
+
+    }
+
+}
+
+@keyframes cloudMove2{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(-220px);
+
+    }
+
+}
+
+@keyframes fogMoveBack{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(-200px);
+
+    }
+
+}
+
+@keyframes fogMoveFront{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(220px);
+
+    }
+
+}
