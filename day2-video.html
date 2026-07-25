@@ -5,8 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Day 2 - The Haunted Well</title>
 
@@ -16,10 +15,13 @@ content="width=device-width, initial-scale=1.0">
 
 <body>
 
+<!-- Intro Video -->
+
 <video
 id="introVideo"
 autoplay
-playsinline>
+playsinline
+preload="auto">
 
 <source
 src="assets/video/haunted-well.mp4"
@@ -27,31 +29,33 @@ type="video/mp4">
 
 </video>
 
-<div class="overlay">
-
-<h1>
-
-DAY 2
-
-</h1>
-
-<h2>
-
-The Haunted Well
-
-</h2>
-
-<p>
-
-Some secrets should remain buried forever...
-
-</p>
+<!-- Skip Button -->
 
 <button id="skipBtn">
 
 Skip Intro
 
 </button>
+
+<!-- Overlay -->
+
+<div id="videoOverlay">
+
+    <h1>DAY 2</h1>
+
+    <h2>The Haunted Well</h2>
+
+    <p>
+
+        Some secrets should remain buried forever...
+
+    </p>
+
+    <button id="enterWell">
+
+        Enter the Well
+
+    </button>
 
 </div>
 
