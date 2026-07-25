@@ -1,0 +1,168 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    background:#000;
+
+}
+
+.background{
+
+    position:fixed;
+
+    inset:0;
+
+    background:url("../assets/images/background 1.png")
+        center center;
+
+    background-size:cover;
+
+}
+
+.background-layer{
+
+    position:fixed;
+
+    inset:0;
+
+    background:url("../assets/images/background 2.png")
+        center center;
+
+    background-size:cover;
+
+    opacity:.35;
+
+}
+
+.fog{
+
+    position:absolute;
+
+    inset:0;
+
+    background:url("../assets/images/fog.svg.png")
+        repeat-x center;
+
+    background-size:cover;
+
+    opacity:.35;
+
+}
+
+.reward-card{
+
+    position:absolute;
+
+    left:50%;
+
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:650px;
+
+    max-width:90%;
+
+    padding:50px;
+
+    text-align:center;
+
+    border-radius:25px;
+
+    background:rgba(0,0,0,.55);
+
+    backdrop-filter:blur(12px);
+
+    border:2px solid rgba(255,140,0,.5);
+
+}
+
+.reward-card h1{
+
+    color:#ff8c00;
+
+    font-size:3rem;
+
+}
+
+.reward-card h2{
+
+    margin-top:10px;
+
+    color:#fff;
+
+}
+
+.xp-box{
+
+    margin:35px auto;
+
+    width:220px;
+
+    padding:20px;
+
+    font-size:2rem;
+
+    color:#fff;
+
+    background:#ff6a00;
+
+    border-radius:15px;
+
+}
+
+.stats{
+
+    color:#fff;
+
+    margin-bottom:30px;
+
+}
+
+#totalXP{
+
+    font-size:3rem;
+
+    color:#ffd54f;
+
+}
+
+.unlock{
+
+    color:#00ff99;
+
+    font-size:1.4rem;
+
+    margin-bottom:35px;
+
+}
+
+#mapBtn{
+
+    padding:18px 45px;
+
+    border:none;
+
+    border-radius:40px;
+
+    background:#ff7b00;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:1.1rem;
+
+}
