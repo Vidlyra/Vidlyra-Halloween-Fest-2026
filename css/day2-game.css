@@ -1,14 +1,16 @@
-/* ==========================================
+/* ======================================================
    VIDLYRA HALLOWEEN FEST 2026
-   DAY 2 - HAUNTED WELL
+   DAY 2 - THE HAUNTED WELL
+====================================================== */
+
+/* ==========================================
+RESET
 ========================================== */
 
 *{
-
     margin:0;
     padding:0;
     box-sizing:border-box;
-
 }
 
 html,
@@ -18,15 +20,58 @@ body{
     height:100%;
     overflow:hidden;
 
-    font-family:Arial,Helvetica,sans-serif;
+    font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
     background:#000;
 
 }
 
+/* ==========================================
+ROOT COLORS
+========================================== */
+
+:root{
+
+    --cyan:#3edcff;
+    --blue:#00bfff;
+    --dark:#07111b;
+    --panel:rgba(0,0,0,.55);
+    --white:#ffffff;
+
+}
+
+/* ==========================================
+BODY
+========================================== */
+
 body{
 
     position:relative;
+
+    color:white;
+
+    user-select:none;
+
+    overflow:hidden;
+
+}
+
+/* ==========================================
+GAME WORLD
+========================================== */
+
+#gameWorld{
+
+    position:relative;
+
+    width:100%;
+
+    height:100%;
+
+    overflow:hidden;
 
 }
 
@@ -36,12 +81,15 @@ BACKGROUND
 
 .background{
 
-    position:fixed;
+    position:absolute;
 
     inset:0;
 
-    background:url("../assets/images/background 1.png")
-        center center;
+    background:
+
+    url("../assets/images/background 1.png")
+
+    center center;
 
     background-size:cover;
 
@@ -53,12 +101,15 @@ BACKGROUND
 
 .background-layer{
 
-    position:fixed;
+    position:absolute;
 
     inset:0;
 
-    background:url("../assets/images/background 2.png")
-        center center;
+    background:
+
+    url("../assets/images/background 2.png")
+
+    center center;
 
     background-size:cover;
 
@@ -84,18 +135,20 @@ CASTLE
 
     transform:translateX(-50%);
 
-    width:34vw;
+    width:36vw;
+
+    min-width:260px;
 
     max-width:650px;
 
-    min-width:250px;
+    z-index:5;
 
-    z-index:4;
+    pointer-events:none;
 
 }
 
 /* ==========================================
-BLUE FOG
+FOG
 ========================================== */
 
 .fog{
@@ -112,9 +165,9 @@ BLUE FOG
 
     bottom:18%;
 
-    opacity:.28;
+    opacity:.25;
 
-    z-index:5;
+    z-index:6;
 
 }
 
@@ -138,7 +191,7 @@ STONE CIRCLE
 
     left:50%;
 
-    bottom:15%;
+    bottom:14%;
 
     transform:translateX(-50%);
 
@@ -198,7 +251,7 @@ BLUE FIRE
 
     width:90px;
 
-    z-index:9;
+    z-index:12;
 
 }
 
@@ -228,7 +281,7 @@ CANDLES
 
     width:70px;
 
-    z-index:9;
+    z-index:12;
 
 }
 
@@ -258,7 +311,7 @@ SKULLS
 
     width:55px;
 
-    z-index:9;
+    z-index:11;
 
 }
 
@@ -297,7 +350,7 @@ PUMPKIN
 }
 
 /* ==========================================
-WITCH HAT
+WITCH
 ========================================== */
 
 .witch{
@@ -313,10 +366,133 @@ WITCH HAT
     z-index:8;
 
 }
+/* ======================================================
+PLAYER
+====================================================== */
 
-/* ==========================================
+#player{
+
+    position:absolute;
+
+    left:15%;
+
+    bottom:12%;
+
+    width:70px;
+
+    height:70px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:3.8rem;
+
+    z-index:100;
+
+    transition:
+    left .3s linear,
+    bottom .3s linear;
+
+    cursor:default;
+
+}
+
+#playerShadow{
+
+    position:absolute;
+
+    width:55px;
+
+    height:18px;
+
+    background:rgba(0,0,0,.45);
+
+    border-radius:50%;
+
+    filter:blur(5px);
+
+    left:15%;
+
+    bottom:9.5%;
+
+    z-index:50;
+
+}
+
+/* ======================================================
+OBJECTIVE
+====================================================== */
+
+#objective{
+
+    position:absolute;
+
+    top:20px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    padding:15px 35px;
+
+    border-radius:40px;
+
+    background:rgba(0,0,0,.6);
+
+    border:1px solid rgba(0,220,255,.5);
+
+    backdrop-filter:blur(8px);
+
+    color:#fff;
+
+    font-size:18px;
+
+    z-index:300;
+
+}
+
+/* ======================================================
+INTERACTION
+====================================================== */
+
+#interactionPrompt{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:32%;
+
+    transform:translateX(-50%);
+
+    padding:12px 24px;
+
+    border-radius:30px;
+
+    background:rgba(0,0,0,.75);
+
+    color:#3edcff;
+
+    opacity:0;
+
+    transition:.3s;
+
+    z-index:250;
+
+}
+
+#interactionPrompt.show{
+
+    opacity:1;
+
+}
+
+/* ======================================================
 RUNES
-========================================== */
+====================================================== */
 
 .rune{
 
@@ -326,15 +502,27 @@ RUNES
 
     cursor:pointer;
 
-    transition:.3s;
+    z-index:120;
 
-    z-index:15;
+    transition:
+    transform .35s,
+    opacity .35s;
 
 }
 
 .rune:hover{
 
     transform:scale(1.15);
+
+}
+
+.rune.found{
+
+    opacity:0;
+
+    transform:scale(0);
+
+    pointer-events:none;
 
 }
 
@@ -364,9 +552,9 @@ RUNES
 
 }
 
-/* ==========================================
+/* ======================================================
 GHOST
-========================================== */
+====================================================== */
 
 .ghost{
 
@@ -378,17 +566,27 @@ GHOST
 
     transform:translateX(-50%);
 
-    width:170px;
+    width:180px;
 
     opacity:0;
 
-    z-index:18;
+    pointer-events:none;
+
+    z-index:180;
+
+    transition:2s;
 
 }
 
-/* ==========================================
-MAGIC CRYSTAL
-========================================== */
+.ghost.active{
+
+    opacity:1;
+
+}
+
+/* ======================================================
+CRYSTAL
+====================================================== */
 
 .crystal{
 
@@ -398,7 +596,7 @@ MAGIC CRYSTAL
 
     bottom:30%;
 
-    transform:translateX(-50%);
+    transform:translate(-50%,60px);
 
     width:110px;
 
@@ -406,31 +604,23 @@ MAGIC CRYSTAL
 
     cursor:pointer;
 
-    z-index:19;
+    z-index:181;
+
+    transition:2s;
 
 }
 
-/* ==========================================
-PLAYER
-========================================== */
+.crystal.active{
 
-#player{
+    opacity:1;
 
-    position:absolute;
-
-    left:15%;
-
-    bottom:12%;
-
-    font-size:4rem;
-
-    z-index:30;
+    transform:translate(-50%,0);
 
 }
 
-/* ==========================================
+/* ======================================================
 MISSION PANEL
-========================================== */
+====================================================== */
 
 .mission-panel{
 
@@ -440,27 +630,29 @@ MISSION PANEL
 
     bottom:30px;
 
-    width:330px;
+    width:340px;
 
-    padding:20px;
+    padding:22px;
 
     border-radius:20px;
 
     background:rgba(0,0,0,.55);
 
-    border:1px solid rgba(0,180,255,.6);
+    border:1px solid rgba(0,220,255,.45);
 
     backdrop-filter:blur(8px);
 
     color:white;
 
-    z-index:50;
+    z-index:500;
 
 }
 
 .mission-panel h3{
 
-    color:#3edbff;
+    color:#3edcff;
+
+    margin-bottom:10px;
 
 }
 
@@ -468,15 +660,15 @@ MISSION PANEL
 
     width:100%;
 
-    height:10px;
+    height:12px;
 
     margin-top:20px;
 
-    background:#222;
-
-    border-radius:20px;
+    border-radius:30px;
 
     overflow:hidden;
+
+    background:#1b1b1b;
 
 }
 
@@ -492,15 +684,63 @@ MISSION PANEL
 
         cyan,
 
-        #00b7ff
+        #00bfff
 
     );
 
+    transition:.4s;
+
 }
 
-/* ==========================================
+.runeCounter{
+
+    margin-top:18px;
+
+    color:#9fefff;
+
+    font-size:17px;
+
+}
+
+/* ======================================================
+DIALOG
+====================================================== */
+
+#dialogBox{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:40px;
+
+    transform:translateX(-50%);
+
+    padding:18px 30px;
+
+    border-radius:40px;
+
+    background:rgba(0,0,0,.82);
+
+    color:#fff;
+
+    opacity:0;
+
+    transition:.4s;
+
+    z-index:900;
+
+}
+
+#dialogBox.show{
+
+    opacity:1;
+
+}
+
+/* ======================================================
 MISSION COMPLETE
-========================================== */
+====================================================== */
 
 #missionComplete{
 
@@ -518,15 +758,13 @@ MISSION COMPLETE
 
     background:rgba(0,0,0,.88);
 
-    color:white;
-
     opacity:0;
 
     pointer-events:none;
 
-    transition:.5s;
+    transition:.7s;
 
-    z-index:999;
+    z-index:5000;
 
 }
 
@@ -540,9 +778,9 @@ MISSION COMPLETE
 
 #missionComplete h2{
 
-    font-size:3rem;
+    color:#4fdcff;
 
-    color:#42d7ff;
+    font-size:52px;
 
 }
 
@@ -550,7 +788,9 @@ MISSION COMPLETE
 
     margin:20px 0;
 
-    font-size:1.3rem;
+    font-size:22px;
+
+    color:white;
 
 }
 
@@ -562,18 +802,112 @@ MISSION COMPLETE
 
     border-radius:40px;
 
-    background:#00b7ff;
+    background:#00bfff;
 
     color:white;
 
     cursor:pointer;
 
-    font-size:1rem;
+    font-size:18px;
+
+    transition:.3s;
 
 }
-/* ==========================================
+
+#nextBtn:hover{
+
+    transform:scale(1.05);
+
+}
+
+/* ======================================================
+PAUSE MENU
+====================================================== */
+
+#pauseMenu{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.85);
+
+    z-index:6000;
+
+}
+
+#pauseMenu button{
+
+    width:240px;
+
+    padding:16px;
+
+    margin:12px;
+
+    border:none;
+
+    border-radius:35px;
+
+    background:#00bfff;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+}
+
+/* ======================================================
+LOADING
+====================================================== */
+
+#loadingOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-direction:column;
+
+    background:#000;
+
+    color:white;
+
+    z-index:7000;
+
+}
+
+.loaderCircle{
+
+    width:70px;
+
+    height:70px;
+
+    border:6px solid rgba(255,255,255,.2);
+
+    border-top:6px solid cyan;
+
+    border-radius:50%;
+
+}
+/* ======================================================
 DAY 2 INTRO
-========================================== */
+====================================================== */
 
 #introScreen{
 
@@ -587,7 +921,7 @@ DAY 2 INTRO
 
     align-items:center;
 
-    background:rgba(0,0,0,.85);
+    background:rgba(0,0,0,.88);
 
     backdrop-filter:blur(8px);
 
@@ -609,15 +943,19 @@ DAY 2 INTRO
 
     text-align:center;
 
+    animation:introFade 4s ease;
+
 }
 
 .intro-content h1{
 
-    font-size:70px;
+    font-size:72px;
 
     color:#4fdcff;
 
     text-shadow:0 0 30px cyan;
+
+    letter-spacing:4px;
 
 }
 
@@ -625,68 +963,137 @@ DAY 2 INTRO
 
     margin-top:20px;
 
-    font-size:38px;
-
     color:white;
+
+    font-size:38px;
 
 }
 
 .intro-content p{
 
-    margin-top:35px;
-
-    color:#ddd;
+    margin-top:30px;
 
     font-size:24px;
+
+    color:#d9f8ff;
 
     font-style:italic;
 
 }
-/* ==========================================
-GHOST
-========================================== */
 
-.ghost{
+/* ======================================================
+DAY COMPLETE
+====================================================== */
 
-    opacity:0;
+#dayComplete{
 
-    transition:2s;
+    position:fixed;
 
-}
+    inset:0;
 
-.ghost.active{
+    display:flex;
 
-    opacity:1;
+    flex-direction:column;
 
-}
+    justify-content:center;
 
-/* ==========================================
-CRYSTAL
-========================================== */
+    align-items:center;
 
-.crystal{
+    background:rgba(0,0,0,.92);
 
     opacity:0;
 
-    transform:translate(-50%,60px);
+    visibility:hidden;
 
-    transition:2s;
+    transition:1s;
+
+    z-index:9998;
 
 }
 
-.crystal.active{
+#dayComplete.show{
 
     opacity:1;
 
-    transform:translate(-50%,0);
+    visibility:visible;
 
 }
 
-/* ==========================================
-MISSION COMPLETE
-========================================== */
+#dayComplete h1{
 
-#missionComplete{
+    font-size:64px;
+
+    color:#4fdcff;
+
+    text-shadow:0 0 30px cyan;
+
+}
+
+#dayComplete h2{
+
+    margin-top:20px;
+
+    font-size:34px;
+
+    color:#fff;
+
+}
+
+#dayComplete p{
+
+    width:700px;
+
+    max-width:90%;
+
+    margin-top:25px;
+
+    line-height:1.7;
+
+    text-align:center;
+
+    color:#d8d8d8;
+
+}
+
+#continueDay3{
+
+    margin-top:40px;
+
+    padding:18px 50px;
+
+    border:none;
+
+    border-radius:40px;
+
+    background:#00bfff;
+
+    color:white;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+#continueDay3:hover{
+
+    transform:scale(1.05);
+
+}
+
+/* ======================================================
+FADE SCREEN
+====================================================== */
+
+#fadeScreen{
+
+    position:fixed;
+
+    inset:0;
+
+    background:#000;
 
     opacity:0;
 
@@ -694,72 +1101,352 @@ MISSION COMPLETE
 
     transition:1s;
 
+    z-index:99999;
+
 }
 
-#missionComplete.show{
+#fadeScreen.active{
 
     opacity:1;
 
-    pointer-events:auto;
-
 }
 
-/* ==========================================
-DIALOG
-========================================== */
+/* ======================================================
+SCREEN GLOW
+====================================================== */
 
-#dialogBox{
+#screenGlow{
 
     position:fixed;
 
-    left:50%;
+    inset:0;
 
-    bottom:40px;
+    pointer-events:none;
 
-    transform:translateX(-50%);
+    background:
 
-    background:rgba(0,0,0,.8);
+    radial-gradient(
 
-    color:#fff;
+        circle,
 
-    padding:18px 30px;
+        rgba(0,255,255,.12),
 
-    border-radius:40px;
+        transparent 70%
+
+    );
+
+    opacity:.45;
+
+    z-index:3;
+
+}
+
+/* ======================================================
+PARTICLES
+====================================================== */
+
+#particles{
+
+    position:fixed;
+
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:4;
+
+}
+
+/* ======================================================
+AMBIENT PARTICLES
+====================================================== */
+
+#ambientParticles{
+
+    position:fixed;
+
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:4;
+
+}
+
+/* ======================================================
+FLASH
+====================================================== */
+
+#flash{
+
+    position:fixed;
+
+    inset:0;
+
+    background:white;
 
     opacity:0;
 
-    transition:.5s;
+    pointer-events:none;
 
-    z-index:9999;
-
-}
-
-#dialogBox.show{
-
-    opacity:1;
+    z-index:99999;
 
 }
 
-/* ==========================================
-SCREEN SHAKE
-========================================== */
+#flash.active{
 
-.shake{
-
-    animation:screenShake .12s linear 10;
+    animation:flash .45s ease;
 
 }
 
-@keyframes screenShake{
+/* ======================================================
+KEYFRAMES
+====================================================== */
 
-    0%{transform:translate(0,0);}
+@keyframes introFade{
 
-    25%{transform:translate(-4px,3px);}
+    0%{
 
-    50%{transform:translate(4px,-3px);}
+        opacity:0;
 
-    75%{transform:translate(-3px,-2px);}
+        transform:translateY(25px);
 
-    100%{transform:translate(0,0);}
+    }
+
+    30%{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+    80%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
+
+@keyframes flash{
+
+    0%{
+
+        opacity:0;
+
+    }
+
+    40%{
+
+        opacity:.9;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
+
+@keyframes loaderSpin{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+.loaderCircle{
+
+    animation:loaderSpin 1s linear infinite;
+
+}
+
+/* ======================================================
+TABLET
+====================================================== */
+
+@media (max-width:1024px){
+
+.castle{
+
+    width:55vw;
+
+}
+
+.well{
+
+    width:190px;
+
+}
+
+.stone-circle{
+
+    width:420px;
+
+}
+
+.mission-panel{
+
+    width:300px;
+
+}
+
+}
+
+/* ======================================================
+MOBILE
+====================================================== */
+
+@media (max-width:768px){
+
+.castle{
+
+    width:80vw;
+
+}
+
+.stone-circle{
+
+    width:320px;
+
+}
+
+.well{
+
+    width:150px;
+
+}
+
+.fire{
+
+    width:60px;
+
+}
+
+.candle{
+
+    width:45px;
+
+}
+
+.skull{
+
+    width:38px;
+
+}
+
+.rune{
+
+    width:50px;
+
+}
+
+.ghost{
+
+    width:120px;
+
+}
+
+.crystal{
+
+    width:80px;
+
+}
+
+#player{
+
+    font-size:2.8rem;
+
+}
+
+#objective{
+
+    width:90%;
+
+    font-size:15px;
+
+}
+
+.mission-panel{
+
+    left:10px;
+
+    bottom:10px;
+
+    width:95%;
+
+}
+
+#dialogBox{
+
+    width:92%;
+
+    bottom:20px;
+
+}
+
+#dayComplete h1{
+
+    font-size:40px;
+
+}
+
+#dayComplete h2{
+
+    font-size:24px;
+
+}
+
+}
+
+/* ======================================================
+UTILITY
+====================================================== */
+
+.hidden{
+
+    display:none !important;
+
+}
+
+.invisible{
+
+    opacity:0 !important;
+
+}
+
+.visible{
+
+    opacity:1 !important;
+
+}
+
+.noPointer{
+
+    pointer-events:none;
+
+}
+
+.clickable{
+
+    cursor:pointer;
 
 }
