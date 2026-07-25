@@ -571,3 +571,74 @@ MISSION COMPLETE
     font-size:1rem;
 
 }
+/* ==========================================
+DAY 2 INTRO
+========================================== */
+
+#introScreen{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.85);
+
+    backdrop-filter:blur(8px);
+
+    z-index:9999;
+
+    transition:1.5s;
+
+}
+
+#introScreen.hide{
+
+    opacity:0;
+
+    visibility:hidden;
+
+}
+
+.intro-content{
+
+    text-align:center;
+
+}
+
+.intro-content h1{
+
+    font-size:70px;
+
+    color:#4fdcff;
+
+    text-shadow:0 0 30px cyan;
+
+}
+
+.intro-content h2{
+
+    margin-top:20px;
+
+    font-size:38px;
+
+    color:white;
+
+}
+
+.intro-content p{
+
+    margin-top:35px;
+
+    color:#ddd;
+
+    font-size:24px;
+
+    font-style:italic;
+
+}
