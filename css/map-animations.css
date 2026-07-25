@@ -1,0 +1,269 @@
+/* ==========================================
+   CLOUD MOVEMENT
+========================================== */
+
+.cloud1{
+
+    animation:cloudMove1 90s linear infinite;
+
+}
+
+.cloud2{
+
+    animation:cloudMove2 120s linear infinite;
+
+}
+
+@keyframes cloudMove1{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(180px);
+
+    }
+
+}
+
+@keyframes cloudMove2{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(-220px);
+
+    }
+
+}
+
+/* ==========================================
+   FOG MOVEMENT
+========================================== */
+
+.fog-back{
+
+    animation:fogBack 45s linear infinite;
+
+}
+
+.fog-front{
+
+    animation:fogFront 28s linear infinite;
+
+}
+
+@keyframes fogBack{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(-200px);
+
+    }
+
+}
+
+@keyframes fogFront{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(250px);
+
+    }
+
+}
+
+/* ==========================================
+   CASTLE GLOW
+========================================== */
+
+.castle{
+
+    animation:castleGlow 5s ease-in-out infinite;
+
+}
+
+@keyframes castleGlow{
+
+    0%{
+
+        filter:brightness(1);
+
+    }
+
+    50%{
+
+        filter:
+            brightness(1.15)
+            drop-shadow(0 0 20px rgba(255,180,80,.6));
+
+    }
+
+    100%{
+
+        filter:brightness(1);
+
+    }
+
+}
+
+/* ==========================================
+   PATH GLOW
+========================================== */
+
+.path{
+
+    animation:pathGlow 2.5s ease-in-out infinite;
+
+}
+
+@keyframes pathGlow{
+
+    0%{
+
+        box-shadow:0 0 10px #ff8800;
+
+    }
+
+    50%{
+
+        box-shadow:
+            0 0 25px #ffb300,
+            0 0 45px #ff6600;
+
+    }
+
+    100%{
+
+        box-shadow:0 0 10px #ff8800;
+
+    }
+
+}
+
+/* ==========================================
+   ACTIVE NODE
+========================================== */
+
+.node.active .circle{
+
+    animation:activePulse 2s infinite;
+
+}
+
+@keyframes activePulse{
+
+    0%{
+
+        transform:scale(1);
+
+        box-shadow:0 0 15px orange;
+
+    }
+
+    50%{
+
+        transform:scale(1.08);
+
+        box-shadow:
+            0 0 35px #ffb300,
+            0 0 60px #ff6600;
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+        box-shadow:0 0 15px orange;
+
+    }
+
+}
+
+/* ==========================================
+   LOCKED NODES
+========================================== */
+
+.node.locked{
+
+    animation:lockedPulse 5s ease-in-out infinite;
+
+}
+
+@keyframes lockedPulse{
+
+    0%{
+
+        opacity:.55;
+
+    }
+
+    50%{
+
+        opacity:.9;
+
+    }
+
+    100%{
+
+        opacity:.55;
+
+    }
+
+}
+
+/* ==========================================
+   HERO TITLE
+========================================== */
+
+.hero{
+
+    animation:heroFade 2s ease;
+
+}
+
+@keyframes heroFade{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateX(-50%)
+            translateY(-30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateX(-50%)
+            translateY(0);
+
+    }
+
+}
