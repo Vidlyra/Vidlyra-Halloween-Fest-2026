@@ -1,22 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Vidlyra Halloween Fest 2026 | Day 2</title>
-
-<link rel="stylesheet" href="css/day2-game.css">
-
-<link rel="stylesheet" href="css/day2-game-animations.css">
-
-</head>
-
 <body>
+
+<!-- ==========================
+DAY 2 INTRO
+========================== -->
+
+<div id="introScreen">
+
+    <div class="intro-content">
+
+        <h1>DAY 2</h1>
+
+        <h2>The Haunted Well</h2>
+
+        <p id="introText">
+
+            Something ancient sleeps beneath the water...
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ==========================
+FLASH EFFECT
+========================== -->
+
+<div id="flash"></div>
+
+<!-- ==========================
+PARTICLES
+========================== -->
+
+<div id="particles"></div>
 
 <!-- ==========================
 BACKGROUND
@@ -162,7 +178,7 @@ GHOST
 <img
 src="assets/images/ghost_blue.png"
 class="ghost"
-alt="Blue Ghost">
+alt="Ghost">
 
 <!-- ==========================
 MAGIC CRYSTAL
@@ -171,9 +187,9 @@ MAGIC CRYSTAL
 <img
 src="assets/images/magic_crystal.png"
 class="crystal"
-alt="Magic Crystal">
+alt="Crystal">
 
-<!-- ==========================
+  <!-- ==========================
 PLAYER
 ========================== -->
 
@@ -189,19 +205,39 @@ MISSION PANEL
 
 <div class="mission-panel">
 
-<h3>Day 2 Mission</h3>
+    <h3>🎯 Day 2 Mission</h3>
 
-<p>
+    <p>
 
-Find all three Ancient Runes to awaken the Haunted Well.
+        Find all three Ancient Runes to awaken the Haunted Well.
 
-</p>
+    </p>
 
-<div class="progress">
+    <div class="progress">
 
-<div class="progress-fill"></div>
+        <div class="progress-fill" id="progressFill"></div>
+
+    </div>
+
+    <div class="runeCounter" id="runeCounter">
+
+        🔷 Ancient Runes : 0 / 3
+
+    </div>
 
 </div>
+
+<!-- ==========================
+DIALOG BOX
+========================== -->
+
+<div id="dialogBox">
+
+    <p id="dialogText">
+
+        Explore the Haunted Well...
+
+    </p>
 
 </div>
 
@@ -211,46 +247,79 @@ MISSION COMPLETE
 
 <div id="missionComplete">
 
-<h2>
+    <h2>
 
-🎉 Mission Complete
+        🎉 Mission Complete!
 
-</h2>
+    </h2>
 
-<p>
+    <p>
 
-The Haunted Well has awakened.
+        The Haunted Well has awakened.
 
-</p>
+    </p>
 
-<button id="nextBtn">
+    <button id="nextBtn">
 
-Continue
+        Continue to Day 3
 
-</button>
+    </button>
 
 </div>
+
+<!-- ==========================
+SCREEN GLOW
+========================== -->
+
+<div id="screenGlow"></div>
+
+<!-- ==========================
+SHAKE LAYER
+========================== -->
+
+<div id="shakeLayer"></div>
 
 <!-- ==========================
 AUDIO
 ========================== -->
 
-<audio
-id="bgMusic"
-loop>
+<audio id="bgMusic" loop>
 
-<source
-src="assets/ambience.mp3"
-type="audio/mpeg">
+    <source
+    src="assets/ambience.mp3"
+    type="audio/mpeg">
 
 </audio>
 
-<audio
-id="rewardSound">
+<audio id="ghostWhisper">
 
-<source
-src="assets/reward.mp3"
-type="audio/mpeg">
+    <source
+    src="assets/ghost-whisper.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="wellRumble">
+
+    <source
+    src="assets/well-rumble.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="magicSound">
+
+    <source
+    src="assets/magic.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="rewardSound">
+
+    <source
+    src="assets/reward.mp3"
+    type="audio/mpeg">
 
 </audio>
 
