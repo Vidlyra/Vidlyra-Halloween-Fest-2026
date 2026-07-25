@@ -1,7 +1,10 @@
-/* ======================================================
+/* ===========================================================
    VIDLYRA HALLOWEEN FEST 2026
    DAY 2 - THE HAUNTED WELL
-====================================================== */
+   PHASE 1
+=========================================================== */
+
+"use strict";
 
 const Game = {
 
@@ -10,38 +13,19 @@ const Game = {
     ========================================== */
 
     runesFound: 0,
-
     totalRunes: 3,
 
     gameStarted: false,
-
     canMove: false,
 
-    playerSpeed: 8,
+    playerX: 15,
+    playerY: 12,
+
+    moveSpeed: 0.30,
 
     keys: {},
 
-    playerX: 15,
-
-    playerY: 12,
-
-    worldWidth: 100,
-
-    worldHeight: 100,
-
-    /* ==========================================
-       INITIALIZE
-    ========================================== */
-
-    init() {
-
-        this.cache();
-
-        this.bindEvents();
-
-        this.startIntro();
-
-    },
+    dialogTimer: null,
 
     /* ==========================================
        CACHE DOM
@@ -49,11 +33,7 @@ const Game = {
 
     cache() {
 
-        this.player =
-            document.getElementById("player");
-
-        this.playerShadow =
-            document.getElementById("playerShadow");
+        this.player = document.getElementById("player");
 
         this.runes =
             document.querySelectorAll(".rune");
@@ -70,46 +50,28 @@ const Game = {
         this.dialog =
             document.getElementById("dialogText");
 
-        this.ghost =
-            document.getElementById("ghost");
-
-        this.crystal =
-            document.getElementById("crystal");
+        this.intro =
+            document.getElementById("introScreen");
 
         this.flash =
             document.getElementById("flash");
 
-        this.intro =
-            document.getElementById("introScreen");
+        this.ghost =
+            document.querySelector(".ghost");
 
-        this.objective =
-            document.getElementById("objective");
-
-        this.interaction =
-            document.getElementById("interactionPrompt");
+        this.crystal =
+            document.querySelector(".crystal");
 
         this.missionComplete =
             document.getElementById("missionComplete");
 
-        this.dayComplete =
-            document.getElementById("dayComplete");
-
         this.nextButton =
             document.getElementById("nextBtn");
-
-        this.continueButton =
-            document.getElementById("continueDay3");
 
         /* AUDIO */
 
         this.bgMusic =
             document.getElementById("bgMusic");
-
-        this.magicSound =
-            document.getElementById("magicSound");
-
-        this.rewardSound =
-            document.getElementById("rewardSound");
 
         this.ghostWhisper =
             document.getElementById("ghostWhisper");
@@ -117,14 +79,25 @@ const Game = {
         this.wellRumble =
             document.getElementById("wellRumble");
 
-        this.collectSound =
-            document.getElementById("collectSound");
+        this.magicSound =
+            document.getElementById("magicSound");
 
-        this.ambientWind =
-            document.getElementById("ambientWind");
+        this.rewardSound =
+            document.getElementById("rewardSound");
 
-        this.stoneMove =
-            document.getElementById("stoneMove");
+    },
+
+    /* ==========================================
+       INITIALIZE
+    ========================================== */
+
+    init() {
+
+        this.cache();
+
+        this.bindEvents();
+
+        this.startIntro();
 
     },
 
@@ -133,8 +106,6 @@ const Game = {
     ========================================== */
 
     bindEvents() {
-
-        /* Keyboard */
 
         window.addEventListener(
 
@@ -160,37 +131,25 @@ const Game = {
 
         );
 
-        /* Rune Click */
-
         this.runes.forEach((rune) => {
 
             rune.addEventListener(
 
                 "click",
 
-                () => this.collectRune(rune)
+                () => {
+
+                    this.collectRune(rune);
+
+                }
 
             );
 
         });
 
-        /* Buttons */
-
         if (this.nextButton) {
 
             this.nextButton.addEventListener(
-
-                "click",
-
-                () => this.showDayComplete()
-
-            );
-
-        }
-
-        if (this.continueButton) {
-
-            this.continueButton.addEventListener(
 
                 "click",
 
@@ -213,15 +172,11 @@ const Game = {
 
     startIntro() {
 
-        console.log(
-
-            "Day 2 Started"
-
-        );
+        console.log("Day 2 Loaded");
 
         this.showMessage(
 
-            "The Haunted Well awaits..."
+            "Find the three Ancient Runes..."
 
         );
 
@@ -257,14 +212,6 @@ const Game = {
 
         }
 
-        if (this.ambientWind) {
-
-            this.ambientWind.volume = 0.20;
-
-            this.ambientWind.play().catch(() => {});
-
-        }
-
         this.gameLoop();
 
     },
@@ -277,11 +224,11 @@ const Game = {
 
         this.updatePlayer();
 
-        requestAnimationFrame(
+        requestAnimationFrame(() => {
 
-            () => this.gameLoop()
+            this.gameLoop();
 
-        );
+        });
 
     },
 
@@ -295,65 +242,53 @@ const Game = {
 
         if (this.keys["arrowleft"] || this.keys["a"]) {
 
-            this.playerX -= 0.25;
+            this.playerX -= this.moveSpeed;
 
         }
 
         if (this.keys["arrowright"] || this.keys["d"]) {
 
-            this.playerX += 0.25;
+            this.playerX += this.moveSpeed;
 
         }
 
         if (this.keys["arrowup"] || this.keys["w"]) {
 
-            this.playerY += 0.25;
+            this.playerY += this.moveSpeed;
 
         }
 
         if (this.keys["arrowdown"] || this.keys["s"]) {
 
-            this.playerY -= 0.25;
+            this.playerY -= this.moveSpeed;
 
         }
 
-        /* LIMITS */
+        this.playerX = Math.max(
 
-        this.playerX =
+            3,
 
-            Math.max(
+            Math.min(94, this.playerX)
 
-                3,
+        );
 
-                Math.min(94, this.playerX)
+        this.playerY = Math.max(
 
-            );
+            5,
 
-        this.playerY =
+            Math.min(75, this.playerY)
 
-            Math.max(
+        );
 
-                4,
+        if (this.player) {
 
-                Math.min(75, this.playerY)
-
-            );
-
-        /* APPLY */
-
-        this.player.style.left =
-
-            this.playerX + "%";
-
-        this.player.style.bottom =
-
-            this.playerY + "%";
-
-        if (this.playerShadow) {
-
-            this.playerShadow.style.left =
+            this.player.style.left =
 
                 this.playerX + "%";
+
+            this.player.style.bottom =
+
+                this.playerY + "%";
 
         }
 
@@ -365,7 +300,9 @@ const Game = {
 
     showMessage(text) {
 
-        if (!this.dialog) return;
+        if (!this.dialogBox || !this.dialog)
+
+            return;
 
         this.dialog.innerHTML = text;
 
@@ -379,184 +316,50 @@ const Game = {
 
         }, 2500);
 
-    }
+    },
+       /* ==========================================
+       COLLECT RUNE
+    ========================================== */
 
-};
+    collectRune(rune) {
 
-/* ==========================================
-START
-========================================== */
+        if (rune.classList.contains("found")) {
 
-document.addEventListener(
-
-    "DOMContentLoaded",
-
-    () => {
-
-        Game.init();
-
-    }
-
-);
-/* ==========================================
-   RUNE COLLECTION
-========================================== */
-
-collectRune(rune) {
-
-    if (rune.classList.contains("found")) {
-
-        return;
-
-    }
-
-    rune.classList.add("found");
-
-    rune.style.pointerEvents = "none";
-
-    this.runesFound++;
-
-    /* Collect Sound */
-
-    if (this.collectSound) {
-
-        this.collectSound.currentTime = 0;
-
-        this.collectSound.play();
-
-    }
-
-    /* Progress */
-
-    const percent =
-
-        (this.runesFound / this.totalRunes) * 100;
-
-    this.progress.style.width =
-
-        percent + "%";
-
-    this.counter.innerHTML =
-
-        "🔷 Ancient Runes : " +
-
-        this.runesFound +
-
-        " / " +
-
-        this.totalRunes;
-
-    /* Messages */
-
-    if (this.runesFound === 1) {
-
-        this.showMessage(
-
-            "The first rune glows with ancient magic..."
-
-        );
-
-    }
-
-    if (this.runesFound === 2) {
-
-        this.showMessage(
-
-            "The Haunted Well begins to tremble..."
-
-        );
-
-    }
-
-    if (this.runesFound === 3) {
-
-        this.showMessage(
-
-            "All Ancient Runes have been restored!"
-
-        );
-
-        setTimeout(() => {
-
-            this.awakenWell();
-
-        }, 1200);
-
-    }
-
-},
-
-/* ==========================================
-   WELL AWAKENS
-========================================== */
-
-awakenWell() {
-
-    this.canMove = false;
-
-    /* Flash */
-
-    if (this.flash) {
-
-        this.flash.classList.add("active");
-
-        setTimeout(() => {
-
-            this.flash.classList.remove("active");
-
-        }, 500);
-
-    }
-
-    /* Shake */
-
-    document.body.classList.add("shake");
-
-    setTimeout(() => {
-
-        document.body.classList.remove("shake");
-
-    }, 1200);
-
-    /* Sounds */
-
-    if (this.ghostWhisper) {
-
-        this.ghostWhisper.currentTime = 0;
-
-        this.ghostWhisper.volume = 0.8;
-
-        this.ghostWhisper.play();
-
-    }
-
-    if (this.wellRumble) {
-
-        this.wellRumble.currentTime = 0;
-
-        this.wellRumble.play();
-
-    }
-
-    /* Ghost */
-
-    setTimeout(() => {
-
-        if (this.ghost) {
-
-            this.ghost.classList.add("active");
+            return;
 
         }
 
-    }, 800);
+        rune.classList.add("found");
 
-    /* Crystal */
+        rune.style.opacity = "0";
 
-    setTimeout(() => {
+        rune.style.pointerEvents = "none";
 
-        if (this.crystal) {
+        this.runesFound++;
 
-            this.crystal.classList.add("active");
+        const percent =
+
+            (this.runesFound / this.totalRunes) * 100;
+
+        if (this.progress) {
+
+            this.progress.style.width =
+
+                percent + "%";
+
+        }
+
+        if (this.counter) {
+
+            this.counter.innerHTML =
+
+                "🔷 Ancient Runes : " +
+
+                this.runesFound +
+
+                " / " +
+
+                this.totalRunes;
 
         }
 
@@ -564,21 +367,133 @@ awakenWell() {
 
             this.magicSound.currentTime = 0;
 
-            this.magicSound.play();
+            this.magicSound.play().catch(() => {});
 
         }
 
-    }, 2200);
+        switch (this.runesFound) {
 
-    this.showMessage(
+            case 1:
 
-        "The Ancient Spirit has awakened..."
+                this.showMessage(
 
-    );
+                    "The first rune has awakened..."
 
-    /* Crystal Click */
+                );
 
-    if (this.crystal) {
+                break;
+
+            case 2:
+
+                this.showMessage(
+
+                    "A strange energy surrounds the well..."
+
+                );
+
+                break;
+
+            case 3:
+
+                this.showMessage(
+
+                    "The Haunted Well is awakening..."
+
+                );
+
+                setTimeout(() => {
+
+                    this.awakenWell();
+
+                }, 1500);
+
+                break;
+
+        }
+
+    },
+
+    /* ==========================================
+       WELL EVENT
+    ========================================== */
+
+    awakenWell() {
+
+        this.canMove = false;
+
+        if (this.flash) {
+
+            this.flash.classList.add("active");
+
+            setTimeout(() => {
+
+                this.flash.classList.remove("active");
+
+            }, 500);
+
+        }
+
+        document.body.classList.add("shake");
+
+        setTimeout(() => {
+
+            document.body.classList.remove("shake");
+
+        }, 1200);
+
+        if (this.wellRumble) {
+
+            this.wellRumble.currentTime = 0;
+
+            this.wellRumble.play().catch(() => {});
+
+        }
+
+        if (this.ghostWhisper) {
+
+            this.ghostWhisper.currentTime = 0;
+
+            this.ghostWhisper.play().catch(() => {});
+
+        }
+
+        setTimeout(() => {
+
+            if (this.ghost) {
+
+                this.ghost.classList.add("active");
+
+            }
+
+        }, 1000);
+
+        setTimeout(() => {
+
+            if (this.crystal) {
+
+                this.crystal.classList.add("active");
+
+            }
+
+            this.showMessage(
+
+                "Touch the Magic Crystal..."
+
+            );
+
+            this.enableCrystal();
+
+        }, 3000);
+
+    },
+
+    /* ==========================================
+       CRYSTAL
+    ========================================== */
+
+    enableCrystal() {
+
+        if (!this.crystal) return;
 
         this.crystal.addEventListener(
 
@@ -586,7 +501,7 @@ awakenWell() {
 
             () => {
 
-                this.activateCrystal();
+                this.collectCrystal();
 
             },
 
@@ -598,291 +513,269 @@ awakenWell() {
 
         );
 
-    }
+    },
 
-},
+    collectCrystal() {
 
-/* ==========================================
-   CRYSTAL
-========================================== */
+        if (this.rewardSound) {
 
-activateCrystal() {
+            this.rewardSound.currentTime = 0;
 
-    this.showMessage(
+            this.rewardSound.play().catch(() => {});
 
-        "The Crystal accepts your courage."
+        }
 
-    );
+        if (this.flash) {
 
-    if (this.rewardSound) {
+            this.flash.classList.add("active");
 
-        this.rewardSound.currentTime = 0;
+            setTimeout(() => {
 
-        this.rewardSound.play();
+                this.flash.classList.remove("active");
 
-    }
+            }, 400);
 
-    if (this.flash) {
+        }
 
-        this.flash.classList.add("active");
+        this.showMessage(
+
+            "The Ancient Spirit accepts you."
+
+        );
 
         setTimeout(() => {
 
-            this.flash.classList.remove("active");
+            this.showMissionComplete();
 
-        }, 450);
+        }, 1500);
 
-    }
+    },
 
-    setTimeout(() => {
+    /* ==========================================
+       MISSION COMPLETE
+    ========================================== */
 
-        this.showMissionComplete();
+    showMissionComplete() {
 
-    }, 1000);
+        if (!this.missionComplete)
 
-},
+            return;
 
-/* ==========================================
-MISSION COMPLETE
-========================================== */
+        this.missionComplete.classList.add(
 
-showMissionComplete() {
-
-    if (!this.missionComplete)
-
-        return;
-
-    this.missionComplete.classList.add(
-
-        "show"
-
-    );
-
-}
-/* ==========================================
-DAY COMPLETE
-========================================== */
-
-showDayComplete() {
-
-    if (this.missionComplete) {
-
-        this.missionComplete.classList.remove("show");
-
-    }
-
-    if (this.dayComplete) {
-
-        this.dayComplete.classList.add("show");
-
-    }
-
-    /* Save Progress */
-
-    try {
-
-        localStorage.setItem(
-
-            "vidlyra_day2_complete",
-
-            "true"
+            "show"
 
         );
 
-    }
+    },
+       /* ==========================================
+       SAVE PROGRESS
+    ========================================== */
 
-    catch(e){
+    saveProgress() {
 
-        console.log(e);
+        try {
 
-    }
+            localStorage.setItem(
 
-}
+                "vidlyra_day2_complete",
 
-/* ==========================================
-RESTART DAY
-========================================== */
+                "true"
 
-restartGame(){
+            );
 
-    location.reload();
+            localStorage.setItem(
 
-}
+                "vidlyra_day2_runes",
 
-/* ==========================================
-RETURN HOME
-========================================== */
+                this.runesFound
 
-goHome(){
-
-    window.location.href="index.html";
-
-}
-
-/* ==========================================
-PAUSE GAME
-========================================== */
-
-pauseGame(){
-
-    this.canMove=false;
-
-    if(this.pauseMenu){
-
-        this.pauseMenu.style.display="flex";
-
-    }
-
-    if(this.bgMusic){
-
-        this.bgMusic.pause();
-
-    }
-
-}
-
-/* ==========================================
-RESUME GAME
-========================================== */
-
-resumeGame(){
-
-    this.canMove=true;
-
-    if(this.pauseMenu){
-
-        this.pauseMenu.style.display="none";
-
-    }
-
-    if(this.bgMusic){
-
-        this.bgMusic.play().catch(()=>{});
-
-    }
-
-}
-
-/* ==========================================
-MOBILE TOUCH
-========================================== */
-
-enableTouchControls(){
-
-    let startX=0;
-
-    let startY=0;
-
-    window.addEventListener(
-
-        "touchstart",
-
-        (e)=>{
-
-            startX=e.touches[0].clientX;
-
-            startY=e.touches[0].clientY;
+            );
 
         }
 
-    );
+        catch (e) {
 
-    window.addEventListener(
-
-        "touchmove",
-
-        (e)=>{
-
-            if(!this.canMove)return;
-
-            const dx=
-
-            e.touches[0].clientX-startX;
-
-            const dy=
-
-            e.touches[0].clientY-startY;
-
-            this.playerX+=dx*0.01;
-
-            this.playerY-=dy*0.01;
-
-            startX=e.touches[0].clientX;
-
-            startY=e.touches[0].clientY;
+            console.log(e);
 
         }
 
-    );
+    },
 
-}
+    /* ==========================================
+       LOAD PROGRESS
+    ========================================== */
 
-/* ==========================================
-AUTO SAVE
-========================================== */
+    loadProgress() {
 
-saveGame(){
+        try {
 
-    try{
+            const runes =
 
-        localStorage.setItem(
+                localStorage.getItem(
 
-            "day2_runes",
+                    "vidlyra_day2_runes"
 
-            this.runesFound
+                );
+
+            if (runes) {
+
+                this.runesFound =
+
+                    parseInt(runes);
+
+            }
+
+        }
+
+        catch (e) {
+
+            console.log(e);
+
+        }
+
+    },
+
+    /* ==========================================
+       DAY COMPLETE
+    ========================================== */
+
+    finishDay() {
+
+        this.canMove = false;
+
+        this.saveProgress();
+
+        this.showMessage(
+
+            "Day 2 Complete!"
 
         );
 
-    }
+        setTimeout(() => {
 
-    catch(e){}
+            if (this.missionComplete) {
 
-}
+                this.missionComplete.classList.add(
 
-/* ==========================================
-LOAD SAVE
-========================================== */
+                    "show"
 
-loadGame(){
+                );
 
-    try{
+            }
 
-        const save=
+        }, 1200);
 
-        localStorage.getItem(
+    },
 
-            "day2_runes"
+    /* ==========================================
+       MOBILE TOUCH
+    ========================================== */
+
+    enableTouchControls() {
+
+        let startX = 0;
+
+        let startY = 0;
+
+        window.addEventListener(
+
+            "touchstart",
+
+            (e) => {
+
+                startX =
+
+                    e.touches[0].clientX;
+
+                startY =
+
+                    e.touches[0].clientY;
+
+            }
 
         );
 
-        if(save){
+        window.addEventListener(
 
-            this.runesFound=
+            "touchmove",
 
-            parseInt(save);
+            (e) => {
 
-        }
+                if (!this.canMove)
+
+                    return;
+
+                const dx =
+
+                    e.touches[0].clientX -
+
+                    startX;
+
+                const dy =
+
+                    e.touches[0].clientY -
+
+                    startY;
+
+                this.playerX += dx * 0.01;
+
+                this.playerY -= dy * 0.01;
+
+                startX =
+
+                    e.touches[0].clientX;
+
+                startY =
+
+                    e.touches[0].clientY;
+
+            }
+
+        );
+
+    },
+
+    /* ==========================================
+       RESET
+    ========================================== */
+
+    restart() {
+
+        location.reload();
+
+    },
+
+    /* ==========================================
+       GO HOME
+    ========================================== */
+
+    home() {
+
+        window.location.href =
+
+            "index.html";
 
     }
 
-    catch(e){}
-
-}
+};
 
 /* ==========================================
-DEBUG
+START GAME
 ========================================== */
 
-debug(){
+document.addEventListener(
 
-    console.log({
+    "DOMContentLoaded",
 
-        runes:this.runesFound,
+    () => {
 
-        playerX:this.playerX,
+        Game.init();
 
-        playerY:this.playerY
+        Game.loadProgress();
 
-    });
+        Game.enableTouchControls();
 
-}
+    }
+
+);
