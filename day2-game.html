@@ -1,16 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+Vidlyra Halloween Fest 2026 | Day 2 - The Haunted Well
+
+</title>
+
+<link
+rel="stylesheet"
+href="css/day2-game.css">
+
+<link
+rel="stylesheet"
+href="css/day2-game-animations.css">
+
+</head>
+
 <body>
 
-<!-- ==========================
-DAY 2 INTRO
-========================== -->
+<!-- ==========================================
+INTRO SCREEN
+========================================== -->
 
 <div id="introScreen">
 
     <div class="intro-content">
 
-        <h1>DAY 2</h1>
+        <h1>
 
-        <h2>The Haunted Well</h2>
+            DAY 2
+
+        </h1>
+
+        <h2>
+
+            The Haunted Well
+
+        </h2>
 
         <p id="introText">
 
@@ -22,176 +56,227 @@ DAY 2 INTRO
 
 </div>
 
-<!-- ==========================
+<!-- ==========================================
 FLASH EFFECT
-========================== -->
+========================================== -->
 
 <div id="flash"></div>
 
-<!-- ==========================
+<!-- ==========================================
+SCREEN GLOW
+========================================== -->
+
+<div id="screenGlow"></div>
+
+<!-- ==========================================
+SHAKE LAYER
+========================================== -->
+
+<div id="shakeLayer"></div>
+
+<!-- ==========================================
 PARTICLES
-========================== -->
+========================================== -->
 
 <div id="particles"></div>
 
-<!-- ==========================
+<!-- ==========================================
+GAME WORLD
+========================================== -->
+
+<div id="gameWorld">
+
+<!-- ==========================================
 BACKGROUND
-========================== -->
+========================================== -->
 
 <div class="background"></div>
 
 <div class="background-layer"></div>
 
-<!-- ==========================
+<!-- ==========================================
 CASTLE
-========================== -->
+========================================== -->
 
 <img
+
 src="assets/images/castle 2.png"
+
 class="castle"
-alt="Castle">
 
-<!-- ==========================
+alt="Castle"
+
+draggable="false">
+
+<!-- ==========================================
 BLUE FOG
-========================== -->
+========================================== -->
 
 <img
+
 src="assets/images/blue_fog.png"
+
 class="fog fog-back"
-alt="Fog">
+
+alt="Blue Fog"
+
+draggable="false">
 
 <img
+
 src="assets/images/blue_fog.png"
+
 class="fog fog-front"
-alt="Fog">
 
-<!-- ==========================
+alt="Blue Fog"
+
+draggable="false">
+
+<!-- ==========================================
 STONE CIRCLE
-========================== -->
+========================================== -->
 
 <img
+
 src="assets/images/stone-circle.png"
+
 class="stone-circle"
-alt="Stone Circle">
 
-<!-- ==========================
+alt="Stone Circle"
+
+draggable="false">
+
+<!-- ==========================================
 HAUNTED WELL
-========================== -->
+========================================== -->
 
 <img
+
 src="assets/images/well.png"
+
 class="well"
-alt="Haunted Well">
 
-<!-- ==========================
+alt="Haunted Well"
+
+draggable="false">
+
+<!-- ==========================================
 WATER RIPPLE
-========================== -->
+========================================== -->
 
 <img
+
 src="assets/images/water_ripple.png"
+
 class="ripple"
-alt="Water Ripple">
 
-<!-- ==========================
+alt="Water Ripple"
+
+draggable="false">
+
+<!-- ==========================================
 BLUE FIRE
-========================== -->
+========================================== -->
 
 <img
+
 src="assets/images/blue_fire.png"
+
 class="fire fire-left"
-alt="Blue Fire">
+
+alt="Blue Fire"
+
+draggable="false">
 
 <img
+
 src="assets/images/blue_fire.png"
+
 class="fire fire-right"
-alt="Blue Fire">
 
-<!-- ==========================
+alt="Blue Fire"
+
+draggable="false">
+
+<!-- ==========================================
 CANDLES
-========================== -->
+========================================== -->
 
 <img
+
 src="assets/images/candle.png"
+
 class="candle candle-left"
-alt="Candle">
+
+alt="Candle"
+
+draggable="false">
 
 <img
+
 src="assets/images/candle 2.png"
+
 class="candle candle-right"
-alt="Candle">
 
-<!-- ==========================
+alt="Candle"
+
+draggable="false">
+
+<!-- ==========================================
 SKULLS
-========================== -->
+========================================== -->
 
 <img
+
 src="assets/images/skull.png"
+
 class="skull skull-left"
-alt="Skull">
+
+alt="Skull"
+
+draggable="false">
 
 <img
+
 src="assets/images/skull.png"
+
 class="skull skull-right"
-alt="Skull">
 
-<!-- ==========================
+alt="Skull"
+
+draggable="false">
+
+<!-- ==========================================
 PUMPKIN
-========================== -->
+========================================== -->
 
 <img
+
 src="assets/images/smile pumpkin.png"
+
 class="pumpkin"
-alt="Pumpkin">
 
-<!-- ==========================
+alt="Pumpkin"
+
+draggable="false">
+
+<!-- ==========================================
 WITCH HAT
-========================== -->
+========================================== -->
 
 <img
+
 src="assets/images/witch hat and candile.png"
+
 class="witch"
-alt="Witch Hat">
 
-<!-- ==========================
-RUNES
-========================== -->
+alt="Witch Hat"
 
-<img
-src="assets/images/rune1.png"
-class="rune rune1"
-alt="Rune 1">
+draggable="false">
 
-<img
-src="assets/images/rune2.png"
-class="rune rune2"
-alt="Rune 2">
-
-<img
-src="assets/images/rune3.png"
-class="rune rune3"
-alt="Rune 3">
-
-<!-- ==========================
-GHOST
-========================== -->
-
-<img
-src="assets/images/ghost_blue.png"
-class="ghost"
-alt="Ghost">
-
-<!-- ==========================
-MAGIC CRYSTAL
-========================== -->
-
-<img
-src="assets/images/magic_crystal.png"
-class="crystal"
-alt="Crystal">
-
-  <!-- ==========================
+<!-- ==========================================
 PLAYER
-========================== -->
+========================================== -->
 
 <div id="player">
 
@@ -199,133 +284,366 @@ PLAYER
 
 </div>
 
-<!-- ==========================
+<div id="playerShadow"></div>
+
+<!-- ==========================================
+ANCIENT RUNES
+========================================== -->
+
+<img
+
+src="assets/images/rune1.png"
+
+class="rune rune1"
+
+id="rune1"
+
+alt="Rune 1"
+
+draggable="false">
+
+<img
+
+src="assets/images/rune2.png"
+
+class="rune rune2"
+
+id="rune2"
+
+alt="Rune 2"
+
+draggable="false">
+
+<img
+
+src="assets/images/rune3.png"
+
+class="rune rune3"
+
+id="rune3"
+
+alt="Rune 3"
+
+draggable="false">
+
+<!-- ==========================================
+BLUE GHOST
+========================================== -->
+
+<img
+
+src="assets/images/ghost_blue.png"
+
+class="ghost"
+
+id="ghost"
+
+alt="Ghost"
+
+draggable="false">
+
+<!-- ==========================================
+MAGIC CRYSTAL
+========================================== -->
+
+<img
+
+src="assets/images/magic_crystal.png"
+
+class="crystal"
+
+id="crystal"
+
+alt="Crystal"
+
+draggable="false">
+
+<!-- ==========================================
+OBJECTIVE
+========================================== -->
+
+<div id="objective">
+
+🔮 Collect all three Ancient Runes to awaken the Haunted Well.
+
+</div>
+
+<!-- ==========================================
+INTERACTION PROMPT
+========================================== -->
+
+<div id="interactionPrompt">
+
+Click the glowing runes.
+
+</div>
+
+</div>
+
+<!-- ==========================================
 MISSION PANEL
-========================== -->
+========================================== -->
 
 <div class="mission-panel">
 
-    <h3>🎯 Day 2 Mission</h3>
+<h3>
 
-    <p>
+🎯 Day 2 Mission
 
-        Find all three Ancient Runes to awaken the Haunted Well.
+</h3>
 
-    </p>
+<p>
 
-    <div class="progress">
+Find all three Ancient Runes hidden around the Haunted Well.
 
-        <div class="progress-fill" id="progressFill"></div>
+</p>
 
-    </div>
+<div class="progress">
 
-    <div class="runeCounter" id="runeCounter">
+<div
 
-        🔷 Ancient Runes : 0 / 3
+class="progress-fill"
 
-    </div>
+id="progressFill">
 
 </div>
 
-<!-- ==========================
+</div>
+
+<div
+
+class="runeCounter"
+
+id="runeCounter">
+
+🔷 Ancient Runes : 0 / 3
+
+</div>
+
+</div>
+
+<!-- ==========================================
 DIALOG BOX
-========================== -->
+========================================== -->
 
 <div id="dialogBox">
 
-    <p id="dialogText">
+<p id="dialogText">
 
-        Explore the Haunted Well...
+Explore the Haunted Well...
 
-    </p>
+</p>
 
 </div>
 
-<!-- ==========================
+<!-- ==========================================
 MISSION COMPLETE
-========================== -->
+========================================== -->
 
 <div id="missionComplete">
 
+<h2>
+
+🎉 Mission Complete!
+
+</h2>
+
+<p>
+
+The Haunted Well has awakened.
+
+</p>
+
+<button id="nextBtn">
+
+Continue to Day 3
+
+</button>
+
+</div>
+
+<!-- ==========================================
+PAUSE MENU
+========================================== -->
+
+<div id="pauseMenu">
+
+<h2>
+
+Game Paused
+
+</h2>
+
+<button id="resumeBtn">
+
+Resume
+
+</button>
+
+<button id="restartBtn">
+
+Restart Day
+
+</button>
+
+<button id="homeBtn">
+
+Return Home
+
+</button>
+
+</div>
+
+<!-- ==========================================
+LOADING OVERLAY
+========================================== -->
+
+<div id="loadingOverlay">
+
+<div class="loaderCircle"></div>
+
+<p>
+
+Preparing the Haunted Well...
+
+</p>
+
+</div>
+<!-- ==========================================
+DAY COMPLETE
+========================================== -->
+
+<div id="dayComplete">
+
+    <h1>
+
+        DAY 2 COMPLETE
+
+    </h1>
+
     <h2>
 
-        🎉 Mission Complete!
+        The Haunted Well has been awakened.
 
     </h2>
 
     <p>
 
-        The Haunted Well has awakened.
+        The ancient spirit has revealed the path ahead.
+
+        Continue your journey into the cursed forest...
 
     </p>
 
-    <button id="nextBtn">
+    <button id="continueDay3">
 
-        Continue to Day 3
+        ▶ Continue to Day 3
 
     </button>
 
 </div>
 
-<!-- ==========================
-SCREEN GLOW
-========================== -->
+<!-- ==========================================
+BLACK FADE
+========================================== -->
 
-<div id="screenGlow"></div>
+<div id="fadeScreen"></div>
 
-<!-- ==========================
-SHAKE LAYER
-========================== -->
+<!-- ==========================================
+AMBIENT PARTICLES
+========================================== -->
 
-<div id="shakeLayer"></div>
+<div id="ambientParticles"></div>
 
-<!-- ==========================
+<!-- ==========================================
 AUDIO
-========================== -->
+========================================== -->
 
-<audio id="bgMusic" loop>
+<audio
+id="bgMusic"
+loop
+preload="auto">
 
-    <source
-    src="assets/ambience.mp3"
-    type="audio/mpeg">
-
-</audio>
-
-<audio id="ghostWhisper">
-
-    <source
-    src="assets/ghost-whisper.mp3"
-    type="audio/mpeg">
+<source
+src="assets/ambience.mp3"
+type="audio/mpeg">
 
 </audio>
 
-<audio id="wellRumble">
+<audio
+id="ghostWhisper"
+preload="auto">
 
-    <source
-    src="assets/well-rumble.mp3"
-    type="audio/mpeg">
-
-</audio>
-
-<audio id="magicSound">
-
-    <source
-    src="assets/magic.mp3"
-    type="audio/mpeg">
+<source
+src="assets/ghost-whisper.mp3"
+type="audio/mpeg">
 
 </audio>
 
-<audio id="rewardSound">
+<audio
+id="wellRumble"
+preload="auto">
 
-    <source
-    src="assets/reward.mp3"
-    type="audio/mpeg">
+<source
+src="assets/well-rumble.mp3"
+type="audio/mpeg">
 
 </audio>
 
-<!-- ==========================
+<audio
+id="magicSound"
+preload="auto">
+
+<source
+src="assets/magic.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio
+id="rewardSound"
+preload="auto">
+
+<source
+src="assets/reward.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio
+id="collectSound"
+preload="auto">
+
+<source
+src="assets/collect.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio
+id="ambientWind"
+loop
+preload="auto">
+
+<source
+src="assets/wind.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio
+id="stoneMove"
+preload="auto">
+
+<source
+src="assets/stone.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<!-- ==========================================
 JAVASCRIPT
-========================== -->
+========================================== -->
 
 <script src="js/day2-game.js"></script>
 
