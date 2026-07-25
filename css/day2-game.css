@@ -642,3 +642,124 @@ DAY 2 INTRO
     font-style:italic;
 
 }
+/* ==========================================
+GHOST
+========================================== */
+
+.ghost{
+
+    opacity:0;
+
+    transition:2s;
+
+}
+
+.ghost.active{
+
+    opacity:1;
+
+}
+
+/* ==========================================
+CRYSTAL
+========================================== */
+
+.crystal{
+
+    opacity:0;
+
+    transform:translate(-50%,60px);
+
+    transition:2s;
+
+}
+
+.crystal.active{
+
+    opacity:1;
+
+    transform:translate(-50%,0);
+
+}
+
+/* ==========================================
+MISSION COMPLETE
+========================================== */
+
+#missionComplete{
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:1s;
+
+}
+
+#missionComplete.show{
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+/* ==========================================
+DIALOG
+========================================== */
+
+#dialogBox{
+
+    position:fixed;
+
+    left:50%;
+
+    bottom:40px;
+
+    transform:translateX(-50%);
+
+    background:rgba(0,0,0,.8);
+
+    color:#fff;
+
+    padding:18px 30px;
+
+    border-radius:40px;
+
+    opacity:0;
+
+    transition:.5s;
+
+    z-index:9999;
+
+}
+
+#dialogBox.show{
+
+    opacity:1;
+
+}
+
+/* ==========================================
+SCREEN SHAKE
+========================================== */
+
+.shake{
+
+    animation:screenShake .12s linear 10;
+
+}
+
+@keyframes screenShake{
+
+    0%{transform:translate(0,0);}
+
+    25%{transform:translate(-4px,3px);}
+
+    50%{transform:translate(4px,-3px);}
+
+    75%{transform:translate(-3px,-2px);}
+
+    100%{transform:translate(0,0);}
+
+}
