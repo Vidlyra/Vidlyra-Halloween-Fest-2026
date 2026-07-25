@@ -3,100 +3,174 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>Day 1 Adventure</title>
+    <title>Vidlyra Halloween Fest 2026 | Day 1 Adventure</title>
 
-<link rel="stylesheet" href="css/adventure.css">
-<link rel="stylesheet" href="css/adventure-animations.css">
+    <link rel="stylesheet" href="css/adventure.css">
+    <link rel="stylesheet" href="css/adventure-animations.css">
 
 </head>
 
 <body>
 
-<div class="background"></div>
+    <!-- ===========================
+         BACKGROUND
+    ============================ -->
 
-<div class="background-layer"></div>
+    <div class="background"></div>
 
-<div class="cloud cloud1"></div>
-<div class="cloud cloud2"></div>
+    <div class="background-layer"></div>
 
-<div class="castle"></div>
+    <!-- ===========================
+         CLOUDS
+    ============================ -->
 
-<img
-src="assets/images/forest.svg.png"
-class="forest"
-alt="Forest">
+    <div class="cloud cloud1"></div>
 
-<div class="fog fog-back"></div>
-<div class="fog fog-front"></div>
+    <div class="cloud cloud2"></div>
 
-<!-- Mission -->
+    <!-- ===========================
+         CASTLE
+    ============================ -->
 
-<div class="mission">
+    <div class="castle"></div>
 
-<h2>Mission</h2>
+    <!-- ===========================
+         FOREST
+    ============================ -->
 
-<p>
+    <img
+        src="assets/images/forest.svg.png"
+        class="forest"
+        alt="Forest">
 
-Find the Pumpkin Gate
+    <!-- ===========================
+         FOG
+    ============================ -->
 
-</p>
+    <div class="fog fog-back"></div>
 
-</div>
+    <div class="fog fog-front"></div>
 
-<!-- Player -->
+    <!-- ===========================
+         MISSION TITLE
+    ============================ -->
 
-<div id="player">
+    <div class="mission">
 
-🧙
+        <h2>🎃 Day 1 Mission</h2>
 
-</div>
+        <p>
 
-<!-- Objects -->
+            Find the Pumpkin Gate hidden in the haunted forest.
 
-<img
-src="assets/images/pumpkin.png.png"
-class="pumpkin">
-
-<img
-src="assets/images/ghost.svg"
-class="ghost">
-
-<img
-src="assets/images/Spider.svg"
-class="spider">
-  
-<div class="mission-panel">
-
-    <h3>🎯 Current Mission</h3>
-
-    <p>Find the Pumpkin Gate hidden in the forest.</p>
-
-    <div class="progress">
-
-        <div class="progress-fill"></div>
+        </p>
 
     </div>
 
-</div>
-<button id="continueBtn">
+    <!-- ===========================
+         PLAYER
+    ============================ -->
 
-Continue
+    <div id="player">
 
-</button>
+        🧙
 
-<script src="js/adventure.js"></script>
-<div id="missionComplete">
+    </div>
 
-    <h2>🎉 Mission Complete!</h2>
+    <!-- ===========================
+         OBJECTS
+    ============================ -->
 
-    <p>Pumpkin Gate Found</p>
+    <img
+        src="assets/images/pumpkin.png.png"
+        class="pumpkin"
+        alt="Pumpkin Gate">
 
-</div>
+    <img
+        src="assets/images/ghost.svg"
+        class="ghost"
+        alt="Ghost">
+
+    <img
+        src="assets/images/Spider.svg"
+        class="spider"
+        alt="Spider">
+
+    <!-- ===========================
+         MISSION PANEL
+    ============================ -->
+
+    <div class="mission-panel">
+
+        <h3>🎯 Current Mission</h3>
+
+        <p>
+
+            Find the Pumpkin Gate hidden in the forest.
+
+        </p>
+
+        <div class="progress">
+
+            <div class="progress-fill"></div>
+
+        </div>
+
+    </div>
+
+    <!-- ===========================
+         CONTINUE BUTTON
+    ============================ -->
+
+    <button id="continueBtn">
+
+        Continue Adventure
+
+    </button>
+
+    <!-- ===========================
+         MISSION COMPLETE POPUP
+    ============================ -->
+
+    <div id="missionComplete">
+
+        <h2>🎉 Mission Complete!</h2>
+
+        <p>
+
+            Pumpkin Gate Found
+
+        </p>
+
+    </div>
+
+    <!-- ===========================
+         AUDIO
+    ============================ -->
+
+    <audio id="bgMusic" preload="auto" loop>
+
+        <source src="assets/ambience.mp3" type="audio/mpeg">
+
+    </audio>
+
+    <audio id="buttonSound">
+
+        <source src="assets/button.mp3" type="audio/mpeg">
+
+    </audio>
+
+    <!-- ===========================
+         JAVASCRIPT
+    ============================ -->
+
+    <script src="js/adventure.js"></script>
+
 </body>
 
 </html>
