@@ -1,60 +1,98 @@
 /* ==========================================
    VIDLYRA HALLOWEEN FEST 2026
-   DAY 2 VIDEO
+   DAY 2 VIDEO CONTROLLER
 ========================================== */
 
-const video = document.getElementById("introVideo");
+document.addEventListener("DOMContentLoaded", () => {
 
-const overlay = document.getElementById("videoOverlay");
+    const video = document.getElementById("introVideo");
 
-const enterButton = document.getElementById("enterWell");
+    const startScreen = document.getElementById("startScreen");
 
-const skipButton = document.getElementById("skipBtn");
+    const startBtn = document.getElementById("startBtn");
 
-/* -------------------------
-Video Finished
--------------------------- */
+    const overlay = document.getElementById("videoOverlay");
 
-if(video){
+    const enterWell = document.getElementById("enterWell");
 
-    video.addEventListener("ended",()=>{
+    const skipBtn = document.getElementById("skipBtn");
 
-        overlay.classList.add("show");
+    /* -----------------------------
+       Start Experience
+    ------------------------------ */
 
-    });
+    if (startBtn) {
 
-}
+        startBtn.addEventListener("click", () => {
 
-/* -------------------------
-Enter Game
--------------------------- */
+            startScreen.style.display = "none";
 
-if(enterButton){
+            video.muted = false;
 
-    enterButton.addEventListener("click",()=>{
+            video.volume = 1;
 
-        window.location.href="day2-game.html";
+            video.currentTime = 0;
 
-    });
+            video.play().catch(error => {
 
-}
+                console.log(error);
 
-/* -------------------------
-Skip Intro
--------------------------- */
+            });
 
-if(skipButton){
+        });
 
-    skipButton.addEventListener("click",()=>{
+    }
 
-        if(video){
+    /* -----------------------------
+       Video Finished
+    ------------------------------ */
 
-            video.pause();
+    if (video) {
 
-        }
+        video.addEventListener("ended", () => {
 
-        window.location.href="day2-game.html";
+            if (overlay) {
 
-    });
+                overlay.classList.add("show");
 
-}
+            }
+
+        });
+
+    }
+
+    /* -----------------------------
+       Enter the Well
+    ------------------------------ */
+
+    if (enterWell) {
+
+        enterWell.addEventListener("click", () => {
+
+            window.location.href = "day2-game.html";
+
+        });
+
+    }
+
+    /* -----------------------------
+       Skip Intro
+    ------------------------------ */
+
+    if (skipBtn) {
+
+        skipBtn.addEventListener("click", () => {
+
+            if (video) {
+
+                video.pause();
+
+            }
+
+            window.location.href = "day2-game.html";
+
+        });
+
+    }
+
+});
