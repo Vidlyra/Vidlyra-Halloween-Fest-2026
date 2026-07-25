@@ -1,0 +1,573 @@
+/* ==========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 2 - HAUNTED WELL
+========================================== */
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    background:#000;
+
+}
+
+body{
+
+    position:relative;
+
+}
+
+/* ==========================================
+BACKGROUND
+========================================== */
+
+.background{
+
+    position:fixed;
+
+    inset:0;
+
+    background:url("../assets/images/background 1.png")
+        center center;
+
+    background-size:cover;
+
+    background-repeat:no-repeat;
+
+    z-index:1;
+
+}
+
+.background-layer{
+
+    position:fixed;
+
+    inset:0;
+
+    background:url("../assets/images/background 2.png")
+        center center;
+
+    background-size:cover;
+
+    background-repeat:no-repeat;
+
+    opacity:.35;
+
+    z-index:2;
+
+}
+
+/* ==========================================
+CASTLE
+========================================== */
+
+.castle{
+
+    position:absolute;
+
+    top:2%;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:34vw;
+
+    max-width:650px;
+
+    min-width:250px;
+
+    z-index:4;
+
+}
+
+/* ==========================================
+BLUE FOG
+========================================== */
+
+.fog{
+
+    position:absolute;
+
+    width:180%;
+
+    pointer-events:none;
+
+}
+
+.fog-back{
+
+    bottom:18%;
+
+    opacity:.28;
+
+    z-index:5;
+
+}
+
+.fog-front{
+
+    bottom:0;
+
+    opacity:.45;
+
+    z-index:20;
+
+}
+
+/* ==========================================
+STONE CIRCLE
+========================================== */
+
+.stone-circle{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:15%;
+
+    transform:translateX(-50%);
+
+    width:520px;
+
+    z-index:8;
+
+}
+
+/* ==========================================
+HAUNTED WELL
+========================================== */
+
+.well{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:18%;
+
+    transform:translateX(-50%);
+
+    width:230px;
+
+    z-index:10;
+
+}
+
+/* ==========================================
+WATER RIPPLE
+========================================== */
+
+.ripple{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:27%;
+
+    transform:translateX(-50%);
+
+    width:120px;
+
+    z-index:11;
+
+}
+
+/* ==========================================
+BLUE FIRE
+========================================== */
+
+.fire{
+
+    position:absolute;
+
+    width:90px;
+
+    z-index:9;
+
+}
+
+.fire-left{
+
+    left:34%;
+
+    bottom:20%;
+
+}
+
+.fire-right{
+
+    right:34%;
+
+    bottom:20%;
+
+}
+
+/* ==========================================
+CANDLES
+========================================== */
+
+.candle{
+
+    position:absolute;
+
+    width:70px;
+
+    z-index:9;
+
+}
+
+.candle-left{
+
+    left:28%;
+
+    bottom:19%;
+
+}
+
+.candle-right{
+
+    right:28%;
+
+    bottom:19%;
+
+}
+
+/* ==========================================
+SKULLS
+========================================== */
+
+.skull{
+
+    position:absolute;
+
+    width:55px;
+
+    z-index:9;
+
+}
+
+.skull-left{
+
+    left:39%;
+
+    bottom:15%;
+
+}
+
+.skull-right{
+
+    right:39%;
+
+    bottom:15%;
+
+}
+
+/* ==========================================
+PUMPKIN
+========================================== */
+
+.pumpkin{
+
+    position:absolute;
+
+    left:12%;
+
+    bottom:8%;
+
+    width:130px;
+
+    z-index:8;
+
+}
+
+/* ==========================================
+WITCH HAT
+========================================== */
+
+.witch{
+
+    position:absolute;
+
+    right:12%;
+
+    bottom:10%;
+
+    width:130px;
+
+    z-index:8;
+
+}
+
+/* ==========================================
+RUNES
+========================================== */
+
+.rune{
+
+    position:absolute;
+
+    width:70px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    z-index:15;
+
+}
+
+.rune:hover{
+
+    transform:scale(1.15);
+
+}
+
+.rune1{
+
+    left:30%;
+
+    bottom:24%;
+
+}
+
+.rune2{
+
+    right:30%;
+
+    bottom:24%;
+
+}
+
+.rune3{
+
+    left:50%;
+
+    bottom:7%;
+
+    transform:translateX(-50%);
+
+}
+
+/* ==========================================
+GHOST
+========================================== */
+
+.ghost{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:35%;
+
+    transform:translateX(-50%);
+
+    width:170px;
+
+    opacity:0;
+
+    z-index:18;
+
+}
+
+/* ==========================================
+MAGIC CRYSTAL
+========================================== */
+
+.crystal{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:30%;
+
+    transform:translateX(-50%);
+
+    width:110px;
+
+    opacity:0;
+
+    cursor:pointer;
+
+    z-index:19;
+
+}
+
+/* ==========================================
+PLAYER
+========================================== */
+
+#player{
+
+    position:absolute;
+
+    left:15%;
+
+    bottom:12%;
+
+    font-size:4rem;
+
+    z-index:30;
+
+}
+
+/* ==========================================
+MISSION PANEL
+========================================== */
+
+.mission-panel{
+
+    position:absolute;
+
+    left:30px;
+
+    bottom:30px;
+
+    width:330px;
+
+    padding:20px;
+
+    border-radius:20px;
+
+    background:rgba(0,0,0,.55);
+
+    border:1px solid rgba(0,180,255,.6);
+
+    backdrop-filter:blur(8px);
+
+    color:white;
+
+    z-index:50;
+
+}
+
+.mission-panel h3{
+
+    color:#3edbff;
+
+}
+
+.progress{
+
+    width:100%;
+
+    height:10px;
+
+    margin-top:20px;
+
+    background:#222;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.progress-fill{
+
+    width:0%;
+
+    height:100%;
+
+    background:linear-gradient(
+
+        90deg,
+
+        cyan,
+
+        #00b7ff
+
+    );
+
+}
+
+/* ==========================================
+MISSION COMPLETE
+========================================== */
+
+#missionComplete{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.88);
+
+    color:white;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.5s;
+
+    z-index:999;
+
+}
+
+#missionComplete.show{
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+#missionComplete h2{
+
+    font-size:3rem;
+
+    color:#42d7ff;
+
+}
+
+#missionComplete p{
+
+    margin:20px 0;
+
+    font-size:1.3rem;
+
+}
+
+#nextBtn{
+
+    padding:18px 45px;
+
+    border:none;
+
+    border-radius:40px;
+
+    background:#00b7ff;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:1rem;
+
+}
