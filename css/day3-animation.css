@@ -1,0 +1,533 @@
+/* ==========================================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 3 ANIMATIONS
+========================================================== */
+
+/* ==========================================
+FOG
+========================================== */
+
+.fog{
+
+    animation:fogMove 28s linear infinite;
+
+}
+
+.fog-middle{
+
+    animation-duration:20s;
+
+}
+
+.fog-front{
+
+    animation-duration:16s;
+
+}
+
+@keyframes fogMove{
+
+    0%{
+
+        transform:translateX(-8%);
+
+    }
+
+    50%{
+
+        transform:translateX(6%);
+
+    }
+
+    100%{
+
+        transform:translateX(-8%);
+
+    }
+
+}
+
+/* ==========================================
+TREES
+========================================== */
+
+.tree{
+
+    transform-origin:bottom center;
+
+    animation:treeSway 6s ease-in-out infinite;
+
+}
+
+.tree-right{
+
+    animation-delay:2s;
+
+}
+
+@keyframes treeSway{
+
+    0%{
+
+        transform:rotate(0deg);
+
+    }
+
+    50%{
+
+        transform:rotate(2deg);
+
+    }
+
+    100%{
+
+        transform:rotate(0deg);
+
+    }
+
+}
+
+/* ==========================================
+RIVER
+========================================== */
+
+.river{
+
+    animation:riverFlow 5s ease-in-out infinite;
+
+}
+
+@keyframes riverFlow{
+
+    0%{
+
+        filter:brightness(.95);
+
+    }
+
+    50%{
+
+        filter:brightness(1.15);
+
+    }
+
+    100%{
+
+        filter:brightness(.95);
+
+    }
+
+}
+
+/* ==========================================
+PORTAL
+========================================== */
+
+.portal{
+
+    animation:portalSpin 4s linear infinite;
+
+}
+
+@keyframes portalSpin{
+
+    from{
+
+        transform:
+
+        translateX(-50%)
+
+        rotate(0deg);
+
+    }
+
+    to{
+
+        transform:
+
+        translateX(-50%)
+
+        rotate(360deg);
+
+    }
+
+}
+
+/* ==========================================
+CRYSTALS
+========================================== */
+
+.crystal{
+
+    animation:crystalFloat 2.5s ease-in-out infinite;
+
+}
+
+.crystal2{
+
+    animation-delay:.4s;
+
+}
+
+.crystal3{
+
+    animation-delay:.8s;
+
+}
+
+.crystal4{
+
+    animation-delay:1.2s;
+
+}
+
+.crystal5{
+
+    animation-delay:1.6s;
+
+}
+
+@keyframes crystalFloat{
+
+    0%{
+
+        transform:translateY(0);
+
+        filter:drop-shadow(0 0 8px cyan);
+
+    }
+
+    50%{
+
+        transform:translateY(-12px);
+
+        filter:drop-shadow(0 0 25px cyan);
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+        filter:drop-shadow(0 0 8px cyan);
+
+    }
+
+}
+/* ==========================================
+DRACULA
+========================================== */
+
+.dracula{
+
+    transform-origin:center bottom;
+
+    animation:draculaIdle 4s ease-in-out infinite;
+
+}
+
+@keyframes draculaIdle{
+
+    0%{
+
+        transform:translateX(-50%) translateY(0);
+
+        filter:drop-shadow(0 0 8px crimson);
+
+    }
+
+    50%{
+
+        transform:translateX(-50%) translateY(-8px);
+
+        filter:drop-shadow(0 0 22px crimson);
+
+    }
+
+    100%{
+
+        transform:translateX(-50%) translateY(0);
+
+        filter:drop-shadow(0 0 8px crimson);
+
+    }
+
+}
+
+/* ==========================================
+BATS
+========================================== */
+
+.bat{
+
+    animation:batFly 10s linear infinite;
+
+}
+
+.bat1{
+
+    animation-duration:8s;
+
+}
+
+.bat2{
+
+    animation-duration:9s;
+
+    animation-delay:1s;
+
+}
+
+.bat3{
+
+    animation-duration:11s;
+
+    animation-delay:2s;
+
+}
+
+.bat4{
+
+    animation-duration:10s;
+
+    animation-delay:3s;
+
+}
+
+.bat5{
+
+    animation-duration:12s;
+
+    animation-delay:4s;
+
+}
+
+@keyframes batFly{
+
+    0%{
+
+        transform:translateX(0) translateY(0);
+
+    }
+
+    25%{
+
+        transform:translateX(60px) translateY(-20px);
+
+    }
+
+    50%{
+
+        transform:translateX(120px) translateY(15px);
+
+    }
+
+    75%{
+
+        transform:translateX(60px) translateY(-25px);
+
+    }
+
+    100%{
+
+        transform:translateX(0) translateY(0);
+
+    }
+
+}
+
+/* ==========================================
+MUSHROOMS
+========================================== */
+
+.mushroom{
+
+    animation:mushroomGlow 2.5s ease-in-out infinite;
+
+}
+
+.mushroom-right{
+
+    animation-delay:1.2s;
+
+}
+
+@keyframes mushroomGlow{
+
+    0%{
+
+        filter:brightness(.9);
+
+    }
+
+    50%{
+
+        filter:
+
+        brightness(1.4)
+
+        drop-shadow(0 0 15px cyan);
+
+    }
+
+    100%{
+
+        filter:brightness(.9);
+
+    }
+
+}
+
+/* ==========================================
+SPIDER WEBS
+========================================== */
+
+.web{
+
+    transform-origin:top center;
+
+    animation:webSwing 5s ease-in-out infinite;
+
+}
+
+.web-right{
+
+    animation-delay:2s;
+
+}
+
+@keyframes webSwing{
+
+    0%{
+
+        transform:rotate(0deg);
+
+    }
+
+    50%{
+
+        transform:rotate(3deg);
+
+    }
+
+    100%{
+
+        transform:rotate(0deg);
+
+    }
+
+}
+
+/* ==========================================
+MISSION PANEL
+========================================== */
+
+.mission-panel{
+
+    animation:panelGlow 4s ease-in-out infinite;
+
+}
+
+@keyframes panelGlow{
+
+    0%{
+
+        box-shadow:0 0 10px rgba(0,200,255,.2);
+
+    }
+
+    50%{
+
+        box-shadow:0 0 28px rgba(0,220,255,.8);
+
+    }
+
+    100%{
+
+        box-shadow:0 0 10px rgba(0,200,255,.2);
+
+    }
+
+}
+
+/* ==========================================
+FLASH
+========================================== */
+
+#flash.active,
+
+#lightningFlash.active{
+
+    animation:lightningFlash .45s ease;
+
+}
+
+@keyframes lightningFlash{
+
+    0%{
+
+        opacity:0;
+
+    }
+
+    30%{
+
+        opacity:.9;
+
+    }
+
+    60%{
+
+        opacity:.3;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
+
+/* ==========================================
+INTRO TITLE
+========================================== */
+
+.intro-content{
+
+    animation:introFade 5s ease;
+
+}
+
+@keyframes introFade{
+
+    0%{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    20%{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+    80%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
