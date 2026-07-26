@@ -5,55 +5,175 @@
 
 <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<meta
-name="theme-color"
-content="#000000">
-
-<meta
-name="description"
-content="VIDLYRA HALLOWEEN FEST 2026 - DAY 5 - The Haunted Cemetery">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>
-
-VIDLYRA HALLOWEEN FEST 2026
-DAY 5
-THE HAUNTED CEMETERY
-
+VIDLYRA HALLOWEEN FEST 2026 - DAY 5
 </title>
 
-<link
-rel="stylesheet"
-href="css/day5-video.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+
+body{
+
+overflow:hidden;
+background:black;
+font-family:Arial, sans-serif;
+
+}
+
+
+
+#videoContainer{
+
+width:100vw;
+height:100vh;
+position:relative;
+
+}
+
+
+
+video{
+
+width:100%;
+height:100%;
+
+object-fit:cover;
+
+}
+
+
+
+/* END OVERLAY */
+
+
+#endOverlay{
+
+position:absolute;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:
+
+rgba(0,0,0,0.75);
+
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+
+opacity:0;
+
+pointer-events:none;
+
+transition:1.5s;
+
+
+}
+
+
+#endOverlay.show{
+
+opacity:1;
+
+pointer-events:auto;
+
+}
+
+
+
+#endOverlay h1{
+
+
+color:white;
+
+font-size:clamp(30px,5vw,70px);
+
+text-align:center;
+
+letter-spacing:5px;
+
+
+animation:pulse 2s infinite;
+
+
+}
+
+
+
+#endOverlay p{
+
+margin-top:25px;
+
+color:#ff8800;
+
+font-size:clamp(16px,2vw,30px);
+
+}
+
+
+
+@keyframes pulse{
+
+
+0%,100%{
+
+transform:scale(1);
+
+}
+
+
+50%{
+
+transform:scale(1.08);
+
+}
+
+
+}
+
+
+
+</style>
+
 
 </head>
 
+
 <body>
 
-<!-- ==========================================
-VIDEO CONTAINER
-========================================== -->
+
 
 <div id="videoContainer">
 
+
 <video
 
-id="introVideo"
-
-class="introVideo"
+id="day5Video"
 
 autoplay
 
 muted
 
-playsinline
+playsinline>
 
-preload="auto"
-
->
 
 <source
 
@@ -61,280 +181,95 @@ src="assets/video/day5-intro.mp4"
 
 type="video/mp4">
 
-Your browser does not support HTML5 video.
 
 </video>
 
-</div>
 
-<!-- ==========================================
-DARK OVERLAY
-========================================== -->
 
-<div id="overlay"></div>
 
-<!-- ==========================================
-LIGHTNING FLASH
-========================================== -->
 
-<div id="lightningFlash"></div>
+<div id="endOverlay"
 
-<!-- ==========================================
-FADE SCREEN
-========================================== -->
+onclick="enterGame()">
 
-<div id="fadeScreen"></div>
 
-<!-- ==========================================
-VIDEO PROGRESS
-========================================== -->
 
-<div id="videoProgress">
+<h1>
 
-<div id="videoFill"></div>
+THE HAUNTED CEMETERY
 
-</div>
-<!-- ==========================================
-TITLE CONTAINER
-========================================== -->
+</h1>
 
-<div id="titleContainer">
 
-    <h1 id="dayTitle">
+<p>
 
-        DAY 5
+CLICK TO ENTER DAY 5
 
-    </h1>
+</p>
 
-    <h2 id="locationTitle">
 
-        THE HAUNTED CEMETERY
-
-    </h2>
-
-    <p id="introDescription">
-
-        The forgotten cemetery has awakened.
-        Restore the Seven Spirit Lanterns
-        before the Ghost King rises.
-
-    </p>
 
 </div>
 
-<!-- ==========================================
-STORY SUBTITLE
-========================================== -->
 
-<div id="subtitleContainer">
-
-    <p id="storySubtitle">
-
-        The cemetery is silent...
-
-    </p>
 
 </div>
 
-<!-- ==========================================
-MISSION PREVIEW
-========================================== -->
 
-<div id="missionPreview">
 
-    <h3>
 
-        TODAY'S MISSION
 
-    </h3>
+<script>
 
-    <ul>
 
-        <li>Explore the Haunted Cemetery</li>
+const video =
+document.getElementById("day5Video");
 
-        <li>Restore 7 Spirit Lanterns</li>
 
-        <li>Defeat the Ghost King</li>
+const overlay =
+document.getElementById("endOverlay");
 
-    </ul>
 
-</div>
 
-<!-- ==========================================
-SKIP BUTTON
-========================================== -->
 
-<button
 
-id="skipButton"
+// SHOW OVERLAY WHEN VIDEO ENDS
 
-type="button">
 
-SKIP ▶
+video.addEventListener(
 
-</button>
+"ended",
 
-<!-- ==========================================
-ENTER SCREEN
-========================================== -->
+()=>{
 
-<div id="enterContainer">
 
-    <div id="enterCard">
+overlay.classList.add("show");
 
-        <h2>
 
-            The Cemetery Awaits...
+}
 
-        </h2>
+);
 
-        <p>
 
-            The cinematic has ended.
 
-            Enter the haunted cemetery
-            and begin your mission.
 
-        </p>
 
-        <button
+// REDIRECT TO GAME
 
-        id="enterButton"
 
-        type="button">
+function enterGame(){
 
-        ENTER THE CEMETERY
 
-        </button>
+window.location.href="day5-game.html";
 
-    </div>
 
-</div>
-<!-- ==========================================
-LOADING SCREEN
-========================================== -->
+}
 
-<div id="loadingScreen">
 
-    <div id="loadingCard">
 
-        <h2>
 
-            Preparing Day 5...
-
-        </h2>
-
-        <p>
-
-            Loading cinematic...
-
-        </p>
-
-        <div id="loadingBar">
-
-            <div id="loadingFill"></div>
-
-        </div>
-
-    </div>
-
-
-<!-- ==========================================
-NOSCRIPT
-========================================== -->
-
-<noscript>
-
-<div
-style="
-position:fixed;
-inset:0;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#000;
-color:#fff;
-font-size:22px;
-font-family:Arial,sans-serif;
-z-index:9999;
-text-align:center;
-padding:30px;">
-
-Please enable JavaScript to view
-VIDLYRA HALLOWEEN FEST 2026
-Day 5.
-
-</div>
-
-</noscript>
-<!-- ==========================================
-VIDEO END MESSAGE
-========================================== -->
-
-<div id="videoEndOverlay">
-
-    <div id="videoEndCard">
-
-        <h2>
-
-            CINEMATIC COMPLETE
-
-        </h2>
-
-        <p>
-
-            The Haunted Cemetery awaits you...
-
-        </p>
-
-        <p>
-
-            Prepare yourself.
-
-        </p>
-
-    </div>
-
-</div>
-
-<!-- ==========================================
-VIDEO CONTROLS
-(Hidden - Used by JavaScript)
-========================================== -->
-
-<div id="hiddenControls" hidden>
-
-<button id="playVideo">
-
-Play
-
-</button>
-
-<button id="pauseVideo">
-
-Pause
-
-</button>
-
-</div>
-
-<!-- ==========================================
-PRELOAD HINTS
-========================================== -->
-
-<link
-rel="preload"
-href="assets/day5-intro.mp4"
-as="video"
-type="video/mp4">
-
-
-<!-- ==========================================
-JAVASCRIPT
-========================================== -->
-
+</script>
 <script src="js/day5-video.js"></script>
-
 </body>
 
 </html>
