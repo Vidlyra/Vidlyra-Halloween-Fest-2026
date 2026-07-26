@@ -1,0 +1,758 @@
+/* ==========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 4 VIDEO
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    background:#000;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+}
+
+/* ==========================================
+START SCREEN
+========================================== */
+
+#startScreen{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:
+    radial-gradient(circle,#24103b,#09060f);
+
+    z-index:100;
+
+    transition:1s;
+
+}
+
+#startScreen.hide{
+
+    opacity:0;
+
+    visibility:hidden;
+
+}
+
+.start-content{
+
+    width:90%;
+
+    max-width:900px;
+
+    text-align:center;
+
+}
+
+.start-content h1{
+
+    font-size:58px;
+
+    color:#ffb347;
+
+    text-shadow:
+    0 0 20px orange;
+
+}
+
+.start-content h2{
+
+    margin-top:25px;
+
+    font-size:42px;
+
+    color:#9d7cff;
+
+}
+
+.start-content h3{
+
+    margin-top:20px;
+
+    font-size:32px;
+
+    color:white;
+
+}
+
+.start-content p{
+
+    margin-top:35px;
+
+    line-height:1.8;
+
+    color:#ddd;
+
+    font-size:22px;
+
+}
+
+#startBtn{
+
+    margin-top:50px;
+
+    padding:18px 55px;
+
+    border:none;
+
+    border-radius:50px;
+
+    background:
+
+    linear-gradient(
+
+        90deg,
+
+        #8b5cf6,
+
+        #6d28d9
+
+    );
+
+    color:white;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+#startBtn:hover{
+
+    transform:scale(1.08);
+
+    box-shadow:
+
+    0 0 25px #8b5cf6;
+
+}
+
+/* ==========================================
+VIDEO
+========================================== */
+
+#introVideo{
+
+    position:fixed;
+
+    inset:0;
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    display:none;
+
+    background:black;
+
+}
+/* ==========================================
+SKIP BUTTON
+========================================== */
+
+#skipBtn{
+
+    position:fixed;
+
+    top:25px;
+
+    right:25px;
+
+    padding:12px 28px;
+
+    border:none;
+
+    border-radius:30px;
+
+    background:rgba(0,0,0,.55);
+
+    color:#fff;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+    backdrop-filter:blur(8px);
+
+    transition:.35s;
+
+    z-index:90;
+
+}
+
+#skipBtn:hover{
+
+    background:#8b5cf6;
+
+    transform:scale(1.08);
+
+}
+
+/* ==========================================
+VIDEO OVERLAY
+========================================== */
+
+#videoOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.82);
+
+    backdrop-filter:blur(10px);
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:1s;
+
+    z-index:95;
+
+}
+
+#videoOverlay.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+.overlay-content{
+
+    width:90%;
+
+    max-width:900px;
+
+    text-align:center;
+
+}
+
+.overlay-content h1{
+
+    font-size:70px;
+
+    color:#ffb347;
+
+    text-shadow:0 0 30px orange;
+
+}
+
+.overlay-content h2{
+
+    margin-top:20px;
+
+    font-size:42px;
+
+    color:#a855f7;
+
+    text-shadow:0 0 20px #8b5cf6;
+
+}
+
+.overlay-content p{
+
+    margin-top:30px;
+
+    font-size:22px;
+
+    color:#f3f3f3;
+
+    line-height:1.8;
+
+}
+
+#enterGame{
+
+    margin-top:45px;
+
+    padding:18px 55px;
+
+    border:none;
+
+    border-radius:50px;
+
+    background:
+
+    linear-gradient(
+
+        90deg,
+
+        #9333ea,
+
+        #6d28d9
+
+    );
+
+    color:#fff;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+#enterGame:hover{
+
+    transform:scale(1.08);
+
+    box-shadow:0 0 28px #9333ea;
+
+}
+
+/* ==========================================
+LIGHTNING
+========================================== */
+
+#lightning{
+
+    position:fixed;
+
+    inset:0;
+
+    background:white;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    z-index:80;
+
+}
+
+/* ==========================================
+PURPLE FOG
+========================================== */
+
+#fogLayer{
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+
+    radial-gradient(
+
+        circle,
+
+        rgba(168,85,247,.12),
+
+        rgba(0,0,0,0)
+
+    );
+
+    pointer-events:none;
+
+    z-index:12;
+
+}
+
+/* ==========================================
+WITCH SHADOW
+========================================== */
+
+#witchShadow{
+
+    position:absolute;
+
+    bottom:8%;
+
+    right:10%;
+
+    width:380px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    z-index:20;
+
+}
+
+/* ==========================================
+MAGIC PARTICLES
+========================================== */
+
+#magicParticles{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:15;
+
+}
+/* ==========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 4 VIDEO ANIMATIONS
+========================================== */
+
+/* ==========================================
+FOG ANIMATION
+========================================== */
+
+#fogLayer{
+
+    animation:fogMove 18s ease-in-out infinite;
+
+}
+
+@keyframes fogMove{
+
+    0%{
+
+        transform:translateX(-4%) scale(1);
+
+        opacity:.25;
+
+    }
+
+    50%{
+
+        transform:translateX(4%) scale(1.08);
+
+        opacity:.55;
+
+    }
+
+    100%{
+
+        transform:translateX(-4%) scale(1);
+
+        opacity:.25;
+
+    }
+
+}
+
+/* ==========================================
+LIGHTNING
+========================================== */
+
+#lightning.flash{
+
+    animation:lightningFlash .45s ease;
+
+}
+
+@keyframes lightningFlash{
+
+    0%{
+
+        opacity:0;
+
+    }
+
+    15%{
+
+        opacity:.9;
+
+    }
+
+    30%{
+
+        opacity:.2;
+
+    }
+
+    45%{
+
+        opacity:.8;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
+
+/* ==========================================
+WITCH SHADOW
+========================================== */
+
+#witchShadow.show{
+
+    animation:witchAppear 3s ease forwards;
+
+}
+
+@keyframes witchAppear{
+
+    0%{
+
+        opacity:0;
+
+        transform:
+
+        translateY(60px)
+
+        scale(.85);
+
+    }
+
+    100%{
+
+        opacity:.9;
+
+        transform:
+
+        translateY(0)
+
+        scale(1);
+
+    }
+
+}
+
+/* ==========================================
+BUTTON GLOW
+========================================== */
+
+#startBtn,
+#enterGame{
+
+    animation:buttonGlow 2.5s ease-in-out infinite;
+
+}
+
+@keyframes buttonGlow{
+
+    0%{
+
+        box-shadow:0 0 10px #7c3aed;
+
+    }
+
+    50%{
+
+        box-shadow:0 0 28px #c084fc;
+
+    }
+
+    100%{
+
+        box-shadow:0 0 10px #7c3aed;
+
+    }
+
+}
+
+/* ==========================================
+TITLE GLOW
+========================================== */
+
+.start-content h1,
+.overlay-content h1{
+
+    animation:titleGlow 3s ease-in-out infinite;
+
+}
+
+@keyframes titleGlow{
+
+    0%{
+
+        text-shadow:
+
+        0 0 15px orange;
+
+    }
+
+    50%{
+
+        text-shadow:
+
+        0 0 35px #ffb347;
+
+    }
+
+    100%{
+
+        text-shadow:
+
+        0 0 15px orange;
+
+    }
+
+}
+
+/* ==========================================
+VIDEO FADE
+========================================== */
+
+#introVideo{
+
+    animation:videoFade .8s ease;
+
+}
+
+@keyframes videoFade{
+
+    from{
+
+        opacity:0;
+
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+/* ==========================================
+MAGIC PARTICLES
+========================================== */
+
+.particle{
+
+    position:absolute;
+
+    width:6px;
+
+    height:6px;
+
+    border-radius:50%;
+
+    background:#c084fc;
+
+    box-shadow:
+
+    0 0 15px #c084fc;
+
+    animation:
+
+    particleFloat linear infinite;
+
+}
+
+@keyframes particleFloat{
+
+    0%{
+
+        transform:
+
+        translateY(100vh)
+
+        scale(.5);
+
+        opacity:0;
+
+    }
+
+    15%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        transform:
+
+        translateY(-120vh)
+
+        scale(1.2);
+
+        opacity:0;
+
+    }
+
+}
+
+/* ==========================================
+RESPONSIVE
+========================================== */
+
+@media(max-width:768px){
+
+.start-content h1,
+.overlay-content h1{
+
+    font-size:42px;
+
+}
+
+.start-content h2,
+.overlay-content h2{
+
+    font-size:30px;
+
+}
+
+.start-content h3{
+
+    font-size:24px;
+
+}
+
+.start-content p,
+.overlay-content p{
+
+    font-size:18px;
+
+}
+
+#startBtn,
+#enterGame{
+
+    width:90%;
+
+    font-size:18px;
+
+}
+
+#witchShadow{
+
+    width:220px;
+
+    right:5%;
+
+}
+
+}
