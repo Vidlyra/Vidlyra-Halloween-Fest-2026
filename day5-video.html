@@ -2,133 +2,400 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>VIDLYRA HALLOWEEN FEST 2026 | Day 5</title>
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="css/day5-video.css">
+<meta
+name="theme-color"
+content="#000000">
+
+<meta
+name="description"
+content="VIDLYRA HALLOWEEN FEST 2026 - DAY 5 - THE HAUNTED CEMETERY">
+
+<title>
+
+VIDLYRA HALLOWEEN FEST 2026
+DAY 5 - THE HAUNTED CEMETERY
+
+</title>
+
+<link
+rel="stylesheet"
+href="css/day5-video.css">
+
 </head>
 
 <body>
 
-<!-- Video -->
+<!-- ==========================================
+VIDEO
+========================================== -->
+
 <div id="videoContainer">
-    <video
-        id="introVideo"
-        class="video"
-        autoplay
-        muted
-        playsinline
-        preload="auto"
-        poster="assets/background.png">
 
-        <source src="assets/video/day5-intro.mp4" type="video/mp4">
+<video
 
-    </video>
+id="introVideo"
+
+class="video"
+
+autoplay
+
+muted
+
+playsinline
+
+preload="auto"
+
+poster="assets/background.png">
+
+<source
+
+src="assets/video/day5-intro.mp4"
+
+type="video/mp4">
+
+Your browser does not support HTML5 video.
+
+</video>
+
 </div>
 
-<!-- Effects -->
+<!-- ==========================================
+VISUAL EFFECTS
+========================================== -->
+
 <div id="overlay"></div>
+
 <div id="lightningFlash"></div>
+
 <div id="fadeScreen"></div>
+
+<div id="fogLayer"></div>
+
 <div id="particleContainer"></div>
 
-<!-- Title -->
+<div id="ghostLayer">
+
+<div class="ghostShadow ghost1"></div>
+
+<div class="ghostShadow ghost2"></div>
+
+<div class="ghostShadow ghost3"></div>
+
+</div>
+
+<!-- ==========================================
+CINEMATIC BARS
+========================================== -->
+
+<div id="topBar"></div>
+
+<div id="bottomBar"></div>
+
+<!-- ==========================================
+MAIN UI
+========================================== -->
+
+<div id="ui">
+
+<!-- TITLE -->
+
 <div id="titleContainer">
-    <h1>DAY 5</h1>
-    <h2>THE HAUNTED CEMETERY</h2>
-    <p>
-        Restore the Seven Spirit Lanterns
-        before the Ghost King awakens.
-    </p>
-</div>
 
-<!-- Mission -->
+<h1>
+
+DAY 5
+
+</h1>
+
+<h2>
+
+THE HAUNTED CEMETERY
+
+</h2>
+
+<p>
+
+Restore the Seven Spirit Lanterns
+before the Ghost King awakens.
+
+</p>
+
+</div>
+<!-- ==========================================
+MISSION PANEL
+========================================== -->
+
 <div id="missionBox">
-    <h3>MISSION</h3>
-    <p>
-        Explore the Haunted Cemetery<br>
-        Find all 7 Spirit Lanterns<br>
-        Seal the Ghost King
-    </p>
+
+<h3>
+
+MISSION
+
+</h3>
+
+<p>
+
+Explore the Haunted Cemetery
+
+<br><br>
+
+Find all 7 Spirit Lanterns
+
+<br><br>
+
+Seal the Ghost King before
+the cemetery is consumed.
+
+</p>
+
 </div>
 
-<!-- Story -->
+<!-- ==========================================
+STORY SUBTITLE
+========================================== -->
+
 <div id="storyText">
-    <p id="storyLine">
-        The Forgotten Cemetery awakens...
-    </p>
+
+<p id="storyLine">
+
+The Forgotten Cemetery awakens...
+
+</p>
+
 </div>
 
-<!-- Progress -->
+<!-- ==========================================
+VIDEO PROGRESS
+========================================== -->
+
 <div id="videoProgress">
-    <div id="videoFill"></div>
+
+<div id="videoFill"></div>
+
 </div>
 
-<!-- Skip -->
+<!-- ==========================================
+SKIP BUTTON
+========================================== -->
+
 <button id="skipButton">
-    SKIP ▶
+
+SKIP ▶
+
 </button>
 
-<!-- Loading -->
-<div id="loadingScreen">
-    <div class="loadingContent">
-        <h2>Preparing The Haunted Cemetery...</h2>
-
-        <div class="loadingBar">
-            <div id="loadingFill"></div>
-        </div>
-    </div>
 </div>
 
-<!-- Enter -->
+<!-- ==========================================
+LOADING SCREEN
+========================================== -->
+
+<div id="loadingScreen">
+
+<div class="loadingContent">
+
+<h2>
+
+Preparing The Haunted Cemetery...
+
+</h2>
+
+<div class="loadingBar">
+
+<div id="loadingFill"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ==========================================
+ENTER SCREEN
+========================================== -->
+
 <div id="enterContainer">
 
-    <div id="enterPanel">
+<div id="enterPanel">
 
-        <h2>THE HAUNTED CEMETERY</h2>
+<h2>
 
-        <p>
-            Every Spirit Lantern you restore
-            releases a trapped soul.
-        </p>
+THE HAUNTED CEMETERY
 
-        <button id="enterButton">
-            ENTER THE CEMETERY
-        </button>
+</h2>
 
-    </div>
+<p>
+
+Every Spirit Lantern you restore
+frees one trapped soul.
+
+The Ghost King grows stronger
+with every passing moment.
+
+Gather all seven lanterns
+and survive the final battle.
+
+</p>
+
+<button id="enterButton">
+
+ENTER THE CEMETERY
+
+</button>
 
 </div>
 
-<!-- Audio -->
+</div>
+<!-- ==========================================
+AUDIO
+========================================== -->
 
-<audio id="bgMusic" loop>
-    <source src="assets/haunted-cemetery.mp3" type="audio/mpeg">
+<audio
+id="bgMusic"
+loop
+preload="auto">
+
+<source
+src="assets/haunted-cemetery.mp3"
+type="audio/mpeg">
+
 </audio>
 
-<audio id="ghostWhisper">
-    <source src="assets/ghost-whisper.mp3" type="audio/mpeg">
+<audio
+id="ghostWhisper"
+preload="auto">
+
+<source
+src="assets/ghost-whisper.mp3"
+type="audio/mpeg">
+
 </audio>
 
-<audio id="ghostAppear">
-    <source src="assets/ghost-appear.mp3" type="audio/mpeg">
+<audio
+id="ghostAppear"
+preload="auto">
+
+<source
+src="assets/ghost-appear.mp3"
+type="audio/mpeg">
+
 </audio>
 
-<audio id="ghostKing">
-    <source src="assets/ghost-king.mp3" type="audio/mpeg">
+<audio
+id="ghostKing"
+preload="auto">
+
+<source
+src="assets/ghost-king.mp3"
+type="audio/mpeg">
+
 </audio>
 
-<audio id="thunder">
-    <source src="assets/thunder.mp3" type="audio/mpeg">
+<audio
+id="spiritLight"
+preload="auto">
+
+<source
+src="assets/spirit-light.mp3"
+type="audio/mpeg">
+
 </audio>
 
-<audio id="battleMusic" loop>
-    <source src="assets/Epic Anime Boss Battle Theme.mp3" type="audio/mpeg">
+<audio
+id="collectSound"
+preload="auto">
+
+<source
+src="assets/collect.mp3"
+type="audio/mpeg">
+
 </audio>
+
+<audio
+id="thunder"
+preload="auto">
+
+<source
+src="assets/thunder.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio
+id="portal"
+preload="auto">
+
+<source
+src="assets/portal.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio
+id="missionComplete"
+preload="auto">
+
+<source
+src="assets/mission-complete.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio
+id="battleMusic"
+loop
+preload="auto">
+
+<source
+src="assets/Epic Anime Boss Battle Theme.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<!-- ==========================================
+NOSCRIPT
+========================================== -->
+
+<noscript>
+
+<div
+style="
+position:fixed;
+inset:0;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#000;
+color:#fff;
+font-size:22px;
+font-family:Arial,sans-serif;
+z-index:9999;
+text-align:center;
+padding:20px;">
+
+JavaScript is required to play
+VIDLYRA HALLOWEEN FEST 2026.
+
+</div>
+
+</noscript>
+
+<!-- ==========================================
+END OF PAGE CONTENT
+========================================== -->
+<!-- ==========================================
+JAVASCRIPT
+========================================== -->
 
 <script src="js/day5-video.js"></script>
 
 </body>
+
 </html>
