@@ -7,19 +7,29 @@
 
 const Game = {
 
-    crystalsFound:0,
+    /* ==========================================
+       GAME STATE
+    ========================================== */
 
-    totalCrystals:5,
+    crystalsFound: 0,
 
-    playerX:8,
+    totalCrystals: 5,
 
-    playerY:10,
+    playerX: 8,
 
-    speed:1,
+    playerY: 10,
 
-    keys:{},
+    speed: 1,
 
-    init(){
+    gameStarted: false,
+
+    keys: {},
+
+    /* ==========================================
+       INITIALIZE
+    ========================================== */
+
+    init() {
 
         this.cache();
 
@@ -29,101 +39,105 @@ const Game = {
 
     },
 
-    cache(){
+    /* ==========================================
+       CACHE ELEMENTS
+    ========================================== */
+
+    cache() {
+
+        /* Intro */
+
+        this.intro =
+            document.getElementById("introScreen");
 
         /* Player */
 
         this.player =
-        document.getElementById("player");
+            document.getElementById("player");
 
-        /* Crystals */
+        /* Collectibles */
 
         this.crystals =
-        document.querySelectorAll(".crystal");
-
-        /* UI */
-
-        this.progress =
-        document.getElementById("progressFill");
-
-        this.counter =
-        document.getElementById("crystalCounter");
-
-        this.dialog =
-        document.getElementById("dialogText");
-
-        this.dialogBox =
-        document.getElementById("dialogBox");
-
-        this.intro =
-        document.getElementById("introScreen");
+            document.querySelectorAll(".crystal");
 
         /* Objects */
 
         this.gate =
-        document.querySelector(".gate");
+            document.querySelector(".gate");
 
         this.portal =
-        document.querySelector(".portal");
+            document.querySelector(".portal");
 
         this.dracula =
-        document.querySelector(".dracula");
+            document.querySelector(".dracula");
 
-        this.flash =
-        document.getElementById("flash");
+        /* UI */
+
+        this.progress =
+            document.getElementById("progressFill");
+
+        this.counter =
+            document.getElementById("crystalCounter");
+
+        this.dialogBox =
+            document.getElementById("dialogBox");
+
+        this.dialog =
+            document.getElementById("dialogText");
 
         this.missionComplete =
-        document.getElementById("missionComplete");
+            document.getElementById("missionComplete");
 
         this.nextBtn =
-        document.getElementById("nextBtn");
+            document.getElementById("nextBtn");
+
+        /* Effects */
+
+        this.flash =
+            document.getElementById("flash");
+
+        this.lightning =
+            document.getElementById("lightningFlash");
+
+        this.loading =
+            document.getElementById("loadingOverlay");
 
         /* Audio */
 
         this.bgMusic =
-        document.getElementById("bgMusic");
+            document.getElementById("bgMusic");
 
         this.rainSound =
-        document.getElementById("rainSound");
+            document.getElementById("rainSound");
 
         this.thunderSound =
-        document.getElementById("thunderSound");
+            document.getElementById("thunderSound");
 
         this.batSound =
-        document.getElementById("batSound");
+            document.getElementById("batSound");
 
         this.crystalSound =
-        document.getElementById("crystalSound");
+            document.getElementById("crystalSound");
 
         this.gateSound =
-        document.getElementById("gateSound");
+            document.getElementById("gateSound");
 
         this.portalSound =
-        document.getElementById("portalSound");
+            document.getElementById("portalSound");
 
         this.draculaLaugh =
-        document.getElementById("draculaLaugh");
+            document.getElementById("draculaLaugh");
 
         this.missionSound =
-        document.getElementById("missionSound");
+            document.getElementById("missionSound");
 
     },
 
-    bindEvents(){
+    /* ==========================================
+       EVENTS
+    ========================================== */
 
-        /* Crystal Click */
-
-        this.crystals.forEach(crystal=>{
-
-            crystal.addEventListener(
-
-                "click",
-
-                ()=>this.collectCrystal(crystal)
-
-            );
-
-        });
+    bindEvents() {
 
         /* Keyboard */
 
@@ -131,9 +145,9 @@ const Game = {
 
             "keydown",
 
-            (e)=>{
+            (event) => {
 
-                this.keys[e.key]=true;
+                this.keys[event.key] = true;
 
             }
 
@@ -143,25 +157,40 @@ const Game = {
 
             "keyup",
 
-            (e)=>{
+            (event) => {
 
-                this.keys[e.key]=false;
+                this.keys[event.key] = false;
 
             }
 
         );
 
+        /* Crystal Click */
+
+        this.crystals.forEach((crystal) => {
+
+            crystal.addEventListener(
+
+                "click",
+
+                () => this.collectCrystal(crystal)
+
+            );
+
+        });
+
         /* Continue */
 
-        if(this.nextBtn){
+        if (this.nextBtn) {
 
             this.nextBtn.addEventListener(
 
                 "click",
 
-                ()=>{
+                () => {
 
-                    window.location.href="day4-video.html";
+                    window.location.href =
+                        "day4-video.html";
 
                 }
 
@@ -171,84 +200,98 @@ const Game = {
 
     },
 
-    start(){
+    /* ==========================================
+       START GAME
+    ========================================== */
 
-        console.log("Day 3 Started");
+    start() {
 
-        /* Music */
+        console.log("DAY 3 STARTED");
 
-        if(this.bgMusic){
+        this.gameStarted = true;
 
-            this.bgMusic.volume=.35;
+        if (this.bgMusic) {
 
-            this.bgMusic.play().catch(()=>{});
+            this.bgMusic.volume = 0.35;
 
-        }
-
-        if(this.rainSound){
-
-            this.rainSound.volume=.25;
-
-            this.rainSound.play().catch(()=>{});
+            this.bgMusic.play().catch(() => {});
 
         }
 
-        /* Intro */
+        if (this.rainSound) {
 
-        setTimeout(()=>{
+            this.rainSound.volume = 0.25;
 
-            if(this.intro){
+            this.rainSound.play().catch(() => {});
+
+        }
+
+        setTimeout(() => {
+
+            if (this.intro) {
 
                 this.intro.classList.add("hide");
 
             }
 
-        },5000);
-
-        /* Movement Loop */
-
-        this.movePlayer();
+        }, 5000);
 
     },
-      /* ==========================================
+       /* ==========================================
        PLAYER MOVEMENT
     ========================================== */
 
-    movePlayer(){
+    movePlayer() {
 
-        const update = ()=>{
+        const update = () => {
 
-            if(this.keys["ArrowLeft"] || this.keys["a"]){
+            if (!this.gameStarted) {
+
+                requestAnimationFrame(update);
+
+                return;
+
+            }
+
+            /* LEFT */
+
+            if (this.keys["ArrowLeft"] || this.keys["a"] || this.keys["A"]) {
 
                 this.playerX -= this.speed;
 
             }
 
-            if(this.keys["ArrowRight"] || this.keys["d"]){
+            /* RIGHT */
+
+            if (this.keys["ArrowRight"] || this.keys["d"] || this.keys["D"]) {
 
                 this.playerX += this.speed;
 
             }
 
-            if(this.keys["ArrowUp"] || this.keys["w"]){
+            /* UP */
+
+            if (this.keys["ArrowUp"] || this.keys["w"] || this.keys["W"]) {
 
                 this.playerY += this.speed;
 
             }
 
-            if(this.keys["ArrowDown"] || this.keys["s"]){
+            /* DOWN */
+
+            if (this.keys["ArrowDown"] || this.keys["s"] || this.keys["S"]) {
 
                 this.playerY -= this.speed;
 
             }
 
-            /* Limit movement */
+            /* LIMIT PLAYER */
 
-            this.playerX = Math.max(2, Math.min(95, this.playerX));
+            this.playerX = Math.max(3, Math.min(95, this.playerX));
 
-            this.playerY = Math.max(5, Math.min(85, this.playerY));
+            this.playerY = Math.max(6, Math.min(82, this.playerY));
 
-            if(this.player){
+            if (this.player) {
 
                 this.player.style.left = this.playerX + "%";
 
@@ -260,17 +303,90 @@ const Game = {
 
         };
 
-        update();
+        requestAnimationFrame(update);
 
     },
 
     /* ==========================================
+       SHOW MESSAGE
+    ========================================== */
+
+    showMessage(text) {
+
+        if (!this.dialogBox || !this.dialog) {
+
+            return;
+
+        }
+
+        this.dialog.textContent = text;
+
+        this.dialogBox.classList.add("show");
+
+        clearTimeout(this.dialogTimer);
+
+        this.dialogTimer = setTimeout(() => {
+
+            this.dialogBox.classList.remove("show");
+
+        }, 2500);
+
+    },
+
+    /* ==========================================
+       SCREEN SHAKE
+    ========================================== */
+
+    shakeScreen(duration = 800) {
+
+        document.body.classList.add("shake");
+
+        setTimeout(() => {
+
+            document.body.classList.remove("shake");
+
+        }, duration);
+
+    },
+
+    /* ==========================================
+       FLASH EFFECT
+    ========================================== */
+
+    flashScreen() {
+
+        if (!this.flash) return;
+
+        this.flash.classList.add("active");
+
+        setTimeout(() => {
+
+            this.flash.classList.remove("active");
+
+        }, 400);
+
+    },
+
+    /* ==========================================
+       PLAY SOUND
+    ========================================== */
+
+    playSound(audio) {
+
+        if (!audio) return;
+
+        audio.currentTime = 0;
+
+        audio.play().catch(() => {});
+
+    },
+       /* ==========================================
        COLLECT CRYSTAL
     ========================================== */
 
-    collectCrystal(crystal){
+    collectCrystal(crystal) {
 
-        if(crystal.classList.contains("collected")){
+        if (crystal.classList.contains("collected")) {
 
             return;
 
@@ -278,45 +394,31 @@ const Game = {
 
         crystal.classList.add("collected");
 
+        crystal.style.pointerEvents = "none";
+
+        /* Play Sound */
+
+        this.playSound(this.crystalSound);
+
+        /* Increase Count */
+
         this.crystalsFound++;
 
-        /* Progress */
+        /* Update Progress */
 
-        const percent =
+        this.updateProgress();
 
-        (this.crystalsFound / this.totalCrystals) * 100;
+        /* Collection Animation */
 
-        if(this.progress){
+        crystal.style.transition =
 
-            this.progress.style.width = percent + "%";
+            "transform .4s ease, opacity .4s ease";
 
-        }
+        crystal.style.transform =
 
-        /* Counter */
+            "scale(1.8)";
 
-        if(this.counter){
-
-            this.counter.innerHTML =
-
-            "💎 Dark Crystals : " +
-
-            this.crystalsFound +
-
-            " / " +
-
-            this.totalCrystals;
-
-        }
-
-        /* Sound */
-
-        if(this.crystalSound){
-
-            this.crystalSound.currentTime = 0;
-
-            this.crystalSound.play().catch(()=>{});
-
-        }
+        crystal.style.opacity = "0";
 
         /* Dialog */
 
@@ -326,58 +428,128 @@ const Game = {
 
         );
 
-        /* Effects */
+        /* Small Flash */
 
-        crystal.style.pointerEvents = "none";
+        this.flashScreen();
 
-        crystal.style.opacity = "0";
+        /* Finished? */
 
-        crystal.style.transform =
+        if (
 
-        "scale(2)";
+            this.crystalsFound >=
 
-        /* Finished */
+            this.totalCrystals
 
-        if(this.crystalsFound === this.totalCrystals){
+        ) {
 
-            setTimeout(()=>{
+            setTimeout(() => {
 
                 this.openGate();
 
-            },1500);
+            }, 1500);
 
         }
 
     },
 
     /* ==========================================
-       DIALOG
+       UPDATE PROGRESS
     ========================================== */
 
-    showMessage(text){
+    updateProgress() {
 
-        if(!this.dialogBox || !this.dialog){
+        const percent =
 
-            return;
+            (this.crystalsFound /
+
+            this.totalCrystals) * 100;
+
+        if (this.progress) {
+
+            this.progress.style.width =
+
+                percent + "%";
 
         }
 
-        this.dialog.innerHTML = text;
+        if (this.counter) {
 
-        this.dialogBox.classList.add("show");
+            this.counter.innerHTML =
 
-        setTimeout(()=>{
+                "💎 Dark Crystals : " +
 
-            this.dialogBox.classList.remove("show");
+                this.crystalsFound +
 
-        },2500);
+                " / " +
+
+                this.totalCrystals;
+
+        }
 
     },
-      /* ==========================================
-       OPEN GATE
+
+    /* ==========================================
+       RESET CRYSTALS
     ========================================== */
 
-    openGate(){
+    resetCrystals() {
+
+        this.crystalsFound = 0;
+
+        this.updateProgress();
+
+        this.crystals.forEach((crystal) => {
+
+            crystal.classList.remove(
+
+                "collected"
+
+            );
+
+            crystal.style.opacity = "1";
+
+            crystal.style.pointerEvents =
+
+                "auto";
+
+            crystal.style.transform =
+
+                "scale(1)";
+
+        });
+
+    },
+
+    /* ==========================================
+       RANDOM THUNDER
+    ========================================== */
+
+    randomThunder() {
+
+        const delay =
+
+            Math.random() * 8000 + 6000;
+
+        setTimeout(() => {
+
+            this.flashScreen();
+
+            this.playSound(
+
+                this.thunderSound
+
+            );
+
+            this.randomThunder();
+
+        }, delay);
+
+    },
+       /* ==========================================
+       OPEN ANCIENT GATE
+    ========================================== */
+
+    openGate() {
 
         this.showMessage(
 
@@ -385,75 +557,37 @@ const Game = {
 
         );
 
-        /* Lightning */
+        this.flashScreen();
 
-        if(this.flash){
+        this.shakeScreen(1200);
 
-            this.flash.classList.add("active");
+        this.playSound(this.thunderSound);
 
-            setTimeout(()=>{
+        setTimeout(() => {
 
-                this.flash.classList.remove("active");
+            this.playSound(this.gateSound);
 
-            },500);
+            if (this.gate) {
 
-        }
+                this.gate.classList.add("open");
 
-        /* Screen Shake */
+            }
 
-        document.body.classList.add("shake");
+        }, 500);
 
-        setTimeout(()=>{
-
-            document.body.classList.remove("shake");
-
-        },1000);
-
-        /* Thunder */
-
-        if(this.thunderSound){
-
-            this.thunderSound.currentTime=0;
-
-            this.thunderSound.play().catch(()=>{});
-
-        }
-
-        /* Gate */
-
-        if(this.gate){
-
-            this.gate.classList.add("open");
-
-        }
-
-        /* Gate Sound */
-
-        if(this.gateSound){
-
-            setTimeout(()=>{
-
-                this.gateSound.play().catch(()=>{});
-
-            },600);
-
-        }
-
-        /* Portal */
-
-        setTimeout(()=>{
+        setTimeout(() => {
 
             this.activatePortal();
 
-        },2000);
+        }, 2500);
 
     },
 
     /* ==========================================
-       PORTAL
+       PORTAL ACTIVATION
     ========================================== */
 
-    activatePortal(){
+    activatePortal() {
 
         this.showMessage(
 
@@ -461,83 +595,99 @@ const Game = {
 
         );
 
-        if(this.portal){
+        if (this.portal) {
 
             this.portal.classList.add("active");
 
         }
 
-        if(this.portalSound){
+        this.playSound(this.portalSound);
 
-            this.portalSound.currentTime=0;
+        this.flashScreen();
 
-            this.portalSound.play().catch(()=>{});
-
-        }
-
-        setTimeout(()=>{
+        setTimeout(() => {
 
             this.showDracula();
 
-        },2500);
+        }, 3000);
 
     },
 
     /* ==========================================
-       DRACULA
+       DRACULA APPEARS
     ========================================== */
 
-    showDracula(){
+    showDracula() {
 
         this.showMessage(
 
-            "Dracula has awakened!"
+            "Dracula has awakened..."
 
         );
 
-        if(this.dracula){
+        if (this.dracula) {
 
             this.dracula.classList.add("active");
 
         }
 
-        if(this.draculaLaugh){
+        this.playSound(this.draculaLaugh);
 
-            this.draculaLaugh.currentTime=0;
+        this.playSound(this.batSound);
 
-            this.draculaLaugh.play().catch(()=>{});
+        this.flashScreen();
 
-        }
+        this.shakeScreen(1800);
 
-        if(this.batSound){
+        setTimeout(() => {
 
-            this.batSound.currentTime=0;
+            this.spawnBats();
 
-            this.batSound.play().catch(()=>{});
+        }, 500);
 
-        }
-
-        document.body.classList.add("shake");
-
-        setTimeout(()=>{
-
-            document.body.classList.remove("shake");
-
-        },1500);
-
-        setTimeout(()=>{
+        setTimeout(() => {
 
             this.completeMission();
 
-        },4000);
+        }, 4500);
 
     },
 
     /* ==========================================
-       COMPLETE
+       BAT ATTACK
     ========================================== */
 
-    completeMission(){
+    spawnBats() {
+
+        const bats =
+
+        document.querySelectorAll(".bat");
+
+        bats.forEach((bat,index)=>{
+
+            bat.style.opacity="1";
+
+            bat.style.transition=
+
+            "transform 3s linear";
+
+            setTimeout(()=>{
+
+                bat.style.transform=
+
+                "translateX(900px) translateY(-120px)";
+
+            },index*200);
+
+        });
+
+    },
+
+    /* ==========================================
+       MISSION COMPLETE
+    ========================================== */
+
+    completeMission() {
 
         this.showMessage(
 
@@ -545,19 +695,138 @@ const Game = {
 
         );
 
-        if(this.missionSound){
+        this.playSound(
 
-            this.missionSound.currentTime=0;
+            this.missionSound
 
-            this.missionSound.play().catch(()=>{});
+        );
+
+        setTimeout(()=>{
+
+            if(this.missionComplete){
+
+                this.missionComplete
+
+                .classList.add("show");
+
+            }
+
+        },1200);
+
+    },
+       /* ==========================================
+       CREATE MAGIC PARTICLES
+    ========================================== */
+
+    createParticles() {
+
+        const container =
+            document.getElementById("particleContainer");
+
+        if (!container) return;
+
+        for (let i = 0; i < 40; i++) {
+
+            const particle =
+                document.createElement("div");
+
+            particle.className = "particle";
+
+            particle.style.left =
+                Math.random() * 100 + "%";
+
+            particle.style.top =
+                Math.random() * 100 + "%";
+
+            particle.style.animationDelay =
+                Math.random() * 6 + "s";
+
+            particle.style.animationDuration =
+                (4 + Math.random() * 5) + "s";
+
+            container.appendChild(particle);
 
         }
 
-        if(this.missionComplete){
+    },
 
-            this.missionComplete.classList.add("show");
+    /* ==========================================
+       RANDOM LIGHTNING
+    ========================================== */
+
+    startLightning() {
+
+        const lightningLoop = () => {
+
+            const delay =
+                Math.random() * 9000 + 6000;
+
+            setTimeout(() => {
+
+                this.flashScreen();
+
+                this.playSound(this.thunderSound);
+
+                lightningLoop();
+
+            }, delay);
+
+        };
+
+        lightningLoop();
+
+    },
+
+    /* ==========================================
+       RESTART GAME
+    ========================================== */
+
+    restartGame() {
+
+        this.crystalsFound = 0;
+
+        this.playerX = 8;
+
+        this.playerY = 10;
+
+        if (this.player) {
+
+            this.player.style.left = "8%";
+            this.player.style.bottom = "10%";
 
         }
+
+        this.resetCrystals();
+
+        if (this.portal) {
+
+            this.portal.classList.remove("active");
+
+        }
+
+        if (this.gate) {
+
+            this.gate.classList.remove("open");
+
+        }
+
+        if (this.dracula) {
+
+            this.dracula.classList.remove("active");
+
+        }
+
+        if (this.missionComplete) {
+
+            this.missionComplete.classList.remove("show");
+
+        }
+
+        this.showMessage(
+
+            "Collect all 5 Dark Crystals."
+
+        );
 
     }
 
@@ -571,9 +840,13 @@ document.addEventListener(
 
     "DOMContentLoaded",
 
-    ()=>{
+    () => {
 
         Game.init();
+
+        Game.createParticles();
+
+        Game.startLightning();
 
     }
 
