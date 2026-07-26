@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+VIDLYRA HALLOWEEN FEST 2026
+DAY 4 - THE WITCH'S CURSE
+
+</title>
+
+<link rel="stylesheet"
+href="css/day4-game.css">
+
+<link rel="stylesheet"
+href="css/day4-animation.css">
+
+</head>
+
+<body>
+
+<!-- ==========================================
+INTRO SCREEN
+========================================== -->
+
+<div id="introScreen">
+
+    <div class="intro-content">
+
+        <h1>DAY 4</h1>
+
+        <h2>The Witch's Curse</h2>
+
+        <p>
+
+            Five enchanted lanterns are hidden
+            deep inside the forbidden forest.
+
+            Find them all to break
+            the Witch's curse.
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+FLASH
+========================================== -->
+
+<div id="flash"></div>
+
+<!-- ==========================================
+PARTICLES
+========================================== -->
+
+<div id="particleContainer"></div>
+
+<!-- ==========================================
+BACKGROUND
+========================================== -->
+
+<div class="world">
+
+<img
+src="assets/background.png"
+class="background"
+alt="Background">
+
+<img
+src="assets/forest.png"
+class="forest"
+alt="Forest">
+
+<img
+src="assets/tree.png"
+class="tree tree-left"
+alt="Tree">
+
+<img
+src="assets/tree.png"
+class="tree tree-right"
+alt="Tree">
+
+<img
+src="assets/spiderweb.png"
+class="web web-left"
+alt="Spider Web">
+
+<img
+src="assets/spiderweb.png"
+class="web web-right"
+alt="Spider Web">
+
+<img
+src="assets/mushroom.png"
+class="mushroom mushroom1"
+alt="Mushroom">
+
+<img
+src="assets/mushroom.png"
+class="mushroom mushroom2"
+alt="Mushroom">
+
+<img
+src="assets/mushroom.png"
+class="mushroom mushroom3"
+alt="Mushroom">
+
+<!-- ==========================================
+PLAYER
+========================================== -->
+
+<img
+src="assets/player.png"
+id="player"
+alt="Player">
+
+<!-- ==========================================
+5 ENCHANTED LANTERNS
+========================================== -->
+
+<img
+src="assets/lantern.png"
+class="lantern lantern1"
+alt="Lantern">
+
+<img
+src="assets/lantern.png"
+class="lantern lantern2"
+alt="Lantern">
+
+<img
+src="assets/lantern.png"
+class="lantern lantern3"
+alt="Lantern">
+
+<img
+src="assets/lantern.png"
+class="lantern lantern4"
+alt="Lantern">
+
+<img
+src="assets/lantern.png"
+class="lantern lantern5"
+alt="Lantern">
+
+<!-- ==========================================
+WITCH AREA
+========================================== -->
+
+<img
+src="assets/cauldron.png"
+class="cauldron"
+alt="Cauldron">
+
+<img
+src="assets/witch.png"
+class="witch"
+alt="Witch">
+
+<img
+src="assets/portal.png"
+class="portal"
+alt="Portal">
+
+<!-- ==========================================
+MISSION PANEL
+========================================== -->
+
+<div class="mission-panel">
+
+    <h2>
+
+        🎯 DAY 4 MISSION
+
+    </h2>
+
+    <p>
+
+        Find and light all 5 Enchanted Lanterns.
+
+    </p>
+
+    <div class="progress-bar">
+
+        <div id="progressFill"></div>
+
+    </div>
+
+    <div id="lanternCounter">
+
+        🏮 Enchanted Lanterns : 0 / 5
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+DIALOG
+========================================== -->
+
+<div id="dialogBox">
+
+    <p id="dialogText">
+
+        Welcome to the Forbidden Forest...
+
+    </p>
+
+</div>
+
+<!-- ==========================================
+MISSION COMPLETE
+========================================== -->
+
+<div id="missionComplete">
+
+    <h1>
+
+        🎉 Mission Complete!
+
+    </h1>
+
+    <p>
+
+        The Witch's Curse has been broken.
+
+    </p>
+
+    <button id="nextBtn">
+
+        Continue To Day 5 →
+
+    </button>
+
+</div>
+
+<!-- ==========================================
+LIGHTNING
+========================================== -->
+
+<div id="lightning"></div>
+
+<!-- ==========================================
+FOG
+========================================== -->
+
+<div class="fog fog-back"></div>
+
+<div class="fog fog-front"></div>
+
+<!-- ==========================================
+AUDIO
+========================================== -->
+
+<audio id="bgMusic" loop>
+
+    <source src="assets/audio/witch-forest.mp3" type="audio/mpeg">
+
+</audio>
+
+<audio id="collectSound">
+
+    <source src="assets/audio/collect.mp3" type="audio/mpeg">
+
+</audio>
+
+<audio id="lanternSound">
+
+    <source src="assets/audio/lantern-light.mp3" type="audio/mpeg">
+
+</audio>
+
+<audio id="spellSound">
+
+    <source src="assets/audio/spell-cast.mp3" type="audio/mpeg">
+
+</audio>
+
+<audio id="cauldronSound" loop>
+
+    <source src="assets/audio/cauldron-bubble.mp3" type="audio/mpeg">
+
+</audio>
+
+<audio id="witchAppearSound">
+
+    <source src="assets/audio/witch-appear.mp3" type="audio/mpeg">
+
+</audio>
+
+<audio id="witchLaughSound">
+
+    <source src="assets/audio/witch-laugh.mp3" type="audio/mpeg">
+
+</audio>
+
+<audio id="thunderSound">
+
+    <source src="assets/audio/thunder.mp3" type="audio/mpeg">
+
+</audio>
+
+<audio id="portalSound">
+
+    <source src="assets/audio/portal.mp3" type="audio/mpeg">
+
+</audio>
+
+<audio id="missionCompleteSound">
+
+    <source src="assets/audio/mission-complete 1.mp3" type="audio/mpeg">
+
+</audio>
+
+</div>
+
+<script src="js/day4-game.js"></script>
+
+</body>
+
+</html>
