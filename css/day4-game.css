@@ -1,0 +1,770 @@
+/* ==========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 4 - THE WITCH'S CURSE
+========================================== */
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    background:#05030a;
+
+    font-family:
+    "Trebuchet MS",
+    Arial,
+    sans-serif;
+
+}
+
+/* ==========================================
+WORLD
+========================================== */
+
+.world{
+
+    position:relative;
+
+    width:100vw;
+
+    height:100vh;
+
+    overflow:hidden;
+
+}
+
+/* ==========================================
+BACKGROUND
+========================================== */
+
+.background{
+
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    z-index:1;
+
+}
+
+.forest{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:100%;
+
+    z-index:3;
+
+}
+
+/* ==========================================
+TREES
+========================================== */
+
+.tree{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:22%;
+
+    z-index:5;
+
+    pointer-events:none;
+
+}
+
+.tree-left{
+
+    left:0;
+
+}
+
+.tree-right{
+
+    right:0;
+
+}
+
+/* ==========================================
+SPIDER WEBS
+========================================== */
+
+.web{
+
+    position:absolute;
+
+    width:170px;
+
+    opacity:.8;
+
+    z-index:6;
+
+}
+
+.web-left{
+
+    top:0;
+
+    left:0;
+
+}
+
+.web-right{
+
+    top:0;
+
+    right:0;
+
+}
+
+/* ==========================================
+MUSHROOMS
+========================================== */
+
+.mushroom{
+
+    position:absolute;
+
+    width:70px;
+
+    z-index:8;
+
+}
+
+.mushroom1{
+
+    left:18%;
+
+    bottom:11%;
+
+}
+
+.mushroom2{
+
+    left:58%;
+
+    bottom:13%;
+
+}
+
+.mushroom3{
+
+    right:18%;
+
+    bottom:9%;
+
+}
+/* ==========================================
+PLAYER
+========================================== */
+
+#player{
+
+    position:absolute;
+
+    left:8%;
+
+    bottom:12%;
+
+    width:130px;
+
+    z-index:30;
+
+    transition:
+
+    left .2s linear,
+
+    bottom .2s linear;
+
+}
+
+/* ==========================================
+LANTERNS
+========================================== */
+
+.lantern{
+
+    position:absolute;
+
+    width:70px;
+
+    cursor:pointer;
+
+    z-index:20;
+
+    transition:
+
+    transform .35s,
+
+    filter .35s,
+
+    opacity .35s;
+
+}
+
+.lantern:hover{
+
+    transform:scale(1.15);
+
+}
+
+.lantern.collected{
+
+    opacity:0;
+
+    pointer-events:none;
+
+}
+
+.lantern1{
+
+    left:12%;
+
+    bottom:35%;
+
+}
+
+.lantern2{
+
+    left:34%;
+
+    bottom:56%;
+
+}
+
+.lantern3{
+
+    left:52%;
+
+    bottom:26%;
+
+}
+
+.lantern4{
+
+    left:71%;
+
+    bottom:48%;
+
+}
+
+.lantern5{
+
+    left:88%;
+
+    bottom:30%;
+
+}
+/* ==========================================
+CAULDRON
+========================================== */
+
+.cauldron{
+
+    position:absolute;
+
+    bottom:14%;
+
+    right:14%;
+
+    width:170px;
+
+    z-index:25;
+
+}
+
+/* ==========================================
+WITCH
+========================================== */
+
+.witch{
+
+    position:absolute;
+
+    right:12%;
+
+    bottom:18%;
+
+    width:260px;
+
+    opacity:0;
+
+    z-index:40;
+
+    transition:1.5s;
+
+}
+
+.witch.active{
+
+    opacity:1;
+
+}
+
+/* ==========================================
+PORTAL
+========================================== */
+
+.portal{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:18%;
+
+    transform:translateX(-50%);
+
+    width:180px;
+
+    opacity:0;
+
+    z-index:22;
+
+    transition:1s;
+
+}
+
+.portal.active{
+
+    opacity:1;
+
+}
+/* ==========================================
+MISSION PANEL
+========================================== */
+
+.mission-panel{
+
+    position:absolute;
+
+    top:20px;
+
+    left:20px;
+
+    width:340px;
+
+    padding:20px;
+
+    background:rgba(10,10,20,.75);
+
+    border:2px solid rgba(170,120,255,.5);
+
+    border-radius:18px;
+
+    backdrop-filter:blur(10px);
+
+    z-index:100;
+
+}
+
+.mission-panel h2{
+
+    color:#ffb347;
+
+    font-size:28px;
+
+    margin-bottom:12px;
+
+}
+
+.mission-panel p{
+
+    color:#eeeeee;
+
+    font-size:17px;
+
+    line-height:1.6;
+
+}
+
+/* ==========================================
+PROGRESS BAR
+========================================== */
+
+.progress-bar{
+
+    width:100%;
+
+    height:18px;
+
+    margin-top:18px;
+
+    background:#1d1d28;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+#progressFill{
+
+    width:0%;
+
+    height:100%;
+
+    background:
+
+    linear-gradient(
+
+        90deg,
+
+        #ffd54f,
+
+        #ff9800
+
+    );
+
+    transition:width .4s ease;
+
+}
+
+#lanternCounter{
+
+    margin-top:14px;
+
+    color:#ffffff;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+
+/* ==========================================
+DIALOG BOX
+========================================== */
+
+#dialogBox{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:35px;
+
+    transform:translateX(-50%);
+
+    width:700px;
+
+    max-width:92%;
+
+    padding:18px 25px;
+
+    background:rgba(0,0,0,.78);
+
+    border:2px solid #8b5cf6;
+
+    border-radius:16px;
+
+    color:white;
+
+    text-align:center;
+
+    opacity:0;
+
+    transition:.35s;
+
+    z-index:120;
+
+}
+
+#dialogBox.show{
+
+    opacity:1;
+
+}
+
+#dialogText{
+
+    font-size:20px;
+
+    line-height:1.6;
+
+}
+/* ==========================================
+MISSION COMPLETE
+========================================== */
+
+#missionComplete{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.88);
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:.5s;
+
+    z-index:300;
+
+}
+
+#missionComplete.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+#missionComplete h1{
+
+    font-size:64px;
+
+    color:#ffd54f;
+
+    text-shadow:0 0 30px orange;
+
+}
+
+#missionComplete p{
+
+    margin-top:20px;
+
+    color:#ffffff;
+
+    font-size:24px;
+
+}
+
+#nextBtn{
+
+    margin-top:40px;
+
+    padding:18px 55px;
+
+    border:none;
+
+    border-radius:40px;
+
+    background:
+
+    linear-gradient(
+
+        90deg,
+
+        #8b5cf6,
+
+        #6d28d9
+
+    );
+
+    color:#fff;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+#nextBtn:hover{
+
+    transform:scale(1.08);
+
+    box-shadow:0 0 30px #8b5cf6;
+
+}
+/* ==========================================
+FLASH
+========================================== */
+
+#flash{
+
+    position:fixed;
+
+    inset:0;
+
+    background:white;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    z-index:500;
+
+}
+
+#flash.active{
+
+    opacity:.85;
+
+}
+
+/* ==========================================
+LIGHTNING
+========================================== */
+
+#lightning{
+
+    position:fixed;
+
+    inset:0;
+
+    background:white;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    z-index:490;
+
+}
+
+/* ==========================================
+FOG
+========================================== */
+
+.fog{
+
+    position:absolute;
+
+    inset:0;
+
+    opacity:.45;
+
+    pointer-events:none;
+
+    z-index:15;
+
+}
+
+.fog-back{
+
+    background:
+
+    radial-gradient(
+
+        circle,
+
+        rgba(120,70,220,.22),
+
+        transparent 70%
+
+    );
+
+}
+
+.fog-front{
+
+    background:
+
+    radial-gradient(
+
+        circle,
+
+        rgba(255,255,255,.08),
+
+        transparent 75%
+
+    );
+
+}
+/* ==========================================
+RESPONSIVE
+========================================== */
+
+@media(max-width:768px){
+
+.mission-panel{
+
+    width:92%;
+
+    left:4%;
+
+    top:15px;
+
+}
+
+#player{
+
+    width:90px;
+
+}
+
+.lantern{
+
+    width:50px;
+
+}
+
+.cauldron{
+
+    width:110px;
+
+}
+
+.witch{
+
+    width:170px;
+
+}
+
+.portal{
+
+    width:120px;
+
+}
+
+#dialogText{
+
+    font-size:16px;
+
+}
+
+#missionComplete h1{
+
+    font-size:38px;
+
+}
+
+#missionComplete p{
+
+    font-size:18px;
+
+}
+
+#nextBtn{
+
+    width:85%;
+
+    font-size:18px;
+
+}
+
+}
