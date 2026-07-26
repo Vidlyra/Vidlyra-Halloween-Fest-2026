@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+Vidlyra Halloween Fest 2026 | Day 3
+
+</title>
+
+<link
+rel="stylesheet"
+href="css/day3-game.css">
+
+<link
+rel="stylesheet"
+href="css/day3-animation.css">
+
+</head>
+
+<body>
+
+<!-- ==========================================
+DAY 3 INTRO
+========================================== -->
+
+<div id="introScreen">
+
+    <div class="intro-content">
+
+        <h1>
+
+            DAY 3
+
+        </h1>
+
+        <h2>
+
+            The Cursed Forest
+
+        </h2>
+
+        <p>
+
+            Darkness watches every step...
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+FLASH
+========================================== -->
+
+<div id="flash"></div>
+
+<!-- ==========================================
+BACKGROUND
+========================================== -->
+
+<div class="background"></div>
+
+<!-- ==========================================
+DISTANT FOREST
+========================================== -->
+
+<img
+
+src="assets/images/forest.png"
+
+class="forest"
+
+alt="Forest">
+
+<!-- ==========================================
+TREES
+========================================== -->
+
+<img
+
+src="assets/images/tree.png"
+
+class="tree tree-left"
+
+alt="Tree">
+
+<img
+
+src="assets/images/tree.png"
+
+class="tree tree-right"
+
+alt="Tree">
+
+<!-- ==========================================
+RIVER
+========================================== -->
+
+<img
+
+src="assets/images/river.png"
+
+class="river"
+
+alt="River">
+
+<!-- ==========================================
+BRIDGE
+========================================== -->
+
+<img
+
+src="assets/images/bridge.png"
+
+class="bridge"
+
+alt="Bridge">
+
+<!-- ==========================================
+GRAVES
+========================================== -->
+
+<img
+
+src="assets/images/grave.png"
+
+class="grave grave-left"
+
+alt="Grave">
+
+<img
+
+src="assets/images/grave.png"
+
+class="grave grave-right"
+
+alt="Grave">
+
+<!-- ==========================================
+SPIDER WEB
+========================================== -->
+
+<img
+
+src="assets/images/spiderweb.png"
+
+class="web web-left"
+
+alt="Spider Web">
+
+<img
+
+src="assets/images/spiderweb.png"
+
+class="web web-right"
+
+alt="Spider Web">
+
+<!-- ==========================================
+MUSHROOMS
+========================================== -->
+
+<img
+
+src="assets/images/mushroom.png"
+
+class="mushroom mushroom-left"
+
+alt="Mushroom">
+
+<img
+
+src="assets/images/mushroom.png"
+
+class="mushroom mushroom-right"
+
+alt="Mushroom">
+
+<!-- ==========================================
+CRYSTALS
+========================================== -->
+
+<img
+src="assets/images/crystal.png"
+class="crystal crystal1"
+alt="Crystal 1">
+
+<img
+src="assets/images/crystal.png"
+class="crystal crystal2"
+alt="Crystal 2">
+
+<img
+src="assets/images/crystal.png"
+class="crystal crystal3"
+alt="Crystal 3">
+
+<img
+src="assets/images/crystal.png"
+class="crystal crystal4"
+alt="Crystal 4">
+
+<img
+src="assets/images/crystal.png"
+class="crystal crystal5"
+alt="Crystal 5">
+
+<!-- ==========================================
+ANCIENT GATE
+========================================== -->
+
+<img
+src="assets/images/gate.png"
+class="gate"
+alt="Ancient Gate">
+
+<!-- ==========================================
+MAGIC PORTAL
+========================================== -->
+
+<img
+src="assets/images/portal.png"
+class="portal"
+alt="Portal">
+
+<!-- ==========================================
+DRACULA
+========================================== -->
+
+<img
+src="assets/images/dracula.png"
+class="dracula"
+alt="Dracula">
+
+<!-- ==========================================
+BATS
+========================================== -->
+
+<div id="batContainer">
+
+    <img
+    src="assets/images/bat.png"
+    class="bat bat1"
+    alt="Bat">
+
+    <img
+    src="assets/images/bat.png"
+    class="bat bat2"
+    alt="Bat">
+
+    <img
+    src="assets/images/bat.png"
+    class="bat bat3"
+    alt="Bat">
+
+    <img
+    src="assets/images/bat.png"
+    class="bat bat4"
+    alt="Bat">
+
+    <img
+    src="assets/images/bat.png"
+    class="bat bat5"
+    alt="Bat">
+
+</div>
+
+<!-- ==========================================
+PLAYER
+========================================== -->
+
+<div id="player">
+
+🧙
+
+</div>
+
+<!-- ==========================================
+MISSION PANEL
+========================================== -->
+
+<div class="mission-panel">
+
+    <h3>
+
+        🎯 Day 3 Mission
+
+    </h3>
+
+    <p>
+
+        Collect all five Dark Crystals to unlock the Ancient Gate.
+
+    </p>
+
+    <div class="progress">
+
+        <div
+        class="progress-fill"
+        id="progressFill">
+
+        </div>
+
+    </div>
+
+    <div
+    id="crystalCounter"
+    class="crystal-counter">
+
+        💎 Dark Crystals : 0 / 5
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+DIALOG
+========================================== -->
+
+<div id="dialogBox">
+
+    <p id="dialogText">
+
+        Enter the Cursed Forest...
+
+    </p>
+
+</div>
+
+<!-- ==========================================
+MISSION COMPLETE
+========================================== -->
+
+<div id="missionComplete">
+
+    <h2>
+
+        🎉 Mission Complete!
+
+    </h2>
+
+    <p>
+
+        The Ancient Gate has opened.
+
+    </p>
+
+    <button id="nextBtn">
+
+        Continue
+
+    </button>
+
+</div>
+<!-- ==========================================
+FOG LAYERS
+========================================== -->
+
+<div class="fog fog-back"></div>
+
+<div class="fog fog-middle"></div>
+
+<div class="fog fog-front"></div>
+
+<!-- ==========================================
+MAGICAL PARTICLES
+========================================== -->
+
+<div id="particleContainer"></div>
+
+<!-- ==========================================
+LIGHTNING FLASH
+========================================== -->
+
+<div id="lightningFlash"></div>
+
+<!-- ==========================================
+SCREEN GLOW
+========================================== -->
+
+<div id="screenGlow"></div>
+
+<!-- ==========================================
+SCREEN SHAKE LAYER
+========================================== -->
+
+<div id="shakeLayer"></div>
+
+<!-- ==========================================
+RAIN
+========================================== -->
+
+<div id="rain"></div>
+
+<!-- ==========================================
+AUDIO
+========================================== -->
+
+<audio id="bgMusic" loop>
+
+    <source
+    src="assets/audio/forest-ambience.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="rainSound" loop>
+
+    <source
+    src="assets/audio/rain.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="thunderSound">
+
+    <source
+    src="assets/audio/thunder.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="batSound">
+
+    <source
+    src="assets/audio/bats.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="crystalSound">
+
+    <source
+    src="assets/audio/crystal.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="gateSound">
+
+    <source
+    src="assets/audio/gate-open.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="portalSound">
+
+    <source
+    src="assets/audio/portal.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="draculaLaugh">
+
+    <source
+    src="assets/audio/dracula-laugh.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="missionSound">
+
+    <source
+    src="assets/audio/mission-complete.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<!-- ==========================================
+LOADING OVERLAY
+========================================== -->
+
+<div id="loadingOverlay">
+
+    <div class="loading-content">
+
+        <h2>
+
+            Entering Day 4...
+
+        </h2>
+
+        <div class="loading-bar">
+
+            <div
+            id="loadingFill">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+JAVASCRIPT
+========================================== -->
+
+<script src="js/day3-game.js"></script>
+
+</body>
+
+</html>
