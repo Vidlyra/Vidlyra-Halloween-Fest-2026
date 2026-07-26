@@ -1,1438 +1,395 @@
-/* ==========================================================
+/* =====================================
    VIDLYRA HALLOWEEN FEST 2026
-   DAY 5 - THE HAUNTED CEMETERY
-   INTRO VIDEO
-========================================================== */
+   DAY 5 VIDEO INTRO CSS
+   THE HAUNTED CEMETERY
+===================================== */
 
-/* ==========================================================
-   RESET
-========================================================== */
+
+/* RESET */
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
 
-html,
-body{
-
-    width:100%;
-    height:100%;
-    overflow:hidden;
-
-    background:#000;
-
-    font-family:
-    "Poppins",
-    sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
 
 }
 
-/* ==========================================================
-   ROOT COLORS
-========================================================== */
 
-:root{
 
-    --primary:#6fdcff;
-    --secondary:#9ce8ff;
-    --accent:#4fc3f7;
+html,body{
 
-    --dark:#05070b;
-    --panel:rgba(8,15,28,.72);
+width:100%;
+height:100%;
 
-    --white:#ffffff;
+overflow:hidden;
+
+background:#000;
+
+font-family:
+"Cinzel",
+"Times New Roman",
+serif;
 
 }
 
-/* ==========================================================
-   VIDEO
-========================================================== */
+
+
+/* VIDEO AREA */
+
 
 #videoContainer{
 
-    position:fixed;
+position:relative;
 
-    inset:0;
+width:100vw;
 
-    overflow:hidden;
+height:100vh;
 
-    z-index:-1;
+overflow:hidden;
 
-}
-
-.video{
-
-    position:absolute;
-
-    top:0;
-    left:0;
-
-    width:100%;
-    height:100%;
-
-    object-fit:cover;
-
-    background:#000;
+background:black;
 
 }
 
-/* ==========================================================
-   OVERLAY
-========================================================== */
 
-#overlay{
 
-    position:fixed;
 
-    inset:0;
+#day5Video{
 
-    background:
+width:100%;
 
-    linear-gradient(
+height:100%;
 
-        rgba(0,0,0,.15),
+object-fit:cover;
 
-        rgba(0,0,0,.45),
-
-        rgba(0,0,0,.78)
-
-    );
-
-    pointer-events:none;
-
-    z-index:1;
+display:block;
 
 }
 
-/* ==========================================================
-   FADE SCREEN
-========================================================== */
 
-#fadeScreen{
 
-    position:fixed;
+/* DARK CINEMATIC COLOR */
 
-    inset:0;
+#videoContainer::after{
 
-    background:#000;
+content:"";
 
-    opacity:0;
+position:absolute;
 
-    pointer-events:none;
+inset:0;
 
-    transition:
+background:
 
-    opacity .8s ease;
+linear-gradient(
 
-    z-index:250;
+to bottom,
 
-}
+rgba(0,0,0,0.35),
 
-#fadeScreen.show{
+rgba(0,0,0,0.75)
 
-    opacity:1;
+);
+
+pointer-events:none;
 
 }
 
-/* ==========================================================
-   LIGHTNING
-========================================================== */
 
-#lightningFlash{
 
-    position:fixed;
 
-    inset:0;
+/* END SCREEN */
 
-    background:
 
-    rgba(190,230,255,.92);
+#endOverlay{
 
-    opacity:0;
+position:absolute;
 
-    pointer-events:none;
+inset:0;
 
-    z-index:220;
 
-}
+display:flex;
 
-#lightningFlash.active{
+justify-content:center;
 
-    animation:lightningFlash .45s;
+align-items:center;
 
-}
+flex-direction:column;
 
-@keyframes lightningFlash{
 
-    0%{
+background:
 
-        opacity:0;
+radial-gradient(
 
-    }
+circle,
 
-    18%{
+rgba(40,40,40,0.2),
 
-        opacity:1;
+rgba(0,0,0,0.95)
 
-    }
+);
 
-    40%{
 
-        opacity:.35;
 
-    }
+opacity:0;
 
-    100%{
+visibility:hidden;
 
-        opacity:0;
 
-    }
+transition:
 
-}
+opacity 1.5s ease,
 
-/* ==========================================================
-   MOVIE BARS
-========================================================== */
+visibility 1.5s;
 
-#topBar,
-#bottomBar{
 
-    position:fixed;
+cursor:pointer;
 
-    left:0;
 
-    width:100%;
+z-index:10;
 
-    height:8vh;
-
-    background:#000;
-
-    z-index:300;
 
 }
 
-#topBar{
 
-    top:0;
 
-}
 
-#bottomBar{
 
-    bottom:0;
+#endOverlay.show{
 
-}
 
-/* ==========================================================
-   FOG
-========================================================== */
+opacity:1;
 
-#fogLayer{
+visibility:visible;
 
-    position:fixed;
-
-    inset:0;
-
-    background:
-
-    radial-gradient(
-
-        circle,
-
-        rgba(120,180,255,.10),
-
-        transparent 70%
-
-    );
-
-    mix-blend-mode:screen;
-
-    animation:
-
-    fogMove 18s linear infinite;
-
-    pointer-events:none;
-
-    z-index:12;
 
 }
 
-@keyframes fogMove{
 
-    0%{
 
-        transform:
 
-        translateX(-8%)
 
-        scale(1);
+/* TITLE */
 
-    }
 
-    100%{
+#endOverlay h1{
 
-        transform:
 
-        translateX(8%)
+color:#ffffff;
 
-        scale(1.12);
 
-    }
+font-size:
 
-}
-/* ==========================================================
-   GHOST LAYER
-========================================================== */
+clamp(32px,6vw,80px);
 
-#ghostLayer{
 
-    position:fixed;
+letter-spacing:
 
-    inset:0;
+8px;
 
-    pointer-events:none;
 
-    overflow:hidden;
+text-align:center;
 
-    z-index:14;
 
-}
+text-shadow:
 
-.ghostShadow{
 
-    position:absolute;
+0 0 10px #fff,
 
-    width:180px;
+0 0 25px #8b0000,
 
-    height:260px;
+0 0 50px #ff0000;
 
-    border-radius:50%;
 
-    background:
 
-    rgba(180,230,255,.08);
+animation:
 
-    filter:blur(20px);
+ghostGlow 3s infinite;
 
-    opacity:0;
 
-    animation:
-
-    ghostFly 16s linear infinite;
 
 }
 
-.ghost1{
 
-    top:18%;
 
-    left:-220px;
 
-    animation-delay:0s;
 
-}
+/* CLICK TEXT */
 
-.ghost2{
 
-    top:48%;
+#endOverlay p{
 
-    left:-220px;
 
-    animation-delay:5s;
+margin-top:35px;
 
-}
 
-.ghost3{
+color:#ffb000;
 
-    top:72%;
 
-    left:-220px;
+font-size:
 
-    animation-delay:10s;
+clamp(18px,3vw,35px);
 
-}
 
-@keyframes ghostFly{
+letter-spacing:4px;
 
-    0%{
 
-        transform:
+text-shadow:
 
-        translateX(0);
 
-        opacity:0;
+0 0 10px orange,
 
-    }
+0 0 25px red;
 
-    20%{
 
-        opacity:1;
 
-    }
+animation:
 
-    80%{
+clickPulse 1.8s infinite;
 
-        opacity:.7;
 
-    }
-
-    100%{
-
-        transform:
-
-        translateX(140vw);
-
-        opacity:0;
-
-    }
 
 }
 
-/* ==========================================================
-   PARTICLES
-========================================================== */
 
-#particleContainer{
 
-    position:fixed;
 
-    inset:0;
+/* GHOST TITLE EFFECT */
 
-    overflow:hidden;
 
-    pointer-events:none;
+@keyframes ghostGlow{
 
-    z-index:15;
 
-}
+0%,100%{
 
-#spiritParticles{
 
-    position:fixed;
+opacity:0.8;
 
-    inset:0;
+transform:
 
-    overflow:hidden;
+translateY(0);
 
-    pointer-events:none;
-
-    z-index:16;
 
 }
 
-.particle{
 
-    position:absolute;
+50%{
 
-    width:5px;
 
-    height:5px;
+opacity:1;
 
-    border-radius:50%;
+transform:
 
-    background:#7fdfff;
+translateY(-10px);
 
-    box-shadow:
-
-    0 0 15px #7fdfff,
-
-    0 0 25px #7fdfff;
-
-    animation:
-
-    particleFloat linear infinite;
 
 }
 
-@keyframes particleFloat{
-
-    0%{
-
-        transform:
-
-        translateY(110vh)
-
-        scale(.4);
-
-        opacity:0;
-
-    }
-
-    20%{
-
-        opacity:1;
-
-    }
-
-    100%{
-
-        transform:
-
-        translateY(-120vh)
-
-        scale(1.5);
-
-        opacity:0;
-
-    }
 
 }
 
-/* ==========================================================
-   MAIN UI
-========================================================== */
 
-#ui{
 
-    position:relative;
 
-    width:100%;
 
-    height:100%;
+/* CLICK ANIMATION */
 
-    z-index:30;
 
-}
+@keyframes clickPulse{
 
-/* ==========================================================
-   TITLE
-========================================================== */
 
-#titleContainer{
+0%{
 
-    position:absolute;
 
-    top:8%;
+transform:scale(1);
 
-    left:50%;
+opacity:.7;
 
-    transform:translateX(-50%);
-
-    text-align:center;
-
-    color:#fff;
-
-    z-index:35;
-
-    animation:
-
-    titleFade 2s ease;
 
 }
 
-#titleContainer h1{
 
-    font-size:82px;
+50%{
 
-    letter-spacing:8px;
 
-    text-shadow:
+transform:scale(1.1);
 
-    0 0 15px #6fdcff,
+opacity:1;
 
-    0 0 35px #6fdcff,
-
-    0 0 55px #6fdcff;
 
 }
 
-#titleContainer h2{
 
-    margin-top:15px;
+100%{
 
-    font-size:40px;
 
-    color:#9ce8ff;
+transform:scale(1);
 
-    text-shadow:
+opacity:.7;
 
-    0 0 18px #6fdcff;
 
 }
 
-#titleContainer p{
-
-    margin-top:25px;
-
-    max-width:760px;
-
-    line-height:1.6;
-
-    font-size:22px;
 
 }
 
-/* ==========================================================
-   MISSION PANEL
-========================================================== */
 
-#missionBox{
 
-    position:absolute;
 
-    left:40px;
 
-    bottom:80px;
+/* MOBILE */
 
-    width:360px;
 
-    padding:22px;
+@media(max-width:768px){
 
-    border-radius:18px;
 
-    background:
+#endOverlay h1{
 
-    rgba(8,18,35,.72);
 
-    border:
+letter-spacing:3px;
 
-    2px solid
-
-    rgba(111,220,255,.45);
-
-    backdrop-filter:blur(12px);
-
-    z-index:35;
-
-    animation:
-
-    missionGlow 3s ease-in-out infinite;
 
 }
 
-#missionBox h3{
 
-    color:#6fdcff;
 
-    font-size:28px;
+#endOverlay p{
 
-    margin-bottom:15px;
 
-}
+letter-spacing:2px;
 
-#missionBox p{
-
-    color:#fff;
-
-    font-size:18px;
-
-    line-height:1.8;
-
-}
-/* ==========================================================
-   STORY SUBTITLE
-========================================================== */
-
-#storyText{
-
-    position:absolute;
-
-    left:50%;
-
-    bottom:40px;
-
-    transform:translateX(-50%);
-
-    width:80%;
-
-    text-align:center;
-
-    color:#fff;
-
-    font-size:26px;
-
-    font-weight:500;
-
-    text-shadow:
-
-    0 0 8px #000,
-
-    0 0 18px rgba(0,0,0,.85);
-
-    z-index:40;
-
-    animation:
-
-    subtitleFade 3s ease infinite;
 
 }
 
-@keyframes subtitleFade{
 
-    0%{
-
-        opacity:0;
-
-    }
-
-    20%{
-
-        opacity:1;
-
-    }
-
-    80%{
-
-        opacity:1;
-
-    }
-
-    100%{
-
-        opacity:0;
-
-    }
 
 }
 
-/* ==========================================================
-   VIDEO PROGRESS
-========================================================== */
 
-#videoProgress{
 
-    position:fixed;
+/* LANDSCAPE MOBILE */
 
-    left:0;
 
-    bottom:0;
+@media(max-height:500px){
 
-    width:100%;
 
-    height:8px;
+#endOverlay h1{
 
-    background:
 
-    rgba(255,255,255,.15);
+font-size:35px;
 
-    z-index:180;
 
 }
 
-#videoFill{
 
-    width:0;
 
-    height:100%;
+#endOverlay p{
 
-    background:
 
-    linear-gradient(
+font-size:18px;
 
-    90deg,
-
-    #5fd6ff,
-
-    #7a5cff
-
-    );
-
-    transition:
-
-    width .2s linear;
 
 }
 
-/* ==========================================================
-   SKIP BUTTON
-========================================================== */
-
-#skipButton{
-
-    position:absolute;
-
-    top:25px;
-
-    right:25px;
-
-    padding:14px 34px;
-
-    border:none;
-
-    border-radius:40px;
-
-    cursor:pointer;
-
-    color:#fff;
-
-    font-size:18px;
-
-    font-weight:600;
-
-    letter-spacing:1px;
-
-    background:
-
-    linear-gradient(
-
-    90deg,
-
-    #29b6f6,
-
-    #1565c0
-
-    );
-
-    transition:
-
-    transform .3s,
-
-    box-shadow .3s;
-
-    animation:
-
-    skipFloat 3s ease-in-out infinite;
-
-    z-index:100;
 
 }
-
-#skipButton:hover{
-
-    transform:scale(1.08);
-
-    box-shadow:
-
-    0 0 25px
-
-    #29b6f6;
-
-}
-
-@keyframes skipFloat{
-
-    0%{
-
-        transform:translateY(0);
-
-    }
-
-    50%{
-
-        transform:translateY(-3px);
-
-    }
-
-    100%{
-
-        transform:translateY(0);
-
-    }
-
-}
-
-/* ==========================================================
-   ENTER SCREEN
-========================================================== */
-
-#enterContainer{
-
-    position:fixed;
-
-    inset:0;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    background:
-
-    rgba(0,0,0,.82);
-
-    opacity:0;
-
-    visibility:hidden;
-
-    transition:
-
-    opacity .6s ease,
-
-    visibility .6s ease;
-
-    z-index:300;
-
-}
-
-#enterContainer.show{
-
-    opacity:1;
-
-    visibility:visible;
-
-}
-
-#enterPanel{
-
-    width:650px;
-
-    max-width:90%;
-
-    padding:45px;
-
-    border-radius:24px;
-
-    text-align:center;
-
-    background:
-
-    rgba(10,18,38,.92);
-
-    border:
-
-    2px solid
-
-    rgba(111,220,255,.5);
-
-    box-shadow:
-
-    0 0 40px
-
-    rgba(79,195,247,.45);
-
-}
-
-#enterPanel h2{
-
-    color:#7fdfff;
-
-    font-size:40px;
-
-    margin-bottom:20px;
-
-}
-
-#enterPanel p{
-
-    color:#fff;
-
-    font-size:20px;
-
-    line-height:1.8;
-
-    margin-bottom:35px;
-
-}
-
-#enterButton{
-
-    padding:20px 70px;
-
-    border:none;
-
-    border-radius:60px;
-
-    cursor:pointer;
-
-    color:#fff;
-
-    font-size:24px;
-
-    font-weight:bold;
-
-    background:
-
-    linear-gradient(
-
-    90deg,
-
-    #4fc3f7,
-
-    #3949ab
-
-    );
-
-    animation:
-
-    buttonPulse 2.5s infinite;
-
-    transition:
-
-    transform .3s,
-
-    box-shadow .3s;
-
-}
-
-#enterButton:hover{
-
-    transform:scale(1.08);
-
-    box-shadow:
-
-    0 0 35px
-
-    #4fc3f7;
-
-}
-
-/* ==========================================================
-   LOADING SCREEN
-========================================================== */
-
-#loadingScreen{
-
-    position:fixed;
-
-    inset:0;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    background:#000;
-
-    opacity:1;
-
-    visibility:visible;
-
-    transition:
-
-    opacity .6s ease;
-
-    z-index:500;
-
-}
-
-.loadingContent{
-
-    width:420px;
-
-    max-width:90%;
-
-    text-align:center;
-
-}
-
-.loadingContent h2{
-
-    color:#fff;
-
-    font-size:30px;
-
-    margin-bottom:30px;
-
-    letter-spacing:2px;
-
-}
-
-.loadingBar{
-
-    width:100%;
-
-    height:16px;
-
-    border-radius:25px;
-
-    overflow:hidden;
-
-    background:#1a1a1a;
-
-}
-
-#loadingFill{
-
-    width:0;
-
-    height:100%;
-
-    background:
-
-    linear-gradient(
-
-    90deg,
-
-    #00e5ff,
-
-    #448aff
-
-    );
-
-    transition:
-
-    width .3s;
-
-}
-
-/* ==========================================================
-   ANIMATIONS
-========================================================== */
-
-@keyframes titleFade{
-
-    0%{
-
-        opacity:0;
-
-        transform:
-
-        translateX(-50%)
-
-        translateY(-40px);
-
-    }
-
-    100%{
-
-        opacity:1;
-
-        transform:
-
-        translateX(-50%)
-
-        translateY(0);
-
-    }
-
-}
-
-@keyframes missionGlow{
-
-    0%{
-
-        box-shadow:
-
-        0 0 12px
-
-        rgba(111,220,255,.25);
-
-    }
-
-    50%{
-
-        box-shadow:
-
-        0 0 28px
-
-        rgba(111,220,255,.85);
-
-    }
-
-    100%{
-
-        box-shadow:
-
-        0 0 12px
-
-        rgba(111,220,255,.25);
-
-    }
-
-}
-
-@keyframes buttonPulse{
-
-    0%{
-
-        transform:scale(1);
-
-    }
-
-    50%{
-
-        transform:scale(1.05);
-
-    }
-
-    100%{
-
-        transform:scale(1);
-
-    }
-
-}
-/* ==========================================================
-   RESPONSIVE
-========================================================== */
-
-@media (max-width:1024px){
-
-    #titleContainer h1{
-
-        font-size:64px;
-
-    }
-
-    #titleContainer h2{
-
-        font-size:32px;
-
-    }
-
-    #missionBox{
-
-        width:320px;
-
-    }
-
-}
-
-/* ==========================================================
-   TABLET
-========================================================== */
-
-@media (max-width:768px){
-
-    #topBar,
-    #bottomBar{
-
-        height:6vh;
-
-    }
-
-    #titleContainer{
-
-        width:92%;
-
-        top:8%;
-
-    }
-
-    #titleContainer h1{
-
-        font-size:46px;
-
-        letter-spacing:3px;
-
-    }
-
-    #titleContainer h2{
-
-        font-size:24px;
-
-    }
-
-    #titleContainer p{
-
-        font-size:16px;
-
-        margin-top:14px;
-
-    }
-
-    #missionBox{
-
-        position:absolute;
-
-        left:50%;
-
-        transform:translateX(-50%);
-
-        bottom:105px;
-
-        width:92%;
-
-        padding:18px;
-
-    }
-
-    #missionBox h3{
-
-        font-size:22px;
-
-    }
-
-    #missionBox p{
-
-        font-size:16px;
-
-    }
-
-    #storyText{
-
-        width:92%;
-
-        font-size:18px;
-
-        bottom:55px;
-
-    }
-
-    #skipButton{
-
-        top:15px;
-
-        right:15px;
-
-        padding:10px 18px;
-
-        font-size:15px;
-
-    }
-
-    #enterPanel{
-
-        width:92%;
-
-        padding:30px 22px;
-
-    }
-
-    #enterPanel h2{
-
-        font-size:28px;
-
-    }
-
-    #enterPanel p{
-
-        font-size:17px;
-
-    }
-
-    #enterButton{
-
-        width:100%;
-
-        font-size:18px;
-
-        padding:18px;
-
-    }
-
-    .loadingContent h2{
-
-        font-size:22px;
-
-    }
-
-}
-
-/* ==========================================================
-   MOBILE
-========================================================== */
-
-@media (max-width:480px){
-
-    #titleContainer{
-
-        top:9%;
-
-    }
-
-    #titleContainer h1{
-
-        font-size:38px;
-
-    }
-
-    #titleContainer h2{
-
-        font-size:20px;
-
-    }
-
-    #titleContainer p{
-
-        font-size:15px;
-
-    }
-
-    #missionBox{
-
-        bottom:95px;
-
-    }
-
-    #storyText{
-
-        font-size:16px;
-
-    }
-
-    #videoProgress{
-
-        height:6px;
-
-    }
-
-}
-
-/* ==========================================================
-   LARGE DESKTOP
-========================================================== */
-
-@media (min-width:1600px){
-
-    #titleContainer h1{
-
-        font-size:100px;
-
-    }
-
-    #titleContainer h2{
-
-        font-size:52px;
-
-    }
-
-    #titleContainer p{
-
-        font-size:28px;
-
-        max-width:900px;
-
-    }
-
-    #missionBox{
-
-        width:430px;
-
-        padding:28px;
-
-    }
-
-    #missionBox h3{
-
-        font-size:32px;
-
-    }
-
-    #missionBox p{
-
-        font-size:21px;
-
-    }
-
-    #storyText{
-
-        font-size:30px;
-
-    }
-
-    #enterPanel{
-
-        width:760px;
-
-    }
-
-}
-
-/* ==========================================================
-   REDUCED MOTION
-========================================================== */
-
-@media (prefers-reduced-motion: reduce){
-
-    *,
-    *::before,
-    *::after{
-
-        animation:none !important;
-
-        transition:none !important;
-
-        scroll-behavior:auto !important;
-
-    }
-
-}
-
-/* ==========================================================
-   END OF FILE
-========================================================== */
