@@ -20,237 +20,269 @@ content="VIDLYRA HALLOWEEN FEST 2026 - DAY 5 - THE HAUNTED CEMETERY">
 <title>
 
 VIDLYRA HALLOWEEN FEST 2026
-DAY 5 - THE HAUNTED CEMETERY
+DAY 5
+THE HAUNTED CEMETERY
 
 </title>
 
 <link
 rel="stylesheet"
-href="css/day5-video.css">
+href="css/day5-game.css">
 
 </head>
 
 <body>
 
 <!-- ==========================================
-VIDEO
+BACKGROUND
 ========================================== -->
 
-<div id="videoContainer">
+<div id="background"></div>
 
-<video
+<div id="fogBack"></div>
 
-id="introVideo"
+<div id="fogFront"></div>
 
-class="video"
-
-autoplay
-
-muted
-
-playsinline
-
-preload="auto"
-
-poster="assets/background.png">
-
-<source
-
-src="assets/video/day5-intro.mp4"
-
-type="video/mp4">
-
-Your browser does not support HTML5 video.
-
-</video>
-
-</div>
-
-<!-- ==========================================
-VISUAL EFFECTS
-========================================== -->
-
-<div id="overlay"></div>
-
-<div id="lightningFlash"></div>
-
-<div id="fadeScreen"></div>
-
-<div id="fogLayer"></div>
+<div id="screenGlow"></div>
 
 <div id="particleContainer"></div>
 
-<div id="ghostLayer">
+<div id="lightning"></div>
 
-<div class="ghostShadow ghost1"></div>
+<div id="cinematicFade"></div>
 
-<div class="ghostShadow ghost2"></div>
+<!-- ==========================================
+WORLD
+========================================== -->
 
-<div class="ghostShadow ghost3"></div>
+<div id="cemetery">
+
+<img
+
+src="assets/images/Cemetery Gate.png"
+
+id="gate"
+
+alt="Cemetery Gate">
+
+<img
+
+src="assets/images/Dead Tree.png"
+
+id="treeLeft"
+
+alt="Dead Tree">
+
+<img
+
+src="assets/images/Dead Tree.png"
+
+id="treeRight"
+
+alt="Dead Tree">
+
+<img
+
+src="assets/images/grave.png"
+
+id="grave1"
+
+alt="Grave">
+
+<img
+
+src="assets/images/grave.png"
+
+id="grave2"
+
+alt="Grave">
+
+<img
+
+src="assets/images/Stone Cross.png"
+
+id="cross1"
+
+alt="Stone Cross">
+
+<img
+
+src="assets/images/Bones.png"
+
+id="bones"
+
+alt="Bones">
 
 </div>
 
 <!-- ==========================================
-CINEMATIC BARS
+PLAYER
 ========================================== -->
 
-<div id="topBar"></div>
+<img
 
-<div id="bottomBar"></div>
+src="assets/images/Player (Day 5 Outfit).png"
+
+id="player"
+
+alt="Player">
 
 <!-- ==========================================
-MAIN UI
+GHOSTS
 ========================================== -->
 
-<div id="ui">
+<img
 
-<!-- TITLE -->
+src="assets/images/Ghost.png"
 
-<div id="titleContainer">
+id="ghost1"
 
-<h1>
+class="ghost"
 
-DAY 5
+alt="Ghost">
 
-</h1>
+<img
 
-<h2>
+src="assets/images/Ghost.png"
 
-THE HAUNTED CEMETERY
+id="ghost2"
 
-</h2>
+class="ghost"
 
-<p>
+alt="Ghost">
 
-Restore the Seven Spirit Lanterns
-before the Ghost King awakens.
+<img
 
-</p>
+src="assets/images/Ghost.png"
+
+id="ghost3"
+
+class="ghost"
+
+alt="Ghost">
+<!-- ==========================================
+GHOST KING
+========================================== -->
+
+<img
+
+src="assets/images/Ghost King (Boss).png"
+
+id="ghostKing"
+
+alt="Ghost King">
+
+<!-- ==========================================
+PORTAL
+========================================== -->
+
+<img
+
+src="assets/images/Portal.png"
+
+id="portal"
+
+alt="Portal">
+
+<!-- ==========================================
+SPIRIT LANTERN
+========================================== -->
+
+<img
+
+src="assets/images/Spirit Lantern.png"
+
+id="lantern"
+
+alt="Spirit Lantern">
+
+<!-- ==========================================
+BLUE SPIRIT FLAME
+========================================== -->
+
+<img
+
+src="assets/images/Blue Spirit Flame.png"
+
+id="spiritFlame"
+
+alt="Blue Spirit Flame">
+
+<!-- ==========================================
+SOUL ORB
+========================================== -->
+
+<img
+
+src="assets/images/Soul Orb.png"
+
+id="orb"
+
+alt="Soul Orb">
+
+<!-- ==========================================
+CROW
+========================================== -->
+
+<img
+
+src="assets/images/Crow.png"
+
+id="crow"
+
+alt="Crow">
+
+<!-- ==========================================
+DIALOGUE UI
+========================================== -->
+
+<div id="dialogueBox">
+
+<div id="speaker">
+
+Narrator
 
 </div>
+
+<div id="dialogueText">
+
+The Forgotten Cemetery awaits...
+
+</div>
+
+</div>
+
 <!-- ==========================================
 MISSION PANEL
 ========================================== -->
 
-<div id="missionBox">
+<div id="missionPanel">
 
-<h3>
+<h2>
 
 MISSION
 
-</h3>
-
-<p>
-
-Explore the Haunted Cemetery
-
-<br><br>
-
-Find all 7 Spirit Lanterns
-
-<br><br>
-
-Seal the Ghost King before
-the cemetery is consumed.
-
-</p>
-
-</div>
-
-<!-- ==========================================
-STORY SUBTITLE
-========================================== -->
-
-<div id="storyText">
-
-<p id="storyLine">
-
-The Forgotten Cemetery awakens...
-
-</p>
-
-</div>
-
-<!-- ==========================================
-VIDEO PROGRESS
-========================================== -->
-
-<div id="videoProgress">
-
-<div id="videoFill"></div>
-
-</div>
-
-<!-- ==========================================
-SKIP BUTTON
-========================================== -->
-
-<button id="skipButton">
-
-SKIP ▶
-
-</button>
-
-</div>
-
-<!-- ==========================================
-LOADING SCREEN
-========================================== -->
-
-<div id="loadingScreen">
-
-<div class="loadingContent">
-
-<h2>
-
-Preparing The Haunted Cemetery...
-
-</h2>
-
-<div class="loadingBar">
-
-<div id="loadingFill"></div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ==========================================
-ENTER SCREEN
-========================================== -->
-
-<div id="enterContainer">
-
-<div id="enterPanel">
-
-<h2>
-
-THE HAUNTED CEMETERY
-
 </h2>
 
 <p>
 
-Every Spirit Lantern you restore
-frees one trapped soul.
+Collect all 7 Spirit Lanterns
 
-The Ghost King grows stronger
-with every passing moment.
+<br><br>
 
-Gather all seven lanterns
-and survive the final battle.
+Seal the Ghost King
+
+<br><br>
+
+Escape through the Portal
 
 </p>
 
-<button id="enterButton">
+<button id="beginMission">
 
-ENTER THE CEMETERY
+BEGIN MISSION
 
 </button>
-
-</div>
 
 </div>
 <!-- ==========================================
@@ -258,12 +290,12 @@ AUDIO
 ========================================== -->
 
 <audio
-id="bgMusic"
+id="bgm"
 loop
 preload="auto">
 
 <source
-src="assets/haunted-cemetery.mp3"
+src="assets/audio/haunted-cemetery.mp3"
 type="audio/mpeg">
 
 </audio>
@@ -273,7 +305,7 @@ id="ghostWhisper"
 preload="auto">
 
 <source
-src="assets/ghost-whisper.mp3"
+src="assets/audio/ghost-whisper.mp3"
 type="audio/mpeg">
 
 </audio>
@@ -283,17 +315,17 @@ id="ghostAppear"
 preload="auto">
 
 <source
-src="assets/ghost-appear.mp3"
+src="assets/audio/ghost-appear.mp3"
 type="audio/mpeg">
 
 </audio>
 
 <audio
-id="ghostKing"
+id="ghostKingSound"
 preload="auto">
 
 <source
-src="assets/ghost-king.mp3"
+src="assets/audio/ghost-king.mp3"
 type="audio/mpeg">
 
 </audio>
@@ -303,7 +335,7 @@ id="spiritLight"
 preload="auto">
 
 <source
-src="assets/spirit-light.mp3"
+src="assets/audio/spirit-light.mp3"
 type="audio/mpeg">
 
 </audio>
@@ -313,7 +345,7 @@ id="collectSound"
 preload="auto">
 
 <source
-src="assets/collect.mp3"
+src="assets/audio/collect.mp3"
 type="audio/mpeg">
 
 </audio>
@@ -323,17 +355,17 @@ id="thunder"
 preload="auto">
 
 <source
-src="assets/thunder.mp3"
+src="assets/audio/thunder.mp3"
 type="audio/mpeg">
 
 </audio>
 
 <audio
-id="portal"
+id="portalSound"
 preload="auto">
 
 <source
-src="assets/portal.mp3"
+src="assets/audio/portal.mp3"
 type="audio/mpeg">
 
 </audio>
@@ -343,7 +375,7 @@ id="missionComplete"
 preload="auto">
 
 <source
-src="assets/mission-complete.mp3"
+src="assets/audio/mission-complete.mp3"
 type="audio/mpeg">
 
 </audio>
@@ -354,7 +386,7 @@ loop
 preload="auto">
 
 <source
-src="assets/Epic Anime Boss Battle Theme.mp3"
+src="assets/audio/Epic Anime Boss Battle Theme.mp3"
 type="audio/mpeg">
 
 </audio>
@@ -378,23 +410,20 @@ font-size:22px;
 font-family:Arial,sans-serif;
 z-index:9999;
 text-align:center;
-padding:20px;">
+padding:30px;">
 
 JavaScript is required to play
-VIDLYRA HALLOWEEN FEST 2026.
+VIDLYRA HALLOWEEN FEST 2026
+Day 5.
 
 </div>
 
 </noscript>
-
-<!-- ==========================================
-END OF PAGE CONTENT
-========================================== -->
 <!-- ==========================================
 JAVASCRIPT
 ========================================== -->
 
-<script src="js/day5-video.js"></script>
+<script src="js/day5-game.js"></script>
 
 </body>
 
