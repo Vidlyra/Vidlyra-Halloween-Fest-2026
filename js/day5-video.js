@@ -1,39 +1,62 @@
 /* ==========================================================
    VIDLYRA HALLOWEEN FEST 2026
-   DAY 5 - VIDEO INTRO
+   DAY 5 - THE HAUNTED CEMETERY
+   INTRO VIDEO
 ========================================================== */
 
 "use strict";
 
 const Intro = {
 
-    /* ==========================================
-       CACHE
-    ========================================== */
+    /* ======================================================
+       ELEMENTS
+    ====================================================== */
 
-    video: null,
-    bgMusic: null,
-    ghostWhisper: null,
-    ghostAppear: null,
-    ghostKing: null,
-    thunder: null,
-    battleMusic: null,
+    video:null,
 
-    title: null,
-    subtitle: null,
-    progress: null,
-    flash: null,
-    fade: null,
+    bgMusic:null,
+    ghostWhisper:null,
+    ghostAppear:null,
+    ghostKing:null,
+    thunder:null,
+    spiritLight:null,
+    battleMusic:null,
 
-    skipButton: null,
-    enterContainer: null,
-    enterButton: null,
+    loading:null,
 
-    particleContainer: null,
+    title:null,
+    subtitle:null,
+    progress:null,
 
-    /* ==========================================
-       INIT
-    ========================================== */
+    flash:null,
+    fade:null,
+
+    skipButton:null,
+
+    enterContainer:null,
+    enterButton:null,
+
+    particleContainer:null,
+
+    /* ======================================================
+       TIMERS
+    ====================================================== */
+
+    whisperTimer:null,
+
+    lightningTimer:null,
+
+    /* ======================================================
+       FLAGS
+    ====================================================== */
+
+    kingTriggered:false,
+
+    introFinished:false,
+
+    /* ======================================================
+       START
+    ====================================================== */
 
     init(){
 
@@ -41,17 +64,19 @@ const Intro = {
 
         this.bindEvents();
 
-        this.startVideo();
+        this.prepareVideo();
 
         this.startParticles();
 
-        this.randomGhostWhispers();
+        this.startGhostWhispers();
+
+        this.startLightning();
 
     },
 
-    /* ==========================================
-       CACHE ELEMENTS
-    ========================================== */
+    /* ======================================================
+       CACHE
+    ====================================================== */
 
     cache(){
 
@@ -70,11 +95,17 @@ const Intro = {
         this.ghostKing =
         document.getElementById("ghostKing");
 
+        this.spiritLight =
+        document.getElementById("spiritLight");
+
         this.thunder =
         document.getElementById("thunder");
 
         this.battleMusic =
         document.getElementById("battleMusic");
+
+        this.loading =
+        document.getElementById("loadingScreen");
 
         this.subtitle =
         document.getElementById("storyLine");
@@ -101,63 +132,94 @@ const Intro = {
         document.getElementById("particleContainer");
 
     },
-      /* ==========================================
-       START
-    ========================================== */
 
-    startVideo(){
+    /* ======================================================
+       AUDIO
+    ====================================================== */
+
+    play(audio){
+
+        if(!audio) return;
+
+        audio.currentTime = 0;
+
+        audio.play().catch(()=>{});
+
+    },
+
+    stop(audio){
+
+        if(!audio) return;
+
+        audio.pause();
+
+        audio.currentTime = 0;
+
+    },
+
+    /* ======================================================
+       VIDEO
+    ====================================================== */
+
+    prepareVideo(){
+
+        if(!this.video) return;
+
+        this.video.muted = true;
+
+        this.video.playsInline = true;
+
+        this.video.addEventListener("loadeddata",()=>{
+
+            if(this.loading){
+
+                this.loading.style.opacity="0";
+
+                setTimeout(()=>{
+
+                    this.loading.style.display="none";
+
+                },600);
+
+            }
+
+        });
+
+        this.video.play().catch(()=>{});
 
         if(this.bgMusic){
 
-            this.bgMusic.volume = 0.35;
+            this.bgMusic.volume=.35;
 
             this.bgMusic.play().catch(()=>{});
 
         }
 
-        if(this.video){
-
-            this.video.play().catch(()=>{});
-
-        }
-
     },
 
-    /* ==========================================
+    /* ======================================================
        EVENTS
-    ========================================== */
+    ====================================================== */
 
     bindEvents(){
 
         if(this.skipButton){
 
-            this.skipButton.addEventListener(
+            this.skipButton.addEventListener("click",()=>{
 
-                "click",
+                window.location.href="day5-game.html";
 
-                ()=>{
-
-                    window.location.href="day5-game.html";
-
-                }
-
-            );
+            });
 
         }
 
         if(this.enterButton){
 
-            this.enterButton.addEventListener(
+            this.enterButton.addEventListener("click",()=>{
 
-                "click",
+                window.location.href="day5-game.html";
 
-                ()=>{
-
-                    window.location.href="day5-game.html";
-
-                }
-
-            );
+            });
 
         }
 
@@ -190,42 +252,21 @@ const Intro = {
         }
 
     },
-      /* ==========================================
-       AUDIO HELPER
-    ========================================== */
-
-    play(audio){
-
-        if(!audio) return;
-
-        audio.currentTime = 0;
-
-        audio.play().catch(()=>{});
-
-    },
-
-    stop(audio){
-
-        if(!audio) return;
-
-        audio.pause();
-
-        audio.currentTime = 0;
-
-    },
-      /* ==========================================
+       /* ======================================================
        PROGRESS BAR
-    ========================================== */
+    ====================================================== */
 
     updateProgress(){
 
         if(!this.video) return;
 
+        if(!this.video.duration) return;
+
         const percent =
 
-        (this.video.currentTime/
+        (this.video.currentTime /
 
-        this.video.duration)*100;
+        this.video.duration) * 100;
 
         if(this.progress){
 
@@ -236,21 +277,38 @@ const Intro = {
         }
 
     },
-      /* ==========================================
+
+    /* ======================================================
+       SUBTITLE
+    ====================================================== */
+
+    setSubtitle(text){
+
+        if(!this.subtitle) return;
+
+        if(this.subtitle.textContent !== text){
+
+            this.subtitle.textContent = text;
+
+        }
+
+    },
+
+    /* ======================================================
        VIDEO TIMELINE
-    ========================================== */
+    ====================================================== */
 
     updateTimeline(){
 
-        this.updateProgress();
-
         if(!this.video) return;
+
+        this.updateProgress();
 
         const t = this.video.currentTime;
 
-        /* ----------------------------------
-           PHASE 1 (0-8s)
-        ----------------------------------- */
+        /* -----------------------------
+           PHASE 1
+        ------------------------------ */
 
         if(t >= 0 && t < 8){
 
@@ -258,9 +316,9 @@ const Intro = {
 
         }
 
-        /* ----------------------------------
-           PHASE 2 (8-16s)
-        ----------------------------------- */
+        /* -----------------------------
+           PHASE 2
+        ------------------------------ */
 
         if(t >= 8 && t < 16){
 
@@ -268,9 +326,9 @@ const Intro = {
 
         }
 
-        /* ----------------------------------
-           PHASE 3 (16-24s)
-        ----------------------------------- */
+        /* -----------------------------
+           PHASE 3
+        ------------------------------ */
 
         if(t >= 16){
 
@@ -280,65 +338,63 @@ const Intro = {
 
     },
 
-    /* ==========================================
-       PHASE 1
-    ========================================== */
+    /* ======================================================
+       PHASE ONE
+    ====================================================== */
 
     phaseOne(){
 
-        this.subtitle.innerHTML =
+        this.setSubtitle(
 
-        "The Forgotten Cemetery awakens...";
+            "The Forgotten Cemetery awakens..."
+
+        );
 
     },
 
-    /* ==========================================
-       PHASE 2
-    ========================================== */
+    /* ======================================================
+       PHASE TWO
+    ====================================================== */
 
     phaseTwo(){
 
-        this.subtitle.innerHTML =
+        this.setSubtitle(
 
-        "Ancient spirits roam these sacred graves...";
+            "Ancient spirits roam these sacred graves..."
+
+        );
+
+        if(!this.kingTriggered){
+
+            this.kingTriggered = true;
+
+            this.ghostKingReveal();
+
+        }
 
     },
 
-    /* ==========================================
-       PHASE 3
-    ========================================== */
+    /* ======================================================
+       PHASE THREE
+    ====================================================== */
 
     phaseThree(){
 
-        this.subtitle.innerHTML =
+        this.setSubtitle(
 
-        "The Ghost King has sensed your arrival...";
+            "The Ghost King has sensed your arrival..."
 
-    },
-      /* ==========================================
-       RANDOM GHOST WHISPERS
-    ========================================== */
-
-    randomGhostWhispers(){
-
-        setInterval(()=>{
-
-            if(this.video.paused) return;
-
-            if(Math.random() > .45){
-
-                this.play(this.ghostWhisper);
-
-            }
-
-        },9000);
+        );
 
     },
-      /* ==========================================
-       RANDOM LIGHTNING
-    ========================================== */
+
+    /* ======================================================
+       LIGHTNING
+    ====================================================== */
 
     lightning(){
+
+        if(!this.flash) return;
 
         this.flash.classList.add("active");
 
@@ -354,7 +410,13 @@ const Intro = {
 
     startLightning(){
 
+        if(this.lightningTimer) return;
+
+        this.lightningTimer =
+
         setInterval(()=>{
+
+            if(!this.video) return;
 
             if(this.video.paused) return;
 
@@ -363,24 +425,66 @@ const Intro = {
         },7000);
 
     },
-      /* ==========================================
-       GHOST KING APPEAR
-    ========================================== */
+
+    /* ======================================================
+       RANDOM GHOST WHISPERS
+    ====================================================== */
+
+    startGhostWhispers(){
+
+        if(this.whisperTimer) return;
+
+        this.whisperTimer =
+
+        setInterval(()=>{
+
+            if(!this.video) return;
+
+            if(this.video.paused) return;
+
+            if(Math.random() > 0.45){
+
+                this.play(
+
+                    this.ghostWhisper
+
+                );
+
+            }
+
+        },9000);
+
+    },
+
+    /* ======================================================
+       GHOST KING
+    ====================================================== */
 
     ghostKingReveal(){
 
-        this.play(this.ghostAppear);
+        this.play(
+
+            this.ghostAppear
+
+        );
 
         setTimeout(()=>{
 
-            this.play(this.ghostKing);
+            this.play(
+
+                this.ghostKing
+
+            );
+
+            this.startBossMusic();
 
         },1000);
 
     },
-      /* ==========================================
-       START BOSS MUSIC
-    ========================================== */
+
+    /* ======================================================
+       BOSS MUSIC
+    ====================================================== */
 
     startBossMusic(){
 
@@ -391,44 +495,77 @@ const Intro = {
         this.battleMusic.play().catch(()=>{});
 
     },
-      /* ==========================================
-       CREATE PARTICLES
-    ========================================== */
+       /* ======================================================
+       PARTICLES
+    ====================================================== */
 
     startParticles(){
 
         if(!this.particleContainer) return;
 
+        this.particleContainer.innerHTML = "";
+
         for(let i=0;i<70;i++){
 
-            const p=document.createElement("div");
+            const particle =
 
-            p.className="particle";
+            document.createElement("div");
 
-            p.style.left=Math.random()*100+"%";
+            particle.className = "particle";
 
-            p.style.top=Math.random()*100+"%";
+            particle.style.left =
+            Math.random()*100 + "%";
 
-            p.style.animationDelay=
-            Math.random()*8+"s";
+            particle.style.top =
+            Math.random()*100 + "%";
 
-            p.style.animationDuration=
-            (5+Math.random()*8)+"s";
+            particle.style.animationDelay =
+            Math.random()*8 + "s";
 
-            p.style.opacity=
-            Math.random();
+            particle.style.animationDuration =
+            (5 + Math.random()*8) + "s";
 
-            this.particleContainer.appendChild(p);
+            particle.style.opacity =
+            Math.random().toFixed(2);
+
+            particle.style.transform =
+            `scale(${0.4 + Math.random()})`;
+
+            this.particleContainer.appendChild(
+
+                particle
+
+            );
 
         }
 
     },
 
-    /* ==========================================
+    /* ======================================================
+       ENTER SCREEN
+    ====================================================== */
+
+    showEnterScreen(){
+
+        if(!this.enterContainer) return;
+
+        this.enterContainer.classList.add(
+
+            "show"
+
+        );
+
+    },
+
+    /* ======================================================
        FINISH INTRO
-    ========================================== */
+    ====================================================== */
 
     finishIntro(){
+
+        if(this.introFinished) return;
+
+        this.introFinished = true;
 
         if(this.bgMusic){
 
@@ -436,35 +573,95 @@ const Intro = {
 
         }
 
-        this.fade.classList.add("show");
+        if(this.fade){
+
+            this.fade.classList.add(
+
+                "show"
+
+            );
+
+        }
 
         setTimeout(()=>{
 
-            this.enterContainer.classList.add("show");
+            this.showEnterScreen();
 
         },700);
 
     },
-      /* ==========================================
-       AUTO REDIRECT
-    ========================================== */
+
+    /* ======================================================
+       AUTO ENTER
+       (Optional)
+    ====================================================== */
 
     autoEnter(){
 
         setTimeout(()=>{
 
-            window.location.href=
+            window.location.href =
+
             "day5-game.html";
 
         },3000);
 
     },
 
-    /* ==========================================
+    /* ======================================================
+       LOADING SCREEN
+    ====================================================== */
+
+    hideLoading(){
+
+        if(!this.loading) return;
+
+        this.loading.style.opacity = "0";
+
+        setTimeout(()=>{
+
+            this.loading.style.display =
+
+            "none";
+
+        },600);
+
+    },
+
+    /* ======================================================
+       PAUSE
+    ====================================================== */
+
+    pauseVideo(){
+
+        if(this.video){
+
+            this.video.pause();
+
+        }
+
+    },
+
+    /* ======================================================
+       PLAY
+    ====================================================== */
+
+    playVideo(){
+
+        if(this.video){
+
+            this.video.play().catch(()=>{});
+
+        }
+
+    },
+       /* ======================================================
        DESTROY
-    ========================================== */
+    ====================================================== */
 
     destroy(){
+
+        /* Stop Audio */
 
         this.stop(this.bgMusic);
 
@@ -474,15 +671,61 @@ const Intro = {
 
         this.stop(this.ghostKing);
 
+        this.stop(this.spiritLight);
+
+        this.stop(this.thunder);
+
         this.stop(this.battleMusic);
+
+        /* Stop Video */
+
+        if(this.video){
+
+            this.video.pause();
+
+        }
+
+        /* Clear Timers */
+
+        if(this.whisperTimer){
+
+            clearInterval(
+
+                this.whisperTimer
+
+            );
+
+            this.whisperTimer = null;
+
+        }
+
+        if(this.lightningTimer){
+
+            clearInterval(
+
+                this.lightningTimer
+
+            );
+
+            this.lightningTimer = null;
+
+        }
+
+        /* Remove Particles */
+
+        if(this.particleContainer){
+
+            this.particleContainer.innerHTML = "";
+
+        }
 
     }
 
 };
 
-/* ==========================================
-START
-========================================== */
+/* ==========================================================
+   PAGE EVENTS
+========================================================== */
 
 document.addEventListener(
 
@@ -492,8 +735,96 @@ document.addEventListener(
 
         Intro.init();
 
-        Intro.startLightning();
+    }
+
+);
+
+/* ==========================================================
+   CLEANUP
+========================================================== */
+
+window.addEventListener(
+
+    "beforeunload",
+
+    ()=>{
+
+        Intro.destroy();
 
     }
 
 );
+
+/* ==========================================================
+   TAB VISIBILITY
+========================================================== */
+
+document.addEventListener(
+
+    "visibilitychange",
+
+    ()=>{
+
+        if(document.hidden){
+
+            Intro.pauseVideo();
+
+        }else{
+
+            Intro.playVideo();
+
+        }
+
+    }
+
+);
+
+/* ==========================================================
+   KEYBOARD SHORTCUTS
+========================================================== */
+
+document.addEventListener(
+
+    "keydown",
+
+    (event)=>{
+
+        switch(event.key){
+
+            case "Escape":
+
+                window.location.href =
+
+                "day5-game.html";
+
+                break;
+
+            case " ":
+
+                event.preventDefault();
+
+                if(Intro.video){
+
+                    if(Intro.video.paused){
+
+                        Intro.playVideo();
+
+                    }else{
+
+                        Intro.pauseVideo();
+
+                    }
+
+                }
+
+                break;
+
+        }
+
+    }
+
+);
+
+/* ==========================================================
+   END OF FILE
+========================================================== */
