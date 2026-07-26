@@ -15,7 +15,7 @@ content="#000000">
 
 <meta
 name="description"
-content="VIDLYRA HALLOWEEN FEST 2026 - DAY 5 - THE HAUNTED CEMETERY">
+content="VIDLYRA HALLOWEEN FEST 2026 - DAY 5 - The Haunted Cemetery">
 
 <title>
 
@@ -27,358 +27,307 @@ THE HAUNTED CEMETERY
 
 <link
 rel="stylesheet"
-href="css/day5-game.css">
+href="css/day5-video.css">
 
 </head>
 
 <body>
 
 <!-- ==========================================
-BACKGROUND
+VIDEO CONTAINER
 ========================================== -->
 
-<div id="background"></div>
+<div id="videoContainer">
 
-<div id="fogBack"></div>
+<video
 
-<div id="fogFront"></div>
+id="introVideo"
 
-<div id="screenGlow"></div>
+class="introVideo"
 
-<div id="particleContainer"></div>
+autoplay
 
-<div id="lightning"></div>
+muted
 
-<div id="cinematicFade"></div>
+playsinline
 
-<!-- ==========================================
-WORLD
-========================================== -->
+preload="auto"
 
-<div id="cemetery">
+>
 
-<img
+<source
 
-src="assets/images/Cemetery Gate.png"
+src="assets/video/day5-intro.mp4"
 
-id="gate"
+type="video/mp4">
 
-alt="Cemetery Gate">
+Your browser does not support HTML5 video.
 
-<img
-
-src="assets/images/Dead Tree.png"
-
-id="treeLeft"
-
-alt="Dead Tree">
-
-<img
-
-src="assets/images/Dead Tree.png"
-
-id="treeRight"
-
-alt="Dead Tree">
-
-<img
-
-src="assets/images/grave.png"
-
-id="grave1"
-
-alt="Grave">
-
-<img
-
-src="assets/images/grave.png"
-
-id="grave2"
-
-alt="Grave">
-
-<img
-
-src="assets/images/Stone Cross.png"
-
-id="cross1"
-
-alt="Stone Cross">
-
-<img
-
-src="assets/images/Bones.png"
-
-id="bones"
-
-alt="Bones">
+</video>
 
 </div>
 
 <!-- ==========================================
-PLAYER
+DARK OVERLAY
 ========================================== -->
 
-<img
-
-src="assets/images/Player (Day 5 Outfit).png"
-
-id="player"
-
-alt="Player">
+<div id="overlay"></div>
 
 <!-- ==========================================
-GHOSTS
+LIGHTNING FLASH
 ========================================== -->
 
-<img
-
-src="assets/images/Ghost.png"
-
-id="ghost1"
-
-class="ghost"
-
-alt="Ghost">
-
-<img
-
-src="assets/images/Ghost.png"
-
-id="ghost2"
-
-class="ghost"
-
-alt="Ghost">
-
-<img
-
-src="assets/images/Ghost.png"
-
-id="ghost3"
-
-class="ghost"
-
-alt="Ghost">
-<!-- ==========================================
-GHOST KING
-========================================== -->
-
-<img
-
-src="assets/images/Ghost King (Boss).png"
-
-id="ghostKing"
-
-alt="Ghost King">
+<div id="lightningFlash"></div>
 
 <!-- ==========================================
-PORTAL
+FADE SCREEN
 ========================================== -->
 
-<img
-
-src="assets/images/Portal.png"
-
-id="portal"
-
-alt="Portal">
+<div id="fadeScreen"></div>
 
 <!-- ==========================================
-SPIRIT LANTERN
+VIDEO PROGRESS
 ========================================== -->
 
-<img
+<div id="videoProgress">
 
-src="assets/images/Spirit Lantern.png"
-
-id="lantern"
-
-alt="Spirit Lantern">
-
-<!-- ==========================================
-BLUE SPIRIT FLAME
-========================================== -->
-
-<img
-
-src="assets/images/Blue Spirit Flame.png"
-
-id="spiritFlame"
-
-alt="Blue Spirit Flame">
-
-<!-- ==========================================
-SOUL ORB
-========================================== -->
-
-<img
-
-src="assets/images/Soul Orb.png"
-
-id="orb"
-
-alt="Soul Orb">
-
-<!-- ==========================================
-CROW
-========================================== -->
-
-<img
-
-src="assets/images/Crow.png"
-
-id="crow"
-
-alt="Crow">
-
-<!-- ==========================================
-DIALOGUE UI
-========================================== -->
-
-<div id="dialogueBox">
-
-<div id="speaker">
-
-Narrator
+<div id="videoFill"></div>
 
 </div>
+<!-- ==========================================
+TITLE CONTAINER
+========================================== -->
 
-<div id="dialogueText">
+<div id="titleContainer">
 
-The Forgotten Cemetery awaits...
+    <h1 id="dayTitle">
 
-</div>
+        DAY 5
+
+    </h1>
+
+    <h2 id="locationTitle">
+
+        THE HAUNTED CEMETERY
+
+    </h2>
+
+    <p id="introDescription">
+
+        The forgotten cemetery has awakened.
+        Restore the Seven Spirit Lanterns
+        before the Ghost King rises.
+
+    </p>
 
 </div>
 
 <!-- ==========================================
-MISSION PANEL
+STORY SUBTITLE
 ========================================== -->
 
-<div id="missionPanel">
+<div id="subtitleContainer">
 
-<h2>
+    <p id="storySubtitle">
 
-MISSION
+        The cemetery is silent...
 
-</h2>
+    </p>
 
-<p>
+</div>
 
-Collect all 7 Spirit Lanterns
+<!-- ==========================================
+MISSION PREVIEW
+========================================== -->
 
-<br><br>
+<div id="missionPreview">
 
-Seal the Ghost King
+    <h3>
 
-<br><br>
+        TODAY'S MISSION
 
-Escape through the Portal
+    </h3>
 
-</p>
+    <ul>
 
-<button id="beginMission">
+        <li>Explore the Haunted Cemetery</li>
 
-BEGIN MISSION
+        <li>Restore 7 Spirit Lanterns</li>
+
+        <li>Defeat the Ghost King</li>
+
+    </ul>
+
+</div>
+
+<!-- ==========================================
+SKIP BUTTON
+========================================== -->
+
+<button
+
+id="skipButton"
+
+type="button">
+
+SKIP ▶
 
 </button>
 
+<!-- ==========================================
+ENTER SCREEN
+========================================== -->
+
+<div id="enterContainer">
+
+    <div id="enterCard">
+
+        <h2>
+
+            The Cemetery Awaits...
+
+        </h2>
+
+        <p>
+
+            The cinematic has ended.
+
+            Enter the haunted cemetery
+            and begin your mission.
+
+        </p>
+
+        <button
+
+        id="enterButton"
+
+        type="button">
+
+        ENTER THE CEMETERY
+
+        </button>
+
+    </div>
+
 </div>
 <!-- ==========================================
-AUDIO
+LOADING SCREEN
+========================================== -->
+
+<div id="loadingScreen">
+
+    <div id="loadingCard">
+
+        <h2>
+
+            Preparing Day 5...
+
+        </h2>
+
+        <p>
+
+            Loading cinematic...
+
+        </p>
+
+        <div id="loadingBar">
+
+            <div id="loadingFill"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+BACKGROUND MUSIC
 ========================================== -->
 
 <audio
-id="bgm"
+id="bgMusic"
 loop
 preload="auto">
 
 <source
-src="assets/audio/haunted-cemetery.mp3"
+src="assets/haunted-cemetery.mp3"
 type="audio/mpeg">
 
 </audio>
 
-<audio
-id="ghostWhisper"
-preload="auto">
-
-<source
-src="assets/audio/ghost-whisper.mp3"
-type="audio/mpeg">
-
-</audio>
-
-<audio
-id="ghostAppear"
-preload="auto">
-
-<source
-src="assets/audio/ghost-appear.mp3"
-type="audio/mpeg">
-
-</audio>
-
-<audio
-id="ghostKingSound"
-preload="auto">
-
-<source
-src="assets/audio/ghost-king.mp3"
-type="audio/mpeg">
-
-</audio>
-
-<audio
-id="spiritLight"
-preload="auto">
-
-<source
-src="assets/audio/spirit-light.mp3"
-type="audio/mpeg">
-
-</audio>
-
-<audio
-id="collectSound"
-preload="auto">
-
-<source
-src="assets/audio/collect.mp3"
-type="audio/mpeg">
-
-</audio>
+<!-- ==========================================
+THUNDER
+========================================== -->
 
 <audio
 id="thunder"
 preload="auto">
 
 <source
-src="assets/audio/thunder.mp3"
+src="assets/thunder.mp3"
 type="audio/mpeg">
 
 </audio>
 
+<!-- ==========================================
+GHOST WHISPER
+========================================== -->
+
 <audio
-id="portalSound"
+id="ghostWhisper"
 preload="auto">
 
 <source
-src="assets/audio/portal.mp3"
+src="assets/ghost-whisper.mp3"
 type="audio/mpeg">
 
 </audio>
 
+<!-- ==========================================
+GHOST APPEAR
+========================================== -->
+
 <audio
-id="missionComplete"
+id="ghostAppear"
 preload="auto">
 
 <source
-src="assets/audio/mission-complete.mp3"
+src="assets/ghost-appear.mp3"
 type="audio/mpeg">
 
 </audio>
+
+<!-- ==========================================
+GHOST KING
+========================================== -->
+
+<audio
+id="ghostKing"
+preload="auto">
+
+<source
+src="assets/ghost-king.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<!-- ==========================================
+PORTAL
+========================================== -->
+
+<audio
+id="portal"
+preload="auto">
+
+<source
+src="assets/portal.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<!-- ==========================================
+BOSS MUSIC
+========================================== -->
 
 <audio
 id="battleMusic"
@@ -386,7 +335,7 @@ loop
 preload="auto">
 
 <source
-src="assets/audio/Epic Anime Boss Battle Theme.mp3"
+src="assets/Epic Anime Boss Battle Theme.mp3"
 type="audio/mpeg">
 
 </audio>
@@ -412,7 +361,7 @@ z-index:9999;
 text-align:center;
 padding:30px;">
 
-JavaScript is required to play
+Please enable JavaScript to view
 VIDLYRA HALLOWEEN FEST 2026
 Day 5.
 
@@ -420,10 +369,85 @@ Day 5.
 
 </noscript>
 <!-- ==========================================
+VIDEO END MESSAGE
+========================================== -->
+
+<div id="videoEndOverlay">
+
+    <div id="videoEndCard">
+
+        <h2>
+
+            CINEMATIC COMPLETE
+
+        </h2>
+
+        <p>
+
+            The Haunted Cemetery awaits you...
+
+        </p>
+
+        <p>
+
+            Prepare yourself.
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+VIDEO CONTROLS
+(Hidden - Used by JavaScript)
+========================================== -->
+
+<div id="hiddenControls" hidden>
+
+<button id="playVideo">
+
+Play
+
+</button>
+
+<button id="pauseVideo">
+
+Pause
+
+</button>
+
+</div>
+
+<!-- ==========================================
+PRELOAD HINTS
+========================================== -->
+
+<link
+rel="preload"
+href="assets/day5-intro.mp4"
+as="video"
+type="video/mp4">
+
+<link
+rel="preload"
+href="assets/haunted-cemetery.mp3"
+as="audio">
+
+<link
+rel="preload"
+href="assets/ghost-whisper.mp3"
+as="audio">
+
+<link
+rel="preload"
+href="assets/thunder.mp3"
+as="audio">
+<!-- ==========================================
 JAVASCRIPT
 ========================================== -->
 
-<script src="js/day5-game.js"></script>
+<script src="js/day5-video.js"></script>
 
 </body>
 
