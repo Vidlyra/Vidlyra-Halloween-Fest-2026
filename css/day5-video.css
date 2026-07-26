@@ -1,0 +1,1016 @@
+/* ==========================================
+VIDLYRA HALLOWEEN FEST 2026
+DAY 5 VIDEO
+========================================== */
+
+*{
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+
+}
+
+html,
+body{
+
+width:100%;
+height:100%;
+overflow:hidden;
+
+background:#000;
+
+font-family:
+
+"Poppins",
+
+sans-serif;
+
+}
+
+/* ==========================================
+VIDEO
+========================================== */
+
+#videoContainer{
+
+position:fixed;
+
+inset:0;
+
+overflow:hidden;
+
+z-index:-5;
+
+}
+
+.video{
+
+width:100%;
+
+height:100%;
+
+object-fit:cover;
+
+}
+
+/* ==========================================
+OVERLAY
+========================================== */
+
+#overlay{
+
+position:fixed;
+
+inset:0;
+
+background:
+
+linear-gradient(
+
+rgba(0,0,0,.10),
+
+rgba(0,0,0,.55),
+
+rgba(0,0,0,.85)
+
+);
+
+z-index:-4;
+
+}
+
+/* ==========================================
+LIGHTNING
+========================================== */
+
+#lightningFlash{
+
+position:fixed;
+
+inset:0;
+
+background:white;
+
+opacity:0;
+
+pointer-events:none;
+
+z-index:20;
+
+}
+/* ==========================================
+TITLE
+========================================== */
+
+#titleContainer{
+
+position:absolute;
+
+top:8%;
+
+left:50%;
+
+transform:translateX(-50%);
+
+text-align:center;
+
+color:white;
+
+animation:
+
+titleFade 2s ease;
+
+}
+
+#titleContainer h1{
+
+font-size:82px;
+
+letter-spacing:8px;
+
+text-shadow:
+
+0 0 25px
+
+#6fdcff;
+
+}
+
+#titleContainer h2{
+
+margin-top:15px;
+
+font-size:40px;
+
+color:#9ce8ff;
+
+text-shadow:
+
+0 0 15px cyan;
+
+}
+
+#titleContainer p{
+
+margin-top:25px;
+
+font-size:22px;
+
+line-height:1.6;
+
+max-width:750px;
+
+}
+/* ==========================================
+MISSION BOX
+========================================== */
+
+#missionBox{
+
+position:absolute;
+
+left:40px;
+
+bottom:80px;
+
+width:360px;
+
+padding:20px;
+
+background:
+
+rgba(10,15,35,.72);
+
+border:
+
+2px solid
+
+rgba(111,220,255,.5);
+
+border-radius:18px;
+
+backdrop-filter:
+
+blur(12px);
+
+}
+
+#missionBox h3{
+
+font-size:28px;
+
+color:#6fdcff;
+
+margin-bottom:15px;
+
+}
+
+#missionBox p{
+
+color:white;
+
+font-size:18px;
+
+line-height:1.8;
+
+}
+/* ==========================================
+SUBTITLE
+========================================== */
+
+#storyText{
+
+position:absolute;
+
+bottom:40px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+width:80%;
+
+text-align:center;
+
+color:white;
+
+font-size:26px;
+
+font-weight:500;
+
+text-shadow:
+
+0 0 10px black;
+
+}
+
+/* ==========================================
+PROGRESS BAR
+========================================== */
+
+#videoProgress{
+
+position:absolute;
+
+left:0;
+
+bottom:0;
+
+width:100%;
+
+height:8px;
+
+background:
+
+rgba(255,255,255,.15);
+
+}
+
+#videoFill{
+
+width:0;
+
+height:100%;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+#5fd6ff,
+
+#7a5cff
+
+);
+
+transition:
+
+width .2s linear;
+
+}
+/* ==========================================
+SKIP BUTTON
+========================================== */
+
+#skipButton{
+
+position:absolute;
+
+top:25px;
+
+right:25px;
+
+padding:14px 34px;
+
+border:none;
+
+border-radius:40px;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+#29b6f6,
+
+#1565c0
+
+);
+
+color:#fff;
+
+font-size:18px;
+
+font-weight:600;
+
+letter-spacing:1px;
+
+cursor:pointer;
+
+transition:.35s;
+
+z-index:100;
+
+}
+
+#skipButton:hover{
+
+transform:scale(1.08);
+
+box-shadow:
+
+0 0 25px
+
+#29b6f6;
+
+}
+
+/* ==========================================
+ENTER BUTTON
+========================================== */
+
+#enterContainer{
+
+position:fixed;
+
+inset:0;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:
+
+rgba(0,0,0,.82);
+
+opacity:0;
+
+visibility:hidden;
+
+transition:.6s;
+
+z-index:300;
+
+}
+
+#enterContainer.show{
+
+opacity:1;
+
+visibility:visible;
+
+}
+
+#enterButton{
+
+padding:20px 70px;
+
+font-size:24px;
+
+font-weight:bold;
+
+border:none;
+
+border-radius:60px;
+
+cursor:pointer;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+#4fc3f7,
+
+#3949ab
+
+);
+
+color:#fff;
+
+transition:.35s;
+
+}
+
+#enterButton:hover{
+
+transform:scale(1.08);
+
+box-shadow:
+
+0 0 35px
+
+#4fc3f7;
+
+}
+/* ==========================================
+LOADING SCREEN
+========================================== */
+
+#loadingScreen{
+
+position:fixed;
+
+inset:0;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:#000;
+
+z-index:500;
+
+transition:.6s;
+
+}
+
+.loadingContent{
+
+width:420px;
+
+max-width:90%;
+
+text-align:center;
+
+}
+
+.loadingContent h2{
+
+color:#ffffff;
+
+margin-bottom:30px;
+
+font-size:30px;
+
+letter-spacing:2px;
+
+}
+
+.loadingBar{
+
+width:100%;
+
+height:16px;
+
+background:#1b1b1b;
+
+border-radius:25px;
+
+overflow:hidden;
+
+}
+
+#loadingFill{
+
+width:0;
+
+height:100%;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+#00e5ff,
+
+#448aff
+
+);
+
+transition:width .3s;
+
+}
+/* ==========================================
+FADE SCREEN
+========================================== */
+
+#fadeScreen{
+
+position:fixed;
+
+inset:0;
+
+background:#000;
+
+opacity:0;
+
+pointer-events:none;
+
+transition:.8s;
+
+z-index:250;
+
+}
+
+#fadeScreen.show{
+
+opacity:1;
+
+}
+
+/* ==========================================
+PARTICLES
+========================================== */
+
+#particleContainer{
+
+position:fixed;
+
+inset:0;
+
+overflow:hidden;
+
+pointer-events:none;
+
+z-index:10;
+
+}
+
+.particle{
+
+position:absolute;
+
+width:5px;
+
+height:5px;
+
+border-radius:50%;
+
+background:#7dd3fc;
+
+box-shadow:
+
+0 0 15px
+
+#7dd3fc;
+
+animation:
+
+particleFloat linear infinite;
+
+}
+/* ==========================================
+VIDEO CONTROLS
+========================================== */
+
+#videoControls{
+
+position:absolute;
+
+bottom:70px;
+
+right:25px;
+
+display:flex;
+
+gap:10px;
+
+}
+
+#videoControls button{
+
+padding:10px 20px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+background:#222;
+
+color:#fff;
+
+}
+/* ==========================================
+TITLE ANIMATION
+========================================== */
+
+@keyframes titleFade{
+
+0%{
+
+opacity:0;
+
+transform:
+
+translateX(-50%)
+
+translateY(-40px);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:
+
+translateX(-50%)
+
+translateY(0);
+
+}
+
+}
+
+/* ==========================================
+SUBTITLE
+========================================== */
+
+#storyText{
+
+animation:
+
+subtitleFade 3s ease infinite;
+
+}
+
+@keyframes subtitleFade{
+
+0%{
+
+opacity:0;
+
+}
+
+20%{
+
+opacity:1;
+
+}
+
+80%{
+
+opacity:1;
+
+}
+
+100%{
+
+opacity:0;
+
+}
+
+}
+
+/* ==========================================
+LIGHTNING
+========================================== */
+
+#lightningFlash.active{
+
+animation:
+
+lightningFlash .45s;
+
+}
+
+@keyframes lightningFlash{
+
+0%{
+
+opacity:0;
+
+}
+
+20%{
+
+opacity:.95;
+
+}
+
+45%{
+
+opacity:.25;
+
+}
+
+100%{
+
+opacity:0;
+
+}
+
+}
+
+/* ==========================================
+PARTICLES
+========================================== */
+
+@keyframes particleFloat{
+
+0%{
+
+transform:
+
+translateY(110vh)
+
+scale(.4);
+
+opacity:0;
+
+}
+
+20%{
+
+opacity:1;
+
+}
+
+100%{
+
+transform:
+
+translateY(-120vh)
+
+scale(1.4);
+
+opacity:0;
+
+}
+
+}
+
+.particle{
+
+animation:
+
+particleFloat linear infinite;
+
+}
+
+/* ==========================================
+MISSION PANEL GLOW
+========================================== */
+
+#missionBox{
+
+animation:
+
+missionGlow 3s ease-in-out infinite;
+
+}
+
+@keyframes missionGlow{
+
+0%{
+
+box-shadow:
+
+0 0 12px
+
+rgba(111,220,255,.25);
+
+}
+
+50%{
+
+box-shadow:
+
+0 0 28px
+
+rgba(111,220,255,.85);
+
+}
+
+100%{
+
+box-shadow:
+
+0 0 12px
+
+rgba(111,220,255,.25);
+
+}
+
+}
+/* ==========================================
+ENTER BUTTON
+========================================== */
+
+#enterButton{
+
+animation:
+
+buttonPulse 2.5s infinite;
+
+}
+
+@keyframes buttonPulse{
+
+0%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.05);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+/* ==========================================
+SKIP BUTTON
+========================================== */
+
+#skipButton{
+
+animation:
+
+skipFloat 3s ease-in-out infinite;
+
+}
+
+@keyframes skipFloat{
+
+0%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-3px);
+
+}
+
+100%{
+
+transform:translateY(0);
+
+}
+
+}
+/* ==========================================
+RESPONSIVE
+========================================== */
+
+@media(max-width:768px){
+
+#titleContainer{
+
+width:90%;
+
+top:7%;
+
+}
+
+#titleContainer h1{
+
+font-size:48px;
+
+letter-spacing:4px;
+
+}
+
+#titleContainer h2{
+
+font-size:24px;
+
+}
+
+#titleContainer p{
+
+font-size:16px;
+
+margin-top:15px;
+
+}
+
+#missionBox{
+
+left:50%;
+
+bottom:90px;
+
+transform:translateX(-50%);
+
+width:92%;
+
+padding:18px;
+
+}
+
+#missionBox h3{
+
+font-size:22px;
+
+}
+
+#missionBox p{
+
+font-size:16px;
+
+}
+
+#storyText{
+
+width:92%;
+
+font-size:18px;
+
+bottom:55px;
+
+}
+
+#skipButton{
+
+top:15px;
+
+right:15px;
+
+padding:10px 20px;
+
+font-size:15px;
+
+}
+
+#enterButton{
+
+width:90%;
+
+font-size:20px;
+
+padding:18px 20px;
+
+}
+
+.loadingContent h2{
+
+font-size:22px;
+
+}
+
+}
+/* ==========================================
+LARGE DESKTOPS
+========================================== */
+
+@media(min-width:1600px){
+
+#titleContainer h1{
+
+font-size:100px;
+
+}
+
+#titleContainer h2{
+
+font-size:52px;
+
+}
+
+#titleContainer p{
+
+font-size:28px;
+
+}
+
+#missionBox{
+
+width:420px;
+
+}
+
+}
