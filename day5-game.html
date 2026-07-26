@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+VIDLYRA HALLOWEEN FEST 2026
+DAY 5
+THE HAUNTED CEMETERY
+</title>
+
+<link
+rel="stylesheet"
+href="css/day5-game.css">
+
+</head>
+
+<body>
+
+<!-- ==========================
+BACKGROUND
+========================== -->
+
+<div id="background"></div>
+
+<!-- ==========================
+FOG
+========================== -->
+
+<div id="fogBack"></div>
+<div id="fogFront"></div>
+
+<!-- ==========================
+CEMETERY
+========================== -->
+
+<div id="cemetery">
+
+<img
+src="assets/images/Cemetery Gate.png"
+id="gate"
+alt="Gate">
+
+<img
+src="assets/images/Dead Tree.png"
+id="treeLeft"
+alt="Tree">
+
+<img
+src="assets/images/Dead Tree.png"
+id="treeRight"
+alt="Tree">
+
+<img
+src="assets/images/grave.png"
+id="grave1"
+alt="Grave">
+
+<img
+src="assets/images/grave.png"
+id="grave2"
+alt="Grave">
+
+<img
+src="assets/images/Stone Cross.png"
+id="cross1"
+alt="Cross">
+
+<img
+src="assets/images/Bones.png"
+id="bones"
+alt="Bones">
+
+</div>
+
+<!-- ==========================
+PLAYER
+========================== -->
+
+<img
+
+src="assets/images/Player (Day 5 Outfit).png"
+
+id="player"
+
+alt="Player">
+
+<!-- ==========================
+SPIRITS
+========================== -->
+
+<img
+
+src="assets/images/Ghost.png"
+
+id="ghost1"
+
+class="ghost"
+
+alt="Ghost">
+
+<img
+
+src="assets/images/Ghost.png"
+
+id="ghost2"
+
+class="ghost"
+
+alt="Ghost">
+
+<img
+
+src="assets/images/Ghost.png"
+
+id="ghost3"
+
+class="ghost"
+
+alt="Ghost">
+
+<!-- ==========================
+SPIRIT FLAME
+========================== -->
+
+<img
+
+src="assets/images/Blue Spirit Flame.png"
+
+id="spiritFlame"
+
+alt="Spirit">
+
+<!-- ==========================
+SPIRIT LANTERN
+========================== -->
+
+<img
+
+src="assets/images/Spirit Lantern.png"
+
+id="lantern"
+
+alt="Lantern">
+
+<!-- ==========================
+SOUL ORB
+========================== -->
+
+<img
+
+src="assets/images/Soul Orb.png"
+
+id="orb"
+
+alt="Soul Orb">
+
+<!-- ==========================
+PORTAL
+========================== -->
+
+<img
+
+src="assets/images/Portal.png"
+
+id="portal"
+
+alt="Portal">
+
+<!-- ==========================
+GHOST KING
+========================== -->
+
+<img
+
+src="assets/images/Ghost King (Boss).png"
+
+id="ghostKing"
+
+alt="Ghost King">
+
+<!-- ==========================
+LIGHTNING
+========================== -->
+
+<div id="lightning"></div>
+
+<!-- ==========================
+DIALOGUE
+========================== -->
+
+<div id="dialogueBox">
+
+<div id="speaker">
+
+Spirit
+
+</div>
+
+<div id="dialogueText">
+
+Welcome...
+
+</div>
+
+</div>
+
+<!-- ==========================
+MISSION
+========================== -->
+
+<div id="missionPanel">
+
+<h2>
+
+MISSION
+
+</h2>
+
+<p>
+
+Collect all
+
+7 Spirit Lanterns
+
+Seal the Ghost King
+
+</p>
+
+<button id="beginMission">
+
+BEGIN MISSION
+
+</button>
+
+</div>
+
+<!-- ==========================
+AUDIO
+========================== -->
+
+<audio id="bgm" loop>
+
+<source
+src="assets/audio/haunted-cemetery.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio id="ghostWhisper">
+
+<source
+src="assets/audio/ghost-whisper.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio id="ghostAppear">
+
+<source
+src="assets/audio/ghost-appear.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio id="ghostKingSound">
+
+<source
+src="assets/audio/ghost-king.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio id="spiritLight">
+
+<source
+src="assets/audio/spirit-light.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio id="portalSound">
+
+<source
+src="assets/audio/portal.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<audio id="battleMusic" loop>
+
+<source
+src="assets/audio/Epic Anime Boss Battle Theme.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<script src="js/day5-game.js"></script>
+
+</body>
+
+</html>
