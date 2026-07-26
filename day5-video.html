@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+VIDLYRA HALLOWEEN FEST 2026
+DAY 5 - THE HAUNTED CEMETERY
+
+</title>
+
+<link
+rel="stylesheet"
+href="css/day5-video.css">
+
+</head>
+
+<body>
+
+<!-- ==========================================
+VIDEO CONTAINER
+========================================== -->
+
+<div id="videoContainer">
+
+<video
+
+id="introVideo"
+
+class="video"
+
+autoplay
+
+muted
+
+playsinline
+
+preload="auto"
+
+>
+
+<source
+
+src="assets/videos/day5-intro.mp4"
+
+type="video/mp4">
+
+Your browser does not support HTML5 video.
+
+</video>
+
+</div>
+
+<!-- ==========================================
+DARK OVERLAY
+========================================== -->
+
+<div id="overlay"></div>
+
+<!-- ==========================================
+LIGHTNING FLASH
+========================================== -->
+
+<div id="lightningFlash"></div>
+
+<!-- ==========================================
+TITLE
+========================================== -->
+
+<div id="titleContainer">
+
+<h1>
+
+DAY 5
+
+</h1>
+
+<h2>
+
+THE HAUNTED CEMETERY
+
+</h2>
+
+<p>
+
+Restore the Seven Spirit Lanterns
+
+before the Ghost King awakens.
+
+</p>
+
+</div>
+<!-- ==========================================
+MISSION BOX
+========================================== -->
+
+<div id="missionBox">
+
+<h3>
+
+MISSION
+
+</h3>
+
+<p>
+
+Explore the Haunted Cemetery
+
+Find all 7 Spirit Lanterns
+
+Seal the Ghost King
+
+</p>
+
+</div>
+
+<!-- ==========================================
+SUBTITLE
+========================================== -->
+
+<div id="subtitle">
+
+The spirits are waiting...
+
+</div>
+
+<!-- ==========================================
+SKIP BUTTON
+========================================== -->
+
+<button id="skipButton">
+
+SKIP ▶
+
+</button>
+<!-- ==========================================
+AUDIO
+========================================== -->
+
+<audio id="bgMusic" loop>
+
+    <source
+    src="assets/audio/haunted-cemetery.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="ghostWhisper">
+
+    <source
+    src="assets/audio/ghost-whisper.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="ghostAppear">
+
+    <source
+    src="assets/audio/ghost-appear.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="ghostKing">
+
+    <source
+    src="assets/audio/ghost-king.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="thunder">
+
+    <source
+    src="assets/audio/thunder.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="portal">
+
+    <source
+    src="assets/audio/portal.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio id="battleMusic" loop>
+
+    <source
+    src="assets/audio/Epic Anime Boss Battle Theme.mp3"
+    type="audio/mpeg">
+
+</audio>
+<!-- ==========================================
+VIDEO STORY TEXT
+========================================== -->
+
+<div id="storyText">
+
+<p id="storyLine">
+
+The Forgotten Cemetery has awakened...
+
+</p>
+
+</div>
+
+<!-- ==========================================
+VIDEO TIMER
+========================================== -->
+
+<div id="videoProgress">
+
+<div id="videoFill"></div>
+
+</div>
+
+<!-- ==========================================
+FADE SCREEN
+========================================== -->
+
+<div id="fadeScreen"></div>
+<!-- ==========================================
+ENTER BUTTON
+========================================== -->
+
+<div id="enterContainer">
+
+<button id="enterButton">
+
+ENTER THE CEMETERY
+
+</button>
+
+</div>
+<!-- ==========================================
+LOADING SCREEN
+========================================== -->
+
+<div id="loadingScreen">
+
+    <div class="loadingContent">
+
+        <h2>
+
+            Preparing The Haunted Cemetery...
+
+        </h2>
+
+        <div class="loadingBar">
+
+            <div id="loadingFill"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+PARTICLE CONTAINER
+========================================== -->
+
+<div id="particleContainer"></div>
+
+<!-- ==========================================
+VIDEO CONTROLS (Hidden)
+========================================== -->
+
+<div id="videoControls" style="display:none;">
+
+<button id="playBtn">Play</button>
+
+<button id="pauseBtn">Pause</button>
+
+</div>
+
+<!-- ==========================================
+JAVASCRIPT
+========================================== -->
+
+<script src="js/day5-video.js"></script>
+
+<script>
+
+const video = document.getElementById("introVideo");
+
+const skipButton = document.getElementById("skipButton");
+
+const enterButton = document.getElementById("enterButton");
+
+const enterContainer = document.getElementById("enterContainer");
+
+const progress = document.getElementById("videoFill");
+
+const storyLine = document.getElementById("storyLine");
+
+const fadeScreen = document.getElementById("fadeScreen");
+
+const bgMusic = document.getElementById("bgMusic");
+
+const ghostWhisper = document.getElementById("ghostWhisper");
+
+const ghostAppear = document.getElementById("ghostAppear");
+
+const ghostKing = document.getElementById("ghostKing");
+
+const thunder = document.getElementById("thunder");
+
+/* ==========================
+START MUSIC
+========================== */
+
+window.addEventListener("load", () => {
+
+    if(bgMusic){
+
+        bgMusic.volume = 0.35;
+
+        bgMusic.play().catch(()=>{});
+
+    }
+
+});
+
+/* ==========================
+VIDEO PROGRESS
+========================== */
+
+video.addEventListener("timeupdate",()=>{
+
+    const percent =
+    (video.currentTime/video.duration)*100;
+
+    progress.style.width = percent + "%";
+
+});
+
+/* ==========================
+STORY EVENTS
+========================== */
+
+video.addEventListener("timeupdate",()=>{
+
+    const t = video.currentTime;
+
+    if(t>2 && t<8){
+
+        storyLine.innerHTML =
+        "Ancient spirits awaken...";
+
+    }
+
+    if(t>8 && t<16){
+
+        storyLine.innerHTML =
+        "The cemetery accepts your presence...";
+
+    }
+
+    if(t>16 && t<22){
+
+        storyLine.innerHTML =
+        "The Ghost King is watching...";
+
+    }
+
+});
+
+/* ==========================
+SKIP
+========================== */
+
+skipButton.onclick=()=>{
+
+    window.location.href="day5-game.html";
+
+};
+
+/* ==========================
+VIDEO END
+========================== */
+
+video.addEventListener("ended",()=>{
+
+    fadeScreen.classList.add("show");
+
+    enterContainer.classList.add("show");
+
+});
+
+/* ==========================
+ENTER BUTTON
+========================== */
+
+enterButton.onclick=()=>{
+
+    window.location.href="day5-game.html";
+
+};
+
+</script>
+
+</body>
+
+</html>
