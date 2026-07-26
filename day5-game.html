@@ -5,312 +5,272 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>
-VIDLYRA HALLOWEEN FEST 2026
-DAY 5
-THE HAUNTED CEMETERY
+VIDLYRA HALLOWEEN FEST 2026 - DAY 5
 </title>
 
-<link
-rel="stylesheet"
-href="css/day5-game.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+
+body{
+
+overflow:hidden;
+background:black;
+font-family:Arial, sans-serif;
+
+}
+
+
+
+#videoContainer{
+
+width:100vw;
+height:100vh;
+position:relative;
+
+}
+
+
+
+video{
+
+width:100%;
+height:100%;
+
+object-fit:cover;
+
+}
+
+
+
+/* END OVERLAY */
+
+
+#endOverlay{
+
+position:absolute;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:
+
+rgba(0,0,0,0.75);
+
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+
+opacity:0;
+
+pointer-events:none;
+
+transition:1.5s;
+
+
+}
+
+
+#endOverlay.show{
+
+opacity:1;
+
+pointer-events:auto;
+
+}
+
+
+
+#endOverlay h1{
+
+
+color:white;
+
+font-size:clamp(30px,5vw,70px);
+
+text-align:center;
+
+letter-spacing:5px;
+
+
+animation:pulse 2s infinite;
+
+
+}
+
+
+
+#endOverlay p{
+
+margin-top:25px;
+
+color:#ff8800;
+
+font-size:clamp(16px,2vw,30px);
+
+}
+
+
+
+@keyframes pulse{
+
+
+0%,100%{
+
+transform:scale(1);
+
+}
+
+
+50%{
+
+transform:scale(1.08);
+
+}
+
+
+}
+
+
+
+</style>
+
 
 </head>
 
+
 <body>
 
-<!-- ==========================
-BACKGROUND
-========================== -->
 
-<img
-src="assets/images/day5/background.png"
-id="background"
-alt="background">
 
-<!-- ==========================
-FOG
-========================== -->
+<div id="videoContainer">
 
-<img
-src="assets/images/day5/Ghost Fog.png"
-id="fogBack"
-alt="Fogback">
-  
-<img
-src="assets/images/day5/Ghost Fog.png"
-id="fogFront"
-alt="Fogfront">
 
-<!-- ==========================
-CEMETERY
-========================== -->
+<video
 
-<div id="cemetery">
+id="day5Video"
 
-<img
-src="assets/images/day5/Cemetery Gate.png"
-id="gate"
-alt="Gate">
+autoplay
 
-<img
-src="assets/images/day5/Dead Tree.png"
-id="treeLeft"
-alt="Tree">
+muted
 
-<img
-src="assets/images/day5/Dead Tree.png"
-id="treeRight"
-alt="Tree">
+playsinline>
 
-<img
-src="assets/images/day5/grave.png"
-id="grave1"
-alt="Grave">
 
-<img
-src="assets/images/day5/grave.png"
-id="grave2"
-alt="Grave">
+<source
 
-<img
-src="assets/images/day5/Stone Cross.png"
-id="cross1"
-alt="Cross">
+src="assets/video/day5-intro.mp4"
 
-<img
-src="assets/images/day5/Bones.png"
-id="bones"
-alt="Bones">
+type="video/mp4">
 
-</div>
 
-<!-- ==========================
-PLAYER
-========================== -->
+</video>
 
-<img
 
-src="assets/images/day5/Player (Day 5 Outfit).png"
 
-id="player"
 
-alt="Player">
 
-<!-- ==========================
-SPIRITS
-========================== -->
+<div id="endOverlay"
 
-<img
+onclick="enterGame()">
 
-src="assets/images/day5/Ghost.png"
 
-id="ghost1"
 
-class="ghost"
+<h1>
 
-alt="Ghost">
+THE HAUNTED CEMETERY
 
-<img
+</h1>
 
-src="assets/images/day5/Ghost.png"
-
-id="ghost2"
-
-class="ghost"
-
-alt="Ghost">
-
-<img
-
-src="assets/images/day5/Ghost.png"
-
-id="ghost3"
-
-class="ghost"
-
-alt="Ghost">
-
-<!-- ==========================
-SPIRIT FLAME
-========================== -->
-
-<img
-
-src="assets/images/day5/Blue Spirit Flame.png"
-
-id="spiritFlame"
-
-alt="Spirit">
-
-<!-- ==========================
-SPIRIT LANTERN
-========================== -->
-
-<img
-
-src="assets/images/day5/Spirit Lantern.png"
-
-id="lantern"
-
-alt="Lantern">
-
-<!-- ==========================
-SOUL ORB
-========================== -->
-
-<img
-
-src="assets/images/day5/Soul Orb.png"
-
-id="orb"
-
-alt="Soul Orb">
-
-<!-- ==========================
-PORTAL
-========================== -->
-
-<img
-
-src="assets/images/day5/Portal.png"
-
-id="portal"
-
-alt="Portal">
-
-<!-- ==========================
-GHOST KING
-========================== -->
-
-<img
-
-src="assets/images/day5/Ghost King (Boss).png"
-
-id="ghostKing"
-
-alt="Ghost King">
-
-<!-- ==========================
-LIGHTNING
-========================== -->
-
-<div id="lightning"></div>
-
-<!-- ==========================
-DIALOGUE
-========================== -->
-
-<div id="dialogueBox">
-
-<div id="speaker">
-
-Spirit
-
-</div>
-
-<div id="dialogueText">
-
-Welcome...
-
-</div>
-
-</div>
-
-<!-- ==========================
-MISSION
-========================== -->
-
-<div id="missionPanel">
-
-<h2>
-
-MISSION
-
-</h2>
 
 <p>
 
-Collect all
-
-7 Spirit Lanterns
-
-Seal the Ghost King
+CLICK TO ENTER DAY 5
 
 </p>
 
-<button id="beginMission">
 
-BEGIN MISSION
-
-</button>
 
 </div>
 
-<!-- ==========================
-AUDIO
-========================== -->
 
-<audio id="bgm" loop>
 
-<source
-src="assets/haunted-cemetery.mp3"
-type="audio/mpeg">
+</div>
 
-</audio>
 
-<audio id="ghostWhisper">
 
-<source
-src="assets/ghost-whisper.mp3"
-type="audio/mpeg">
 
-</audio>
 
-<audio id="ghostAppear">
+<script>
 
-<source
-src="assets/ghost-appear.mp3"
-type="audio/mpeg">
 
-</audio>
+const video =
+document.getElementById("day5Video");
 
-<audio id="ghostKingSound">
 
-<source
-src="assets/ghost-king.mp3"
-type="audio/mpeg">
+const overlay =
+document.getElementById("endOverlay");
 
-</audio>
 
-<audio id="spiritLight">
 
-<source
-src="assets/spirit-light.mp3"
-type="audio/mpeg">
 
-</audio>
 
-<audio id="portalSound">
+// SHOW OVERLAY WHEN VIDEO ENDS
 
-<source
-src="assets/portal.mp3"
-type="audio/mpeg">
 
-</audio>
+video.addEventListener(
 
-<audio id="battleMusic" loop>
+"ended",
 
-<source
-src="assets/Epic Anime Boss Battle Theme.mp3"
-type="audio/mpeg">
+()=>{
 
-</audio>
 
-<script src="js/day5-game.js"></script>
+overlay.classList.add("show");
+
+
+}
+
+);
+
+
+
+
+
+// REDIRECT TO GAME
+
+
+function enterGame(){
+
+
+window.location.href="day5-game.html";
+
+
+}
+
+
+
+
+</script>
+
+
 
 </body>
 
