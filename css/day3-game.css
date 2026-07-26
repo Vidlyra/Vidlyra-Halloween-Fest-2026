@@ -1,0 +1,1105 @@
+/* ==========================================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 3 - THE CURSED FOREST
+========================================================== */
+
+/* ==========================================
+RESET
+========================================== */
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    background:#000;
+
+}
+
+body{
+
+    position:relative;
+
+}
+
+/* ==========================================
+INTRO
+========================================== */
+
+#introScreen{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.9);
+
+    backdrop-filter:blur(8px);
+
+    z-index:9999;
+
+    transition:1.2s;
+
+}
+
+#introScreen.hide{
+
+    opacity:0;
+
+    visibility:hidden;
+
+}
+
+.intro-content{
+
+    text-align:center;
+
+}
+
+.intro-content h1{
+
+    font-size:72px;
+
+    color:#58e6ff;
+
+    text-shadow:
+
+        0 0 15px cyan,
+
+        0 0 35px cyan;
+
+}
+
+.intro-content h2{
+
+    margin-top:18px;
+
+    color:#fff;
+
+    font-size:42px;
+
+}
+
+.intro-content p{
+
+    margin-top:28px;
+
+    color:#ddd;
+
+    font-size:22px;
+
+}
+
+/* ==========================================
+BACKGROUND
+========================================== */
+
+.background{
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+
+    url("../assets/images/background (2).png")
+
+    center center;
+
+    background-size:cover;
+
+    background-repeat:no-repeat;
+
+    z-index:1;
+
+}
+
+/* ==========================================
+FOREST
+========================================== */
+
+.forest{
+
+    position:absolute;
+
+    left:0;
+
+    bottom:0;
+
+    width:100%;
+
+    z-index:2;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================
+TREES
+========================================== */
+
+.tree{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:340px;
+
+    z-index:8;
+
+    pointer-events:none;
+
+}
+
+.tree-left{
+
+    left:0;
+
+}
+
+.tree-right{
+
+    right:0;
+
+    transform:scaleX(-1);
+
+}
+
+/* ==========================================
+RIVER
+========================================== */
+
+.river{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:0;
+
+    transform:translateX(-50%);
+
+    width:100%;
+
+    z-index:4;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================
+BRIDGE
+========================================== */
+
+.bridge{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:16%;
+
+    transform:translateX(-50%);
+
+    width:600px;
+
+    z-index:12;
+
+}
+
+/* ==========================================
+FOG
+========================================== */
+
+.fog{
+
+    position:absolute;
+
+    width:170%;
+
+    left:-20%;
+
+    height:280px;
+
+    pointer-events:none;
+
+    background:
+
+    radial-gradient(
+
+        circle,
+
+        rgba(60,220,255,.20),
+
+        transparent 70%
+
+    );
+
+}
+
+.fog-back{
+
+    bottom:18%;
+
+    opacity:.25;
+
+    z-index:5;
+
+}
+
+.fog-middle{
+
+    bottom:10%;
+
+    opacity:.35;
+
+    z-index:15;
+
+}
+
+.fog-front{
+
+    bottom:0;
+
+    opacity:.45;
+
+    z-index:35;
+
+}
+/* ==========================================
+GRAVES
+========================================== */
+
+.grave{
+
+    position:absolute;
+
+    width:130px;
+
+    z-index:14;
+
+    pointer-events:none;
+
+}
+
+.grave-left{
+
+    left:12%;
+
+    bottom:18%;
+
+}
+
+.grave-right{
+
+    right:12%;
+
+    bottom:18%;
+
+}
+
+/* ==========================================
+SPIDER WEBS
+========================================== */
+
+.web{
+
+    position:absolute;
+
+    width:220px;
+
+    z-index:18;
+
+    pointer-events:none;
+
+}
+
+.web-left{
+
+    top:5%;
+
+    left:3%;
+
+}
+
+.web-right{
+
+    top:5%;
+
+    right:3%;
+
+    transform:scaleX(-1);
+
+}
+
+/* ==========================================
+MUSHROOMS
+========================================== */
+
+.mushroom{
+
+    position:absolute;
+
+    width:90px;
+
+    z-index:16;
+
+    pointer-events:none;
+
+}
+
+.mushroom-left{
+
+    left:22%;
+
+    bottom:14%;
+
+}
+
+.mushroom-right{
+
+    right:22%;
+
+    bottom:14%;
+
+}
+
+/* ==========================================
+CRYSTALS
+========================================== */
+
+.crystal{
+
+    position:absolute;
+
+    width:70px;
+
+    cursor:pointer;
+
+    z-index:22;
+
+    transition:
+
+        transform .3s,
+
+        opacity .3s;
+
+}
+
+.crystal:hover{
+
+    transform:scale(1.15);
+
+}
+
+.crystal.collected{
+
+    opacity:0;
+
+    pointer-events:none;
+
+}
+
+.crystal1{
+
+    left:20%;
+
+    bottom:28%;
+
+}
+
+.crystal2{
+
+    left:36%;
+
+    bottom:40%;
+
+}
+
+.crystal3{
+
+    left:50%;
+
+    bottom:24%;
+
+    transform:translateX(-50%);
+
+}
+
+.crystal4{
+
+    right:36%;
+
+    bottom:40%;
+
+}
+
+.crystal5{
+
+    right:20%;
+
+    bottom:28%;
+
+}
+
+/* ==========================================
+ANCIENT GATE
+========================================== */
+
+.gate{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:26%;
+
+    transform:translateX(-50%);
+
+    width:340px;
+
+    z-index:20;
+
+    transition:1.2s;
+
+}
+
+.gate.open{
+
+    transform:
+
+        translateX(-50%)
+
+        translateY(-120px);
+
+}
+
+/* ==========================================
+MAGIC PORTAL
+========================================== */
+
+.portal{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:30%;
+
+    transform:translateX(-50%);
+
+    width:220px;
+
+    opacity:0;
+
+    z-index:24;
+
+    transition:1s;
+
+}
+
+.portal.active{
+
+    opacity:1;
+
+}
+
+/* ==========================================
+DRACULA
+========================================== */
+
+.dracula{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:28%;
+
+    transform:
+
+        translateX(-50%);
+
+    width:240px;
+
+    opacity:0;
+
+    z-index:26;
+
+    transition:1.5s;
+
+}
+
+.dracula.active{
+
+    opacity:1;
+
+}
+
+/* ==========================================
+BAT CONTAINER
+========================================== */
+
+#batContainer{
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:40;
+
+}
+
+/* ==========================================
+BATS
+========================================== */
+
+.bat{
+
+    position:absolute;
+
+    width:70px;
+
+    opacity:.9;
+
+}
+
+.bat1{
+
+    top:12%;
+
+    left:8%;
+
+}
+
+.bat2{
+
+    top:18%;
+
+    left:34%;
+
+}
+
+.bat3{
+
+    top:10%;
+
+    left:52%;
+
+}
+
+.bat4{
+
+    top:16%;
+
+    right:28%;
+
+}
+
+.bat5{
+
+    top:8%;
+
+    right:8%;
+
+}
+/* ==========================================
+PLAYER
+========================================== */
+
+#player{
+
+    position:absolute;
+
+    left:8%;
+
+    bottom:10%;
+
+    font-size:4rem;
+
+    z-index:100;
+
+    user-select:none;
+
+    transition:
+
+        left .08s linear,
+
+        bottom .08s linear;
+
+}
+
+/* ==========================================
+MISSION PANEL
+========================================== */
+
+.mission-panel{
+
+    position:fixed;
+
+    left:30px;
+
+    bottom:30px;
+
+    width:340px;
+
+    padding:22px;
+
+    border-radius:20px;
+
+    background:rgba(0,0,0,.55);
+
+    backdrop-filter:blur(12px);
+
+    border:1px solid rgba(0,220,255,.6);
+
+    color:#fff;
+
+    z-index:200;
+
+}
+
+.mission-panel h3{
+
+    color:#4de8ff;
+
+    margin-bottom:15px;
+
+    font-size:24px;
+
+}
+
+.mission-panel p{
+
+    line-height:1.6;
+
+    color:#ddd;
+
+    margin-bottom:18px;
+
+}
+
+/* ==========================================
+PROGRESS BAR
+========================================== */
+
+.progress{
+
+    width:100%;
+
+    height:12px;
+
+    background:#222;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.progress-fill{
+
+    width:0%;
+
+    height:100%;
+
+    border-radius:20px;
+
+    background:linear-gradient(
+
+        90deg,
+
+        #00d9ff,
+
+        cyan,
+
+        #7fffd4
+
+    );
+
+    transition:.5s;
+
+}
+
+.crystal-counter{
+
+    margin-top:18px;
+
+    color:#63ecff;
+
+    font-size:18px;
+
+}
+
+/* ==========================================
+DIALOG
+========================================== */
+
+#dialogBox{
+
+    position:fixed;
+
+    left:50%;
+
+    bottom:40px;
+
+    transform:translateX(-50%);
+
+    background:rgba(0,0,0,.8);
+
+    color:#fff;
+
+    padding:18px 35px;
+
+    border-radius:40px;
+
+    border:1px solid rgba(0,220,255,.5);
+
+    opacity:0;
+
+    transition:.5s;
+
+    z-index:300;
+
+}
+
+#dialogBox.show{
+
+    opacity:1;
+
+}
+
+/* ==========================================
+MISSION COMPLETE
+========================================== */
+
+#missionComplete{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.92);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:1s;
+
+    z-index:999;
+
+}
+
+#missionComplete.show{
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+#missionComplete h2{
+
+    font-size:60px;
+
+    color:#53e7ff;
+
+    text-shadow:
+
+        0 0 15px cyan,
+
+        0 0 35px cyan;
+
+}
+
+#missionComplete p{
+
+    margin:25px 0;
+
+    color:white;
+
+    font-size:24px;
+
+}
+
+#nextBtn{
+
+    padding:18px 50px;
+
+    border:none;
+
+    border-radius:50px;
+
+    background:#00b7ff;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+    transition:.35s;
+
+    box-shadow:0 0 20px cyan;
+
+}
+
+#nextBtn:hover{
+
+    transform:scale(1.08);
+
+    box-shadow:
+
+        0 0 30px cyan,
+
+        0 0 60px cyan;
+
+}
+
+/* ==========================================
+LOADING
+========================================== */
+
+#loadingOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-direction:column;
+
+    background:#000;
+
+    z-index:99999;
+
+}
+
+.loading-content{
+
+    width:420px;
+
+    text-align:center;
+
+}
+
+.loading-content h2{
+
+    color:#57e6ff;
+
+    margin-bottom:30px;
+
+}
+
+.loading-bar{
+
+    width:100%;
+
+    height:12px;
+
+    background:#222;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+#loadingFill{
+
+    width:0%;
+
+    height:100%;
+
+    background:linear-gradient(
+
+        90deg,
+
+        cyan,
+
+        #00b7ff
+
+    );
+
+}
+
+/* ==========================================
+FLASH
+========================================== */
+
+#flash,
+
+#lightningFlash{
+
+    position:fixed;
+
+    inset:0;
+
+    background:white;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    z-index:900;
+
+}
+
+#flash.active,
+
+#lightningFlash.active{
+
+    animation:flashEffect .45s;
+
+}
+
+@keyframes flashEffect{
+
+    0%{
+
+        opacity:0;
+
+    }
+
+    40%{
+
+        opacity:.9;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
+
+/* ==========================================
+SCREEN GLOW
+========================================== */
+
+#screenGlow{
+
+    position:fixed;
+
+    inset:0;
+
+    pointer-events:none;
+
+    background:
+
+    radial-gradient(
+
+        circle,
+
+        rgba(0,220,255,.12),
+
+        transparent 70%
+
+    );
+
+    z-index:250;
+
+}
+
+/* ==========================================
+SHAKE
+========================================== */
+
+.shake{
+
+    animation:screenShake .12s linear 10;
+
+}
+
+@keyframes screenShake{
+
+    0%{transform:translate(0,0);}
+
+    25%{transform:translate(-4px,3px);}
+
+    50%{transform:translate(4px,-3px);}
+
+    75%{transform:translate(-3px,-2px);}
+
+    100%{transform:translate(0,0);}
+
+}
+
+/* ==========================================
+RESPONSIVE
+========================================== */
+
+@media(max-width:768px){
+
+    .mission-panel{
+
+        width:92%;
+
+        left:4%;
+
+        bottom:20px;
+
+    }
+
+    #player{
+
+        font-size:3rem;
+
+    }
+
+    .bridge{
+
+        width:90%;
+
+    }
+
+    .gate{
+
+        width:240px;
+
+    }
+
+    .dracula{
+
+        width:170px;
+
+    }
+
+}
