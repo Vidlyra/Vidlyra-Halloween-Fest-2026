@@ -1,12 +1,3 @@
-/* =====================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 5 VIDEO INTRO CSS
-   THE HAUNTED CEMETERY
-===================================== */
-
-
-/* RESET */
-
 *{
 
 margin:0;
@@ -16,7 +7,6 @@ box-sizing:border-box;
 }
 
 
-
 html,body{
 
 width:100%;
@@ -24,38 +14,34 @@ height:100%;
 
 overflow:hidden;
 
-background:#000;
+background:black;
 
 font-family:
 "Cinzel",
-"Times New Roman",
 serif;
 
 }
 
 
 
-/* VIDEO AREA */
-
 
 #videoContainer{
-
-position:relative;
 
 width:100vw;
 
 height:100vh;
 
-overflow:hidden;
+position:relative;
 
-background:black;
+overflow:hidden;
 
 }
 
 
 
 
-#day5Video{
+
+video{
 
 width:100%;
 
@@ -63,45 +49,17 @@ height:100%;
 
 object-fit:cover;
 
-display:block;
-
-}
-
-
-
-/* DARK CINEMATIC COLOR */
-
-#videoContainer::after{
-
-content:"";
-
-position:absolute;
-
-inset:0;
-
-background:
-
-linear-gradient(
-
-to bottom,
-
-rgba(0,0,0,0.35),
-
-rgba(0,0,0,0.75)
-
-);
-
-pointer-events:none;
-
 }
 
 
 
 
-/* END SCREEN */
+
+/* START SCREEN */
 
 
-#endOverlay{
+#startOverlay{
+
 
 position:absolute;
 
@@ -119,38 +77,161 @@ flex-direction:column;
 
 background:
 
-radial-gradient(
+rgba(0,0,0,0.85);
 
-circle,
 
-rgba(40,40,40,0.2),
+z-index:20;
 
-rgba(0,0,0,0.95)
 
-);
+color:white;
+
+text-align:center;
+
+
+}
+
+
+
+#startOverlay h1{
+
+
+font-size:
+
+clamp(30px,5vw,70px);
+
+
+letter-spacing:5px;
+
+
+text-shadow:
+
+0 0 20px red;
+
+
+}
+
+
+
+
+#startOverlay h2{
+
+
+margin:30px;
+
+
+font-size:
+
+clamp(20px,3vw,40px);
+
+
+color:#ddd;
+
+
+}
+
+
+
+
+
+#startVideo{
+
+
+padding:
+
+18px 50px;
+
+
+font-size:
+
+20px;
+
+
+letter-spacing:3px;
+
+
+color:white;
+
+
+background:#600000;
+
+
+border:
+
+2px solid red;
+
+
+border-radius:10px;
+
+
+cursor:pointer;
+
+
+transition:.5s;
+
+
+}
+
+
+
+#startVideo:hover{
+
+
+background:red;
+
+
+transform:scale(1.1);
+
+
+}
+
+
+
+
+
+/* END SCREEN */
+
+
+#endOverlay{
+
+
+position:absolute;
+
+inset:0;
+
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+
+background:
+
+rgba(0,0,0,.85);
 
 
 
 opacity:0;
+
 
 visibility:hidden;
 
 
 transition:
 
-opacity 1.5s ease,
-
-visibility 1.5s;
-
-
-cursor:pointer;
+1.5s;
 
 
 z-index:10;
 
 
-}
+cursor:pointer;
 
+
+}
 
 
 
@@ -160,6 +241,7 @@ z-index:10;
 
 opacity:1;
 
+
 visibility:visible;
 
 
@@ -168,24 +250,18 @@ visibility:visible;
 
 
 
-
-/* TITLE */
-
-
 #endOverlay h1{
 
 
-color:#ffffff;
+color:white;
 
 
 font-size:
 
-clamp(32px,6vw,80px);
+clamp(35px,6vw,80px);
 
 
-letter-spacing:
-
-8px;
+letter-spacing:8px;
 
 
 text-align:center;
@@ -194,11 +270,9 @@ text-align:center;
 text-shadow:
 
 
-0 0 10px #fff,
+0 0 20px red,
 
-0 0 25px #8b0000,
-
-0 0 50px #ff0000;
+0 0 50px crimson;
 
 
 
@@ -213,17 +287,10 @@ ghostGlow 3s infinite;
 
 
 
-
-/* CLICK TEXT */
-
-
 #endOverlay p{
 
 
-margin-top:35px;
-
-
-color:#ffb000;
+margin-top:30px;
 
 
 font-size:
@@ -231,21 +298,12 @@ font-size:
 clamp(18px,3vw,35px);
 
 
-letter-spacing:4px;
-
-
-text-shadow:
-
-
-0 0 10px orange,
-
-0 0 25px red;
-
+color:#ffb000;
 
 
 animation:
 
-clickPulse 1.8s infinite;
+pulse 2s infinite;
 
 
 
@@ -253,81 +311,31 @@ clickPulse 1.8s infinite;
 
 
 
-
-/* GHOST TITLE EFFECT */
 
 
 @keyframes ghostGlow{
 
 
-0%,100%{
+50%{
 
+transform:translateY(-10px);
 
-opacity:0.8;
-
-transform:
-
-translateY(0);
+}
 
 
 }
+
+
+
+
+
+@keyframes pulse{
 
 
 50%{
-
-
-opacity:1;
-
-transform:
-
-translateY(-10px);
-
-
-}
-
-
-}
-
-
-
-
-
-/* CLICK ANIMATION */
-
-
-@keyframes clickPulse{
-
-
-0%{
-
-
-transform:scale(1);
-
-opacity:.7;
-
-
-}
-
-
-50%{
-
 
 transform:scale(1.1);
 
-opacity:1;
-
-
-}
-
-
-100%{
-
-
-transform:scale(1);
-
-opacity:.7;
-
-
 }
 
 
@@ -335,58 +343,16 @@ opacity:.7;
 
 
 
-
-
-/* MOBILE */
 
 
 @media(max-width:768px){
 
 
+#startOverlay h1,
 #endOverlay h1{
 
 
 letter-spacing:3px;
-
-
-}
-
-
-
-#endOverlay p{
-
-
-letter-spacing:2px;
-
-
-}
-
-
-
-}
-
-
-
-/* LANDSCAPE MOBILE */
-
-
-@media(max-height:500px){
-
-
-#endOverlay h1{
-
-
-font-size:35px;
-
-
-}
-
-
-
-#endOverlay p{
-
-
-font-size:18px;
 
 
 }
