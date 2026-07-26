@@ -7,151 +7,14 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+
 <title>
-VIDLYRA HALLOWEEN FEST 2026 - DAY 5
+VIDLYRA HALLOWEEN FEST 2026
+DAY 5 - THE HAUNTED CEMETERY
 </title>
 
 
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-
-body{
-
-overflow:hidden;
-background:black;
-font-family:Arial, sans-serif;
-
-}
-
-
-
-#videoContainer{
-
-width:100vw;
-height:100vh;
-position:relative;
-
-}
-
-
-
-video{
-
-width:100%;
-height:100%;
-
-object-fit:cover;
-
-}
-
-
-
-/* END OVERLAY */
-
-
-#endOverlay{
-
-position:absolute;
-
-top:0;
-left:0;
-
-width:100%;
-height:100%;
-
-background:
-
-rgba(0,0,0,0.75);
-
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-flex-direction:column;
-
-
-opacity:0;
-
-pointer-events:none;
-
-transition:1.5s;
-
-
-}
-
-
-#endOverlay.show{
-
-opacity:1;
-
-pointer-events:auto;
-
-}
-
-
-
-#endOverlay h1{
-
-
-color:white;
-
-font-size:clamp(30px,5vw,70px);
-
-text-align:center;
-
-letter-spacing:5px;
-
-
-animation:pulse 2s infinite;
-
-
-}
-
-
-
-#endOverlay p{
-
-margin-top:25px;
-
-color:#ff8800;
-
-font-size:clamp(16px,2vw,30px);
-
-}
-
-
-
-@keyframes pulse{
-
-
-0%,100%{
-
-transform:scale(1);
-
-}
-
-
-50%{
-
-transform:scale(1.08);
-
-}
-
-
-}
-
-
-
-</style>
+<link rel="stylesheet" href="css/day5-video.css">
 
 
 </head>
@@ -160,19 +23,54 @@ transform:scale(1.08);
 <body>
 
 
-
 <div id="videoContainer">
+
+
+
+<!-- START SCREEN -->
+
+<div id="startOverlay">
+
+
+<h1>
+VIDLYRA HALLOWEEN FEST 2026
+</h1>
+
+
+<h2>
+
+DAY 5
+
+<br>
+
+THE HAUNTED CEMETERY
+
+</h2>
+
+
+<button id="startVideo">
+
+ENTER CEMETERY
+
+</button>
+
+
+</div>
+
+
+
+
+
+<!-- VIDEO -->
 
 
 <video
 
 id="day5Video"
 
-autoplay
+playsinline
 
-muted
-
-playsinline>
+preload="auto">
 
 
 <source
@@ -182,16 +80,19 @@ src="assets/video/day5-intro.mp4"
 type="video/mp4">
 
 
+Your browser does not support video.
+
 </video>
 
 
 
 
 
-<div id="endOverlay"
 
-onclick="enterGame()">
+<!-- END SCREEN -->
 
+
+<div id="endOverlay">
 
 
 <h1>
@@ -208,7 +109,6 @@ CLICK TO ENTER DAY 5
 </p>
 
 
-
 </div>
 
 
@@ -219,57 +119,10 @@ CLICK TO ENTER DAY 5
 
 
 
-<script>
 
-
-const video =
-document.getElementById("day5Video");
-
-
-const overlay =
-document.getElementById("endOverlay");
-
-
-
-
-
-// SHOW OVERLAY WHEN VIDEO ENDS
-
-
-video.addEventListener(
-
-"ended",
-
-()=>{
-
-
-overlay.classList.add("show");
-
-
-}
-
-);
-
-
-
-
-
-// REDIRECT TO GAME
-
-
-function enterGame(){
-
-
-window.location.href="day5-game.html";
-
-
-}
-
-
-
-
-</script>
 <script src="js/day5-video.js"></script>
+
+
 </body>
 
 </html>
