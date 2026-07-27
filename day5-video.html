@@ -4,171 +4,21 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<meta
-name="theme-color"
-content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
 
 <title>
-
 VIDLYRA HALLOWEEN FEST 2026
 DAY 5
 THE HAUNTED CEMETERY
-
 </title>
 
-<link
-rel="stylesheet"
-href="css/day5-video.css">
+<link rel="stylesheet" href="css/day5-video.css">
 
 </head>
 
 <body>
 
-<!-- ==========================================
-VIDEO CONTAINER
-========================================== -->
-
-<div id="videoContainer">
-
-<video
-
-id="introVideo"
-
-autoplay
-
-muted
-
-playsinline
-
-preload="auto"
-
-class="introVideo">
-
-<source
-
-src="assets/video/day5-intro.mp4"
-
-type="video/mp4">
-
-Your browser does not support HTML5 video.
-
-</video>
-
-</div>
-
-<!-- ==========================================
-DARK OVERLAY
-========================================== -->
-
-<div id="overlay"></div>
-
-<!-- ==========================================
-LIGHTNING FLASH
-========================================== -->
-
-<div id="lightningFlash"></div>
-
-<!-- ==========================================
-BLACK FADE
-========================================== -->
-
-<div id="fadeScreen"></div>
-
-<!-- ==========================================
-PROGRESS BAR
-========================================== -->
-
-<div id="videoProgress">
-
-<div id="videoFill"></div>
-
-</div>
-<!-- ==========================================
-TITLE
-========================================== -->
-
-<div id="titleContainer">
-
-    <h1 id="dayTitle">
-
-        DAY 5
-
-    </h1>
-
-    <h2 id="locationTitle">
-
-        THE HAUNTED CEMETERY
-
-    </h2>
-
-    <p id="introText">
-
-        Enter the forgotten cemetery...
-        Restore the Seven Spirit Lanterns
-        before the Ghost King awakens.
-
-    </p>
-
-</div>
-
-<!-- ==========================================
-LIVE SUBTITLE
-========================================== -->
-
-<div id="subtitleContainer">
-
-    <p id="storySubtitle">
-
-        The cemetery sleeps...
-
-    </p>
-
-</div>
-
-<!-- ==========================================
-MISSION PREVIEW
-========================================== -->
-
-<div id="missionPreview">
-
-    <div class="missionHeader">
-
-        TODAY'S MISSION
-
-    </div>
-
-    <ul>
-
-        <li>Explore the Haunted Cemetery</li>
-
-        <li>Restore 7 Spirit Lanterns</li>
-
-        <li>Seal the Ghost King</li>
-
-    </ul>
-
-</div>
-
-<!-- ==========================================
-SKIP BUTTON
-========================================== -->
-
-<button
-
-id="skipButton"
-
-type="button"
-
-aria-label="Skip Intro">
-
-SKIP ▶
-
-</button>
 <!-- ==========================================
 LOADING SCREEN
 ========================================== -->
@@ -177,17 +27,9 @@ LOADING SCREEN
 
     <div id="loadingContent">
 
-        <h2>
+        <h2>Preparing Day 5...</h2>
 
-            PREPARING DAY 5...
-
-        </h2>
-
-        <p>
-
-            Loading cinematic...
-
-        </p>
+        <p>Loading cinematic...</p>
 
         <div id="loadingBar">
 
@@ -200,41 +42,237 @@ LOADING SCREEN
 </div>
 
 <!-- ==========================================
-VIDEO END OVERLAY
+VIDEO
 ========================================== -->
 
-<div id="endOverlay">
+<div id="videoContainer">
 
-    <div id="endContent">
+<video
+id="introVideo"
+class="introVideo"
+autoplay
+muted
+playsinline
+preload="auto">
+
+<source
+src="assets/video/day5-intro.mp4"
+type="video/mp4">
+
+Your browser does not support HTML5 video.
+
+</video>
+
+</div>
+
+<!-- ==========================================
+OVERLAY
+========================================== -->
+
+<div id="overlay"></div>
+
+<div id="lightningFlash"></div>
+
+<div id="fadeScreen"></div>
+
+<!-- ==========================================
+TITLE
+========================================== -->
+
+<header id="titleContainer">
+
+<h1 id="dayTitle">
+
+DAY 5
+
+</h1>
+
+<h2 id="locationTitle">
+
+THE HAUNTED CEMETERY
+
+</h2>
+
+<p id="introText">
+
+The Forgotten Cemetery has awakened.
+
+Restore the Seven Spirit Lanterns
+
+before the Ghost King rises.
+
+</p>
+
+</header>
+
+<!-- ==========================================
+MISSION
+========================================== -->
+
+<section id="missionPreview">
+
+<div class="missionHeader">
+
+TODAY'S MISSION
+
+</div>
+
+<ul>
+
+<li>Explore the Haunted Cemetery</li>
+
+<li>Restore 7 Spirit Lanterns</li>
+
+<li>Defeat the Ghost King</li>
+
+</ul>
+
+</section>
+
+<!-- ==========================================
+SUBTITLE
+========================================== -->
+
+<div id="subtitleContainer">
+
+<p id="storySubtitle">
+
+The cemetery sleeps...
+
+</p>
+
+</div>
+
+<!-- ==========================================
+SKIP BUTTON
+========================================== -->
+
+<button
+id="skipButton"
+type="button">
+
+SKIP ▶
+
+</button>
+
+<!-- ==========================================
+PROGRESS BAR
+========================================== -->
+
+<div id="videoProgress">
+
+<div id="videoFill"></div>
+
+</div>
+
+<!-- ==========================================
+END OVERLAY
+========================================== -->
+
+<section id="endOverlay">
+
+<div id="endContent">
+
+<h1>
+
+THE JOURNEY CONTINUES
+
+</h1>
+
+<h2>
+
+THE HAUNTED CEMETERY
+
+</h2>
+
+<p>
+
+The cinematic has ended.
+
+Your mission begins now.
+
+</p>
+
+<button
+id="enterButton"
+type="button">
+
+CLICK TO ENTER
+THE CEMETERY
+
+</button>
+
+</div>
+
+</section>
+<!-- ==========================================
+OPTIONAL AUDIO OVERLAY
+(Remove if your MP4 already contains audio)
+========================================== -->
+
+<audio
+id="bgMusic"
+preload="auto"
+loop>
+
+    <source
+    src="assets/audio/day5-theme.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio
+id="thunder"
+preload="auto">
+
+    <source
+    src="assets/audio/thunder.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<audio
+id="ghostWhisper"
+preload="auto">
+
+    <source
+    src="assets/audio/ghost-whisper.mp3"
+    type="audio/mpeg">
+
+</audio>
+
+<!-- ==========================================
+START SCREEN
+(Needed if you want sound on all browsers)
+========================================== -->
+
+<div id="startOverlay">
+
+    <div id="startCard">
 
         <h1>
 
-            THE JOURNEY CONTINUES
+            VIDLYRA HALLOWEEN FEST 2026
 
         </h1>
 
         <h2>
 
-            THE HAUNTED CEMETERY
+            DAY 5
 
         </h2>
 
         <p>
 
-            The cinematic has ended.
-
-            Your mission begins now.
+            Click below to begin the cinematic.
 
         </p>
 
         <button
-
-        id="enterButton"
-
+        id="startButton"
         type="button">
 
-            CLICK TO ENTER
-            THE CEMETERY
+            START EXPERIENCE
 
         </button>
 
@@ -248,100 +286,33 @@ NO JAVASCRIPT
 
 <noscript>
 
-<div id="noscriptMessage">
+<div
+style="
+position:fixed;
+inset:0;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#000;
+color:#fff;
+font-size:22px;
+font-family:Arial,sans-serif;
+z-index:9999;
+text-align:center;
+padding:30px;">
 
-JavaScript is required to continue.
+JavaScript is required
+to play the Day 5 cinematic.
 
 </div>
 
 </noscript>
-<!-- ==========================================
-HIDDEN HELPER ELEMENTS
-========================================== -->
-
-<div id="videoEvents" hidden>
-
-<span id="phaseOne"></span>
-
-<span id="phaseTwo"></span>
-
-<span id="phaseThree"></span>
-
-</div>
 
 <!-- ==========================================
-ACCESSIBILITY
+JAVASCRIPT
 ========================================== -->
 
-<div
-id="screenReaderStatus"
-class="sr-only"
-aria-live="polite"
-aria-atomic="true">
-
-Loading Day 5 cinematic...
-
-</div>
-
-<!-- ==========================================
-VIDEO FALLBACK
-========================================== -->
-
-<div
-id="videoFallback"
-
-style="display:none;">
-
-<h2>
-
-Your browser cannot play this video.
-
-</h2>
-
-<p>
-
-Please use a modern browser.
-
-</p>
-
-<button
-id="fallbackButton">
-
-ENTER DAY 5
-
-</button>
-
-</div>
-
-<!-- ==========================================
-PREPARE JAVASCRIPT
-========================================== -->
-
-<script>
-
-window.DAY5={
-
-nextPage:"day5-game.html",
-
-videoDuration:24,
-
-title:"DAY 5",
-
-location:"THE HAUNTED CEMETERY"
-
-};
-
-</script>
-<!-- ==========================================
-MAIN JAVASCRIPT
-========================================== -->
-
-<script src="js/day5-video.js" defer></script>
-
-<!-- ==========================================
-END OF PAGE
-========================================== -->
+<script src="js/day5-video.js"></script>
 
 </body>
-
 </html>
