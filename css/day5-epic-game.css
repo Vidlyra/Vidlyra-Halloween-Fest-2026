@@ -1,0 +1,1489 @@
+/* ==========================================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 5 - EPIC GAME
+========================================================== */
+
+/* ==========================================
+RESET
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    background:#020202;
+
+    font-family:
+    "Poppins",
+    sans-serif;
+
+    color:#ffffff;
+
+}
+
+/* ==========================================
+GAME WORLD
+========================================== */
+
+#gameWorld{
+
+    position:relative;
+
+    width:100vw;
+    height:100vh;
+
+    overflow:hidden;
+
+    background:#000;
+
+}
+
+/* ==========================================
+BACKGROUND LAYERS
+========================================== */
+
+#skyLayer,
+#moonLayer,
+#fogLayer,
+#rainLayer,
+#particleLayer,
+#lightningLayer,
+#cemeteryBackground,
+#treeLayer,
+#graveLayer,
+#gateLayer,
+#frontFog{
+
+    position:absolute;
+
+    inset:0;
+
+    background-position:center;
+    background-repeat:no-repeat;
+    background-size:cover;
+
+}
+
+/* Layer order */
+
+#skyLayer{
+
+    z-index:1;
+
+    background:
+    linear-gradient(
+    #040611,
+    #0b1428,
+    #121212);
+
+}
+
+#moonLayer{
+
+    z-index:2;
+
+    background-image:
+    url("../assets/background/moon.png");
+
+    opacity:.8;
+
+}
+
+#cemeteryBackground{
+
+    z-index:3;
+
+    background-image:
+    url("../assets/background/cemetery.png");
+
+}
+
+#treeLayer{
+
+    z-index:4;
+
+    background-image:
+    url("../assets/background/trees.png");
+
+}
+
+#graveLayer{
+
+    z-index:5;
+
+    background-image:
+    url("../assets/background/graves.png");
+
+}
+
+#gateLayer{
+
+    z-index:6;
+
+    background-image:
+    url("../assets/background/gate.png");
+
+}
+
+#fogLayer{
+
+    z-index:7;
+
+    opacity:.45;
+
+}
+
+#frontFog{
+
+    z-index:18;
+
+    opacity:.55;
+
+}
+
+#particleLayer{
+
+    z-index:15;
+
+    pointer-events:none;
+
+}
+
+#rainLayer{
+
+    z-index:16;
+
+    pointer-events:none;
+
+}
+
+#lightningLayer{
+
+    z-index:40;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================
+PLAYER
+========================================== */
+
+#player{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:120px;
+
+    transform:
+    translateX(-50%);
+
+    width:90px;
+
+    height:90px;
+
+    z-index:100;
+
+    transition:
+    transform .15s linear;
+
+}
+
+#player img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:contain;
+
+    user-select:none;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================
+HUD
+========================================== */
+
+#hud{
+
+    position:fixed;
+
+    top:20px;
+
+    left:20px;
+
+    display:flex;
+
+    gap:16px;
+
+    flex-wrap:wrap;
+
+    z-index:500;
+
+}
+
+.hudCard{
+
+    width:200px;
+
+    padding:16px;
+
+    border-radius:16px;
+
+    background:
+    rgba(8,18,35,.82);
+
+    border:
+
+    1px solid
+
+    rgba(120,220,255,.35);
+
+    backdrop-filter:
+
+    blur(10px);
+
+}
+
+.hudTitle{
+
+    font-size:14px;
+
+    font-weight:700;
+
+    letter-spacing:2px;
+
+    color:#7fdfff;
+
+    margin-bottom:10px;
+
+}
+
+.bar{
+
+    width:100%;
+
+    height:12px;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    background:
+
+    rgba(255,255,255,.12);
+
+}
+
+#healthFill{
+
+    width:100%;
+
+    height:100%;
+
+    background:
+    linear-gradient(
+    90deg,
+    #ff4e50,
+    #ff1b1b);
+
+}
+
+#spiritFill{
+
+    width:100%;
+
+    height:100%;
+
+    background:
+    linear-gradient(
+    90deg,
+    #00d4ff,
+    #0095ff);
+
+}
+
+#healthText,
+#spiritText,
+#lanternCounter,
+#scoreCounter{
+
+    margin-top:10px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+}
+
+/* ==========================================
+MISSION PANEL
+========================================== */
+
+#missionPanel{
+
+    position:fixed;
+
+    top:20px;
+
+    right:20px;
+
+    width:330px;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    background:
+
+    rgba(10,15,30,.82);
+
+    border:
+
+    1px solid
+
+    rgba(120,220,255,.3);
+
+    backdrop-filter:
+
+    blur(10px);
+
+    z-index:500;
+
+}
+
+#missionPanel h2{
+
+    color:#7fdfff;
+
+    margin-bottom:15px;
+
+}
+
+#missionPanel ul{
+
+    list-style:none;
+
+}
+
+#missionPanel li{
+
+    margin-bottom:14px;
+
+    line-height:1.6;
+
+}
+
+#missionPanel li::before{
+
+    content:"✦ ";
+
+    color:#7fdfff;
+
+}
+
+/* ==========================================
+OBJECTIVE POPUP
+========================================== */
+
+#objectivePopup{
+
+    position:fixed;
+
+    left:50%;
+
+    top:80px;
+
+    transform:translateX(-50%);
+
+    padding:16px 36px;
+
+    border-radius:50px;
+
+    background:
+
+    rgba(0,0,0,.8);
+
+    border:
+
+    1px solid
+
+    #00d4ff;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    letter-spacing:2px;
+
+    color:#7fdfff;
+
+    z-index:800;
+
+    animation:
+
+    popupFade
+
+    3s ease;
+
+}
+
+@keyframes popupFade{
+
+    0%{
+
+        opacity:0;
+
+        transform:
+        translate(-50%,-40px);
+
+    }
+
+    15%{
+
+        opacity:1;
+
+        transform:
+        translate(-50%,0);
+
+    }
+
+    85%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
+/* ==========================================================
+ENEMY LAYER
+========================================================== */
+
+#enemyLayer{
+
+    position:absolute;
+
+    inset:0;
+
+    z-index:120;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================================
+GHOSTS
+========================================================== */
+
+.ghost{
+
+    position:absolute;
+
+    width:90px;
+
+    height:90px;
+
+    animation:ghostFloat 3s ease-in-out infinite;
+
+}
+
+.ghost img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:contain;
+
+}
+
+#ghost1{
+
+    left:18%;
+
+    top:42%;
+
+}
+
+#ghost2{
+
+    left:58%;
+
+    top:30%;
+
+    animation-delay:1s;
+
+}
+
+#ghost3{
+
+    left:82%;
+
+    top:48%;
+
+    animation-delay:2s;
+
+}
+
+.enemyHealth{
+
+    width:90px;
+
+    height:8px;
+
+    margin-top:8px;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.15);
+
+}
+
+.enemyHealthFill{
+
+    width:100%;
+
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        #ff5a5a,
+        #b80000
+    );
+
+}
+
+@keyframes ghostFloat{
+
+    0%{
+
+        transform:translateY(0px);
+
+    }
+
+    50%{
+
+        transform:translateY(-18px);
+
+    }
+
+    100%{
+
+        transform:translateY(0px);
+
+    }
+
+}
+
+/* ==========================================================
+GHOST KING
+========================================================== */
+
+#ghostKing{
+
+    position:absolute;
+
+    right:10%;
+
+    bottom:140px;
+
+    width:220px;
+
+    z-index:150;
+
+}
+
+#ghostKing img{
+
+    width:100%;
+
+    display:block;
+
+}
+
+#bossBar{
+
+    margin-top:18px;
+
+    width:100%;
+
+}
+
+#bossName{
+
+    margin-bottom:8px;
+
+    text-align:center;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#ff4d4d;
+
+}
+
+#bossHealth{
+
+    width:100%;
+
+    height:16px;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.15);
+
+}
+
+#bossHealthFill{
+
+    width:100%;
+
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        #ff2a2a,
+        #990000
+    );
+
+}
+
+/* ==========================================================
+SPIRIT LANTERNS
+========================================================== */
+
+#lanternLayer{
+
+    position:absolute;
+
+    inset:0;
+
+    z-index:90;
+
+}
+
+.lantern{
+
+    position:absolute;
+
+    width:42px;
+
+    height:72px;
+
+    border-radius:12px;
+
+    background:radial-gradient(
+        circle,
+        #ffe680,
+        #ff9900
+    );
+
+    box-shadow:
+        0 0 20px #ffd54f,
+        0 0 40px rgba(255,180,0,.6);
+
+    animation:lanternGlow 2s infinite;
+
+}
+
+#lantern1{left:10%;top:22%;}
+#lantern2{left:25%;top:62%;}
+#lantern3{left:40%;top:38%;}
+#lantern4{left:52%;top:18%;}
+#lantern5{left:66%;top:54%;}
+#lantern6{left:82%;top:28%;}
+#lantern7{left:90%;top:72%;}
+
+@keyframes lanternGlow{
+
+    0%{
+
+        opacity:.7;
+
+    }
+
+    50%{
+
+        opacity:1;
+
+        transform:scale(1.08);
+
+    }
+
+    100%{
+
+        opacity:.7;
+
+    }
+
+}
+
+/* ==========================================================
+INVENTORY
+========================================================== */
+
+#inventoryPanel{
+
+    position:fixed;
+
+    left:20px;
+
+    bottom:20px;
+
+    width:320px;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:rgba(8,18,35,.82);
+
+    border:1px solid rgba(120,220,255,.3);
+
+    backdrop-filter:blur(12px);
+
+    z-index:500;
+
+}
+
+#inventoryPanel h2{
+
+    margin-bottom:16px;
+
+    color:#7fdfff;
+
+}
+
+.inventoryGrid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:12px;
+
+}
+
+.slot{
+
+    aspect-ratio:1;
+
+    border-radius:10px;
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.15);
+
+}
+
+/* ==========================================================
+DIALOGUE
+========================================================== */
+
+#dialogueBox{
+
+    position:fixed;
+
+    left:50%;
+
+    bottom:30px;
+
+    transform:translateX(-50%);
+
+    width:min(820px,90%);
+
+    padding:22px;
+
+    border-radius:20px;
+
+    background:rgba(5,12,22,.9);
+
+    border:1px solid rgba(120,220,255,.35);
+
+    z-index:700;
+
+}
+
+#speakerName{
+
+    color:#7fdfff;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    margin-bottom:12px;
+
+}
+
+#dialogueText{
+
+    line-height:1.8;
+
+    margin-bottom:20px;
+
+}
+
+#nextDialogue{
+
+    padding:12px 28px;
+
+    border:none;
+
+    border-radius:30px;
+
+    cursor:pointer;
+
+    color:#fff;
+
+    background:#1b7cff;
+
+    transition:.3s;
+
+}
+
+#nextDialogue:hover{
+
+    transform:scale(1.05);
+
+}
+
+/* ==========================================================
+PAUSE MENU
+========================================================== */
+
+#pauseMenu{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-direction:column;
+
+    gap:20px;
+
+    background:rgba(0,0,0,.88);
+
+    z-index:1000;
+
+}
+
+#pauseMenu h1{
+
+    font-size:52px;
+
+    margin-bottom:10px;
+
+}
+
+#pauseMenu button{
+
+    width:260px;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:40px;
+
+    cursor:pointer;
+
+    color:#fff;
+
+    background:#1565c0;
+
+    font-size:18px;
+
+    transition:.3s;
+
+}
+
+#pauseMenu button:hover{
+
+    transform:scale(1.05);
+
+}
+
+/* ==========================================================
+SETTINGS
+========================================================== */
+
+#settingsPanel{
+
+    position:fixed;
+
+    top:50%;
+
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    display:none;
+
+    width:min(420px,90%);
+
+    padding:24px;
+
+    border-radius:20px;
+
+    background:rgba(10,18,35,.95);
+
+    border:1px solid rgba(120,220,255,.3);
+
+    z-index:1100;
+
+}
+
+#settingsPanel h2{
+
+    margin-bottom:20px;
+
+    color:#7fdfff;
+
+}
+
+#settingsPanel label{
+
+    display:block;
+
+    margin-bottom:18px;
+
+}
+
+#settingsPanel input{
+
+    width:100%;
+
+    margin-top:8px;
+
+}
+
+#closeSettings{
+
+    margin-top:10px;
+
+    padding:12px 24px;
+
+    border:none;
+
+    border-radius:30px;
+
+    cursor:pointer;
+
+    background:#1b7cff;
+
+    color:#fff;
+
+}
+
+/* ==========================================================
+MOBILE CONTROLS
+========================================================== */
+
+#mobileControls{
+
+    display:none;
+
+}
+/* ==========================================================
+VICTORY & GAME OVER
+========================================================== */
+
+.gameOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.92);
+
+    backdrop-filter:blur(12px);
+
+    z-index:5000;
+
+}
+
+.overlayCard{
+
+    width:min(760px,92%);
+
+    padding:45px;
+
+    border-radius:25px;
+
+    text-align:center;
+
+    background:rgba(12,20,35,.95);
+
+    border:2px solid rgba(120,220,255,.35);
+
+    box-shadow:
+    0 0 40px rgba(0,180,255,.25);
+
+}
+
+.overlayCard h1{
+
+    font-size:56px;
+
+    color:#7fdfff;
+
+    margin-bottom:20px;
+
+}
+
+.overlayCard h2{
+
+    margin-bottom:18px;
+
+    color:#ffffff;
+
+}
+
+.overlayCard p{
+
+    line-height:1.8;
+
+    margin-bottom:30px;
+
+    color:#dddddd;
+
+}
+
+/* ==========================================================
+REWARDS
+========================================================== */
+
+.rewardGrid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:15px;
+
+    margin-bottom:35px;
+
+}
+
+.rewardItem{
+
+    padding:18px;
+
+    border-radius:15px;
+
+    background:rgba(255,255,255,.06);
+
+    border:1px solid rgba(120,220,255,.25);
+
+}
+
+/* ==========================================================
+BUTTONS
+========================================================== */
+
+#nextDayButton,
+#retryButton,
+#exitButton{
+
+    padding:16px 40px;
+
+    border:none;
+
+    border-radius:40px;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#fff;
+
+    margin:10px;
+
+    transition:.3s;
+
+}
+
+#nextDayButton{
+
+    background:linear-gradient(
+    90deg,
+    #00bcd4,
+    #2962ff);
+
+}
+
+#retryButton{
+
+    background:linear-gradient(
+    90deg,
+    #ff9800,
+    #ef6c00);
+
+}
+
+#exitButton{
+
+    background:linear-gradient(
+    90deg,
+    #f44336,
+    #b71c1c);
+
+}
+
+#nextDayButton:hover,
+#retryButton:hover,
+#exitButton:hover{
+
+    transform:scale(1.08);
+
+}
+
+/* ==========================================================
+MINI MAP
+========================================================== */
+
+#miniMap{
+
+    position:fixed;
+
+    bottom:20px;
+
+    right:20px;
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:15px;
+
+    background:rgba(10,20,30,.82);
+
+    border:1px solid rgba(120,220,255,.35);
+
+    overflow:hidden;
+
+    z-index:450;
+
+}
+
+#playerDot{
+
+    position:absolute;
+
+    width:10px;
+
+    height:10px;
+
+    border-radius:50%;
+
+    background:#00ff66;
+
+    left:50%;
+
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+}
+
+/* ==========================================================
+NOTIFICATIONS
+========================================================== */
+
+#notificationContainer{
+
+    position:fixed;
+
+    top:120px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+    z-index:2500;
+
+}
+
+.notification{
+
+    min-width:320px;
+
+    padding:16px 22px;
+
+    border-radius:40px;
+
+    background:rgba(0,0,0,.82);
+
+    border:1px solid #7fdfff;
+
+    text-align:center;
+
+    animation:notify .35s ease;
+
+}
+
+@keyframes notify{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(-20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ==========================================================
+LIGHTNING
+========================================================== */
+
+.flash{
+
+    animation:flash .4s;
+
+}
+
+@keyframes flash{
+
+    0%{filter:brightness(1);}
+
+    30%{filter:brightness(3);}
+
+    100%{filter:brightness(1);}
+
+}
+
+/* ==========================================================
+SHAKE
+========================================================== */
+
+.shake{
+
+    animation:shake .4s;
+
+}
+
+@keyframes shake{
+
+    0%{transform:translateX(0);}
+
+    20%{transform:translateX(-5px);}
+
+    40%{transform:translateX(5px);}
+
+    60%{transform:translateX(-5px);}
+
+    80%{transform:translateX(5px);}
+
+    100%{transform:translateX(0);}
+
+}
+
+/* ==========================================================
+RESPONSIVE
+========================================================== */
+
+@media(max-width:992px){
+
+    #hud{
+
+        flex-direction:column;
+
+    }
+
+    #missionPanel{
+
+        width:280px;
+
+    }
+
+    .rewardGrid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    #missionPanel{
+
+        display:none;
+
+    }
+
+    #inventoryPanel{
+
+        display:none;
+
+    }
+
+    #miniMap{
+
+        width:130px;
+
+        height:130px;
+
+    }
+
+    #mobileControls{
+
+        display:flex;
+
+        position:fixed;
+
+        left:0;
+
+        right:0;
+
+        bottom:15px;
+
+        justify-content:space-between;
+
+        align-items:flex-end;
+
+        padding:0 20px;
+
+        z-index:900;
+
+    }
+
+    #joystick{
+
+        width:120px;
+
+        height:120px;
+
+        border-radius:50%;
+
+        background:rgba(255,255,255,.08);
+
+        position:relative;
+
+    }
+
+    #stick{
+
+        width:55px;
+
+        height:55px;
+
+        border-radius:50%;
+
+        background:#00bcd4;
+
+        position:absolute;
+
+        left:50%;
+
+        top:50%;
+
+        transform:translate(-50%,-50%);
+
+    }
+
+    #actionButtons{
+
+        display:flex;
+
+        gap:15px;
+
+    }
+
+    #actionButtons button{
+
+        width:70px;
+
+        height:70px;
+
+        border:none;
+
+        border-radius:50%;
+
+        background:#1565c0;
+
+        color:#fff;
+
+        font-size:24px;
+
+    }
+
+}
+
+@media(max-width:480px){
+
+    .hudCard{
+
+        width:170px;
+
+    }
+
+    .overlayCard{
+
+        padding:25px;
+
+    }
+
+    .overlayCard h1{
+
+        font-size:38px;
+
+    }
+
+}
