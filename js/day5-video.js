@@ -9,25 +9,37 @@ const Intro = {
 
     video:null,
 
-    progress:null,
-
-    subtitle:null,
-
     loadingScreen:null,
 
     loadingFill:null,
+
+    startOverlay:null,
+
+    startButton:null,
+
+    bgMusic:null,
+
+    thunder:null,
+
+    ghostWhisper:null,
+
+    subtitle:null,
+
+    progress:null,
+
+    lightning:null,
 
     fadeScreen:null,
 
     endOverlay:null,
 
-    skipButton:null,
-
     enterButton:null,
 
-    lightning:null,
+    skipButton:null,
 
-    loaded:false,
+    lightningTimer:null,
+
+    whisperTimer:null,
 
     init(){
 
@@ -43,122 +55,81 @@ const Intro = {
 
         this.video=document.getElementById("introVideo");
 
-        this.progress=document.getElementById("videoFill");
-
-        this.subtitle=document.getElementById("storySubtitle");
-
         this.loadingScreen=document.getElementById("loadingScreen");
 
         this.loadingFill=document.getElementById("loadingFill");
+
+        this.startOverlay=document.getElementById("startOverlay");
+
+        this.startButton=document.getElementById("startButton");
+
+        this.bgMusic=document.getElementById("bgMusic");
+
+        this.thunder=document.getElementById("thunder");
+
+        this.ghostWhisper=document.getElementById("ghostWhisper");
+
+        this.subtitle=document.getElementById("storySubtitle");
+
+        this.progress=document.getElementById("videoFill");
+
+        this.lightning=document.getElementById("lightningFlash");
 
         this.fadeScreen=document.getElementById("fadeScreen");
 
         this.endOverlay=document.getElementById("endOverlay");
 
-        this.skipButton=document.getElementById("skipButton");
-
         this.enterButton=document.getElementById("enterButton");
 
-        this.lightning=document.getElementById("lightningFlash");
+        this.skipButton=document.getElementById("skipButton");
 
     },
 
     bindEvents(){
 
-        this.video.addEventListener(
+        if(this.startButton){
 
-            "timeupdate",
+            this.startButton.addEventListener(
 
-            ()=>{
+                "click",
 
-                this.updateProgress();
+                ()=>{
 
-                this.updateSubtitle();
+                    this.startExperience();
 
-            }
+                }
 
-        );
+            );
 
-        this.video.addEventListener(
+        }
 
-            "ended",
+        if(this.skipButton){
 
-            ()=>{
+            this.skipButton.addEventListener(
 
-                this.finishVideo();
+                "click",
 
-            }
+                ()=>{
 
-        );
+                    this.skipIntro();
 
-        this.skipButton.addEventListener(
+                }
 
-            "click",
+            );
 
-            ()=>{
+        }
 
-                this.skip();
+        if(this.enterButton){
 
-            }
+            this.enterButton.addEventListener(
 
-        );
+                "click",
 
-        this.enterButton.addEventListener(
+                ()=>{
 
-            "click",
+                    window.location.href="day5-game.html";
 
-            ()=>{
-
-                this.enter();
-
-            }
-
-        );
-
-    },
-      /* ==========================================
-       LOADING
-    ========================================== */
-
-    fakeLoading(){
-
-        let value = 0;
-
-        const loader = setInterval(()=>{
-
-            value += 2;
-
-            if(this.loadingFill){
-
-                this.loadingFill.style.width =
-
-                value + "%";
-
-            }
-
-            if(value >= 100){
-
-                clearInterval(loader);
-
-                this.startVideo();
-
-            }
-
-        },30);
-
-    },
-
-    /* ==========================================
-       START VIDEO
-    ========================================== */
-
-    startVideo(){
-
-        if(this.loadingScreen){
-
-            this.loadingScreen.classList.add(
-
-                "hide"
+                }
 
             );
 
@@ -166,83 +137,171 @@ const Intro = {
 
         if(this.video){
 
-            this.video.play().catch(()=>{
+            this.video.addEventListener(
 
-                console.log(
+                "timeupdate",
 
-                    "Autoplay blocked."
+                ()=>{
 
-                );
+                    this.updateProgress();
 
-            });
+                    this.updateSubtitle();
+
+                }
+
+            );
+
+            this.video.addEventListener(
+
+                "ended",
+
+                ()=>{
+
+                    this.finishVideo();
+
+                }
+
+            );
 
         }
 
     },
 
-    /* ==========================================
-       PROGRESS BAR
-    ========================================== */
+    fakeLoading(){
+
+        let value=0;
+
+        const loader=setInterval(()=>{
+
+            value+=2;
+
+            if(this.loadingFill){
+
+                this.loadingFill.style.width=value+"%";
+
+            }
+
+            if(value>=100){
+
+                clearInterval(loader);
+
+                if(this.loadingScreen){
+
+                    this.loadingScreen.classList.add("hide");
+
+                }
+
+                if(this.startOverlay){
+
+                    this.startOverlay.style.display="flex";
+
+                }else{
+
+                    this.startExperience();
+
+                }
+
+            }
+
+        },30);
+
+    },
+
+    startExperience(){
+
+        if(this.startOverlay){
+
+            this.startOverlay.style.display="none";
+
+        }
+
+        if(this.video){
+
+            this.video.muted=false;
+
+            this.video.volume=1;
+
+            this.video.play().catch(()=>{});
+
+        }
+
+        if(this.bgMusic){
+
+            this.bgMusic.volume=0.35;
+
+            this.bgMusic.play().catch(()=>{});
+
+        }
+
+        this.startLightning();
+
+        this.startGhostWhispers();
+
+    },
 
     updateProgress(){
 
         if(!this.video.duration) return;
 
-        const percent =
+        const percent=(
 
-        (this.video.currentTime /
+            this.video.currentTime/
 
-        this.video.duration) * 100;
+            this.video.duration
 
-        this.progress.style.width =
+        )*100;
 
-        percent + "%";
+        if(this.progress){
+
+            this.progress.style.width=
+
+            percent+"%";
+
+        }
 
     },
 
-    /* ==========================================
-       SUBTITLE TIMELINE
-    ========================================== */
-
     updateSubtitle(){
 
-        const t = this.video.currentTime;
+        if(!this.subtitle) return;
 
-        if(t < 4){
+        const t=this.video.currentTime;
 
-            this.subtitle.textContent =
+        if(t<4){
+
+            this.subtitle.textContent=
 
             "The cemetery sleeps...";
 
         }
 
-        else if(t < 8){
+        else if(t<8){
 
-            this.subtitle.textContent =
+            this.subtitle.textContent=
 
             "Ancient spirits begin to awaken...";
 
         }
 
-        else if(t < 12){
+        else if(t<12){
 
-            this.subtitle.textContent =
+            this.subtitle.textContent=
 
             "Seven Spirit Lanterns have faded...";
 
         }
 
-        else if(t < 16){
+        else if(t<16){
 
-            this.subtitle.textContent =
+            this.subtitle.textContent=
 
-            "Darkness spreads through every grave...";
+            "Darkness spreads across every grave...";
 
         }
 
-        else if(t < 20){
+        else if(t<20){
 
-            this.subtitle.textContent =
+            this.subtitle.textContent=
 
             "The Ghost King has awakened...";
 
@@ -250,22 +309,27 @@ const Intro = {
 
         else{
 
-            this.subtitle.textContent =
+            this.subtitle.textContent=
 
             "Prepare to enter the Haunted Cemetery...";
 
         }
 
     },
-      /* ==========================================
-       RANDOM LIGHTNING
-    ========================================== */
+
+    playSound(audio){
+
+        if(!audio) return;
+
+        audio.currentTime=0;
+
+        audio.play().catch(()=>{});
+
+    },
 
     startLightning(){
 
-        this.lightningTimer = setInterval(()=>{
-
-            if(!this.video) return;
+        this.lightningTimer=setInterval(()=>{
 
             if(this.video.paused) return;
 
@@ -279,37 +343,44 @@ const Intro = {
 
         if(!this.lightning) return;
 
-        this.lightning.classList.add(
+        this.lightning.classList.add("active");
 
-            "active"
-
-        );
+        this.playSound(this.thunder);
 
         setTimeout(()=>{
 
-            this.lightning.classList.remove(
-
-                "active"
-
-            );
+            this.lightning.classList.remove("active");
 
         },450);
 
     },
 
-    /* ==========================================
-       VIDEO END
+    startGhostWhispers(){
+
+        this.whisperTimer=setInterval(()=>{
+
+            if(this.video.paused) return;
+
+            if(Math.random()>0.45){
+
+                this.playSound(this.ghostWhisper);
+
+            }
+
+        },9000);
+
+    },
+       /* ==========================================
+       VIDEO FINISHED
     ========================================== */
 
     finishVideo(){
 
+        this.stopEffects();
+
         if(this.fadeScreen){
 
-            this.fadeScreen.classList.add(
-
-                "show"
-
-            );
+            this.fadeScreen.classList.add("show");
 
         }
 
@@ -317,21 +388,13 @@ const Intro = {
 
             if(this.fadeScreen){
 
-                this.fadeScreen.classList.remove(
-
-                    "show"
-
-                );
+                this.fadeScreen.classList.remove("show");
 
             }
 
             if(this.endOverlay){
 
-                this.endOverlay.classList.add(
-
-                    "show"
-
-                );
+                this.endOverlay.classList.add("show");
 
             }
 
@@ -343,7 +406,31 @@ const Intro = {
        SKIP INTRO
     ========================================== */
 
-    skip(){
+    skipIntro(){
+
+        this.stopEffects();
+
+        window.location.href="day5-game.html";
+
+    },
+
+    /* ==========================================
+       STOP ALL EFFECTS
+    ========================================== */
+
+    stopEffects(){
+
+        if(this.lightningTimer){
+
+            clearInterval(this.lightningTimer);
+
+        }
+
+        if(this.whisperTimer){
+
+            clearInterval(this.whisperTimer);
+
+        }
 
         if(this.video){
 
@@ -351,47 +438,102 @@ const Intro = {
 
         }
 
-        window.location.href =
+        if(this.bgMusic){
 
-        "day5-game.html";
+            this.bgMusic.pause();
+
+            this.bgMusic.currentTime=0;
+
+        }
+
+        if(this.thunder){
+
+            this.thunder.pause();
+
+            this.thunder.currentTime=0;
+
+        }
+
+        if(this.ghostWhisper){
+
+            this.ghostWhisper.pause();
+
+            this.ghostWhisper.currentTime=0;
+
+        }
 
     },
 
     /* ==========================================
-       ENTER GAME
-    ========================================== */
-
-    enter(){
-
-        window.location.href =
-
-        "day5-game.html";
-
-    },
-      /* ==========================================
        TAB VISIBILITY
     ========================================== */
 
     handleVisibility(){
 
+        if(!this.video) return;
+
         if(document.hidden){
 
-            if(this.video){
+            this.video.pause();
 
-                this.video.pause();
+        }else{
+
+            if(!this.endOverlay.classList.contains("show")){
+
+                this.video.play().catch(()=>{});
 
             }
 
         }
 
-        else{
+    },
 
-            if(this.video &&
-               !this.endOverlay.classList.contains("show")){
+    /* ==========================================
+       KEYBOARD
+    ========================================== */
 
-                this.video.play().catch(()=>{});
+    handleKeyboard(event){
 
-            }
+        switch(event.code){
+
+            case "Escape":
+
+                this.skipIntro();
+
+            break;
+
+            case "Space":
+
+                event.preventDefault();
+
+                if(!this.video) return;
+
+                if(this.video.paused){
+
+                    this.video.play().catch(()=>{});
+
+                }else{
+
+                    this.video.pause();
+
+                }
+
+            break;
+
+            case "Enter":
+
+                if(
+
+                    this.endOverlay &&
+                    this.endOverlay.classList.contains("show")
+
+                ){
+
+                    window.location.href="day5-game.html";
+
+                }
+
+            break;
 
         }
 
@@ -403,71 +545,19 @@ const Intro = {
 
     handleVideoError(){
 
-        console.error(
-
-            "Unable to load day5-intro.mp4"
-
-        );
-
         alert(
 
-            "The Day 5 cinematic could not be loaded."
+            "Unable to load the Day 5 cinematic video."
 
         );
 
     },
 
     /* ==========================================
-       KEYBOARD SHORTCUTS
+       GLOBAL EVENTS
     ========================================== */
 
-    handleKeyboard(event){
-
-        switch(event.code){
-
-            case "Space":
-
-                event.preventDefault();
-
-                if(this.video.paused){
-
-                    this.video.play().catch(()=>{});
-
-                }
-
-                else{
-
-                    this.video.pause();
-
-                }
-
-            break;
-
-            case "Enter":
-
-                if(this.endOverlay.classList.contains("show")){
-
-                    this.enter();
-
-                }
-
-            break;
-
-            case "Escape":
-
-                this.skip();
-
-            break;
-
-        }
-
-    },
-
-    /* ==========================================
-       REGISTER GLOBAL EVENTS
-    ========================================== */
-
-    registerGlobalEvents(){
+    registerEvents(){
 
         document.addEventListener(
 
@@ -493,57 +583,48 @@ const Intro = {
 
         );
 
-        this.video.addEventListener(
-
-            "error",
-
-            ()=>{
-
-                this.handleVideoError();
-
-            }
-
-        );
-
-    },
-      /* ==========================================
-       DESTROY
-    ========================================== */
-
-    destroy(){
-
-        if(this.lightningTimer){
-
-            clearInterval(this.lightningTimer);
-
-        }
-
         if(this.video){
 
-            this.video.pause();
+            this.video.addEventListener(
 
-            this.video.currentTime = 0;
+                "error",
+
+                ()=>{
+
+                    this.handleVideoError();
+
+                }
+
+            );
 
         }
 
     },
 
     /* ==========================================
-       START EVERYTHING
+       START SYSTEM
     ========================================== */
 
     start(){
 
-        this.startLightning();
+        this.registerEvents();
 
-        this.registerGlobalEvents();
+    },
+
+    /* ==========================================
+       DESTROY
+    ========================================== */
+
+    destroy(){
+
+        this.stopEffects();
 
     }
 
 };
 
 /* ==========================================
-START INTRO
+   START
 ========================================== */
 
 document.addEventListener(
@@ -561,7 +642,7 @@ document.addEventListener(
 );
 
 /* ==========================================
-WINDOW UNLOAD
+   CLEANUP
 ========================================== */
 
 window.addEventListener(
