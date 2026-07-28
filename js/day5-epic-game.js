@@ -1,1494 +1,1842 @@
-/*==========================================================
-VIDLYRA HALLOWEEN FEST 2026
-DAY 5 - EPIC GAME
-PART 1
-==========================================================*/
-
 "use strict";
 
-/*==========================================================
-GAME
-==========================================================*/
+/*=========================================================
+VIDLYRA HALLOWEEN FEST 2026
+DAY 5 - THE HAUNTED CEMETERY
+PART 1.1
+=========================================================*/
 
-const Game={
+/*=========================================================
+DOM REFERENCES
+=========================================================*/
 
-    running:false,
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => document.querySelectorAll(selector);
 
-    paused:false,
+/* Loading */
 
-    loading:true,
+const loadingScreen = $("#loadingScreen");
+const loadingFill = $("#loadingFill");
+const loadingText = $("#loadingText");
 
-    score:0,
+/* World */
 
-    lanterns:0,
+const gameWorld = $("#gameWorld");
 
-    maxLanterns:7,
+/* Player */
 
-    level:5,
+const player = $("#player");
 
-    difficulty:"normal"
+/* HUD */
+
+const healthFill = $("#healthFill");
+const spiritFill = $("#spiritFill");
+
+const healthText = $("#healthText");
+const spiritText = $("#spiritText");
+
+const lanternCounter = $("#lanternCounter");
+const scoreCounter = $("#scoreCounter");
+
+/* Mission */
+
+const missionPanel = $("#missionPanel");
+const objectivePopup = $("#objectivePopup");
+
+/* Dialogue */
+
+const dialogueBox = $("#dialogueBox");
+const dialogueText = $("#dialogueText");
+const nextDialogue = $("#nextDialogue");
+
+/* Enemy */
+
+const enemyLayer = $("#enemyLayer");
+
+const ghostKing = $("#ghostKing");
+const bossHealthFill = $("#bossHealthFill");
+
+/* Lantern */
+
+const lanternLayer = $("#lanternLayer");
+
+/* Inventory */
+
+const inventoryPanel = $("#inventoryPanel");
+
+/* Pause */
+
+const pauseMenu = $("#pauseMenu");
+
+const resumeButton = $("#resumeButton");
+const restartButton = $("#restartButton");
+const quitButton = $("#quitButton");
+
+/* Mobile */
+
+const joystick = $("#joystick");
+
+const attackButton = $("#attackButton");
+const skillButton = $("#skillButton");
+const pauseButton = $("#pauseButton");
+
+/* Victory */
+
+const victoryScreen = $("#victoryScreen");
+const nextDayButton = $("#nextDayButton");
+
+/* Game Over */
+
+const gameOverScreen = $("#gameOverScreen");
+
+const retryButton = $("#retryButton");
+const exitButton = $("#exitButton");
+
+/* Audio */
+
+const bgMusic = $("#bgMusic");
+
+const ghostAttackSound = $("#ghostAttackSound");
+const lanternSound = $("#lanternSound");
+const bossRoar = $("#bossRoar");
+
+const victorySound = $("#victorySound");
+const gameOverSound = $("#gameOverSound");
+
+
+/*=========================================================
+GAME CONFIG
+=========================================================*/
+
+const CONFIG = {
+
+PLAYER_SPEED:6,
+
+DASH_SPEED:12,
+
+ATTACK_DAMAGE:25,
+
+MAX_HEALTH:100,
+
+MAX_SPIRIT:100,
+
+TOTAL_LANTERNS:7,
+
+TOTAL_GHOSTS:3,
+
+WORLD_WIDTH:7000,
+
+WORLD_HEIGHT:2600,
+
+CAMERA_SMOOTH:0.08,
+
+SAVE_KEY:"VIDLYRA_DAY5_SAVE"
 
 };
 
-/*==========================================================
-PLAYER
-==========================================================*/
 
-const Player={
+/*=========================================================
+GLOBAL GAME STATE
+=========================================================*/
 
-    x:window.innerWidth/2,
+const GAME = {
 
-    y:window.innerHeight-180,
+running:false,
 
-    width:90,
+paused:false,
 
-    height:90,
+loading:true,
 
-    speed:5,
+victory:false,
 
-    health:100,
+gameOver:false,
 
-    maxHealth:100,
+bossFight:false,
 
-    spirit:100,
+bossDefeated:false,
 
-    maxSpirit:100,
+mobile:false,
 
-    damage:15,
+debug:false,
 
-    alive:true,
+fps:0,
 
-    attacking:false,
+score:0,
 
-    moving:false,
+lanterns:0,
 
-    direction:"down"
+kills:0,
+
+time:0,
+
+frame:0
 
 };
 
-/*==========================================================
+
+/*=========================================================
+PLAYER DATA
+=========================================================*/
+
+const PLAYER={
+
+x:600,
+
+y:1800,
+
+width:90,
+
+height:150,
+
+health:100,
+
+spirit:100,
+
+speed:CONFIG.PLAYER_SPEED,
+
+facing:1,
+
+moving:false,
+
+attacking:false,
+
+dashing:false,
+
+invincible:false
+
+};
+
+
+/*=========================================================
+BOSS DATA
+=========================================================*/
+
+const BOSS={
+
+alive:false,
+
+phase:0,
+
+health:1000,
+
+maxHealth:1000,
+
+x:6100,
+
+y:1700,
+
+active:false
+
+};
+
+
+/*=========================================================
 INPUT
-==========================================================*/
+=========================================================*/
 
-const Keys={
-
-    w:false,
-
-    a:false,
-
-    s:false,
-
-    d:false,
-
-    ArrowUp:false,
-
-    ArrowDown:false,
-
-    ArrowLeft:false,
-
-    ArrowRight:false,
-
-    space:false,
-
-    shift:false
+const KEYS={
 
 };
 
-/*==========================================================
-DOM
-==========================================================*/
 
-const UI={
+/*=========================================================
+AUDIO SETTINGS
+=========================================================*/
 
-    player:null,
+const AUDIO={
 
-    healthFill:null,
+master:1,
 
-    spiritFill:null,
+music:0.8,
 
-    healthText:null,
+effects:0.8,
 
-    spiritText:null,
-
-    lanternCounter:null,
-
-    scoreCounter:null,
-
-    loadingScreen:null,
-
-    loadingFill:null,
-
-    objectivePopup:null,
-
-    notificationContainer:null
+muted:false
 
 };
 
-/*==========================================================
-CACHE
-==========================================================*/
 
-function cacheElements(){
+/*=========================================================
+SAVE DATA
+=========================================================*/
 
-    UI.player=document.getElementById("player");
+const SAVE={
 
-    UI.healthFill=document.getElementById("healthFill");
+lanterns:0,
 
-    UI.spiritFill=document.getElementById("spiritFill");
+score:0,
 
-    UI.healthText=document.getElementById("healthText");
-
-    UI.spiritText=document.getElementById("spiritText");
-
-    UI.lanternCounter=document.getElementById("lanternCounter");
-
-    UI.scoreCounter=document.getElementById("scoreCounter");
-
-    UI.loadingScreen=document.getElementById("loadingScreen");
-
-    UI.loadingFill=document.getElementById("loadingFill");
-
-    UI.objectivePopup=document.getElementById("objectivePopup");
-
-    UI.notificationContainer=document.getElementById("notificationContainer");
-
-}
-
-/*==========================================================
-HUD
-==========================================================*/
-
-function updateHUD(){
-
-    UI.healthFill.style.width=
-
-    (Player.health/Player.maxHealth*100)+"%";
-
-    UI.spiritFill.style.width=
-
-    (Player.spirit/Player.maxSpirit*100)+"%";
-
-    UI.healthText.textContent=
-
-    Player.health+" / "+Player.maxHealth;
-
-    UI.spiritText.textContent=
-
-    Player.spirit+" / "+Player.maxSpirit;
-
-    UI.lanternCounter.textContent=
-
-    Game.lanterns+" / "+Game.maxLanterns;
-
-    UI.scoreCounter.textContent=
-
-    Game.score.toString().padStart(6,"0");
-
-}
-
-/*==========================================================
-PLAYER POSITION
-==========================================================*/
-
-function drawPlayer(){
-
-    UI.player.style.left=Player.x+"px";
-
-    UI.player.style.top=Player.y+"px";
-
-}
-
-/*==========================================================
-LOADING
-==========================================================*/
-
-function startLoading(){
-
-    let progress=0;
-
-    const timer=setInterval(()=>{
-
-        progress+=2;
-
-        UI.loadingFill.style.width=
-
-        progress+"%";
-
-        if(progress>=100){
-
-            clearInterval(timer);
-
-            finishLoading();
-
-        }
-
-    },30);
-
-}
-
-function finishLoading(){
-
-    Game.loading=false;
-
-    UI.loadingScreen.style.display="none";
-
-    Game.running=true;
-
-    updateHUD();
-
-    notify("Mission Started");
-
-}
-
-/*==========================================================
-NOTIFICATION
-==========================================================*/
-
-function notify(text){
-
-    const box=document.createElement("div");
-
-    box.className="notification";
-
-    box.textContent=text;
-
-    UI.notificationContainer.appendChild(box);
-
-    setTimeout(()=>{
-
-        box.remove();
-
-    },2500);
-
-}
-
-/*==========================================================
-KEYBOARD
-==========================================================*/
-
-window.addEventListener("keydown",(e)=>{
-
-    if(e.key==="w") Keys.w=true;
-    if(e.key==="a") Keys.a=true;
-    if(e.key==="s") Keys.s=true;
-    if(e.key==="d") Keys.d=true;
-
-    if(e.key==="ArrowUp") Keys.ArrowUp=true;
-    if(e.key==="ArrowDown") Keys.ArrowDown=true;
-    if(e.key==="ArrowLeft") Keys.ArrowLeft=true;
-    if(e.key==="ArrowRight") Keys.ArrowRight=true;
-
-    if(e.code==="Space") Keys.space=true;
-
-    if(e.key==="Shift") Keys.shift=true;
-
-});
-
-window.addEventListener("keyup",(e)=>{
-
-    if(e.key==="w") Keys.w=false;
-    if(e.key==="a") Keys.a=false;
-    if(e.key==="s") Keys.s=false;
-    if(e.key==="d") Keys.d=false;
-
-    if(e.key==="ArrowUp") Keys.ArrowUp=false;
-    if(e.key==="ArrowDown") Keys.ArrowDown=false;
-    if(e.key==="ArrowLeft") Keys.ArrowLeft=false;
-    if(e.key==="ArrowRight") Keys.ArrowRight=false;
-
-    if(e.code==="Space") Keys.space=false;
-
-    if(e.key==="Shift") Keys.shift=false;
-
-});
-/*==========================================================
-PART 2
-PLAYER MOVEMENT
-CAMERA
-COLLISION
-LANTERNS
-==========================================================*/
-
-/*==========================================================
-MOVEMENT
-==========================================================*/
-
-function movePlayer(){
-
-    if(!Game.running) return;
-
-    if(Game.paused) return;
-
-    let moveX=0;
-    let moveY=0;
-
-    if(Keys.w || Keys.ArrowUp){
-
-        moveY-=Player.speed;
-        Player.direction="up";
-
-    }
-
-    if(Keys.s || Keys.ArrowDown){
-
-        moveY+=Player.speed;
-        Player.direction="down";
-
-    }
-
-    if(Keys.a || Keys.ArrowLeft){
-
-        moveX-=Player.speed;
-        Player.direction="left";
-
-    }
-
-    if(Keys.d || Keys.ArrowRight){
-
-        moveX+=Player.speed;
-        Player.direction="right";
-
-    }
-
-    Player.x+=moveX;
-    Player.y+=moveY;
-
-    keepInsideWorld();
-
-    drawPlayer();
-
-}
-
-/*==========================================================
-WORLD LIMITS
-==========================================================*/
-
-function keepInsideWorld(){
-
-    const maxX=window.innerWidth-Player.width;
-
-    const maxY=window.innerHeight-Player.height;
-
-    if(Player.x<0){
-
-        Player.x=0;
-
-    }
-
-    if(Player.y<0){
-
-        Player.y=0;
-
-    }
-
-    if(Player.x>maxX){
-
-        Player.x=maxX;
-
-    }
-
-    if(Player.y>maxY){
-
-        Player.y=maxY;
-
-    }
-
-}
-
-/*==========================================================
-CAMERA
-==========================================================*/
-
-function updateCamera(){
-
-    const world=document.getElementById("gameWorld");
-
-    if(!world) return;
-
-    world.style.transform=
-
-    "translateZ(0)";
-
-}
-
-/*==========================================================
-PLAYER ANIMATION
-==========================================================*/
-
-function animatePlayer(){
-
-    if(!UI.player) return;
-
-    if(
-
-        Keys.w ||
-
-        Keys.a ||
-
-        Keys.s ||
-
-        Keys.d ||
-
-        Keys.ArrowUp ||
-
-        Keys.ArrowDown ||
-
-        Keys.ArrowLeft ||
-
-        Keys.ArrowRight
-
-    ){
-
-        Player.moving=true;
-
-        UI.player.style.transform=
-
-        "translate(-50%,0) scale(1.03)";
-
-    }
-
-    else{
-
-        Player.moving=false;
-
-        UI.player.style.transform=
-
-        "translate(-50%,0) scale(1)";
-
-    }
-
-}
-
-/*==========================================================
-SPIRIT LANTERNS
-==========================================================*/
-
-const Lanterns=[];
-
-function registerLanterns(){
-
-    document
-
-    .querySelectorAll(".lantern")
-
-    .forEach((lantern)=>{
-
-        Lanterns.push({
-
-            element:lantern,
-
-            active:true
-
-        });
-
-    });
-
-}
-
-/*==========================================================
-COLLECT LANTERN
-==========================================================*/
-
-function updateLanterns(){
-
-    Lanterns.forEach((lantern)=>{
-
-        if(!lantern.active) return;
-
-        const rect=
-
-        lantern.element
-
-        .getBoundingClientRect();
-
-        const px=Player.x+45;
-
-        const py=Player.y+45;
-
-        if(
-
-            px>rect.left &&
-
-            px<rect.right &&
-
-            py>rect.top &&
-
-            py<rect.bottom
-
-        ){
-
-            lantern.active=false;
-
-            lantern.element.style.display="none";
-
-            Game.lanterns++;
-
-            Game.score+=500;
-
-            Player.spirit=Math.min(
-
-                Player.maxSpirit,
-
-                Player.spirit+10
-
-            );
-
-            updateHUD();
-
-            notify(
-
-                "Spirit Lantern Restored"
-
-            );
-
-            checkLanternMission();
-
-        }
-
-    });
-
-}
-
-/*==========================================================
-MISSION CHECK
-==========================================================*/
-
-function checkLanternMission(){
-
-    if(
-
-        Game.lanterns>=
-
-        Game.maxLanterns
-
-    ){
-
-        notify(
-
-            "Ghost King Awakened!"
-
-        );
-
-    }
-
-}
-
-/*==========================================================
-MAIN UPDATE
-==========================================================*/
-
-function updatePlayerSystem(){
-
-    movePlayer();
-
-    animatePlayer();
-
-    updateCamera();
-
-    updateLanterns();
-
-}
-/*==========================================================
-PART 3
-GHOST AI
-COMBAT
-BOSS
-==========================================================*/
-
-/*==========================================================
-ENEMIES
-==========================================================*/
-
-const Ghosts=[];
-
-let GhostKing={
-
-    element:null,
-
-    health:500,
-
-    maxHealth:500,
-
-    active:false,
-
-    alive:true
+boss:false
 
 };
 
-/*==========================================================
-REGISTER ENEMIES
-==========================================================*/
 
-function registerGhosts(){
+/*=========================================================
+HELPERS
+=========================================================*/
 
-    document.querySelectorAll(".ghost").forEach((ghost)=>{
+function clamp(value,min,max){
 
-        Ghosts.push({
-
-            element:ghost,
-
-            x:ghost.offsetLeft,
-
-            y:ghost.offsetTop,
-
-            health:100,
-
-            maxHealth:100,
-
-            alive:true,
-
-            speed:1.2
-
-        });
-
-    });
-
-    GhostKing.element=document.getElementById("ghostKing");
+return Math.max(min,Math.min(max,value));
 
 }
 
-/*==========================================================
-MOVE GHOSTS
-==========================================================*/
+function random(min,max){
 
-function updateGhosts(){
-
-    Ghosts.forEach((ghost)=>{
-
-        if(!ghost.alive) return;
-
-        const dx=Player.x-ghost.x;
-        const dy=Player.y-ghost.y;
-
-        const distance=Math.sqrt(dx*dx+dy*dy);
-
-        if(distance<350){
-
-            ghost.x+=(dx/distance)*ghost.speed;
-            ghost.y+=(dy/distance)*ghost.speed;
-
-            ghost.element.style.left=ghost.x+"px";
-            ghost.element.style.top=ghost.y+"px";
-
-        }
-
-        if(distance<70){
-
-            damagePlayer(1);
-
-        }
-
-    });
+return Math.random()*(max-min)+min;
 
 }
 
-/*==========================================================
-PLAYER DAMAGE
-==========================================================*/
+function randomInt(min,max){
 
-function damagePlayer(amount){
-
-    if(!Player.alive) return;
-
-    Player.health-=amount;
-
-    if(Player.health<0){
-
-        Player.health=0;
-
-    }
-
-    updateHUD();
-
-    if(Player.health<=0){
-
-        playerDead();
-
-    }
+return Math.floor(random(min,max+1));
 
 }
 
-/*==========================================================
-PLAYER ATTACK
-==========================================================*/
 
-function playerAttack(){
+/*=========================================================
+LOADING TEXT
+=========================================================*/
 
-    if(Player.attacking) return;
+const loadingMessages=[
 
-    Player.attacking=true;
+"Entering the cemetery...",
 
-    Ghosts.forEach((ghost)=>{
+"Summoning spirits...",
 
-        if(!ghost.alive) return;
+"Lighting cursed lanterns...",
 
-        const dx=ghost.x-Player.x;
-        const dy=ghost.y-Player.y;
+"Awakening Ghost King...",
 
-        const distance=Math.sqrt(dx*dx+dy*dy);
+"Preparing your sword...",
 
-        if(distance<110){
-
-            ghost.health-=Player.damage;
-
-            if(ghost.health<=0){
-
-                ghost.alive=false;
-
-                ghost.element.style.display="none";
-
-                Game.score+=1000;
-
-                notify("Ghost Defeated");
-
-            }
-
-        }
-
-    });
-
-    if(GhostKing.active){
-
-        attackBoss();
-
-    }
-
-    updateHUD();
-
-    setTimeout(()=>{
-
-        Player.attacking=false;
-
-    },400);
-
-}
-
-/*==========================================================
-ACTIVATE BOSS
-==========================================================*/
-
-function activateBoss(){
-
-    if(GhostKing.active) return;
-
-    GhostKing.active=true;
-
-    notify("Ghost King Appears!");
-
-}
-
-/*==========================================================
-ATTACK BOSS
-==========================================================*/
-
-function attackBoss(){
-
-    const bossRect=
-
-    GhostKing.element.getBoundingClientRect();
-
-    const dx=(bossRect.left+110)-Player.x;
-    const dy=(bossRect.top+110)-Player.y;
-
-    const distance=Math.sqrt(dx*dx+dy*dy);
-
-    if(distance<150){
-
-        GhostKing.health-=Player.damage;
-
-        document.getElementById("bossHealthFill").style.width=
-
-        (GhostKing.health/GhostKing.maxHealth*100)+"%";
-
-        if(GhostKing.health<=0){
-
-            bossDefeated();
-
-        }
-
-    }
-
-}
-
-/*==========================================================
-BOSS DAMAGE
-==========================================================*/
-
-function updateBoss(){
-
-    if(!GhostKing.active) return;
-
-    if(!GhostKing.alive) return;
-
-    const rect=
-
-    GhostKing.element.getBoundingClientRect();
-
-    const dx=(rect.left+100)-Player.x;
-
-    const dy=(rect.top+100)-Player.y;
-
-    const distance=Math.sqrt(dx*dx+dy*dy);
-
-    if(distance<150){
-
-        damagePlayer(2);
-
-    }
-
-}
-
-/*==========================================================
-BOSS DEFEATED
-==========================================================*/
-
-function bossDefeated(){
-
-    GhostKing.alive=false;
-
-    GhostKing.element.style.display="none";
-
-    Game.score+=5000;
-
-    updateHUD();
-
-    notify("Ghost King Defeated");
-
-    showVictory();
-
-}
-
-/*==========================================================
-PLAYER DEAD
-==========================================================*/
-
-function playerDead(){
-
-    Player.alive=false;
-
-    Game.running=false;
-
-    document.getElementById("gameOverScreen").style.display="flex";
-
-}
-
-/*==========================================================
-ATTACK KEY
-==========================================================*/
-
-window.addEventListener("keydown",(e)=>{
-
-    if(e.code==="Space"){
-
-        playerAttack();
-
-    }
-
-});
-
-/*==========================================================
-ENEMY UPDATE
-==========================================================*/
-
-function updateEnemySystem(){
-
-    updateGhosts();
-
-    updateBoss();
-
-    if(Game.lanterns>=Game.maxLanterns){
-
-        activateBoss();
-
-    }
-
-}
-/*==========================================================
-PART 4
-INVENTORY
-DIALOGUE
-PAUSE
-SETTINGS
-AUDIO
-MOBILE
-==========================================================*/
-
-/*==========================================================
-INVENTORY
-==========================================================*/
-
-const Inventory={
-
-    items:[],
-
-    maxSlots:8
-
-};
-
-function addItem(name){
-
-    if(Inventory.items.length>=Inventory.maxSlots){
-
-        notify("Inventory Full");
-
-        return;
-
-    }
-
-    Inventory.items.push(name);
-
-    notify(name+" Collected");
-
-}
-
-/*==========================================================
-DIALOGUE
-==========================================================*/
-
-const Dialogues=[
-
-"Lyra: The cemetery is cursed...",
-
-"Restore all Spirit Lanterns.",
-
-"Only then will the Ghost King appear.",
-
-"Be careful..."
+"Loading haunted world..."
 
 ];
 
-let dialogueIndex=0;
 
-const dialogueBox=document.getElementById("dialogueBox");
-const dialogueText=document.getElementById("dialogueText");
-const nextDialogue=document.getElementById("nextDialogue");
+/*=========================================================
+BOOT
+=========================================================*/
 
-function startDialogue(){
+window.addEventListener("load",bootGame);
 
-    dialogueIndex=0;
+function bootGame(){
 
-    dialogueBox.style.display="block";
+detectDevice();
 
-    dialogueText.textContent=Dialogues[0];
+startLoading();
 
 }
 
-nextDialogue.addEventListener("click",()=>{
 
-    dialogueIndex++;
+/*=========================================================
+DEVICE
+=========================================================*/
 
-    if(dialogueIndex>=Dialogues.length){
+function detectDevice(){
 
-        dialogueBox.style.display="none";
+GAME.mobile=
+
+/Android|iPhone|iPad|Mobile/i.test(
+
+navigator.userAgent
+
+);
+
+}
+
+
+/*=========================================================
+END PART 1.1
+=========================================================*/
+/*=========================================================
+PART 2.1A
+KEYBOARD INPUT + PLAYER MOVEMENT
+=========================================================*/
+
+const INPUT = {
+    left: false,
+    right: false,
+    up: false,
+    down: false,
+    attack: false,
+    dash: false,
+    skill: false,
+    pause: false
+};
+
+/*=========================================
+KEY DOWN
+=========================================*/
+
+window.addEventListener("keydown", (e) => {
+
+    if (e.repeat) return;
+
+    switch (e.code) {
+
+        case "ArrowLeft":
+        case "KeyA":
+            INPUT.left = true;
+            break;
+
+        case "ArrowRight":
+        case "KeyD":
+            INPUT.right = true;
+            break;
+
+        case "ArrowUp":
+        case "KeyW":
+            INPUT.up = true;
+            break;
+
+        case "ArrowDown":
+        case "KeyS":
+            INPUT.down = true;
+            break;
+
+        case "Space":
+            INPUT.attack = true;
+            break;
+
+        case "ShiftLeft":
+        case "ShiftRight":
+            INPUT.dash = true;
+            break;
+
+        case "KeyE":
+            INPUT.skill = true;
+            break;
+
+        case "Escape":
+            INPUT.pause = true;
+            togglePause();
+            break;
+
+    }
+
+});
+
+/*=========================================
+KEY UP
+=========================================*/
+
+window.addEventListener("keyup", (e) => {
+
+    switch (e.code) {
+
+        case "ArrowLeft":
+        case "KeyA":
+            INPUT.left = false;
+            break;
+
+        case "ArrowRight":
+        case "KeyD":
+            INPUT.right = false;
+            break;
+
+        case "ArrowUp":
+        case "KeyW":
+            INPUT.up = false;
+            break;
+
+        case "ArrowDown":
+        case "KeyS":
+            INPUT.down = false;
+            break;
+
+        case "Space":
+            INPUT.attack = false;
+            break;
+
+        case "ShiftLeft":
+        case "ShiftRight":
+            INPUT.dash = false;
+            break;
+
+        case "KeyE":
+            INPUT.skill = false;
+            break;
+
+    }
+
+});
+
+/*=========================================
+PLAYER MOVEMENT
+=========================================*/
+
+function updatePlayerMovement() {
+
+    if (!GAME.running) return;
+    if (GAME.paused) return;
+
+    let moveX = 0;
+    let moveY = 0;
+
+    if (INPUT.left) moveX--;
+    if (INPUT.right) moveX++;
+
+    if (INPUT.up) moveY--;
+    if (INPUT.down) moveY++;
+
+    PLAYER.moving = false;
+
+    if (moveX !== 0 || moveY !== 0) {
+
+        PLAYER.moving = true;
+
+        let length = Math.hypot(moveX, moveY);
+
+        moveX /= length;
+        moveY /= length;
+
+        let speed = PLAYER.speed;
+
+        if (INPUT.dash) {
+
+            speed *= 1.8;
+
+        }
+
+        PLAYER.x += moveX * speed;
+        PLAYER.y += moveY * speed;
+
+        PLAYER.x = clamp(
+            PLAYER.x,
+            0,
+            CONFIG.WORLD_WIDTH
+        );
+
+        PLAYER.y = clamp(
+            PLAYER.y,
+            0,
+            CONFIG.WORLD_HEIGHT
+        );
+
+        if (moveX < 0) {
+
+            PLAYER.facing = -1;
+
+        }
+
+        if (moveX > 0) {
+
+            PLAYER.facing = 1;
+
+        }
+
+    }
+
+    renderPlayer();
+
+}
+
+/*=========================================
+PLAYER RENDER
+=========================================*/
+
+function renderPlayer() {
+
+    player.style.left = PLAYER.x + "px";
+    player.style.top = PLAYER.y + "px";
+
+    player.style.transform =
+        "translate(-50%,-100%) scaleX(" +
+        PLAYER.facing +
+        ")";
+
+}
+
+/*=========================================
+PAUSE
+=========================================*/
+
+function togglePause() {
+
+    GAME.paused = !GAME.paused;
+
+    if (pauseMenu) {
+
+        pauseMenu.style.display =
+            GAME.paused ? "flex" : "none";
+
+    }
+
+}
+
+/*=========================================
+UPDATE LOOP
+=========================================*/
+
+function updateControls() {
+
+    updatePlayerMovement();
+
+}
+/*=========================================================
+PART 2.1B
+MOBILE JOYSTICK + TOUCH CONTROLS
+=========================================================*/
+
+const JOYSTICK = {
+
+    active: false,
+
+    startX: 0,
+    startY: 0,
+
+    currentX: 0,
+    currentY: 0,
+
+    dx: 0,
+    dy: 0,
+
+    radius: 55
+
+};
+
+const stick = document.getElementById("stick");
+
+/*=========================================================
+SHOW MOBILE CONTROLS
+=========================================================*/
+
+if (GAME.mobile) {
+
+    const controls = document.getElementById("mobileControls");
+
+    if (controls) {
+
+        controls.style.display = "flex";
+
+    }
+
+}
+
+/*=========================================================
+JOYSTICK START
+=========================================================*/
+
+joystick.addEventListener("touchstart", function (e) {
+
+    e.preventDefault();
+
+    const touch = e.touches[0];
+
+    JOYSTICK.active = true;
+
+    JOYSTICK.startX = touch.clientX;
+
+    JOYSTICK.startY = touch.clientY;
+
+});
+
+/*=========================================================
+JOYSTICK MOVE
+=========================================================*/
+
+joystick.addEventListener("touchmove", function (e) {
+
+    e.preventDefault();
+
+    if (!JOYSTICK.active) return;
+
+    const touch = e.touches[0];
+
+    JOYSTICK.currentX = touch.clientX;
+
+    JOYSTICK.currentY = touch.clientY;
+
+    JOYSTICK.dx =
+
+        JOYSTICK.currentX - JOYSTICK.startX;
+
+    JOYSTICK.dy =
+
+        JOYSTICK.currentY - JOYSTICK.startY;
+
+    const distance = Math.hypot(
+
+        JOYSTICK.dx,
+
+        JOYSTICK.dy
+
+    );
+
+    if (distance > JOYSTICK.radius) {
+
+        const angle = Math.atan2(
+
+            JOYSTICK.dy,
+
+            JOYSTICK.dx
+
+        );
+
+        JOYSTICK.dx =
+
+            Math.cos(angle) * JOYSTICK.radius;
+
+        JOYSTICK.dy =
+
+            Math.sin(angle) * JOYSTICK.radius;
+
+    }
+
+    if (stick) {
+
+        stick.style.transform =
+
+            `translate(${JOYSTICK.dx}px, ${JOYSTICK.dy}px)`;
+
+    }
+
+});
+
+/*=========================================================
+JOYSTICK END
+=========================================================*/
+
+function resetJoystick() {
+
+    JOYSTICK.active = false;
+
+    JOYSTICK.dx = 0;
+
+    JOYSTICK.dy = 0;
+
+    if (stick) {
+
+        stick.style.transform =
+
+            "translate(0px,0px)";
+
+    }
+
+}
+
+joystick.addEventListener("touchend", resetJoystick);
+
+joystick.addEventListener("touchcancel", resetJoystick);
+
+/*=========================================================
+MOVE PLAYER FROM JOYSTICK
+=========================================================*/
+
+function updateJoystickMovement() {
+
+    if (!JOYSTICK.active) return;
+
+    let moveX = JOYSTICK.dx / JOYSTICK.radius;
+
+    let moveY = JOYSTICK.dy / JOYSTICK.radius;
+
+    PLAYER.moving = true;
+
+    PLAYER.x += moveX * PLAYER.speed;
+
+    PLAYER.y += moveY * PLAYER.speed;
+
+    PLAYER.x = clamp(
+
+        PLAYER.x,
+
+        0,
+
+        CONFIG.WORLD_WIDTH
+
+    );
+
+    PLAYER.y = clamp(
+
+        PLAYER.y,
+
+        0,
+
+        CONFIG.WORLD_HEIGHT
+
+    );
+
+    if (moveX < -0.1) PLAYER.facing = -1;
+
+    if (moveX > 0.1) PLAYER.facing = 1;
+
+}
+
+/*=========================================================
+ATTACK BUTTON
+=========================================================*/
+
+attackButton.addEventListener("touchstart", function (e) {
+
+    e.preventDefault();
+
+    INPUT.attack = true;
+
+});
+
+attackButton.addEventListener("touchend", function () {
+
+    INPUT.attack = false;
+
+});
+
+/*=========================================================
+SKILL BUTTON
+=========================================================*/
+
+skillButton.addEventListener("touchstart", function (e) {
+
+    e.preventDefault();
+
+    INPUT.skill = true;
+
+});
+
+skillButton.addEventListener("touchend", function () {
+
+    INPUT.skill = false;
+
+});
+
+/*=========================================================
+PAUSE BUTTON
+=========================================================*/
+
+pauseButton.addEventListener("touchstart", function (e) {
+
+    e.preventDefault();
+
+    togglePause();
+
+});
+
+/*=========================================================
+UPDATE MOBILE INPUT
+=========================================================*/
+
+function updateMobileControls() {
+
+    if (!GAME.mobile) return;
+
+    updateJoystickMovement();
+
+}
+/*=========================================================
+PART 2.1C
+PLAYER UPDATE SYSTEM
+=========================================================*/
+
+PLAYER.velocityX = 0;
+PLAYER.velocityY = 0;
+
+PLAYER.runSpeed = 6;
+PLAYER.dashSpeed = 12;
+
+PLAYER.stamina = 100;
+PLAYER.maxStamina = 100;
+
+PLAYER.state = "idle";
+
+PLAYER.animation = "idle";
+
+/*=========================================================
+UPDATE PLAYER
+=========================================================*/
+
+function updatePlayer() {
+
+    if (!GAME.running) return;
+
+    if (GAME.paused) return;
+
+    updateControls();
+
+    updateMobileControls();
+
+    applyMovement();
+
+    updatePlayerState();
+
+    updatePlayerAnimation();
+
+    updatePlayerHUD();
+
+}
+
+/*=========================================================
+MOVEMENT
+=========================================================*/
+
+function applyMovement() {
+
+    PLAYER.velocityX = 0;
+    PLAYER.velocityY = 0;
+
+    /* Keyboard */
+
+    if (INPUT.left) PLAYER.velocityX--;
+    if (INPUT.right) PLAYER.velocityX++;
+
+    if (INPUT.up) PLAYER.velocityY--;
+    if (INPUT.down) PLAYER.velocityY++;
+
+    /* Mobile */
+
+    if (JOYSTICK.active) {
+
+        PLAYER.velocityX += JOYSTICK.dx / JOYSTICK.radius;
+
+        PLAYER.velocityY += JOYSTICK.dy / JOYSTICK.radius;
+
+    }
+
+    if (
+        PLAYER.velocityX !== 0 ||
+        PLAYER.velocityY !== 0
+    ) {
+
+        const length = Math.hypot(
+
+            PLAYER.velocityX,
+
+            PLAYER.velocityY
+
+        );
+
+        PLAYER.velocityX /= length;
+        PLAYER.velocityY /= length;
+
+    }
+
+    let speed = PLAYER.runSpeed;
+
+    /* Dash */
+
+    if (
+        INPUT.dash &&
+        PLAYER.stamina > 0
+    ) {
+
+        speed = PLAYER.dashSpeed;
+
+        PLAYER.stamina -= 0.6;
+
+        PLAYER.state = "dash";
+
+    } else {
+
+        PLAYER.stamina += 0.25;
+
+    }
+
+    PLAYER.stamina = clamp(
+
+        PLAYER.stamina,
+
+        0,
+
+        PLAYER.maxStamina
+
+    );
+
+    PLAYER.x += PLAYER.velocityX * speed;
+
+    PLAYER.y += PLAYER.velocityY * speed;
+
+    PLAYER.x = clamp(
+
+        PLAYER.x,
+
+        0,
+
+        CONFIG.WORLD_WIDTH
+
+    );
+
+    PLAYER.y = clamp(
+
+        PLAYER.y,
+
+        0,
+
+        CONFIG.WORLD_HEIGHT
+
+    );
+
+}
+
+/*=========================================================
+PLAYER STATE
+=========================================================*/
+
+function updatePlayerState() {
+
+    if (PLAYER.attacking) {
+
+        PLAYER.state = "attack";
 
         return;
 
     }
 
-    dialogueText.textContent=
+    if (
 
-    Dialogues[dialogueIndex];
+        PLAYER.velocityX === 0 &&
 
-});
+        PLAYER.velocityY === 0
 
-/*==========================================================
-PAUSE
-==========================================================*/
+    ) {
 
-const pauseMenu=
+        PLAYER.state = "idle";
 
-document.getElementById("pauseMenu");
+    } else {
 
-window.addEventListener("keydown",(e)=>{
+        if (PLAYER.state !== "dash") {
 
-    if(e.key==="Escape"){
+            PLAYER.state = "walk";
 
-        togglePause();
+        }
 
     }
 
-});
+}
 
-function togglePause(){
+/*=========================================================
+PLAYER ANIMATION
+=========================================================*/
 
-    Game.paused=!Game.paused;
+function updatePlayerAnimation() {
 
-    pauseMenu.style.display=
+    switch (PLAYER.state) {
 
-    Game.paused?"flex":"none";
+        case "idle":
+
+            player.dataset.state = "idle";
+
+            break;
+
+        case "walk":
+
+            player.dataset.state = "walk";
+
+            break;
+
+        case "dash":
+
+            player.dataset.state = "dash";
+
+            break;
+
+        case "attack":
+
+            player.dataset.state = "attack";
+
+            break;
+
+    }
 
 }
 
-document
+/*=========================================================
+HUD
+=========================================================*/
 
-.getElementById("resumeButton")
+function updatePlayerHUD() {
 
-.addEventListener("click",()=>{
+    healthFill.style.width =
 
-    Game.paused=false;
+        PLAYER.health + "%";
 
-    pauseMenu.style.display="none";
+    spiritFill.style.width =
 
-});
+        PLAYER.spirit + "%";
 
-/*==========================================================
-SETTINGS
-==========================================================*/
+    healthText.textContent =
 
-const settings=
+        PLAYER.health + " / 100";
 
-document.getElementById("settingsPanel");
+    spiritText.textContent =
 
-document
+        PLAYER.spirit + " / 100";
 
-.getElementById("closeSettings")
+}
 
-.addEventListener("click",()=>{
+/*=========================================================
+RENDER PLAYER
+=========================================================*/
 
-    settings.style.display="none";
+function renderPlayer() {
 
-});
+    player.style.left = PLAYER.x + "px";
 
-/*==========================================================
-AUDIO
-==========================================================*/
+    player.style.top = PLAYER.y + "px";
 
-const AudioManager={
+    player.style.transform =
 
-    music:
+        `translate(-50%,-100%) scaleX(${PLAYER.facing})`;
 
-    document.getElementById("bgMusic"),
+}
 
-    attack:
+/*=========================================================
+MAIN UPDATE
+=========================================================*/
 
-    document.getElementById("ghostAttackSound"),
+function playerLoop() {
 
-    lantern:
+    updatePlayer();
 
-    document.getElementById("lanternSound"),
+    renderPlayer();
 
-    boss:
+}
+/*=========================================================
+PART 2.2A
+SMOOTH CAMERA SYSTEM
+=========================================================*/
 
-    document.getElementById("bossRoar"),
+const CAMERA = {
 
-    victory:
+    x: 0,
+    y: 0,
 
-    document.getElementById("victorySound"),
+    targetX: 0,
+    targetY: 0,
 
-    gameover:
+    smooth: 0.08,
 
-    document.getElementById("gameOverSound")
+    width: window.innerWidth,
+    height: window.innerHeight
 
 };
 
-function playMusic(){
+/*=========================================================
+RESIZE
+=========================================================*/
 
-    if(AudioManager.music){
+window.addEventListener("resize", () => {
 
-        AudioManager.music.volume=.5;
+    CAMERA.width = window.innerWidth;
+    CAMERA.height = window.innerHeight;
 
-        AudioManager.music.play().catch(()=>{});
+});
 
-    }
+/*=========================================================
+CAMERA TARGET
+=========================================================*/
 
-}
+function updateCameraTarget() {
 
-function stopMusic(){
+    CAMERA.targetX =
+        PLAYER.x - CAMERA.width / 2;
 
-    if(AudioManager.music){
-
-        AudioManager.music.pause();
-
-    }
-
-}
-
-function playSound(sound){
-
-    if(!sound) return;
-
-    sound.currentTime=0;
-
-    sound.play().catch(()=>{});
+    CAMERA.targetY =
+        PLAYER.y - CAMERA.height / 2;
 
 }
 
-/*==========================================================
-MOBILE CONTROLS
-==========================================================*/
+/*=========================================================
+SMOOTH FOLLOW
+=========================================================*/
 
-const attackButton=
+function updateCamera() {
 
-document.getElementById("attackButton");
+    updateCameraTarget();
 
-const pauseButton=
+    CAMERA.x +=
+        (CAMERA.targetX - CAMERA.x) *
+        CAMERA.smooth;
 
-document.getElementById("pauseButton");
+    CAMERA.y +=
+        (CAMERA.targetY - CAMERA.y) *
+        CAMERA.smooth;
 
-const joystick=
+    CAMERA.x = clamp(
 
-document.getElementById("joystick");
+        CAMERA.x,
 
-const stick=
+        0,
 
-document.getElementById("stick");
+        CONFIG.WORLD_WIDTH - CAMERA.width
 
-if(attackButton){
+    );
 
-    attackButton.addEventListener(
+    CAMERA.y = clamp(
 
-        "touchstart",
+        CAMERA.y,
 
-        ()=>{
+        0,
 
-            playerAttack();
+        CONFIG.WORLD_HEIGHT - CAMERA.height
+
+    );
+
+    gameWorld.style.transform =
+        `translate(${-CAMERA.x}px, ${-CAMERA.y}px)`;
+
+}
+
+/*=========================================================
+CAMERA SHAKE
+=========================================================*/
+
+function cameraShake(
+    power = 10,
+    duration = 300
+) {
+
+    const start = performance.now();
+
+    function shake(time) {
+
+        const elapsed = time - start;
+
+        if (elapsed >= duration) {
+
+            gameWorld.style.transform =
+                `translate(${-CAMERA.x}px, ${-CAMERA.y}px)`;
+
+            return;
 
         }
+
+        const offsetX =
+            (Math.random() - 0.5) * power;
+
+        const offsetY =
+            (Math.random() - 0.5) * power;
+
+        gameWorld.style.transform =
+            `translate(${-CAMERA.x + offsetX}px,
+                       ${-CAMERA.y + offsetY}px)`;
+
+        requestAnimationFrame(shake);
+
+    }
+
+    requestAnimationFrame(shake);
+
+}
+
+/*=========================================================
+CAMERA LOOP
+=========================================================*/
+
+function cameraLoop() {
+
+    updateCamera();
+
+}
+/*=========================================================
+PART 2.2B
+SWORD ATTACK SYSTEM
+=========================================================*/
+
+const ATTACK = {
+
+    combo: 0,
+
+    cooldown: false,
+
+    duration: 250,
+
+    comboReset: 700,
+
+    damage: 25,
+
+    range: 140,
+
+    lastAttack: 0
+
+};
+
+/*=========================================================
+ATTACK INPUT
+=========================================================*/
+
+function updateAttackInput() {
+
+    if (!INPUT.attack) return;
+
+    if (ATTACK.cooldown) return;
+
+    startAttack();
+
+}
+
+/*=========================================================
+START ATTACK
+=========================================================*/
+
+function startAttack() {
+
+    ATTACK.cooldown = true;
+
+    PLAYER.attacking = true;
+
+    PLAYER.state = "attack";
+
+    ATTACK.combo++;
+
+    if (ATTACK.combo > 3) {
+
+        ATTACK.combo = 1;
+
+    }
+
+    ATTACK.lastAttack = performance.now();
+
+    playAttackAnimation();
+
+    createSlashEffect();
+
+    damageGhosts();
+
+    setTimeout(() => {
+
+        PLAYER.attacking = false;
+
+    }, ATTACK.duration);
+
+    setTimeout(() => {
+
+        ATTACK.cooldown = false;
+
+    }, 180);
+
+}
+
+/*=========================================================
+COMBO RESET
+=========================================================*/
+
+function updateCombo() {
+
+    if (
+
+        performance.now()
+
+        -
+
+        ATTACK.lastAttack
+
+        >
+
+        ATTACK.comboReset
+
+    ) {
+
+        ATTACK.combo = 0;
+
+    }
+
+}
+
+/*=========================================================
+ANIMATION
+=========================================================*/
+
+function playAttackAnimation() {
+
+    player.classList.remove(
+
+        "attack1",
+
+        "attack2",
+
+        "attack3"
+
+    );
+
+    player.offsetWidth;
+
+    player.classList.add(
+
+        "attack" + ATTACK.combo
 
     );
 
 }
 
-if(pauseButton){
+/*=========================================================
+UPDATE
+=========================================================*/
 
-    pauseButton.addEventListener(
+function updateCombat() {
 
-        "touchstart",
+    updateAttackInput();
 
-        ()=>{
-
-            togglePause();
-
-        }
-
-    );
+    updateCombo();
 
 }
+/*=========================================================
+PART 2.2C
+SWORD HITBOX + GHOST DAMAGE
+=========================================================*/
 
-/*==========================================================
-JOYSTICK
-==========================================================*/
+const GHOSTS = [];
 
-let joystickActive=false;
+document.querySelectorAll(".ghost").forEach((ghost, index) => {
 
-let joyCenter={x:0,y:0};
+    GHOSTS.push({
 
-if(joystick){
+        id: index,
 
-joystick.addEventListener(
+        element: ghost,
 
-"touchstart",
+        alive: true,
 
-(e)=>{
+        health: 100,
 
-joystickActive=true;
+        maxHealth: 100,
 
-const r=
+        damage: 15,
 
-joystick.getBoundingClientRect();
+        x: ghost.offsetLeft,
 
-joyCenter.x=r.left+r.width/2;
+        y: ghost.offsetTop,
 
-joyCenter.y=r.top+r.height/2;
+        width: 90,
 
-}
+        height: 120,
 
-);
-
-joystick.addEventListener(
-
-"touchmove",
-
-(e)=>{
-
-if(!joystickActive) return;
-
-const touch=e.touches[0];
-
-const dx=touch.clientX-joyCenter.x;
-
-const dy=touch.clientY-joyCenter.y;
-
-const max=35;
-
-stick.style.transform=
-
-`translate(${Math.max(-max,Math.min(max,dx))}px,
-${Math.max(-max,Math.min(max,dy))}px)`;
-
-Keys.w=dy<-15;
-Keys.s=dy>15;
-Keys.a=dx<-15;
-Keys.d=dx>15;
-
-}
-
-);
-
-joystick.addEventListener(
-
-"touchend",
-
-()=>{
-
-joystickActive=false;
-
-stick.style.transform=
-
-"translate(-50%,-50%)";
-
-Keys.w=false;
-Keys.a=false;
-Keys.s=false;
-Keys.d=false;
-
-}
-
-);
-
-}
-/*==========================================================
-PART 5
-VICTORY
-GAME OVER
-GAME LOOP
-INITIALIZATION
-==========================================================*/
-
-/*==========================================================
-VICTORY
-==========================================================*/
-
-function showVictory(){
-
-    Game.running=false;
-
-    stopMusic();
-
-    playSound(AudioManager.victory);
-
-    const screen=document.getElementById("victoryScreen");
-
-    if(screen){
-
-        screen.style.display="flex";
-
-    }
-
-}
-
-/*==========================================================
-GAME OVER
-==========================================================*/
-
-function showGameOver(){
-
-    Game.running=false;
-
-    stopMusic();
-
-    playSound(AudioManager.gameover);
-
-    const screen=document.getElementById("gameOverScreen");
-
-    if(screen){
-
-        screen.style.display="flex";
-
-    }
-
-}
-
-/*==========================================================
-BUTTONS
-==========================================================*/
-
-const retryButton=document.getElementById("retryButton");
-
-const exitButton=document.getElementById("exitButton");
-
-const nextDayButton=document.getElementById("nextDayButton");
-
-if(retryButton){
-
-    retryButton.addEventListener("click",()=>{
-
-        location.reload();
+        lastHit: 0
 
     });
 
-}
+});
 
-if(exitButton){
+/*=========================================================
+HITBOX
+=========================================================*/
 
-    exitButton.addEventListener("click",()=>{
+function getSwordHitbox() {
 
-        window.location.href="day5.html";
+    const box = {
 
-    });
+        x: PLAYER.x,
 
-}
+        y: PLAYER.y,
 
-if(nextDayButton){
+        width: ATTACK.range,
 
-    nextDayButton.addEventListener("click",()=>{
-
-        window.location.href="day6-video.html";
-
-    });
-
-}
-
-/*==========================================================
-SAVE
-==========================================================*/
-
-function saveProgress(){
-
-    const save={
-
-        score:Game.score,
-
-        lanterns:Game.lanterns,
-
-        health:Player.health,
-
-        spirit:Player.spirit
+        height: 120
 
     };
 
-    localStorage.setItem(
+    if (PLAYER.facing > 0) {
 
-        "day5_save",
+        box.x += 60;
 
-        JSON.stringify(save)
+    } else {
+
+        box.x -= ATTACK.range;
+
+    }
+
+    return box;
+
+}
+
+/*=========================================================
+RECT COLLISION
+=========================================================*/
+
+function rectCollision(a, b) {
+
+    return (
+
+        a.x < b.x + b.width &&
+
+        a.x + a.width > b.x &&
+
+        a.y < b.y + b.height &&
+
+        a.y + a.height > b.y
 
     );
 
 }
 
-function loadProgress(){
+/*=========================================================
+DAMAGE GHOSTS
+=========================================================*/
 
-    const data=
+function damageGhosts() {
 
-    localStorage.getItem("day5_save");
+    const sword = getSwordHitbox();
 
-    if(!data) return;
+    GHOSTS.forEach((ghost) => {
 
-    const save=
+        if (!ghost.alive) return;
 
-    JSON.parse(data);
+        const enemy = {
 
-    Game.score=save.score||0;
+            x: ghost.element.offsetLeft,
 
-    Game.lanterns=save.lanterns||0;
+            y: ghost.element.offsetTop,
 
-    Player.health=save.health||100;
+            width: ghost.width,
 
-    Player.spirit=save.spirit||100;
+            height: ghost.height
 
-    updateHUD();
+        };
+
+        if (!rectCollision(sword, enemy)) return;
+
+        if (performance.now() - ghost.lastHit < 250) return;
+
+        ghost.lastHit = performance.now();
+
+        ghost.health -= ATTACK.damage;
+
+        updateGhostHealth(ghost);
+
+        createBloodEffect(
+
+            enemy.x + enemy.width / 2,
+
+            enemy.y + enemy.height / 2
+
+        );
+
+        cameraShake(5,120);
+
+        if (ghost.health <= 0) {
+
+            killGhost(ghost);
+
+        }
+
+    });
 
 }
 
-/*==========================================================
-AUTO SAVE
-==========================================================*/
+/*=========================================================
+HEALTH BAR
+=========================================================*/
 
-setInterval(()=>{
+function updateGhostHealth(ghost) {
 
-    if(Game.running){
+    const fill =
 
-        saveProgress();
+        ghost.element.querySelector(
+
+            ".enemyHealthFill"
+
+        );
+
+    if (!fill) return;
+
+    fill.style.width =
+
+        (ghost.health / ghost.maxHealth * 100)
+
+        + "%";
+
+}
+
+/*=========================================================
+KILL GHOST
+=========================================================*/
+
+function killGhost(ghost) {
+
+    ghost.alive = false;
+
+    GAME.kills++;
+
+    GAME.score += 250;
+
+    scoreCounter.textContent =
+
+        GAME.score
+
+        .toString()
+
+        .padStart(6,"0");
+
+    ghost.element.classList.add("ghostDead");
+
+    setTimeout(() => {
+
+        ghost.element.remove();
+
+    },800);
+
+    showNotification(
+
+        "+250 SCORE"
+
+    );
+
+}
+
+/*=========================================================
+BLOOD EFFECT
+=========================================================*/
+
+function createBloodEffect(x,y){
+
+    const blood=document.createElement("div");
+
+    blood.className="bloodEffect";
+
+    blood.style.left=x+"px";
+
+    blood.style.top=y+"px";
+
+    gameWorld.appendChild(blood);
+
+    setTimeout(()=>{
+
+        blood.remove();
+
+    },700);
+
+}
+
+/*=========================================================
+NOTIFICATION
+=========================================================*/
+
+function showNotification(text){
+
+    const n=document.createElement("div");
+
+    n.className="notification";
+
+    n.textContent=text;
+
+    notificationContainer.appendChild(n);
+
+    setTimeout(()=>{
+
+        n.remove();
+
+    },1800);
+
+}
+/*=========================================================
+PART 2.2D
+DASH SYSTEM
+=========================================================*/
+
+const DASH = {
+
+    active:false,
+
+    duration:220,
+
+    cooldown:800,
+
+    speed:18,
+
+    timer:0,
+
+    cooldownTimer:0,
+
+    directionX:0,
+
+    directionY:0
+
+};
+
+/*=========================================================
+START DASH
+=========================================================*/
+
+function startDash(){
+
+    if(DASH.active) return;
+
+    if(DASH.cooldownTimer>0) return;
+
+    if(PLAYER.stamina<20) return;
+
+    let dx=PLAYER.velocityX;
+    let dy=PLAYER.velocityY;
+
+    if(dx===0 && dy===0){
+
+        dx=PLAYER.facing;
+        dy=0;
 
     }
 
-},10000);
+    const length=Math.hypot(dx,dy);
 
-/*==========================================================
-GAME LOOP
-==========================================================*/
+    DASH.directionX=dx/length;
+    DASH.directionY=dy/length;
 
-function update(){
+    DASH.active=true;
 
-    if(!Game.running) return;
+    DASH.timer=DASH.duration;
 
-    if(Game.paused) return;
+    DASH.cooldownTimer=DASH.cooldown;
 
-    updatePlayerSystem();
+    PLAYER.invincible=true;
 
-    updateEnemySystem();
+    PLAYER.stamina-=20;
 
-    updateHUD();
+    player.classList.add("dash");
 
-}
-
-function render(){
-
-    drawPlayer();
+    createDashTrail();
 
 }
 
-function gameLoop(){
+/*=========================================================
+UPDATE DASH
+=========================================================*/
 
-    update();
+function updateDash(delta){
 
-    render();
+    if(INPUT.dash && !DASH.active){
 
-    requestAnimationFrame(gameLoop);
+        startDash();
 
-}
+    }
 
-/*==========================================================
-RESIZE
-==========================================================*/
+    if(DASH.cooldownTimer>0){
 
-window.addEventListener(
+        DASH.cooldownTimer-=delta;
 
-"resize",
+    }
 
-()=>{
+    if(!DASH.active) return;
 
-    keepInsideWorld();
+    DASH.timer-=delta;
 
-    drawPlayer();
+    PLAYER.x+=DASH.directionX*DASH.speed;
 
-}
+    PLAYER.y+=DASH.directionY*DASH.speed;
 
-);
+    PLAYER.x=clamp(
+        PLAYER.x,
+        0,
+        CONFIG.WORLD_WIDTH
+    );
 
-/*==========================================================
-START
-==========================================================*/
+    PLAYER.y=clamp(
+        PLAYER.y,
+        0,
+        CONFIG.WORLD_HEIGHT
+    );
 
-function init(){
+    createAfterImage();
 
-    cacheElements();
+    if(DASH.timer<=0){
 
-    registerLanterns();
+        DASH.active=false;
 
-    registerGhosts();
+        PLAYER.invincible=false;
 
-    loadProgress();
+        player.classList.remove("dash");
 
-    updateHUD();
-
-    drawPlayer();
-
-    playMusic();
-
-    startDialogue();
-
-    startLoading();
-
-    gameLoop();
+    }
 
 }
 
-window.addEventListener(
+/*=========================================================
+AFTER IMAGE
+=========================================================*/
 
-"load",
+function createAfterImage(){
 
-init
+    const clone=player.cloneNode(true);
 
-);
+    clone.classList.add("afterImage");
+
+    clone.style.left=PLAYER.x+"px";
+    clone.style.top=PLAYER.y+"px";
+
+    gameWorld.appendChild(clone);
+
+    setTimeout(()=>{
+
+        clone.remove();
+
+    },350);
+
+}
+
+/*=========================================================
+DASH TRAIL
+=========================================================*/
+
+function createDashTrail(){
+
+    const trail=document.createElement("div");
+
+    trail.className="dashTrail";
+
+    trail.style.left=PLAYER.x+"px";
+    trail.style.top=PLAYER.y+"px";
+
+    gameWorld.appendChild(trail);
+
+    setTimeout(()=>{
+
+        trail.remove();
+
+    },500);
+
+}
+
+/*=========================================================
+DASH DAMAGE
+=========================================================*/
+
+function dashCollision(){
+
+    if(!DASH.active) return;
+
+    GHOSTS.forEach(ghost=>{
+
+        if(!ghost.alive) return;
+
+        const gx=ghost.element.offsetLeft;
+        const gy=ghost.element.offsetTop;
+
+        const dist=Math.hypot(
+
+            gx-PLAYER.x,
+
+            gy-PLAYER.y
+
+        );
+
+        if(dist>90) return;
+
+        ghost.health-=15;
+
+        updateGhostHealth(ghost);
+
+        createBloodEffect(gx,gy);
+
+        cameraShake(3,80);
+
+        if(ghost.health<=0){
+
+            killGhost(ghost);
+
+        }
+
+    });
+
+}
+
+/*=========================================================
+UPDATE
+=========================================================*/
+
+function updatePlayerAbilities(delta){
+
+    updateCombat();
+
+    updateDash(delta);
+
+    dashCollision();
+
+}
