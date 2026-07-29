@@ -1840,3 +1840,2144 @@ function updatePlayerAbilities(delta){
     dashCollision();
 
 }
+/*=========================================================
+PART 2.2E
+SPIRIT SKILL + PLAYER UTILITIES
+=========================================================*/
+
+const SKILL={
+
+    cooldown:12000,
+
+    timer:0,
+
+    spiritCost:35,
+
+    damage:60,
+
+    active:false
+
+};
+
+/*=========================================================
+UPDATE SKILL
+=========================================================*/
+
+function updateSkill(delta){
+
+    if(SKILL.timer>0){
+
+        SKILL.timer-=delta;
+
+    }
+
+    if(!INPUT.skill) return;
+
+    castSpiritSkill();
+
+}
+
+/*=========================================================
+CAST SKILL
+=========================================================*/
+
+function castSpiritSkill(){
+
+    if(SKILL.timer>0) return;
+
+    if(PLAYER.spirit<SKILL.spiritCost) return;
+
+    PLAYER.spirit-=SKILL.spiritCost;
+
+    SKILL.timer=SKILL.cooldown;
+
+    PLAYER.state="skill";
+
+    player.classList.add("skillCast");
+
+    setTimeout(()=>{
+
+        player.classList.remove("skillCast");
+
+    },700);
+
+    spiritExplosion();
+
+}
+
+/*=========================================================
+SPIRIT EXPLOSION
+=========================================================*/
+
+function spiritExplosion(){
+
+    const blast=document.createElement("div");
+
+    blast.className="spiritBlast";
+
+    blast.style.left=PLAYER.x+"px";
+    blast.style.top=PLAYER.y+"px";
+
+    gameWorld.appendChild(blast);
+
+    GHOSTS.forEach(ghost=>{
+
+        if(!ghost.alive) return;
+
+        const gx=ghost.element.offsetLeft;
+        const gy=ghost.element.offsetTop;
+
+        const distance=Math.hypot(
+
+            gx-PLAYER.x,
+
+            gy-PLAYER.y
+
+        );
+
+        if(distance>250) return;
+
+        ghost.health-=SKILL.damage;
+
+        updateGhostHealth(ghost);
+
+        createBloodEffect(gx,gy);
+
+        if(ghost.health<=0){
+
+            killGhost(ghost);
+
+        }
+
+    });
+
+    setTimeout(()=>{
+
+        blast.remove();
+
+    },900);
+
+}
+
+/*=========================================================
+CRITICAL HIT
+=========================================================*/
+
+function criticalDamage(baseDamage){
+
+    if(Math.random()<0.20){
+
+        showNotification("CRITICAL!");
+
+        return baseDamage*2;
+
+    }
+
+    return baseDamage;
+
+}
+
+/*=========================================================
+SPIRIT REGEN
+=========================================================*/
+
+function regenerateSpirit(delta){
+
+    if(PLAYER.spirit>=PLAYER.maxSpirit) return;
+
+    PLAYER.spirit+=0.012*delta;
+
+    PLAYER.spirit=clamp(
+
+        PLAYER.spirit,
+
+        0,
+
+        PLAYER.maxSpirit
+
+    );
+
+}
+
+/*=========================================================
+HEALTH REGEN
+=========================================================*/
+
+function regenerateHealth(delta){
+
+    if(PLAYER.health>=PLAYER.maxHealth) return;
+
+    PLAYER.health+=0.003*delta;
+
+    PLAYER.health=clamp(
+
+        PLAYER.health,
+
+        0,
+
+        PLAYER.maxHealth
+
+    );
+
+}
+
+/*=========================================================
+PICKUPS
+=========================================================*/
+
+function collectPickups(){
+
+    document.querySelectorAll(".pickup").forEach(item=>{
+
+        const dx=item.offsetLeft-PLAYER.x;
+
+        const dy=item.offsetTop-PLAYER.y;
+
+        if(Math.hypot(dx,dy)>70) return;
+
+        if(item.dataset.type==="health"){
+
+            PLAYER.health=Math.min(
+
+                PLAYER.maxHealth,
+
+                PLAYER.health+25
+
+            );
+
+        }
+
+        if(item.dataset.type==="spirit"){
+
+            PLAYER.spirit=Math.min(
+
+                PLAYER.maxSpirit,
+
+                PLAYER.spirit+30
+
+            );
+
+        }
+
+        item.remove();
+
+    });
+
+}
+
+/*=========================================================
+PLAYER UPDATE
+=========================================================*/
+
+function updatePlayerSystem(delta){
+
+    updatePlayer();
+
+    updateCombat();
+
+    updateDash(delta);
+
+    dashCollision();
+
+    updateSkill(delta);
+
+    regenerateSpirit(delta);
+
+    regenerateHealth(delta);
+
+    collectPickups();
+
+}
+/*=========================================================
+PART 3.1A
+GHOST AI SYSTEM
+=========================================================*/
+
+const GHOST_AI = {
+
+    detectRange:450,
+
+    attackRange:80,
+
+    moveSpeed:2,
+
+    wanderSpeed:1,
+
+    attackCooldown:1500
+
+};
+
+/*=========================================================
+INITIALIZE
+=========================================================*/
+
+GHOSTS.forEach(ghost=>{
+
+    ghost.state="wander";
+
+    ghost.targetX=ghost.element.offsetLeft;
+
+    ghost.targetY=ghost.element.offsetTop;
+
+    ghost.velocityX=0;
+
+    ghost.velocityY=0;
+
+    ghost.attackTimer=0;
+
+    ghost.floatOffset=Math.random()*1000;
+
+});
+
+/*=========================================================
+UPDATE ALL
+=========================================================*/
+
+function updateGhostAI(delta){
+
+    GHOSTS.forEach(ghost=>{
+
+        if(!ghost.alive) return;
+
+        updateGhostState(ghost);
+
+        updateGhostMovement(ghost,delta);
+
+        updateGhostAttack(ghost,delta);
+
+        renderGhost(ghost);
+
+    });
+
+}
+
+/*=========================================================
+STATE
+=========================================================*/
+
+function updateGhostState(ghost){
+
+    const dx=PLAYER.x-ghost.element.offsetLeft;
+
+    const dy=PLAYER.y-ghost.element.offsetTop;
+
+    const distance=Math.hypot(dx,dy);
+
+    if(distance<GHOST_AI.attackRange){
+
+        ghost.state="attack";
+
+        return;
+
+    }
+
+    if(distance<GHOST_AI.detectRange){
+
+        ghost.state="chase";
+
+        return;
+
+    }
+
+    ghost.state="wander";
+
+}
+
+/*=========================================================
+MOVEMENT
+=========================================================*/
+
+function updateGhostMovement(ghost,delta){
+
+    let speed=GHOST_AI.wanderSpeed;
+
+    switch(ghost.state){
+
+        case "wander":
+
+            wanderGhost(ghost);
+
+            break;
+
+        case "chase":
+
+            speed=GHOST_AI.moveSpeed;
+
+            chasePlayer(ghost,speed);
+
+            break;
+
+        case "attack":
+
+            ghost.velocityX=0;
+
+            ghost.velocityY=0;
+
+            break;
+
+    }
+
+    ghost.targetX+=ghost.velocityX;
+    ghost.targetY+=ghost.velocityY;
+
+}
+
+/*=========================================================
+WANDER
+=========================================================*/
+
+function wanderGhost(ghost){
+
+    if(Math.random()<0.01){
+
+        const angle=Math.random()*Math.PI*2;
+
+        ghost.velocityX=Math.cos(angle);
+
+        ghost.velocityY=Math.sin(angle);
+
+    }
+
+}
+
+/*=========================================================
+CHASE
+=========================================================*/
+
+function chasePlayer(ghost,speed){
+
+    const dx=PLAYER.x-ghost.targetX;
+
+    const dy=PLAYER.y-ghost.targetY;
+
+    const length=Math.hypot(dx,dy);
+
+    if(length===0) return;
+
+    ghost.velocityX=(dx/length)*speed;
+
+    ghost.velocityY=(dy/length)*speed;
+
+}
+/*=========================================================
+PART 3.1B
+GHOST ATTACK SYSTEM
+=========================================================*/
+
+/*=========================================================
+FLOATING EFFECT
+=========================================================*/
+
+function renderGhost(ghost){
+
+    const time = performance.now() * 0.002;
+
+    const floatY =
+
+        Math.sin(time + ghost.floatOffset) * 10;
+
+    ghost.element.style.left =
+
+        ghost.targetX + "px";
+
+    ghost.element.style.top =
+
+        (ghost.targetY + floatY) + "px";
+
+    if(PLAYER.x > ghost.targetX){
+
+        ghost.element.style.transform =
+            "scaleX(1)";
+
+    }else{
+
+        ghost.element.style.transform =
+            "scaleX(-1)";
+
+    }
+
+}
+
+/*=========================================================
+ATTACK
+=========================================================*/
+
+function updateGhostAttack(ghost,delta){
+
+    if(ghost.state!=="attack") return;
+
+    ghost.attackTimer-=delta;
+
+    if(ghost.attackTimer>0) return;
+
+    ghost.attackTimer=
+
+        GHOST_AI.attackCooldown;
+
+    attackPlayer(ghost);
+
+}
+
+/*=========================================================
+PLAYER DAMAGE
+=========================================================*/
+
+function attackPlayer(ghost){
+
+    if(PLAYER.invincible) return;
+
+    PLAYER.health-=ghost.damage;
+
+    PLAYER.health=Math.max(
+
+        PLAYER.health,
+
+        0
+
+    );
+
+    ghostAttackSound.currentTime=0;
+
+    ghostAttackSound.play();
+
+    cameraShake(8,180);
+
+    player.classList.add("hurt");
+
+    setTimeout(()=>{
+
+        player.classList.remove("hurt");
+
+    },250);
+
+    knockbackPlayer(ghost);
+
+    if(PLAYER.health<=0){
+
+        playerDie();
+
+    }
+
+}
+
+/*=========================================================
+KNOCKBACK
+=========================================================*/
+
+function knockbackPlayer(ghost){
+
+    const dx=
+
+        PLAYER.x-ghost.targetX;
+
+    const dy=
+
+        PLAYER.y-ghost.targetY;
+
+    const length=
+
+        Math.hypot(dx,dy);
+
+    if(length===0) return;
+
+    PLAYER.x+=
+
+        (dx/length)*40;
+
+    PLAYER.y+=
+
+        (dy/length)*40;
+
+}
+
+/*=========================================================
+PLAYER DEATH
+=========================================================*/
+
+function playerDie(){
+
+    if(GAME.gameOver) return;
+
+    GAME.gameOver=true;
+
+    GAME.running=false;
+
+    gameOverSound.play();
+
+    gameOverScreen.style.display="flex";
+
+}
+
+/*=========================================================
+FLASH DAMAGE
+=========================================================*/
+
+function flashPlayer(){
+
+    player.classList.add("damageFlash");
+
+    setTimeout(()=>{
+
+        player.classList.remove(
+
+            "damageFlash"
+
+        );
+
+    },180);
+
+}
+
+/*=========================================================
+UPDATE LOOP
+=========================================================*/
+
+function updateEnemySystem(delta){
+
+    updateGhostAI(delta);
+
+}
+/*=========================================================
+PART 3.1C
+ADVANCED GHOST AI
+=========================================================*/
+
+const ELITE = {
+
+    chance:0.25,
+
+    healthMultiplier:2,
+
+    damageMultiplier:2,
+
+    speedMultiplier:1.5
+
+};
+
+/*=========================================================
+INITIALIZE ELITE GHOSTS
+=========================================================*/
+
+function initializeGhostTypes(){
+
+    GHOSTS.forEach(ghost=>{
+
+        if(Math.random()<ELITE.chance){
+
+            ghost.elite=true;
+
+            ghost.health*=ELITE.healthMultiplier;
+            ghost.maxHealth*=ELITE.healthMultiplier;
+            ghost.damage*=ELITE.damageMultiplier;
+
+            ghost.speed=GHOST_AI.moveSpeed*
+                        ELITE.speedMultiplier;
+
+            ghost.element.classList.add("eliteGhost");
+
+        }else{
+
+            ghost.elite=false;
+            ghost.speed=GHOST_AI.moveSpeed;
+
+        }
+
+    });
+
+}
+
+/*=========================================================
+TELEPORT
+=========================================================*/
+
+function updateGhostTeleport(ghost){
+
+    if(ghost.state!=="chase") return;
+
+    if(Math.random()>0.002) return;
+
+    const angle=Math.random()*Math.PI*2;
+
+    const radius=140;
+
+    ghost.targetX=
+
+        PLAYER.x+
+        Math.cos(angle)*radius;
+
+    ghost.targetY=
+
+        PLAYER.y+
+        Math.sin(angle)*radius;
+
+    ghost.element.classList.add("ghostTeleport");
+
+    setTimeout(()=>{
+
+        ghost.element.classList.remove(
+
+            "ghostTeleport"
+
+        );
+
+    },600);
+
+}
+
+/*=========================================================
+DEATH EFFECT
+=========================================================*/
+
+function ghostDeathEffect(x,y){
+
+    for(let i=0;i<10;i++){
+
+        const p=document.createElement("div");
+
+        p.className="ghostParticle";
+
+        p.style.left=x+"px";
+
+        p.style.top=y+"px";
+
+        p.style.setProperty(
+
+            "--dx",
+
+            (Math.random()*120-60)+"px"
+
+        );
+
+        p.style.setProperty(
+
+            "--dy",
+
+            (Math.random()*120-60)+"px"
+
+        );
+
+        gameWorld.appendChild(p);
+
+        setTimeout(()=>{
+
+            p.remove();
+
+        },900);
+
+    }
+
+}
+
+/*=========================================================
+LOOT DROP
+=========================================================*/
+
+function dropLoot(ghost){
+
+    const chance=Math.random();
+
+    if(chance>0.45) return;
+
+    const item=document.createElement("div");
+
+    item.className="pickup";
+
+    item.style.left=
+
+        ghost.targetX+"px";
+
+    item.style.top=
+
+        ghost.targetY+"px";
+
+    if(chance<0.20){
+
+        item.dataset.type="health";
+
+        item.classList.add("healthPickup");
+
+    }else{
+
+        item.dataset.type="spirit";
+
+        item.classList.add("spiritPickup");
+
+    }
+
+    gameWorld.appendChild(item);
+
+}
+
+/*=========================================================
+OVERRIDE GHOST DEATH
+=========================================================*/
+
+const oldKillGhost=killGhost;
+
+killGhost=function(ghost){
+
+    ghostDeathEffect(
+
+        ghost.targetX,
+
+        ghost.targetY
+
+    );
+
+    dropLoot(ghost);
+
+    oldKillGhost(ghost);
+
+};
+
+/*=========================================================
+UPDATE
+=========================================================*/
+
+function updateAdvancedGhosts(){
+
+    GHOSTS.forEach(ghost=>{
+
+        if(!ghost.alive) return;
+
+        updateGhostTeleport(ghost);
+
+    });
+
+}
+/*=========================================================
+PART 3.2A
+GHOST KING INTRO
+=========================================================*/
+
+const BOSS = {
+
+    active:false,
+
+    intro:false,
+
+    defeated:false,
+
+    phase:1,
+
+    health:1000,
+
+    maxHealth:1000,
+
+    damage:35,
+
+    speed:2.2,
+
+    attackCooldown:2500,
+
+    attackTimer:0,
+
+    x:0,
+
+    y:0
+
+};
+
+const boss = document.getElementById("ghostKing");
+const bossBar = document.getElementById("bossBar");
+const bossHealthFill =
+document.getElementById("bossHealthFill");
+
+/*=========================================================
+SPAWN
+=========================================================*/
+
+function activateGhostKing(){
+
+    if(BOSS.active) return;
+
+    BOSS.active=true;
+
+    BOSS.intro=true;
+
+    boss.style.display="block";
+
+    bossBar.style.display="block";
+
+    BOSS.x=4200;
+    BOSS.y=1800;
+
+    boss.style.left=BOSS.x+"px";
+    boss.style.top=BOSS.y+"px";
+
+    startBossIntro();
+
+}
+
+/*=========================================================
+INTRO
+=========================================================*/
+
+function startBossIntro(){
+
+    GAME.running=false;
+
+    cameraShake(20,1200);
+
+    bossRoar.currentTime=0;
+    bossRoar.play();
+
+    objectivePopup.innerHTML=
+
+        "⚠ GHOST KING AWAKENS ⚠";
+
+    objectivePopup.classList.add("show");
+
+    setTimeout(()=>{
+
+        objectivePopup.classList.remove("show");
+
+    },3500);
+
+    boss.classList.add("bossIntro");
+
+    setTimeout(()=>{
+
+        GAME.running=true;
+
+        BOSS.intro=false;
+
+    },4000);
+
+}
+
+/*=========================================================
+UPDATE
+=========================================================*/
+
+function updateBoss(){
+
+    if(!BOSS.active) return;
+
+    if(BOSS.intro) return;
+
+    updateBossMovement();
+
+    updateBossAttack();
+
+    updateBossHealth();
+
+}
+
+/*=========================================================
+HEALTH BAR
+=========================================================*/
+
+function updateBossHealth(){
+
+    bossHealthFill.style.width=
+
+        (BOSS.health/BOSS.maxHealth*100)+"%";
+
+}
+/*=========================================================
+PART 3.2B
+GHOST KING AI
+=========================================================*/
+
+BOSS.state="idle";
+BOSS.combo=0;
+BOSS.invincible=false;
+
+/*=========================================================
+MOVEMENT
+=========================================================*/
+
+function updateBossMovement(){
+
+    const dx=PLAYER.x-BOSS.x;
+    const dy=PLAYER.y-BOSS.y;
+
+    const distance=Math.hypot(dx,dy);
+
+    if(distance>180){
+
+        BOSS.state="chase";
+
+        const angle=Math.atan2(dy,dx);
+
+        BOSS.x+=Math.cos(angle)*BOSS.speed;
+
+        BOSS.y+=Math.sin(angle)*BOSS.speed;
+
+    }else{
+
+        BOSS.state="attack";
+
+    }
+
+    boss.style.left=BOSS.x+"px";
+    boss.style.top=BOSS.y+"px";
+
+    if(dx>0){
+
+        boss.style.transform="scaleX(1)";
+
+    }else{
+
+        boss.style.transform="scaleX(-1)";
+
+    }
+
+}
+
+/*=========================================================
+ATTACK UPDATE
+=========================================================*/
+
+function updateBossAttack(){
+
+    BOSS.attackTimer--;
+
+    if(BOSS.attackTimer>0) return;
+
+    if(BOSS.state!=="attack") return;
+
+    BOSS.attackTimer=BOSS.attackCooldown;
+
+    bossSwordCombo();
+
+}
+
+/*=========================================================
+3 HIT COMBO
+=========================================================*/
+
+function bossSwordCombo(){
+
+    BOSS.combo++;
+
+    if(BOSS.combo>3){
+
+        BOSS.combo=1;
+
+    }
+
+    boss.classList.remove(
+
+        "bossAttack1",
+
+        "bossAttack2",
+
+        "bossAttack3"
+
+    );
+
+    boss.offsetWidth;
+
+    boss.classList.add(
+
+        "bossAttack"+BOSS.combo
+
+    );
+
+    cameraShake(12,220);
+
+    bossHitPlayer();
+
+}
+
+/*=========================================================
+PLAYER DAMAGE
+=========================================================*/
+
+function bossHitPlayer(){
+
+    if(PLAYER.invincible) return;
+
+    const distance=Math.hypot(
+
+        PLAYER.x-BOSS.x,
+
+        PLAYER.y-BOSS.y
+
+    );
+
+    if(distance>170) return;
+
+    PLAYER.health-=BOSS.damage;
+
+    PLAYER.health=Math.max(
+
+        PLAYER.health,
+
+        0
+
+    );
+
+    createBloodEffect(
+
+        PLAYER.x,
+
+        PLAYER.y
+
+    );
+
+    flashPlayer();
+
+    knockbackFromBoss();
+
+    if(PLAYER.health<=0){
+
+        playerDie();
+
+    }
+
+}
+
+/*=========================================================
+KNOCKBACK
+=========================================================*/
+
+function knockbackFromBoss(){
+
+    const angle=Math.atan2(
+
+        PLAYER.y-BOSS.y,
+
+        PLAYER.x-BOSS.x
+
+    );
+
+    PLAYER.x+=Math.cos(angle)*80;
+
+    PLAYER.y+=Math.sin(angle)*80;
+
+}
+
+/*=========================================================
+PLAYER ATTACKS BOSS
+=========================================================*/
+
+function damageBoss(amount){
+
+    if(!BOSS.active) return;
+
+    if(BOSS.invincible) return;
+
+    BOSS.health-=amount;
+
+    updateBossHealth();
+
+    cameraShake(6,120);
+
+    createBloodEffect(
+
+        BOSS.x,
+
+        BOSS.y
+
+    );
+
+    if(BOSS.health<=0){
+
+        bossDefeated();
+
+        return;
+
+    }
+
+    checkBossPhase();
+
+}
+
+/*=========================================================
+PHASE CHECK
+=========================================================*/
+
+function checkBossPhase(){
+
+    if(
+
+        BOSS.phase===1 &&
+
+        BOSS.health<650
+
+    ){
+
+        BOSS.phase=2;
+
+        bossPhaseTwo();
+
+    }
+
+    if(
+
+        BOSS.phase===2 &&
+
+        BOSS.health<300
+
+    ){
+
+        BOSS.phase=3;
+
+        bossRageMode();
+
+    }
+
+}
+/*=========================================================
+PART 3.2C
+PHASE 2 + RAGE MODE
+=========================================================*/
+
+const BOSS_SKILLS={
+
+    summonCooldown:12000,
+
+    bloodSlashCooldown:9000,
+
+    teleportCooldown:7000,
+
+    moonCooldown:18000,
+
+    summonTimer:0,
+
+    bloodTimer:0,
+
+    teleportTimer:0,
+
+    moonTimer:0
+
+};
+
+/*=========================================================
+UPDATE PHASE SKILLS
+=========================================================*/
+
+function updateBossSkills(delta){
+
+    if(!BOSS.active) return;
+
+    if(BOSS.intro) return;
+
+    BOSS_SKILLS.summonTimer-=delta;
+    BOSS_SKILLS.bloodTimer-=delta;
+    BOSS_SKILLS.teleportTimer-=delta;
+    BOSS_SKILLS.moonTimer-=delta;
+
+    if(BOSS.phase>=2){
+
+        if(BOSS_SKILLS.summonTimer<=0){
+
+            summonGhostWave();
+
+            BOSS_SKILLS.summonTimer=
+            BOSS_SKILLS.summonCooldown;
+
+        }
+
+        if(BOSS_SKILLS.teleportTimer<=0){
+
+            teleportSlash();
+
+            BOSS_SKILLS.teleportTimer=
+            BOSS_SKILLS.teleportCooldown;
+
+        }
+
+    }
+
+    if(BOSS.phase>=3){
+
+        if(BOSS_SKILLS.bloodTimer<=0){
+
+            bloodSlashRain();
+
+            BOSS_SKILLS.bloodTimer=
+            BOSS_SKILLS.bloodSlashCooldown;
+
+        }
+
+        if(BOSS_SKILLS.moonTimer<=0){
+
+            bloodMoonCurse();
+
+            BOSS_SKILLS.moonTimer=
+            BOSS_SKILLS.moonCooldown;
+
+        }
+
+    }
+
+}
+
+/*=========================================================
+PHASE TWO
+=========================================================*/
+
+function bossPhaseTwo(){
+
+    objectivePopup.innerHTML=
+
+    "PHASE 2<br>THE CURSED KING";
+
+    objectivePopup.classList.add("show");
+
+    setTimeout(()=>{
+
+        objectivePopup.classList.remove("show");
+
+    },3500);
+
+    BOSS.speed+=1;
+
+    BOSS.damage+=10;
+
+    boss.classList.add("phaseTwo");
+
+    cameraShake(20,1200);
+
+}
+
+/*=========================================================
+RAGE MODE
+=========================================================*/
+
+function bossRageMode(){
+
+    objectivePopup.innerHTML=
+
+    "FINAL PHASE<br>RAGE MODE";
+
+    objectivePopup.classList.add("show");
+
+    setTimeout(()=>{
+
+        objectivePopup.classList.remove("show");
+
+    },3500);
+
+    BOSS.speed+=1.5;
+
+    BOSS.damage+=20;
+
+    BOSS.attackCooldown=1200;
+
+    boss.classList.add("rageMode");
+
+    cameraShake(30,1500);
+
+}
+
+/*=========================================================
+SUMMON GHOSTS
+=========================================================*/
+
+function summonGhostWave(){
+
+    showNotification("Ghosts Summoned!");
+
+    for(let i=0;i<3;i++){
+
+        createGhost(
+
+            BOSS.x+
+            (Math.random()*300-150),
+
+            BOSS.y+
+            (Math.random()*300-150)
+
+        );
+
+    }
+
+}
+
+/*=========================================================
+TELEPORT SLASH
+=========================================================*/
+
+function teleportSlash(){
+
+    boss.classList.add("ghostTeleport");
+
+    setTimeout(()=>{
+
+        boss.classList.remove("ghostTeleport");
+
+    },500);
+
+    const angle=Math.random()*Math.PI*2;
+
+    BOSS.x=
+
+        PLAYER.x+
+        Math.cos(angle)*140;
+
+    BOSS.y=
+
+        PLAYER.y+
+        Math.sin(angle)*140;
+
+    boss.style.left=BOSS.x+"px";
+    boss.style.top=BOSS.y+"px";
+
+    cameraShake(12,250);
+
+}
+
+/*=========================================================
+BLOOD SLASH RAIN
+=========================================================*/
+
+function bloodSlashRain(){
+
+    showNotification("Blood Slash!");
+
+    for(let i=0;i<10;i++){
+
+        setTimeout(()=>{
+
+            const slash=document.createElement("div");
+
+            slash.className="bloodSlash";
+
+            slash.style.left=
+
+                (PLAYER.x+
+                Math.random()*500-250)+"px";
+
+            slash.style.top=
+
+                (PLAYER.y+
+                Math.random()*400-200)+"px";
+
+            gameWorld.appendChild(slash);
+
+            setTimeout(()=>{
+
+                slash.remove();
+
+            },1200);
+
+        },i*120);
+
+    }
+
+}
+
+/*=========================================================
+BLOOD MOON CURSE
+=========================================================*/
+
+function bloodMoonCurse(){
+
+    document.body.classList.add("bloodMoon");
+
+    cameraShake(25,1000);
+
+    PLAYER.spirit-=20;
+
+    PLAYER.spirit=Math.max(
+
+        PLAYER.spirit,
+
+        0
+
+    );
+
+    showNotification("Blood Moon Curse!");
+
+    setTimeout(()=>{
+
+        document.body.classList.remove(
+
+            "bloodMoon"
+
+        );
+
+    },5000);
+
+}
+/*=========================================================
+PART 4.0A
+DYNAMIC WEATHER ENGINE
+=========================================================*/
+
+const WEATHER = {
+
+    rain:true,
+
+    fog:true,
+
+    lightning:true,
+
+    wind:true,
+
+    intensity:1,
+
+    lightningDelay:0,
+
+    windAngle:0
+
+};
+
+/*=========================================================
+START
+=========================================================*/
+
+function startWeather(){
+
+    startRain();
+
+    startFog();
+
+    startWind();
+
+    scheduleLightning();
+
+}
+
+/*=========================================================
+RAIN
+=========================================================*/
+
+function startRain(){
+
+    const rainLayer=document.getElementById("rainLayer");
+
+    for(let i=0;i<300;i++){
+
+        const drop=document.createElement("div");
+
+        drop.className="rainDrop";
+
+        drop.style.left=Math.random()*100+"%";
+
+        drop.style.animationDelay=
+
+            Math.random()*2+"s";
+
+        drop.style.animationDuration=
+
+            (0.6+Math.random())+"s";
+
+        rainLayer.appendChild(drop);
+
+    }
+
+}
+
+/*=========================================================
+FOG
+=========================================================*/
+
+function startFog(){
+
+    const fog=document.getElementById("fog");
+
+    let x=0;
+
+    setInterval(()=>{
+
+        x+=0.15;
+
+        fog.style.backgroundPosition=
+
+            x+"px 0";
+
+    },16);
+
+}
+
+/*=========================================================
+WIND
+=========================================================*/
+
+function startWind(){
+
+    setInterval(()=>{
+
+        WEATHER.windAngle+=0.2;
+
+        document.documentElement.style.setProperty(
+
+            "--wind",
+
+            Math.sin(
+
+                WEATHER.windAngle
+
+            )*6+"deg"
+
+        );
+
+    },16);
+
+}
+
+/*=========================================================
+LIGHTNING
+=========================================================*/
+
+function scheduleLightning(){
+
+    const delay=
+
+        4000+
+
+        Math.random()*6000;
+
+    setTimeout(()=>{
+
+        lightningStrike();
+
+        scheduleLightning();
+
+    },delay);
+
+}
+
+function lightningStrike(){
+
+    lightning.classList.add("flash");
+
+    cameraShake(12,250);
+
+    thunder.currentTime=0;
+
+    thunder.play();
+
+    setTimeout(()=>{
+
+        lightning.classList.remove("flash");
+
+    },220);
+
+}
+/*=========================================================
+PART 4.0B
+AMBIENT WORLD SYSTEM
+=========================================================*/
+
+const AMBIENT = {
+
+    bats:30,
+
+    eyes:18,
+
+    spiders:10,
+
+    leaves:45
+
+};
+
+/*=========================================================
+INITIALIZE
+=========================================================*/
+
+function initializeAmbientWorld(){
+
+    createBats();
+
+    createEyes();
+
+    createSpiders();
+
+    createLeaves();
+
+}
+
+/*=========================================================
+BATS
+=========================================================*/
+
+function createBats(){
+
+    const layer=document.getElementById("particleLayer");
+
+    for(let i=0;i<AMBIENT.bats;i++){
+
+        const bat=document.createElement("div");
+
+        bat.className="ambientBat";
+
+        bat.style.left=Math.random()*5000+"px";
+        bat.style.top=Math.random()*1200+"px";
+
+        bat.style.animationDelay=
+            Math.random()*8+"s";
+
+        bat.style.animationDuration=
+            (8+Math.random()*6)+"s";
+
+        layer.appendChild(bat);
+
+    }
+
+}
+
+/*=========================================================
+GLOWING EYES
+=========================================================*/
+
+function createEyes(){
+
+    const forest=document.getElementById("treeLayer");
+
+    for(let i=0;i<AMBIENT.eyes;i++){
+
+        const eye=document.createElement("div");
+
+        eye.className="glowingEyes";
+
+        eye.style.left=Math.random()*5000+"px";
+        eye.style.top=(300+Math.random()*700)+"px";
+
+        eye.style.animationDelay=
+            Math.random()*6+"s";
+
+        forest.appendChild(eye);
+
+    }
+
+}
+
+/*=========================================================
+SPIDERS
+=========================================================*/
+
+function createSpiders(){
+
+    const layer=document.getElementById("graveLayer");
+
+    for(let i=0;i<AMBIENT.spiders;i++){
+
+        const spider=document.createElement("div");
+
+        spider.className="spider";
+
+        spider.style.left=Math.random()*4800+"px";
+        spider.style.top=(200+Math.random()*900)+"px";
+
+        spider.style.animationDelay=
+            Math.random()*10+"s";
+
+        layer.appendChild(spider);
+
+    }
+
+}
+
+/*=========================================================
+LEAVES
+=========================================================*/
+
+function createLeaves(){
+
+    const layer=document.getElementById("particleLayer");
+
+    for(let i=0;i<AMBIENT.leaves;i++){
+
+        const leaf=document.createElement("div");
+
+        leaf.className="deadLeaf";
+
+        leaf.style.left=Math.random()*5000+"px";
+        leaf.style.top=Math.random()*1000+"px";
+
+        leaf.style.animationDelay=
+            Math.random()*5+"s";
+
+        layer.appendChild(leaf);
+
+    }
+
+}
+
+/*=========================================================
+FOG PARTICLES
+=========================================================*/
+
+function createFogParticle(x,y){
+
+    const fog=document.createElement("div");
+
+    fog.className="fogParticle";
+
+    fog.style.left=x+"px";
+    fog.style.top=y+"px";
+
+    gameWorld.appendChild(fog);
+
+    setTimeout(()=>{
+
+        fog.remove();
+
+    },10000);
+
+}
+
+setInterval(()=>{
+
+    createFogParticle(
+
+        CAMERA.x-150,
+
+        Math.random()*1200
+
+    );
+
+},900);
+
+/*=========================================================
+AMBIENT AUDIO
+=========================================================*/
+
+function playAmbientSound(){
+
+    const sounds=[
+
+        "crow",
+
+        "wolf",
+
+        "wind",
+
+        "whisper"
+
+    ];
+
+    const sound=
+
+        sounds[
+
+            Math.floor(
+
+                Math.random()*sounds.length
+
+            )
+
+        ];
+
+    playSound(sound);
+
+}
+
+setInterval(
+
+    playAmbientSound,
+
+    12000
+
+);
+
+/*=========================================================
+RANDOM SHADOW
+=========================================================*/
+
+function randomShadow(){
+
+    const shadow=document.createElement("div");
+
+    shadow.className="shadowFigure";
+
+    shadow.style.left=
+
+        PLAYER.x+
+
+        (Math.random()*900-450)+"px";
+
+    shadow.style.top=
+
+        PLAYER.y+
+
+        (Math.random()*500-250)+"px";
+
+    gameWorld.appendChild(shadow);
+
+    setTimeout(()=>{
+
+        shadow.remove();
+
+    },2500);
+
+}
+
+setInterval(()=>{
+
+    if(Math.random()<0.35){
+
+        randomShadow();
+
+    }
+
+},18000);
+/*=========================================================
+PART 4.0D
+FINAL GAME SYSTEM
+=========================================================*/
+
+const ENGINE = {
+
+    fps:60,
+
+    lastTime:0,
+
+    delta:0,
+
+    frame:0,
+
+    autoSaveTimer:0,
+
+    weatherTimer:0
+
+};
+
+/*=========================================================
+AUTO SAVE
+=========================================================*/
+
+function autoSave(){
+
+    const saveData={
+
+        player:{
+
+            x:PLAYER.x,
+            y:PLAYER.y,
+            health:PLAYER.health,
+            spirit:PLAYER.spirit
+
+        },
+
+        boss:{
+
+            health:BOSS.health,
+            phase:BOSS.phase,
+            defeated:BOSS.defeated
+
+        },
+
+        game:{
+
+            score:GAME.score,
+            kills:GAME.kills,
+            lanterns:GAME.lanterns,
+            checkpoint:GAME.checkpoint||0
+
+        }
+
+    };
+
+    localStorage.setItem(
+
+        "vidlyra_day5_save",
+
+        JSON.stringify(saveData)
+
+    );
+
+}
+
+/*=========================================================
+LOAD SAVE
+=========================================================*/
+
+function loadSave(){
+
+    const data=
+
+        localStorage.getItem(
+
+            "vidlyra_day5_save"
+
+        );
+
+    if(!data) return;
+
+    const save=JSON.parse(data);
+
+    PLAYER.x=save.player.x;
+    PLAYER.y=save.player.y;
+
+    PLAYER.health=save.player.health;
+    PLAYER.spirit=save.player.spirit;
+
+    GAME.score=save.game.score;
+    GAME.kills=save.game.kills;
+
+    BOSS.health=save.boss.health;
+    BOSS.phase=save.boss.phase;
+    BOSS.defeated=save.boss.defeated;
+
+}
+
+/*=========================================================
+CHECKPOINT
+=========================================================*/
+
+function createCheckpoint(x,y){
+
+    GAME.checkpoint={x,y};
+
+    showNotification("Checkpoint Reached");
+
+    autoSave();
+
+}
+
+/*=========================================================
+RESPAWN
+=========================================================*/
+
+function respawnPlayer(){
+
+    if(!GAME.checkpoint) return;
+
+    PLAYER.x=GAME.checkpoint.x;
+    PLAYER.y=GAME.checkpoint.y;
+
+    PLAYER.health=100;
+    PLAYER.spirit=100;
+
+    GAME.running=true;
+    GAME.gameOver=false;
+
+    gameOverScreen.style.display="none";
+
+}
+
+/*=========================================================
+PERFORMANCE
+=========================================================*/
+
+function optimizePerformance(){
+
+    if(!GAME.mobile) return;
+
+    WEATHER.intensity=0.6;
+
+    document
+        .querySelectorAll(".ambientBat")
+        .forEach((bat,index)=>{
+
+            if(index>15){
+
+                bat.remove();
+
+            }
+
+        });
+
+    document
+        .querySelectorAll(".deadLeaf")
+        .forEach((leaf,index)=>{
+
+            if(index>20){
+
+                leaf.remove();
+
+            }
+
+        });
+
+}
+
+/*=========================================================
+FPS COUNTER
+=========================================================*/
+
+function updateFPS(delta){
+
+    ENGINE.frame++;
+
+    ENGINE.delta+=delta;
+
+    if(ENGINE.delta>=1000){
+
+        ENGINE.fps=ENGINE.frame;
+
+        ENGINE.frame=0;
+
+        ENGINE.delta=0;
+
+    }
+
+}
+
+/*=========================================================
+GAME LOOP
+=========================================================*/
+
+function gameLoop(time){
+
+    const delta=
+
+        time-
+
+        ENGINE.lastTime;
+
+    ENGINE.lastTime=time;
+
+    if(GAME.running){
+
+        updatePlayerSystem(delta);
+
+        updateEnemySystem(delta);
+
+        updateAdvancedGhosts();
+
+        updateBoss();
+
+        updateBossSkills(delta);
+
+        updateCinematicEffects();
+
+        cameraLoop();
+
+    }
+
+    ENGINE.autoSaveTimer+=delta;
+
+    if(ENGINE.autoSaveTimer>30000){
+
+        ENGINE.autoSaveTimer=0;
+
+        autoSave();
+
+    }
+
+    updateFPS(delta);
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+/*=========================================================
+INITIALIZE
+=========================================================*/
+
+function initializeGame(){
+
+    loadSave();
+
+    optimizePerformance();
+
+    initializeGhostTypes();
+
+    initializeAmbientWorld();
+
+    startWeather();
+
+    ENGINE.lastTime=performance.now();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+/*=========================================================
+START
+=========================================================*/
+
+window.addEventListener("load",()=>{
+
+    initializeGame();
+
+});
