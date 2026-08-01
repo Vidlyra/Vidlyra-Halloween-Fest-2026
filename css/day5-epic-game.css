@@ -1713,6 +1713,36 @@ animation:lanternVanish .55s cubic-bezier(.2,.8,.3,1) forwards;
 100%{opacity:0;transform:scale(.15) rotate(20deg);filter:brightness(3) drop-shadow(0 0 0 transparent);}
 }
 
+/*======================================================
+PART 10
+BOSS HIT FEEDBACK + DAY 6 PORTAL
+(FIX: the Ghost King never reacted visually when hit, and #day6Portal had
+no positioning/visibility logic anywhere, so it could never be seen or
+entered. See activatePortal() / updatePortalProximity() in the JS.)
+======================================================*/
+
+#ghostKingSprite.hit{
+animation:bossHitFlash .18s ease-out;
+}
+
+@keyframes bossHitFlash{
+0%{filter:brightness(3) drop-shadow(0 0 50px #fff);}
+100%{filter:drop-shadow(0 0 40px crimson);}
+}
+
+#day6Portal{
+position:absolute;
+}
+
+#day6Portal.inRange #portalGlow{
+animation:portalGlow .9s infinite;
+}
+
+#day6Portal.inRange #portalText{
+color:#ffe9a8;
+text-shadow:0 0 18px #ffcf66;
+}
+
 .lanternSparkle{
 position:absolute;
 width:6px;
