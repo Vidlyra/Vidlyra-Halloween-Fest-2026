@@ -97,6 +97,10 @@ const activeLanternsLabel = $("#activeLanterns");
 const bossIntroScreen = $("#bossIntroScreen");
 const bossWarning     = $("#bossWarning");
 
+const ghostKingSprite = $("#ghostKingSprite");
+const day6Portal      = $("#day6Portal");
+const portalSound     = $("#portalSound");
+
 const lightningLayer = $("#lightningLayer");
 
 const miniPlayerEl = $("#miniPlayer");
@@ -133,7 +137,13 @@ const CONFIG = {
     // ring that lights up as a visual hint, and the actual pickup radius.
     // Both are generous so lanterns never feel finicky to collect.
     LANTERN_HINT_RADIUS: 220,
-    LANTERN_PICKUP_RADIUS: 130
+    LANTERN_PICKUP_RADIUS: 130,
+    // FIX: the Day 6 portal existed in the HTML/CSS (#day6Portal) but was
+    // never positioned, shown, or wired to anything. It now appears where
+    // the Ghost King fell once the boss is defeated.
+    PORTAL_HINT_RADIUS: 220,
+    PORTAL_ENTER_RADIUS: 90,
+    NEXT_LEVEL_URL: "day6-video.html"
 };
 
 /*=========================================================
@@ -892,7 +902,12 @@ INTERACT
 
 function tryInteract() {
     const nearLantern = LANTERNS.find(l => !l.lit && Math.hypot(PLAYER.x - l.x, PLAYER.y - l.y) < CONFIG.LANTERN_HINT_RADIUS);
-    if (nearLantern) lightLantern(nearLantern);
+    if (nearLantern) { lightLantern(nearLantern); return; }
+
+    if (PORTAL.active && !PORTAL.entered) {
+        const dist = Math.hypot(PLAYER.x - PORTAL.x, PLAYER.y - PORTAL.y);
+        if (dist <= CONFIG.PORTAL_HINT_RADIUS) goToDay6();
+    }
 }
 
 /*=========================================================
@@ -1001,10 +1016,20 @@ function damageBossIfInRange() {
 
     cameraShake(6, 120);
 
+    // FIX: the boss had no visual feedback when hit at all - the sprite
+    // never reacted, so hits on the Ghost King were invisible/felt fake.
+    if (ghostKingSprite) {
+        ghostKingSprite.classList.remove("hit");
+        void ghostKingSprite.offsetWidth;
+        ghostKingSprite.classList.add("hit");
+    }
+
     if (BOSS.phase === 1 && BOSS.health < 650) {
         BOSS.phase = 2;
         BOSS.speed += 0.6;
         BOSS.damage += 4;
+        BOSS.attackCooldown = 1500;
+        if (bossHealthFill) bossHealthFill.style.background = "linear-gradient(90deg,#c40000,#ff6a00)";
         showNotification("The Ghost King grows stronger!");
     }
     if (BOSS.phase === 2 && BOSS.health < 300) {
@@ -1012,6 +1037,8 @@ function damageBossIfInRange() {
         BOSS.speed += 0.6;
         BOSS.damage += 6;
         BOSS.attackCooldown = 1100;
+        if (bossHealthFill) bossHealthFill.style.background = "linear-gradient(90deg,#8b00ff,#ff2f6c)";
+        cameraShake(16, 400);
         showNotification("RAGE MODE!");
     }
 
@@ -1025,9 +1052,93 @@ function bossDefeated() {
     BOSS.active = false;
 
     if (mission3) mission3.style.textDecoration = "line-through";
-    if (bossEl) bossEl.style.opacity = "0";
 
-    winGame();
+    cameraShake(24, 700);
+    safePlay(bossRoarSound);
+
+    if (bossEl) {
+        bossEl.style.transition = "opacity .8s ease, transform .8s ease";
+        bossEl.style.opacity = "0";
+        bossEl.style.transform = (bossEl.style.transform || "") + " translateY(-40px)";
+        setTimeout(() => { bossEl.style.display = "none"; }, 800);
+    }
+    if (bossHUD) bossHUD.style.display = "none";
+
+    showNotification("The Ghost King has fallen!");
+
+    // Pace this out so the player actually sees the boss fall, then the
+    // portal open, before the victory screen covers everything - instead
+    // of all three happening in the same instant.
+    setTimeout(() => activatePortal(BOSS.x, BOSS.y), 700);
+    setTimeout(() => winGame(), 1600);
+}
+
+/*=========================================================
+DAY 6 PORTAL
+(FIX: #day6Portal had markup + CSS animations from the start, but no JS
+ever positioned it, made it visible, or gave it a click/proximity handler,
+so it was permanently invisible and there was no way to progress. Now it
+opens where the Ghost King fell, glows, and can be entered either by
+walking up to it or by clicking/tapping it.)
+=========================================================*/
+
+const PORTAL = { active: false, entered: false, x: 0, y: 0 };
+
+function activatePortal(x, y) {
+    if (PORTAL.active) return;
+
+    PORTAL.active = true;
+    PORTAL.x = x;
+    PORTAL.y = y;
+
+    if (day6Portal) {
+        day6Portal.style.left = x + "px";
+        day6Portal.style.top = y + "px";
+        day6Portal.style.transform = "translate(-50%,-60%) scale(.4)";
+        day6Portal.style.opacity = "0";
+        day6Portal.style.display = "flex";
+        day6Portal.style.transition = "opacity .6s ease, transform .6s ease";
+
+        requestAnimationFrame(() => {
+            day6Portal.style.opacity = "1";
+            day6Portal.style.transform = "translate(-50%,-60%) scale(1)";
+        });
+    }
+
+    safePlay(portalSound);
+    showNotification("A portal to Day 6 has opened!");
+}
+
+function goToDay6() {
+    if (PORTAL.entered) return;
+    PORTAL.entered = true;
+
+    safePlay(portalSound);
+    if (day6Portal) day6Portal.style.opacity = "0";
+
+    // Small delay so the portal sound/visual actually registers before
+    // navigating away.
+    setTimeout(() => { window.location.href = CONFIG.NEXT_LEVEL_URL; }, 350);
+}
+
+on(day6Portal, "click", goToDay6);
+on(day6Portal, "touchstart", (e) => { e.preventDefault(); goToDay6(); });
+
+function updatePortalProximity() {
+    if (!PORTAL.active || PORTAL.entered) return;
+
+    const dist = Math.hypot(PLAYER.x - PORTAL.x, PLAYER.y - PORTAL.y);
+
+    if (day6Portal) {
+        day6Portal.classList.toggle("inRange", dist <= CONFIG.PORTAL_HINT_RADIUS);
+    }
+    if (interactionPrompt && dist <= CONFIG.PORTAL_HINT_RADIUS) {
+        interactionPrompt.style.display = "flex";
+    }
+
+    if (dist <= CONFIG.PORTAL_ENTER_RADIUS) {
+        goToDay6();
+    }
 }
 
 /*=========================================================
@@ -1208,7 +1319,10 @@ function winGame() {
 
 on(retryGameButton, "click", () => window.location.reload());
 on(quitEventButton, "click", () => window.location.reload());
-on(continueButton, "click", () => { showNotification("Day 6 coming soon!"); });
+// FIX: previously just showed a "coming soon" toast and went nowhere.
+// The victory screen now actually hands off to day6-video.html, same as
+// walking into the in-world portal.
+on(continueButton, "click", () => { window.location.href = CONFIG.NEXT_LEVEL_URL; });
 
 /*=========================================================
 GAME LOOP
@@ -1228,6 +1342,7 @@ function gameLoop(time) {
         updateGhostAI(delta);
         updateBoss(delta);
         updateLanternProximity();
+        updatePortalProximity();
         updateCamera();
         renderPlayer();
         updateMiniMap();
