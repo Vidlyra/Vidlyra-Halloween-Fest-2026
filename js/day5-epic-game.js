@@ -3610,29 +3610,342 @@ function winGame() {
 
 
 /*=========================================================
-DAY 6 CONTINUE BUTTON
+VIDLYRA HALLOWEEN FEST 2026
+DAY 5 → DAY 6 TRANSITION
 =========================================================*/
 
-on(
-    continueButton,
-    "click",
-    (e) => {
+const NEXT_LEVEL_URL = "day6-video.html";
 
+const PORTAL = {
+    active: false,
+    entered: false,
+    x: 0,
+    y: 0
+};
+
+/*=========================================================
+GO TO DAY 6
+=========================================================*/
+
+function goToDay6() {
+    if (PORTAL.entered) return;
+
+    PORTAL.entered = true;
+
+    GAME.running = false;
+    GAME.paused = false;
+
+    // Play portal sound if available
+    safePlay(portalSound);
+
+    // Hide portal
+    if (day6Portal) {
+        day6Portal.style.pointerEvents = "none";
+        day6Portal.style.transition = "opacity .5s ease, transform .5s ease";
+        day6Portal.style.opacity = "0";
+        day6Portal.style.transform =
+            "translate(-50%, -60%) scale(1.8)";
+    }
+
+    // Small cinematic delay before loading Day 6
+    setTimeout(() => {
+        window.location.assign(NEXT_LEVEL_URL);
+    }, 600);
+}
+
+/*=========================================================
+CREATE DAY 6 PORTAL
+=========================================================*/
+
+function activatePortal(x, y) {
+
+    if (PORTAL.active) return;
+
+    PORTAL.active = true;
+    PORTAL.entered = false;
+
+    PORTAL.x = x;
+    PORTAL.y = y;
+
+    if (!day6Portal) return;
+
+    day6Portal.style.display = "flex";
+    day6Portal.style.position = "absolute";
+
+    day6Portal.style.left = x + "px";
+    day6Portal.style.top = y + "px";
+
+    day6Portal.style.opacity = "0";
+    day6Portal.style.pointerEvents = "auto";
+
+    day6Portal.style.transform =
+        "translate(-50%, -60%) scale(.2)";
+
+    day6Portal.style.transition =
+        "opacity .8s ease, transform .8s ease";
+
+    requestAnimationFrame(() => {
+
+        requestAnimationFrame(() => {
+
+            day6Portal.style.opacity = "1";
+
+            day6Portal.style.transform =
+                "translate(-50%, -60%) scale(1)";
+
+        });
+
+    });
+
+    safePlay(portalSound);
+
+    showNotification("PORTAL TO DAY 6 HAS OPENED!");
+
+    setTimeout(() => {
+        showNotification("ENTER THE PORTAL...");
+    }, 1200);
+}
+
+/*=========================================================
+PORTAL CLICK
+=========================================================*/
+
+if (day6Portal) {
+
+    day6Portal.addEventListener("click", (e) => {
         e.preventDefault();
-
         e.stopPropagation();
 
-        /*
-           IMPORTANT:
-           This is the main Day 5 → Day 6
-           transition.
-        */
+        goToDay6();
+    });
+
+    day6Portal.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        goToDay6();
+    }, {
+        passive: false
+    });
+}
+
+/*=========================================================
+PORTAL PROXIMITY
+=========================================================*/
+
+function updatePortalProximity() {
+
+    if (!PORTAL.active || PORTAL.entered) return;
+
+    const distance = Math.hypot(
+        PLAYER.x - PORTAL.x,
+        PLAYER.y - PORTAL.y
+    );
+
+    if (day6Portal) {
+
+        if (distance <= CONFIG.PORTAL_HINT_RADIUS) {
+            day6Portal.classList.add("inRange");
+
+            if (interactionPrompt) {
+                interactionPrompt.style.display = "flex";
+                interactionPrompt.textContent =
+                    "ENTER PORTAL → DAY 6";
+            }
+
+        } else {
+
+            day6Portal.classList.remove("inRange");
+
+            if (interactionPrompt) {
+                interactionPrompt.style.display = "none";
+            }
+        }
+    }
+
+    /*
+     * Automatically enter the portal when the player
+     * gets close enough.
+     */
+    if (distance <= CONFIG.PORTAL_ENTER_RADIUS) {
+        goToDay6();
+    }
+}
+
+/*=========================================================
+INTERACT BUTTON / KEY F
+=========================================================*/
+
+function tryInteract() {
+
+    if (!GAME.running || GAME.paused) return;
+
+    /* Lantern interaction */
+    const nearbyLantern = LANTERNS.find((lantern) => {
+
+        if (lantern.lit) return false;
+
+        const distance = Math.hypot(
+            PLAYER.x - lantern.x,
+            PLAYER.y - lantern.y
+        );
+
+        return distance <= CONFIG.LANTERN_HINT_RADIUS;
+    });
+
+    if (nearbyLantern) {
+        lightLantern(nearbyLantern);
+        return;
+    }
+
+    /* Day 6 portal interaction */
+    if (PORTAL.active && !PORTAL.entered) {
+
+        const distance = Math.hypot(
+            PLAYER.x - PORTAL.x,
+            PLAYER.y - PORTAL.y
+        );
+
+        if (distance <= CONFIG.PORTAL_HINT_RADIUS) {
+            goToDay6();
+        }
+    }
+}
+
+/*=========================================================
+GHOST KING DEFEATED
+=========================================================*/
+
+function bossDefeated() {
+
+    if (BOSS.defeated) return;
+
+    BOSS.defeated = true;
+    BOSS.active = false;
+
+    if (mission3) {
+        mission3.style.textDecoration = "line-through";
+    }
+
+    cameraShake(24, 700);
+
+    safePlay(bossRoarSound);
+
+    /* Hide Ghost King */
+    if (bossEl) {
+
+        bossEl.style.transition =
+            "opacity .8s ease, transform .8s ease";
+
+        bossEl.style.opacity = "0";
+
+        bossEl.style.transform =
+            "translateY(-50px) scale(1.2)";
+
+        setTimeout(() => {
+
+            bossEl.style.display = "none";
+
+        }, 800);
+    }
+
+    /* Hide boss HUD */
+    if (bossHUD) {
+        bossHUD.style.display = "none";
+    }
+
+    showNotification("THE GHOST KING HAS FALLEN!");
+
+    /*
+     * Open Day 6 portal after the boss defeat.
+     */
+    setTimeout(() => {
+
+        activatePortal(
+            BOSS.x,
+            BOSS.y
+        );
+
+    }, 1000);
+
+    /*
+     * Show victory screen after the portal opens.
+     */
+    setTimeout(() => {
+
+        winGame();
+
+    }, 2200);
+}
+
+/*=========================================================
+VICTORY SCREEN
+=========================================================*/
+
+function winGame() {
+
+    if (GAME.victory) return;
+
+    GAME.victory = true;
+    GAME.running = false;
+
+    safePlay(victorySound);
+
+    if (victoryScreen) {
+
+        victoryScreen.style.display = "flex";
+        victoryScreen.style.opacity = "0";
+
+        victoryScreen.style.transition =
+            "opacity .6s ease";
+
+        requestAnimationFrame(() => {
+            victoryScreen.style.opacity = "1";
+        });
+    }
+}
+
+/*=========================================================
+CONTINUE → DAY 6 VIDEO
+=========================================================*/
+
+if (continueButton) {
+
+    continueButton.addEventListener("click", (e) => {
+
+        e.preventDefault();
+        e.stopPropagation();
 
         goToDay6();
 
-    }
-);
+    });
+}
 
+/*=========================================================
+RETRY
+=========================================================*/
+
+if (retryGameButton) {
+
+    retryGameButton.addEventListener("click", () => {
+
+        window.location.reload();
+
+    });
+}
+
+/*=========================================================
+QUIT
+=========================================================*/
+
+if (quitEventButton) {
+
+    quitEventButton.addEventListener("click", () => {
+
+        window.location.href = "index.html";
+
+    });
+}
 
 /*=========================================================
 RETRY / QUIT
