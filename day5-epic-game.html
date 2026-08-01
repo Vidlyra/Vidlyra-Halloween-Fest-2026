@@ -1,2159 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-<meta
-name="theme-color"
-content="#050505">
-
-<meta
-name="description"
-content="VIDLYRA HALLOWEEN FEST 2026 - DAY 5 - THE HAUNTED CEMETERY">
-
-<meta
-name="apple-mobile-web-app-capable"
-content="yes">
-
-<meta
-name="mobile-web-app-capable"
-content="yes">
-
-<meta
-name="apple-mobile-web-app-status-bar-style"
-content="black-translucent">
-
-<meta
-name="format-detection"
-content="telephone=no">
-
-<title>
-
-VIDLYRA HALLOWEEN FEST 2026
-DAY 5
-THE HAUNTED CEMETERY
-
-</title>
-
-<!-- ==========================================
-FONT
-========================================== -->
-
-<link
-rel="preconnect"
-href="https://fonts.googleapis.com">
-
-<link
-rel="preconnect"
-href="https://fonts.gstatic.com"
-crossorigin>
-
-<link
-href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
-rel="stylesheet">
-
-<!-- ==========================================
-CSS
-========================================== -->
-
-<link
-rel="stylesheet"
-href="css/day5-epic-game.css">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<meta name="description" content="VIDLYRA HALLOWEEN FEST 2026 - DAY 5 - THE HAUNTED CEMETERY">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<title>VIDLYRA HALLOWEEN FEST 2026 - DAY 5 - THE HAUNTED CEMETERY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/day5-epic-game.css">
 </head>
-
 <body>
-
-<!-- ==========================================
-LOADING SCREEN
-========================================== -->
-
 <div id="loadingScreen">
-
-    <div class="loadingBackground"></div>
-
-    <div class="loadingFog"></div>
-
-    <div class="loadingContent">
-
-        <img
-        id="loadingLogo"
-        src="assets/images/vidlyra-logo.png"
-        alt="Vidlyra Logo">
-
-        <h1>
-
-            VIDLYRA HALLOWEEN FEST 2026
-
-        </h1>
-
-        <h2>
-
-            DAY 5
-
-        </h2>
-
-        <h3>
-
-            THE HAUNTED CEMETERY
-
-        </h3>
-
-        <p id="loadingMessage">
-
-            Entering the cursed cemetery...
-
-        </p>
-
-        <div class="loadingBar">
-
-            <div id="loadingFill"></div>
-
-        </div>
-
-        <div id="loadingPercent">
-
-            0%
-
-        </div>
-
-    </div>
-
+  <div class="loadingBackground"></div>
+  <div class="loadingFog"></div>
+  <div class="loadingContent">
+    <img id="loadingLogo" src="assets/images/vidlyra-logo.png" alt="Vidlyra Logo">
+    <h1>VIDLYRA HALLOWEEN FEST 2026</h1>
+    <h2>DAY 5</h2>
+    <h3>THE HAUNTED CEMETERY</h3>
+    <p id="loadingMessage">Entering the cursed cemetery...</p>
+    <div class="loadingBar"><div id="loadingFill"></div></div>
+    <div id="loadingPercent">0%</div>
+  </div>
 </div>
-
-<!-- ==========================================
-GAME ROOT
-========================================== -->
-
 <div id="gameRoot">
-
-<!-- ==========================================
-GAME CAMERA
-========================================== -->
-
 <div id="camera">
-
-<!-- ==========================================
-WORLD
-========================================== -->
-
 <div id="gameWorld">
-
-<!-- ==========================================
-SKY
-========================================== -->
-
 <div id="skyLayer"></div>
-
-<!-- ==========================================
-MOON
-========================================== -->
-
-<div id="moonLayer">
-
-    <img
-    src="assets/images/blood-moon.png"
-    alt="Blood Moon">
-
-</div>
-
-<!-- ==========================================
-STARS
-========================================== -->
-
+<div id="moonLayer"><img src="assets/images/blood-moon.png" alt="Blood Moon"></div>
 <div id="starLayer"></div>
-
-<!-- ==========================================
-CLOUDS
-========================================== -->
-
 <div id="cloudLayer"></div>
-
-<!-- ==========================================
-LIGHTNING
-========================================== -->
-
 <div id="lightningLayer"></div>
-
-<!-- ==========================================
-RAIN
-========================================== -->
-
 <canvas id="rainCanvas"></canvas>
-
-<!-- ==========================================
-FOG
-========================================== -->
-
 <div id="fogBack"></div>
-
 <div id="fogMiddle"></div>
-
 <div id="fogFront"></div>
-
-<!-- ==========================================
-PARTICLES
-========================================== -->
-
 <div id="particleLayer"></div>
-
-<!-- ==========================================
-BACKGROUND
-========================================== -->
-
-<div id="cemeteryBackground">
-
-    <img
-    src="assets/images/day5/background.png"
-    alt="Haunted Cemetery">
-
-</div>
-
-<!-- ==========================================
-CASTLE
-========================================== -->
-
-<div id="castleLayer">
-
-    <img
-    src="assets/images/castle.png"
-    alt="Castle">
-
-</div>
-
-<!-- ==========================================
-TREES
-========================================== -->
-
-<div id="treeLayer">
-
-    <img
-    src="assets/images/day5/Dead Tree.png"
-    alt="Trees">
-
-</div>
-
-<!-- ==========================================
-GRAVES
-========================================== -->
-
-<div id="graveLayer">
-
-    <img
-    src="assets/images/day5/grave.png"
-    alt="Graves">
-
-</div>
-
-<!-- ==========================================
-GROUND
-========================================== -->
-
-<div id="groundLayer">
-
-    <img
-    src="assets/ground.png"
-    alt="Ground">
-
-</div>
-
-<!-- ==========================================
-OBJECT LAYER
-(All gameplay objects go here)
-========================================== -->
-
+<div id="cemeteryBackground"><img src="assets/images/day5/background.png" alt="Haunted Cemetery"></div>
+<div id="castleLayer"><img src="assets/images/castle.png" alt="Castle"></div>
+<div id="treeLayer"><img src="assets/images/day5/Dead Tree.png" alt="Trees"></div>
+<div id="graveLayer"><img src="assets/images/day5/grave.png" alt="Graves"></div>
+<div id="groundLayer"><img src="assets/ground.png" alt="Ground"></div>
 <div id="objectLayer">
-<!-- =====================================================
-PLAYER
-===================================================== -->
-
 <div id="playerContainer">
-
-    <div id="playerShadow"></div>
-
-    <div id="player">
-
-        <img
-        id="playerSprite"
-        src="assets/images/day5/Player (Day 5 Outfit).png"
-        alt="Hero">
-
-    </div>
-
-    <!-- Sword -->
-
-    <div id="playerSword">
-
-        <img
-        src="assets/images/sword.png"
-        alt="Sword">
-
-    </div>
-
-    <!-- Dash Effect -->
-
-    <div id="dashTrail"></div>
-
-    <!-- Attack Effect -->
-
-    <div id="slashEffect"></div>
-
+  <div id="playerShadow"></div>
+  <div id="player"><img id="playerSprite" src="assets/images/day5/Player (Day 5 Outfit).png" alt="Hero"></div>
+  <div id="playerSword"><img src="assets/images/sword.png" alt="Sword"></div>
+  <div id="dashTrail"></div>
+  <div id="slashEffect"></div>
 </div>
-
-<!-- =====================================================
-CAMERA TARGET
-===================================================== -->
-
 <div id="cameraTarget"></div>
-
-<!-- =====================================================
-HEAD UP DISPLAY
-===================================================== -->
-
 <div id="hud">
-
-    <!-- Health -->
-
-    <div class="hudCard">
-
-        <div class="hudTitle">
-
-            HEALTH
-
-        </div>
-
-        <div class="hudBar">
-
-            <div id="healthFill"></div>
-
-        </div>
-
-        <div id="healthText">
-
-            100 / 100
-
-        </div>
-
-    </div>
-
-    <!-- Spirit -->
-
-    <div class="hudCard">
-
-        <div class="hudTitle">
-
-            SPIRIT
-
-        </div>
-
-        <div class="hudBar">
-
-            <div id="spiritFill"></div>
-
-        </div>
-
-        <div id="spiritText">
-
-            100 / 100
-
-        </div>
-
-    </div>
-
-    <!-- Lantern -->
-
-    <div class="hudCard">
-
-        <div class="hudTitle">
-
-            SPIRIT LANTERNS
-
-        </div>
-
-        <div id="lanternCounter">
-
-            0 / 7
-
-        </div>
-
-    </div>
-
-    <!-- Score -->
-
-    <div class="hudCard">
-
-        <div class="hudTitle">
-
-            SCORE
-
-        </div>
-
-        <div id="scoreCounter">
-
-            000000
-
-        </div>
-
-    </div>
-
+  <div class="hudCard"><div class="hudTitle">HEALTH</div><div class="hudBar"><div id="healthFill"></div></div><div id="healthText">100 / 100</div></div>
+  <div class="hudCard"><div class="hudTitle">SPIRIT</div><div class="hudBar"><div id="spiritFill"></div></div><div id="spiritText">100 / 100</div></div>
+  <div class="hudCard"><div class="hudTitle">SPIRIT LANTERNS</div><div id="lanternCounter">0 / 7</div></div>
+  <div class="hudCard"><div class="hudTitle">SCORE</div><div id="scoreCounter">000000</div></div>
 </div>
-
-<!-- =====================================================
-MISSION PANEL
-===================================================== -->
-
-<div id="missionPanel">
-
-    <h2>
-
-        OBJECTIVES
-
-    </h2>
-
-    <ul>
-
-        <li id="mission1">
-
-            Restore all 7 Spirit Lanterns
-
-        </li>
-
-        <li id="mission2">
-
-            Defeat every Cemetery Ghost
-
-        </li>
-
-        <li id="mission3">
-
-            Defeat the Ghost King
-
-        </li>
-
-    </ul>
-
-</div>
-
-<!-- =====================================================
-MISSION POPUP
-===================================================== -->
-
-<div id="missionPopup">
-
-    <h2>
-
-        DAY 5
-
-    </h2>
-
-    <p>
-
-        Restore the Spirit Lanterns to weaken the Ghost King's power.
-
-    </p>
-
-</div>
-
-<!-- =====================================================
-BOSS HUD
-===================================================== -->
-
+<div id="missionPanel"><h2>OBJECTIVES</h2><ul>
+  <li id="mission1">Restore all 7 Spirit Lanterns</li>
+  <li id="mission2">Defeat every Cemetery Ghost</li>
+  <li id="mission3">Defeat the Ghost King</li>
+</ul></div>
+<div id="missionPopup"><h2>DAY 5</h2><p>Restore the Spirit Lanterns to weaken the Ghost King's power.</p></div>
 <div id="bossHUD">
-
-    <div id="bossName">
-
-        GHOST KING
-
-    </div>
-
-    <div id="bossHealthBar">
-
-        <div id="bossHealthFill"></div>
-
-    </div>
-
+  <div id="bossName">GHOST KING</div>
+  <div id="bossHealthBar"><div id="bossHealthFill"></div></div>
 </div>
-
-<!-- =====================================================
-NOTIFICATIONS
-===================================================== -->
-
 <div id="notificationContainer"></div>
-
-<!-- =====================================================
-INTERACTION PROMPT
-===================================================== -->
-
-<div id="interactionPrompt">
-
-    <span>
-
-        PRESS
-
-    </span>
-
-    <kbd>SPACE</kbd>
-
-    <span>
-
-        TO INTERACT
-
-    </span>
-
-</div>
-
-<!-- =====================================================
-PLAYER LEVEL
-===================================================== -->
-
-<div id="playerLevelBox">
-
-    <div class="levelTitle">
-
-        LEVEL
-
-    </div>
-
-    <div id="playerLevel">
-
-        05
-
-    </div>
-
-</div>
-
-<!-- =====================================================
-PLAYER EXPERIENCE
-===================================================== -->
-
-<div id="xpBar">
-
-    <div id="xpFill"></div>
-
-</div>
-
-<!-- =====================================================
-CURRENT OBJECTIVE
-===================================================== -->
-
-<div id="objectiveTracker">
-
-    Restore Spirit Lanterns
-
-</div>
-
-<!-- =====================================================
-GAME TIMER
-===================================================== -->
-
-<div id="gameTimer">
-
-    00:00
-
-</div>
-
-<!-- =====================================================
-FPS COUNTER
-(Developer Mode)
-===================================================== -->
-
-<div id="fpsCounter">
-
-    FPS: 60
-
-</div>
-
-<!-- =====================================================
-ENEMY LAYER
-===================================================== -->
-
+<div id="interactionPrompt"><span>PRESS</span><kbd>SPACE</kbd><span>TO INTERACT</span></div>
+<div id="playerLevelBox"><div class="levelTitle">LEVEL</div><div id="playerLevel">05</div></div>
+<div id="xpBar"><div id="xpFill"></div></div>
+<div id="objectiveTracker">Restore Spirit Lanterns</div>
+<div id="gameTimer">00:00</div>
+<div id="fpsCounter">FPS: 60</div>
 <div id="enemyLayer">
-<!-- =====================================================
-GHOST ENEMIES
-===================================================== -->
-
-<div class="ghost" id="ghost1">
-    <img src="assets/images/day5/Ghost.png" alt="Ghost">
-    <div class="enemyHealth">
-        <div class="enemyHealthFill"></div>
-    </div>
+<div class="ghost" id="ghost1"><img src="assets/images/day5/Ghost.png" alt="Ghost"><div class="enemyHealth"><div class="enemyHealthFill"></div></div></div>
+<div class="ghost" id="ghost2"><img src="assets/images/day5/Ghost.png" alt="Ghost"><div class="enemyHealth"><div class="enemyHealthFill"></div></div></div>
+<div class="ghost" id="ghost3"><img src="assets/images/day5/Ghost.png" alt="Ghost"><div class="enemyHealth"><div class="enemyHealthFill"></div></div></div>
+<div class="ghost" id="ghost4"><img src="assets/images/day5/Ghost.png" alt="Ghost"><div class="enemyHealth"><div class="enemyHealthFill"></div></div></div>
+<div class="ghost" id="ghost5"><img src="assets/images/day5/Ghost.png" alt="Ghost"><div class="enemyHealth"><div class="enemyHealthFill"></div></div></div>
+<div class="ghost" id="ghost6"><img src="assets/images/day5/Ghost.png" alt="Ghost"><div class="enemyHealth"><div class="enemyHealthFill"></div></div></div>
+<div class="ghost" id="ghost7"><img src="assets/images/day5/Ghost.png" alt="Ghost"><div class="enemyHealth"><div class="enemyHealthFill"></div></div></div>
+<div class="ghost" id="ghost8"><img src="assets/images/day5/Ghost.png" alt="Ghost"><div class="enemyHealth"><div class="enemyHealthFill"></div></div></div>
+<div class="ghost" id="ghost9"><img src="assets/images/day5/Ghost.png" alt="Ghost"><div class="enemyHealth"><div class="enemyHealthFill"></div></div></div>
+<div class="ghost" id="ghost10"><img src="assets/images/day5/Ghost.png" alt="Ghost"><div class="enemyHealth"><div class="enemyHealthFill"></div></div></div>
+<div id="ghostKing"><img id="ghostKingSprite" src="assets/images/day5/Ghost King (Boss).png" alt="Ghost King"><div id="bossAura"></div><div id="bossShadow"></div></div>
 </div>
-
-<div class="ghost" id="ghost2">
-    <img src="assets/images/day5/Ghost.png" alt="Ghost">
-    <div class="enemyHealth">
-        <div class="enemyHealthFill"></div>
-    </div>
-</div>
-
-<div class="ghost" id="ghost3">
-    <img src="assets/images/day5/Ghost.png" alt="Ghost">
-    <div class="enemyHealth">
-        <div class="enemyHealthFill"></div>
-    </div>
-</div>
-
-<div class="ghost" id="ghost4">
-    <img src="assets/images/day5/Ghost.png" alt="Ghost">
-    <div class="enemyHealth">
-        <div class="enemyHealthFill"></div>
-    </div>
-</div>
-
-<div class="ghost" id="ghost5">
-    <img src="assets/images/day5/Ghost.png" alt="Ghost">
-    <div class="enemyHealth">
-        <div class="enemyHealthFill"></div>
-    </div>
-</div>
-
-<div class="ghost" id="ghost6">
-    <img src="assets/images/day5/Ghost.png" alt="Ghost">
-    <div class="enemyHealth">
-        <div class="enemyHealthFill"></div>
-    </div>
-</div>
-
-<div class="ghost" id="ghost7">
-    <img src="assets/images/day5/Ghost.png" alt="Ghost">
-    <div class="enemyHealth">
-        <div class="enemyHealthFill"></div>
-    </div>
-</div>
-
-<div class="ghost" id="ghost8">
-    <img src="assets/images/day5/Ghost.png" alt="Ghost">
-    <div class="enemyHealth">
-        <div class="enemyHealthFill"></div>
-    </div>
-</div>
-
-<div class="ghost" id="ghost9">
-    <img src="assets/images/day5/Ghost.png" alt="Ghost">
-    <div class="enemyHealth">
-        <div class="enemyHealthFill"></div>
-    </div>
-</div>
-
-<div class="ghost" id="ghost10">
-    <img src="assets/images/day5/Ghost.png" alt="Ghost">
-    <div class="enemyHealth">
-        <div class="enemyHealthFill"></div>
-    </div>
-</div>
-
-<!-- =====================================================
-GHOST KING
-===================================================== -->
-
-<div id="ghostKing">
-
-    <img
-    id="ghostKingSprite"
-    src="assets/images/day5/Ghost King (Boss).png"
-    alt="Ghost King">
-
-    <div id="bossAura"></div>
-
-    <div id="bossShadow"></div>
-
-</div>
-
-</div>
-<!-- END enemyLayer -->
-
-<!-- =====================================================
-SPIRIT LANTERNS
-===================================================== -->
-
 <div id="lanternLayer">
-
-    <div class="lantern" id="lantern1">
-        <div class="lanternGlow"></div>
-        <img src="assets/images/day5/Spirit Lantern.png" alt="">
-    </div>
-
-    <div class="lantern" id="lantern2">
-        <div class="lanternGlow"></div>
-        <img src="assets/images/day5/Spirit Lantern.png" alt="">
-    </div>
-
-    <div class="lantern" id="lantern3">
-        <div class="lanternGlow"></div>
-        <img src="assets/images/day5/Spirit Lantern.png" alt="">
-    </div>
-
-    <div class="lantern" id="lantern4">
-        <div class="lanternGlow"></div>
-        <img src="assets/images/day5/Spirit Lantern.png" alt="">
-    </div>
-
-    <div class="lantern" id="lantern5">
-        <div class="lanternGlow"></div>
-        <img src="assets/images/day5/Spirit Lantern.png" alt="">
-    </div>
-
-    <div class="lantern" id="lantern6">
-        <div class="lanternGlow"></div>
-        <img src="assets/images/day5/Spirit Lantern.png" alt="">
-    </div>
-
-    <div class="lantern" id="lantern7">
-        <div class="lanternGlow"></div>
-        <img src="assets/images/day5/Spirit Lantern.png" alt="">
-    </div>
-
+<div class="lantern" id="lantern1"><div class="lanternGlow"></div><img src="assets/images/day5/Spirit Lantern.png" alt=""></div>
+<div class="lantern" id="lantern2"><div class="lanternGlow"></div><img src="assets/images/day5/Spirit Lantern.png" alt=""></div>
+<div class="lantern" id="lantern3"><div class="lanternGlow"></div><img src="assets/images/day5/Spirit Lantern.png" alt=""></div>
+<div class="lantern" id="lantern4"><div class="lanternGlow"></div><img src="assets/images/day5/Spirit Lantern.png" alt=""></div>
+<div class="lantern" id="lantern5"><div class="lanternGlow"></div><img src="assets/images/day5/Spirit Lantern.png" alt=""></div>
+<div class="lantern" id="lantern6"><div class="lanternGlow"></div><img src="assets/images/day5/Spirit Lantern.png" alt=""></div>
+<div class="lantern" id="lantern7"><div class="lanternGlow"></div><img src="assets/images/day5/Spirit Lantern.png" alt=""></div>
 </div>
-
-<!-- =====================================================
-INTERACTIVE OBJECTS
-===================================================== -->
-
-<div id="objectLayer">
-
-    <div class="grave" id="grave1"></div>
-    <div class="grave" id="grave2"></div>
-    <div class="grave" id="grave3"></div>
-    <div class="grave" id="grave4"></div>
-    <div class="grave" id="grave5"></div>
-    <div class="grave" id="grave6"></div>
-
-    <div class="deadTree" id="deadTree1"></div>
-    <div class="deadTree" id="deadTree2"></div>
-    <div class="deadTree" id="deadTree3"></div>
-
-    <div class="rock" id="rock1"></div>
-    <div class="rock" id="rock2"></div>
-
-    <div class="skull" id="skull1"></div>
-    <div class="skull" id="skull2"></div>
-
-    <div class="candle" id="candle1"></div>
-    <div class="candle" id="candle2"></div>
-    <div class="candle" id="candle3"></div>
-
-    <div id="hiddenChest">
-
-        <img
-        src="assets/images/chest.png"
-        alt="Treasure Chest">
-
-    </div>
-
+<div id="decorLayer">
+<div class="grave" id="grave1"></div><div class="grave" id="grave2"></div><div class="grave" id="grave3"></div>
+<div class="grave" id="grave4"></div><div class="grave" id="grave5"></div><div class="grave" id="grave6"></div>
+<div class="deadTree" id="deadTree1"></div><div class="deadTree" id="deadTree2"></div><div class="deadTree" id="deadTree3"></div>
+<div class="rock" id="rock1"></div><div class="rock" id="rock2"></div>
+<div class="skull" id="skull1"></div><div class="skull" id="skull2"></div>
+<div class="candle" id="candle1"></div><div class="candle" id="candle2"></div><div class="candle" id="candle3"></div>
+<div id="hiddenChest"><img src="assets/images/chest.png" alt="Treasure Chest"></div>
 </div>
-
-<!-- =====================================================
-DECORATIVE EFFECTS
-===================================================== -->
-
 <div id="batLayer"></div>
-
 <div id="crowLayer"></div>
-
 <div id="fireflyLayer"></div>
-
 <div id="spiritParticleLayer"></div>
-<!-- =====================================================
-INVENTORY PANEL
-===================================================== -->
-
 <div id="inventoryPanel">
-
-    <div class="panelHeader">
-
-        <h2>
-
-            INVENTORY
-
-        </h2>
-
-        <button id="closeInventory">
-
-            ✕
-
-        </button>
-
-    </div>
-
-    <div id="inventoryGrid">
-
-        <div class="inventorySlot" id="slot1"></div>
-        <div class="inventorySlot" id="slot2"></div>
-        <div class="inventorySlot" id="slot3"></div>
-        <div class="inventorySlot" id="slot4"></div>
-
-        <div class="inventorySlot" id="slot5"></div>
-        <div class="inventorySlot" id="slot6"></div>
-        <div class="inventorySlot" id="slot7"></div>
-        <div class="inventorySlot" id="slot8"></div>
-
-        <div class="inventorySlot" id="slot9"></div>
-        <div class="inventorySlot" id="slot10"></div>
-        <div class="inventorySlot" id="slot11"></div>
-        <div class="inventorySlot" id="slot12"></div>
-
-    </div>
-
+  <div class="panelHeader"><h2>INVENTORY</h2><button id="closeInventory">✕</button></div>
+  <div id="inventoryGrid">
+    <div class="inventorySlot" id="slot1"></div><div class="inventorySlot" id="slot2"></div>
+    <div class="inventorySlot" id="slot3"></div><div class="inventorySlot" id="slot4"></div>
+    <div class="inventorySlot" id="slot5"></div><div class="inventorySlot" id="slot6"></div>
+    <div class="inventorySlot" id="slot7"></div><div class="inventorySlot" id="slot8"></div>
+    <div class="inventorySlot" id="slot9"></div><div class="inventorySlot" id="slot10"></div>
+    <div class="inventorySlot" id="slot11"></div><div class="inventorySlot" id="slot12"></div>
+  </div>
 </div>
-
-<!-- =====================================================
-QUEST LOG
-===================================================== -->
-
 <div id="questPanel">
-
-    <div class="panelHeader">
-
-        <h2>
-
-            QUEST LOG
-
-        </h2>
-
-    </div>
-
-    <div class="questItem completed">
-
-        ✓ Enter the Haunted Cemetery
-
-    </div>
-
-    <div class="questItem active">
-
-        ➜ Restore 7 Spirit Lanterns
-
-    </div>
-
-    <div class="questItem">
-
-        ○ Defeat Cemetery Ghosts
-
-    </div>
-
-    <div class="questItem">
-
-        ○ Defeat the Ghost King
-
-    </div>
-
+  <div class="panelHeader"><h2>QUEST LOG</h2></div>
+  <div class="questItem completed">✓ Enter the Haunted Cemetery</div>
+  <div class="questItem active">➜ Restore 7 Spirit Lanterns</div>
+  <div class="questItem">○ Defeat Cemetery Ghosts</div>
+  <div class="questItem">○ Defeat the Ghost King</div>
 </div>
-
-<!-- =====================================================
-DIALOGUE
-===================================================== -->
-
 <div id="dialogueContainer">
-
-    <div id="portrait">
-
-        <img
-        src="assets/images/lyra.png"
-        alt="Lyra">
-
-    </div>
-
-    <div id="dialoguePanel">
-
-        <div id="speakerName">
-
-            LYRA
-
-        </div>
-
-        <div id="dialogueText">
-
-            The cemetery is cursed...
-            Restore every Spirit Lantern
-            before facing the Ghost King.
-
-        </div>
-
-        <button id="nextDialogue">
-
-            NEXT ▶
-
-        </button>
-
-    </div>
-
+  <div id="portrait"><img src="assets/images/lyra.png" alt="Lyra"></div>
+  <div id="dialoguePanel">
+    <div id="speakerName">LYRA</div>
+    <div id="dialogueText">The cemetery is cursed... Restore every Spirit Lantern before facing the Ghost King.</div>
+    <button id="nextDialogue">NEXT ▶</button>
+  </div>
 </div>
-
-<!-- =====================================================
-MINI MAP
-===================================================== -->
-
 <div id="miniMap">
-
-    <div id="miniMapFrame">
-
-        <div id="miniPlayer"></div>
-
-        <div class="miniLantern" id="miniLantern1"></div>
-        <div class="miniLantern" id="miniLantern2"></div>
-        <div class="miniLantern" id="miniLantern3"></div>
-        <div class="miniLantern" id="miniLantern4"></div>
-        <div class="miniLantern" id="miniLantern5"></div>
-        <div class="miniLantern" id="miniLantern6"></div>
-        <div class="miniLantern" id="miniLantern7"></div>
-
-        <div id="miniBoss"></div>
-
-    </div>
-
+  <div id="miniMapFrame">
+    <div id="miniPlayer"></div>
+    <div class="miniLantern" id="miniLantern1"></div><div class="miniLantern" id="miniLantern2"></div>
+    <div class="miniLantern" id="miniLantern3"></div><div class="miniLantern" id="miniLantern4"></div>
+    <div class="miniLantern" id="miniLantern5"></div><div class="miniLantern" id="miniLantern6"></div>
+    <div class="miniLantern" id="miniLantern7"></div>
+    <div id="miniBoss"></div>
+  </div>
 </div>
-
-<!-- =====================================================
-COMPASS
-===================================================== -->
-
-<div id="compass">
-
-    <div id="compassRing"></div>
-
-    <div id="compassNeedle"></div>
-
-    <div id="northLabel">
-
-        N
-
-    </div>
-
-</div>
-
-<!-- =====================================================
-PLAYER STATS
-===================================================== -->
-
+<div id="compass"><div id="compassRing"></div><div id="compassNeedle"></div><div id="northLabel">N</div></div>
 <div id="playerStats">
-
-    <h2>
-
-        HERO STATUS
-
-    </h2>
-
-    <div class="statRow">
-
-        <span>Level</span>
-
-        <span id="statLevel">5</span>
-
-    </div>
-
-    <div class="statRow">
-
-        <span>Attack</span>
-
-        <span id="statAttack">15</span>
-
-    </div>
-
-    <div class="statRow">
-
-        <span>Spirit</span>
-
-        <span id="statSpirit">100</span>
-
-    </div>
-
-    <div class="statRow">
-
-        <span>Ghosts Defeated</span>
-
-        <span id="ghostKillCount">0</span>
-
-    </div>
-
+  <h2>HERO STATUS</h2>
+  <div class="statRow"><span>Level</span><span id="statLevel">5</span></div>
+  <div class="statRow"><span>Attack</span><span id="statAttack">15</span></div>
+  <div class="statRow"><span>Spirit</span><span id="statSpirit">100</span></div>
+  <div class="statRow"><span>Ghosts Defeated</span><span id="ghostKillCount">0</span></div>
 </div>
-
-<!-- =====================================================
-BOSS TRIGGER
-===================================================== -->
-
 <div id="bossTriggerZone"></div>
-
-<!-- =====================================================
-CUTSCENE OVERLAY
-===================================================== -->
-
-<div id="cutsceneOverlay">
-
-    <div id="cutsceneFade"></div>
-
-</div>
-
-<!-- =====================================================
-SAVE INDICATOR
-===================================================== -->
-
-<div id="saveIndicator">
-
-    Game Saved
-
-</div>
-<!-- =====================================================
-PAUSE MENU
-===================================================== -->
-
+<div id="cutsceneOverlay"><div id="cutsceneFade"></div></div>
+<div id="saveIndicator">Game Saved</div>
 <div id="pauseMenu" class="menuOverlay">
-
-    <div class="menuCard">
-
-        <h1>
-
-            GAME PAUSED
-
-        </h1>
-
-        <p>
-
-            Darkness never sleeps...
-
-        </p>
-
-        <button id="resumeButton">
-
-            ▶ RESUME
-
-        </button>
-
-        <button id="restartButton">
-
-            ↻ RESTART
-
-        </button>
-
-        <button id="openSettingsButton">
-
-            ⚙ SETTINGS
-
-        </button>
-
-        <button id="exitGameButton">
-
-            ⌂ EXIT EVENT
-
-        </button>
-
-    </div>
-
+  <div class="menuCard">
+    <h1>GAME PAUSED</h1><p>Darkness never sleeps...</p>
+    <button id="resumeButton">▶ RESUME</button>
+    <button id="restartButton">↻ RESTART</button>
+    <button id="openSettingsButton">⚙ SETTINGS</button>
+    <button id="exitGameButton">⌂ EXIT EVENT</button>
+  </div>
 </div>
-
-<!-- =====================================================
-SETTINGS PANEL
-===================================================== -->
-
 <div id="settingsPanel" class="menuOverlay">
-
-    <div class="menuCard">
-
-        <h2>
-
-            SETTINGS
-
-        </h2>
-
-        <div class="settingRow">
-
-            <label for="musicSlider">
-
-                Music Volume
-
-            </label>
-
-            <input
-            id="musicSlider"
-            type="range"
-            min="0"
-            max="100"
-            value="80">
-
-        </div>
-
-        <div class="settingRow">
-
-            <label for="effectsSlider">
-
-                Effects Volume
-
-            </label>
-
-            <input
-            id="effectsSlider"
-            type="range"
-            min="0"
-            max="100"
-            value="90">
-
-        </div>
-
-        <div class="settingRow">
-
-            <label for="brightnessSlider">
-
-                Brightness
-
-            </label>
-
-            <input
-            id="brightnessSlider"
-            type="range"
-            min="40"
-            max="120"
-            value="100">
-
-        </div>
-
-        <div class="settingRow">
-
-            <label>
-
-                Screen Shake
-
-            </label>
-
-            <input
-            id="screenShakeToggle"
-            type="checkbox"
-            checked>
-
-        </div>
-
-        <div class="settingRow">
-
-            <label>
-
-                Auto Save
-
-            </label>
-
-            <input
-            id="autoSaveToggle"
-            type="checkbox"
-            checked>
-
-        </div>
-
-        <button id="closeSettingsButton">
-
-            CLOSE
-
-        </button>
-
-    </div>
-
+  <div class="menuCard">
+    <h2>SETTINGS</h2>
+    <div class="settingRow"><label for="musicSlider">Music Volume</label><input id="musicSlider" type="range" min="0" max="100" value="80"></div>
+    <div class="settingRow"><label for="effectsSlider">Effects Volume</label><input id="effectsSlider" type="range" min="0" max="100" value="90"></div>
+    <div class="settingRow"><label for="brightnessSlider">Brightness</label><input id="brightnessSlider" type="range" min="40" max="120" value="100"></div>
+    <div class="settingRow"><label>Screen Shake</label><input id="screenShakeToggle" type="checkbox" checked></div>
+    <div class="settingRow"><label>Auto Save</label><input id="autoSaveToggle" type="checkbox" checked></div>
+    <button id="closeSettingsButton">CLOSE</button>
+  </div>
 </div>
-
-<!-- =====================================================
-MOBILE CONTROLS
-===================================================== -->
-
 <div id="mobileControls">
-
-    <!-- LEFT SIDE -->
-
-    <div id="leftControls">
-
-        <div id="joystickBase">
-
-            <div id="joystickStick"></div>
-
-        </div>
-
-    </div>
-
-    <!-- RIGHT SIDE -->
-
-    <div id="rightControls">
-
-        <button
-        id="attackButton"
-        class="gameButton">
-
-            ⚔
-
-        </button>
-
-        <button
-        id="dashButton"
-        class="gameButton">
-
-            💨
-
-        </button>
-
-        <button
-        id="skillButton"
-        class="gameButton">
-
-            ✨
-
-        </button>
-
-        <button
-        id="interactButton"
-        class="gameButton">
-
-            🖐
-
-        </button>
-
-        <button
-        id="pauseButton"
-        class="gameButton">
-
-            ⏸
-
-        </button>
-
-    </div>
-
+  <div id="leftControls"><div id="joystickBase"><div id="joystickStick"></div></div></div>
+  <div id="rightControls">
+    <button id="attackButton" class="gameButton">⚔</button>
+    <button id="dashButton" class="gameButton">💨</button>
+    <button id="skillButton" class="gameButton">✨</button>
+    <button id="interactButton" class="gameButton">🖐</button>
+    <button id="pauseButton" class="gameButton">⏸</button>
+  </div>
 </div>
-
-<!-- =====================================================
-AUDIO CONTROLLER
-===================================================== -->
-
-<div id="audioControls">
-
-    <button id="muteButton">
-
-        🔊
-
-    </button>
-
-</div>
-
-<!-- =====================================================
-FPS / DEBUG
-===================================================== -->
-
+<div id="audioControls"><button id="muteButton">🔊</button></div>
 <div id="debugPanel">
-
-    <div>
-
-        FPS:
-        <span id="fpsValue">
-
-            60
-
-        </span>
-
-    </div>
-
-    <div>
-
-        X:
-        <span id="playerX">
-
-            0
-
-        </span>
-
-    </div>
-
-    <div>
-
-        Y:
-        <span id="playerY">
-
-            0
-
-        </span>
-
-    </div>
-
-    <div>
-
-        Ghosts:
-        <span id="aliveGhosts">
-
-            10
-
-        </span>
-
-    </div>
-
-    <div>
-
-        Lanterns:
-        <span id="activeLanterns">
-
-            0
-
-        </span>
-
-    </div>
-
+  <div>FPS: <span id="fpsValue">60</span></div>
+  <div>X: <span id="playerX">0</span></div>
+  <div>Y: <span id="playerY">0</span></div>
+  <div>Ghosts: <span id="aliveGhosts">10</span></div>
+  <div>Lanterns: <span id="activeLanterns">0</span></div>
 </div>
-
-<!-- =====================================================
-TOUCH BLOCKER
-===================================================== -->
-
 <div id="touchBlocker"></div>
-<!-- =====================================================
-BOSS INTRO CINEMATIC
-===================================================== -->
-
 <div id="bossIntroScreen" class="cinematicScreen">
-
-    <div class="cinematicBackground"></div>
-
-    <div class="cinematicFlash"></div>
-
-    <div class="bossRevealContainer">
-
-        <img
-        id="bossRevealImage"
-        src="assets/images/day5/Ghost King (Boss).png"
-        alt="Ghost King">
-
-        <h1 id="bossRevealTitle">
-
-            GHOST KING
-
-        </h1>
-
-        <h2 id="bossRevealSubtitle">
-
-            Ruler of the Haunted Cemetery
-
-        </h2>
-
-        <p id="bossRevealQuote">
-
-            "Every soul belongs to the darkness..."
-
-        </p>
-
-    </div>
-
+  <div class="cinematicBackground"></div><div class="cinematicFlash"></div>
+  <div class="bossRevealContainer">
+    <img id="bossRevealImage" src="assets/images/day5/Ghost King (Boss).png" alt="Ghost King">
+    <h1 id="bossRevealTitle">GHOST KING</h1>
+    <h2 id="bossRevealSubtitle">Ruler of the Haunted Cemetery</h2>
+    <p id="bossRevealQuote">"Every soul belongs to the darkness..."</p>
+  </div>
 </div>
-
-<!-- =====================================================
-VICTORY SCREEN
-===================================================== -->
-
 <div id="victoryScreen" class="gameOverlay">
-
-    <div class="overlayCard">
-
-        <div class="victoryIcon">
-
-            🏆
-
-        </div>
-
-        <h1>
-
-            DAY 5 COMPLETE
-
-        </h1>
-
-        <h2>
-
-            THE HAUNTED CEMETERY
-            HAS BEEN PURIFIED
-
-        </h2>
-
-        <div class="rewardGrid">
-
-            <div class="rewardItem">
-
-                ⭐ +5000 XP
-
-            </div>
-
-            <div class="rewardItem">
-
-                🏮 Lantern Master
-
-            </div>
-
-            <div class="rewardItem">
-
-                💎 Spirit Crystal ×100
-
-            </div>
-
-            <div class="rewardItem">
-
-                🔓 DAY 6 UNLOCKED
-
-            </div>
-
-        </div>
-
-        <button id="continueButton">
-
-            CONTINUE
-
-        </button>
-
+  <div class="overlayCard">
+    <div class="victoryIcon">🏆</div><h1>DAY 5 COMPLETE</h1><h2>THE HAUNTED CEMETERY HAS BEEN PURIFIED</h2>
+    <div class="rewardGrid">
+      <div class="rewardItem">⭐ +5000 XP</div><div class="rewardItem">🏮 Lantern Master</div>
+      <div class="rewardItem">💎 Spirit Crystal ×100</div><div class="rewardItem">🔓 DAY 6 UNLOCKED</div>
     </div>
-
+    <button id="continueButton">CONTINUE</button>
+  </div>
 </div>
-
-<!-- =====================================================
-GAME OVER
-===================================================== -->
-
 <div id="gameOverScreen" class="gameOverlay">
-
-    <div class="overlayCard">
-
-        <div class="gameOverIcon">
-
-            ☠
-
-        </div>
-
-        <h1>
-
-            GAME OVER
-
-        </h1>
-
-        <p>
-
-            Darkness has consumed the cemetery.
-
-        </p>
-
-        <button id="retryGameButton">
-
-            RETRY
-
-        </button>
-
-        <button id="quitEventButton">
-
-            EXIT
-
-        </button>
-
-    </div>
-
+  <div class="overlayCard">
+    <div class="gameOverIcon">☠</div><h1>GAME OVER</h1><p>Darkness has consumed the cemetery.</p>
+    <button id="retryGameButton">RETRY</button>
+    <button id="quitEventButton">EXIT</button>
+  </div>
 </div>
-
-<!-- =====================================================
-DAY 6 PORTAL
-===================================================== -->
-
-<div id="day6Portal">
-
-    <div id="portalGlow"></div>
-
-    <img
-    id="portalImage"
-    src="assets/images/day5/Portal.png"
-    alt="Day 6 Portal">
-
-    <div id="portalText">
-
-        Enter Day 6
-
-    </div>
-
-</div>
-
-<!-- =====================================================
-LEVEL COMPLETE BANNER
-===================================================== -->
-
-<div id="levelCompleteBanner">
-
-    <span>
-
-        THE CURSE HAS BEEN BROKEN
-
-    </span>
-
-</div>
-
-<!-- =====================================================
-SCREEN EFFECTS
-===================================================== -->
-
-<div id="screenFlash"></div>
-
-<div id="screenDarkness"></div>
-
-<div id="vignetteEffect"></div>
-
-<div id="damageOverlay"></div>
-
-<div id="healOverlay"></div>
-
-<div id="lightningOverlay"></div>
-
-<!-- =====================================================
-NOTIFICATION POPUP
-===================================================== -->
-
-<div id="popupNotification">
-
-    <div id="popupIcon"></div>
-
-    <div id="popupMessage">
-
-        Objective Updated
-
-    </div>
-
-</div>
-
-<!-- =====================================================
-BOSS WARNING
-===================================================== -->
-
-<div id="bossWarning">
-
-    <h1>
-
-        ⚠ WARNING ⚠
-
-    </h1>
-
-    <h2>
-
-        THE GHOST KING HAS AWAKENED
-
-    </h2>
-
-</div>
-<!-- =====================================================
-AMBIENT EFFECT LAYERS
-===================================================== -->
-
+<div id="day6Portal"><div id="portalGlow"></div><img id="portalImage" src="assets/images/day5/Portal.png" alt="Day 6 Portal"><div id="portalText">Enter Day 6</div></div>
+<div id="levelCompleteBanner"><span>THE CURSE HAS BEEN BROKEN</span></div>
+<div id="screenFlash"></div><div id="screenDarkness"></div><div id="vignetteEffect"></div>
+<div id="damageOverlay"></div><div id="healOverlay"></div><div id="lightningOverlay"></div>
+<div id="popupNotification"><div id="popupIcon"></div><div id="popupMessage">Objective Updated</div></div>
+<div id="bossWarning"><h1>⚠ WARNING ⚠</h1><h2>THE GHOST KING HAS AWAKENED</h2></div>
 <div id="ambientEffects">
-
-    <!-- Flying Bats -->
-
-    <div id="batLayer"></div>
-
-    <!-- Flying Crows -->
-
-    <div id="crowLayer"></div>
-
-    <!-- Fireflies -->
-
-    <div id="fireflyLayer"></div>
-
-    <!-- Floating Spirits -->
-
-    <div id="spiritLayer"></div>
-
-    <!-- Falling Leaves -->
-
-    <div id="leafLayer"></div>
-
-    <!-- Mist -->
-
-    <div id="mistLayer"></div>
-
+  <div id="spiritLayer"></div><div id="leafLayer"></div><div id="mistLayer"></div>
 </div>
-
-<!-- =====================================================
-GLOWING EYES
-===================================================== -->
-
 <div id="glowingEyesLayer">
-
-    <div class="eyePair" id="eyes1"></div>
-
-    <div class="eyePair" id="eyes2"></div>
-
-    <div class="eyePair" id="eyes3"></div>
-
-    <div class="eyePair" id="eyes4"></div>
-
+  <div class="eyePair" id="eyes1"></div><div class="eyePair" id="eyes2"></div>
+  <div class="eyePair" id="eyes3"></div><div class="eyePair" id="eyes4"></div>
 </div>
-
-<!-- =====================================================
-SCREEN PARTICLES
-===================================================== -->
-
 <canvas id="particleCanvas"></canvas>
-
-<!-- =====================================================
-RAIN
-===================================================== -->
-
 <canvas id="rainCanvasFront"></canvas>
-
-<!-- =====================================================
-LIGHTNING FLASH
-===================================================== -->
-
 <div id="lightningFlash"></div>
-
-<!-- =====================================================
-SCREEN SHAKE
-===================================================== -->
-
 <div id="screenShakeContainer"></div>
-
-<!-- =====================================================
-ENDING CUTSCENE
-===================================================== -->
-
 <div id="endingCutscene" class="cinematicScreen">
-
-    <video
-        id="endingVideo"
-        preload="auto"
-        playsinline>
-
-        <source
-            src="assets/video/ending.mp4"
-            type="video/mp4">
-
-    </video>
-
-    <div id="endingFade"></div>
-
+  <video id="endingVideo" preload="auto" playsinline><source src="assets/video/ending.mp4" type="video/mp4"></video>
+  <div id="endingFade"></div>
 </div>
-
-<!-- =====================================================
-BOSS INTRO VIDEO
-===================================================== -->
-
 <div id="bossVideoContainer" class="cinematicScreen">
-
-    <video
-        id="bossIntroVideo"
-        preload="auto"
-        playsinline>
-
-        <source
-            src="assets/video/boss-intro.mp4"
-            type="video/mp4">
-
-    </video>
-
+  <video id="bossIntroVideo" preload="auto" playsinline><source src="assets/video/boss-intro.mp4" type="video/mp4"></video>
 </div>
-
-<!-- =====================================================
-AUDIO
-===================================================== -->
-
-<audio id="bgMusic" loop preload="auto">
-    <source src="assets/day5-theme.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="ambientWind" loop preload="auto">
-    <source src="assets/wind.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="rainSound" loop preload="auto">
-    <source src="assets/rain.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="ghostWhisper" preload="auto">
-    <source src="assets/ghost-whisper.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="ghostAttack" preload="auto">
-    <source src="assets/ghost-attack.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="lanternLight" preload="auto">
-    <source src="assets/spirit-light.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="swordSlash" preload="auto">
-    <source src="assets/slash.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="heroDash" preload="auto">
-    <source src="assets/dash.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="bossRoar" preload="auto">
-    <source src="assets/boss-roar.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="lightningSound" preload="auto">
-    <source src="assets/lightning.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="victorySound" preload="auto">
-    <source src="assets/victory.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="gameOverSound" preload="auto">
-    <source src="assets/game-over.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="portalSound" preload="auto">
-    <source src="assets/portal.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="buttonClick" preload="auto">
-    <source src="assets/button.mp3" type="audio/mpeg">
-</audio>
-<!-- =====================================================
-ASSET PRELOADER
-(All hidden for smooth gameplay)
-===================================================== -->
-
-<div id="assetPreloader" aria-hidden="true">
-
-    <!-- Player -->
-
-    <img src="assets/images/day5/Player (Day 5 Outfit).png" alt="">
-
-    <img src="assets/images/sword.png" alt="">
-
-    <!-- Enemies -->
-
-    <img src="assets/images/day5/Ghost.png" alt="">
-
-    <img src="assets/images/day5/Ghost King (Boss).png" alt="">
-
-    <!-- World -->
-
-    <img src="assets/images/day5/background.png" alt="">
-
-    <img src="assets/images/castle.png" alt="">
-
-    <img src="assets/images/day5/Dead Tree.png" alt="">
-
-    <img src="assets/images/day5/grave.png" alt="">
-
-    <img src="assets/images/ground.png" alt="">
-
-    <img src="assets/images/day5/Spirit Lantern.png" alt="">
-
-    <img src="assets/images/day5/Portal.png" alt="">
-
-    <img src="assets/images/blood-moon.png" alt="">
-
-</div>
-
-<!-- =====================================================
-GAME STATE
-===================================================== -->
-
-<div id="gameState"
-
-     data-level="5"
-
-     data-health="100"
-
-     data-spirit="100"
-
-     data-score="0"
-
-     data-lanterns="0"
-
-     data-ghosts="10"
-
-     data-boss="locked"
-
-     hidden>
-
-</div>
-
-<!-- =====================================================
-SAVE DATA
-===================================================== -->
-
-<input
-type="hidden"
-id="saveSlot"
-value="day5">
-
-<input
-type="hidden"
-id="saveProgress"
-value="0">
-
-<input
-type="hidden"
-id="checkpoint"
-value="start">
-
-<!-- =====================================================
-EVENT SYSTEM
-===================================================== -->
-
-<div id="eventManager" hidden>
-
-    <div id="eventBossSpawn"></div>
-
-    <div id="eventLanternComplete"></div>
-
-    <div id="eventVictory"></div>
-
-    <div id="eventGameOver"></div>
-
-    <div id="eventPortalOpen"></div>
-
-</div>
-
-<!-- =====================================================
-SPAWN POINTS
-===================================================== -->
-
-<div id="spawnPoints" hidden>
-
-    <div id="playerSpawn"></div>
-
-    <div id="bossSpawn"></div>
-
-    <div id="portalSpawn"></div>
-
-    <div id="lanternSpawn"></div>
-
-</div>
-
-<!-- =====================================================
-DEVELOPER TOOLS
-(Hidden in release builds)
-===================================================== -->
-
-<div id="developerPanel" hidden>
-
-    <button id="spawnBossDev">
-
-        Spawn Boss
-
-    </button>
-
-    <button id="killBossDev">
-
-        Kill Boss
-
-    </button>
-
-    <button id="unlockLanternsDev">
-
-        Restore Lanterns
-
-    </button>
-
-    <button id="winGameDev">
-
-        Instant Victory
-
-    </button>
-
-</div>
-
-<!-- =====================================================
-SYSTEM MESSAGES
-===================================================== -->
-
-<div id="systemMessages">
-
-    <div id="toastMessage"></div>
-
-    <div id="achievementPopup"></div>
-
-    <div id="warningPopup"></div>
-
-</div>
-
-<!-- =====================================================
-TRANSITION LAYER
-===================================================== -->
-
-<div id="transitionLayer">
-
-    <div id="fadeToBlack"></div>
-
-    <div id="fadeFromBlack"></div>
-
-</div>
-
-<!-- =====================================================
-DAY 6 REDIRECT OVERLAY
-===================================================== -->
-
-<div id="day6RedirectScreen">
-
-    <div class="redirectCard">
-
-        <h1>
-
-            DAY 5 COMPLETE
-
-        </h1>
-
-        <p>
-
-            Preparing your journey to...
-
-        </p>
-
-        <h2>
-
-            DAY 6
-
-        </h2>
-
-        <div class="redirectLoader">
-
-            <div id="redirectFill"></div>
-
-        </div>
-
-    </div>
-
-</div>
-<!-- =====================================================
-OBJECT POOL
-(Reused by JavaScript for performance)
-===================================================== -->
-
-<div id="objectPool" hidden>
-
-    <!-- Ghost Template -->
-
-    <template id="ghostTemplate">
-
-        <div class="ghost">
-
-            <img
-            class="ghostSprite"
-            src="assets/images/day5/Ghost.png"
-            alt="Ghost">
-
-            <div class="enemyHealth">
-
-                <div class="enemyHealthFill"></div>
-
-            </div>
-
-        </div>
-
-    </template>
-
-    <!-- Spirit Lantern -->
-
-    <template id="lanternTemplate">
-
-        <div class="lantern">
-
-            <div class="lanternGlow"></div>
-
-            <img
-            src="assets/images/day5/Spirit Lantern.png"
-            alt="Lantern">
-
-        </div>
-
-    </template>
-
-    <!-- Floating Spirit -->
-
-    <template id="spiritTemplate">
-
-        <div class="floatingSpirit"></div>
-
-    </template>
-
-    <!-- Damage Number -->
-
-    <template id="damageTemplate">
-
-        <div class="damageNumber">
-
-            0
-
-        </div>
-
-    </template>
-
-</div>
-
-<!-- =====================================================
-SPECIAL EFFECTS
-===================================================== -->
-
-<div id="effectsLayer">
-
-    <div id="explosionEffect"></div>
-
-    <div id="slashTrailEffect"></div>
-
-    <div id="ghostDeathEffect"></div>
-
-    <div id="bossDeathEffect"></div>
-
-    <div id="portalOpenEffect"></div>
-
-    <div id="lanternLightEffect"></div>
-
-    <div id="magicCircle"></div>
-
-    <div id="shockwaveEffect"></div>
-
-</div>
-
-<!-- =====================================================
-BOSS TRANSFORMATION
-===================================================== -->
-
-<div id="bossTransformation">
-
-    <div id="transformationAura"></div>
-
-    <div id="transformationLightning"></div>
-
-    <div id="transformationFog"></div>
-
-</div>
-
-<!-- =====================================================
-ACCESSIBILITY
-===================================================== -->
-
-<div class="sr-only"
-
-     aria-live="polite"
-
-     id="screenReaderStatus">
-
-</div>
-
-<!-- =====================================================
-LOADING MASK
-===================================================== -->
-
+<audio id="bgMusic" loop preload="auto"><source src="assets/day5-theme.mp3" type="audio/mpeg"></audio>
+<audio id="ambientWind" loop preload="auto"><source src="assets/wind.mp3" type="audio/mpeg"></audio>
+<audio id="rainSound" loop preload="auto"><source src="assets/rain.mp3" type="audio/mpeg"></audio>
+<audio id="ghostWhisper" preload="auto"><source src="assets/ghost-whisper.mp3" type="audio/mpeg"></audio>
+<audio id="ghostAttack" preload="auto"><source src="assets/ghost-attack.mp3" type="audio/mpeg"></audio>
+<audio id="lanternLight" preload="auto"><source src="assets/spirit-light.mp3" type="audio/mpeg"></audio>
+<audio id="swordSlash" preload="auto"><source src="assets/slash.mp3" type="audio/mpeg"></audio>
+<audio id="heroDash" preload="auto"><source src="assets/dash.mp3" type="audio/mpeg"></audio>
+<audio id="bossRoar" preload="auto"><source src="assets/boss-roar.mp3" type="audio/mpeg"></audio>
+<audio id="lightningSound" preload="auto"><source src="assets/lightning.mp3" type="audio/mpeg"></audio>
+<audio id="victorySound" preload="auto"><source src="assets/victory.mp3" type="audio/mpeg"></audio>
+<audio id="gameOverSound" preload="auto"><source src="assets/game-over.mp3" type="audio/mpeg"></audio>
+<audio id="portalSound" preload="auto"><source src="assets/portal.mp3" type="audio/mpeg"></audio>
+<audio id="buttonClick" preload="auto"><source src="assets/button.mp3" type="audio/mpeg"></audio>
+<div id="assetPreloader" aria-hidden="true"></div>
+<div id="gameState" data-level="5" data-health="100" data-spirit="100" data-score="0" data-lanterns="0" data-ghosts="10" data-boss="locked" hidden></div>
+<input type="hidden" id="saveSlot" value="day5">
+<input type="hidden" id="saveProgress" value="0">
+<input type="hidden" id="checkpoint" value="start">
+<div id="eventManager" hidden></div>
+<div id="spawnPoints" hidden></div>
+<div id="developerPanel" hidden></div>
+<div id="systemMessages"></div>
+<div id="transitionLayer"><div id="fadeToBlack"></div><div id="fadeFromBlack"></div></div>
+<div id="day6RedirectScreen"></div>
+<div id="objectPool" hidden></div>
+<div id="effectsLayer"></div>
+<div id="bossTransformation"></div>
+<div class="sr-only" aria-live="polite" id="screenReaderStatus"></div>
 <div id="loadingMask"></div>
-
-<!-- =====================================================
-GAME INITIALIZER
-===================================================== -->
-
-<div id="gameInitializer"
-
-     data-version="1.0.0"
-
-     data-day="5"
-
-     data-event="Vidlyra Halloween Fest 2026"
-
-     hidden>
-
-</div>
-
-<!-- =====================================================
-JAVASCRIPT DATA HOOKS
-===================================================== -->
-
-<div id="runtimeData"
-
-     hidden
-
-     data-player="hero"
-
-     data-boss="ghost-king"
-
-     data-map="haunted-cemetery"
-
-     data-next="day6-video.html">
-
-</div>
-
-<!-- =====================================================
-PERFORMANCE CONTAINERS
-===================================================== -->
-
+<div id="gameInitializer" data-version="1.0.0" data-day="5" hidden></div>
+<div id="runtimeData" hidden data-player="hero" data-boss="ghost-king" data-map="haunted-cemetery" data-next="day6-video.html"></div>
 <div id="dynamicEntityLayer"></div>
-
 <div id="uiEffectLayer"></div>
-
 <div id="animationLayer"></div>
-
 <div id="temporaryObjects"></div>
-
-<!-- =====================================================
-END OF GAME WORLD
-===================================================== -->
-
 </div>
-<!-- /#objectLayer -->
-
 </div>
-<!-- /#gameWorld -->
-
 </div>
-<!-- /#camera -->
-<!-- =====================================================
-JAVASCRIPT
-===================================================== -->
-
 <script defer src="js/day5-epic-game.js"></script>
-
-<!-- =====================================================
-GAME STARTUP
-===================================================== -->
-
-<script>
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    console.log("========================================");
-    console.log("VIDLYRA HALLOWEEN FEST 2026");
-    console.log("DAY 5 - THE HAUNTED CEMETERY");
-    console.log("========================================");
-
-    if (typeof initializeGame === "function") {
-        initializeGame();
-    }
-
-});
-
-</script>
-
-<!-- =====================================================
-OPTIONAL PWA SUPPORT
-===================================================== -->
-
-<script>
-
-if ("serviceWorker" in navigator) {
-
-    window.addEventListener("load", () => {
-
-        navigator.serviceWorker
-            .register("service-worker.js")
-            .then(() => {
-
-                console.log("Service Worker Registered");
-
-            })
-            .catch(() => {
-
-                console.log("Service Worker Not Available");
-
-            });
-
-    });
-
-}
-
-</script>
-
-<!-- =====================================================
-END GAME ROOT
-===================================================== -->
-
-</div>
-<!-- /#gameRoot -->
-
 </body>
-
 </html>
