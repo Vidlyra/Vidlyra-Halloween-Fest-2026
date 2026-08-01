@@ -1053,6 +1053,7 @@ width:8px;
 height:8px;
 border-radius:50%;
 background:#ffd966;
+transition:opacity .3s ease, transform .3s ease;
 }
 
 #miniBoss{
@@ -1086,6 +1087,7 @@ height:34px;
 background:#ff4444;
 transform-origin:bottom;
 border-radius:10px;
+transition:transform .18s ease-out;
 }
 
 #northLabel{
@@ -1670,3 +1672,59 @@ pointer-events:none;
 
 .hidden{display:none !important;}
 .visible{display:block !important;}
+
+/*======================================================
+PART 9
+LANTERN PICKUP FIX
+(FIX: lanterns were only "brightened" on click and stayed on screen
+forever, and clicking required a pixel-perfect hit on a small element,
+which made them feel broken / not collectible, especially on mobile.
+Now: walking near a lantern auto-collects it, a pulsing "in range" ring
+shows up when you're close enough, and on collect the lantern plays a
+bright burst-and-vanish animation before being fully removed.)
+======================================================*/
+
+.lantern{
+will-change:transform,opacity;
+}
+
+.lantern.inRange:not(.collected){
+transform:scale(1.15);
+filter:drop-shadow(0 0 18px #fff4c2);
+}
+
+.lantern.inRange:not(.collected) .lanternGlow{
+animation:lanternGlowFast .6s infinite;
+}
+
+@keyframes lanternGlowFast{
+0%,100%{transform:scale(1.1);opacity:.9;}
+50%{transform:scale(1.4);opacity:1;}
+}
+
+.lantern.collected{
+pointer-events:none;
+animation:lanternVanish .55s cubic-bezier(.2,.8,.3,1) forwards;
+}
+
+@keyframes lanternVanish{
+0%{opacity:1;transform:scale(1) rotate(0deg);filter:brightness(1) drop-shadow(0 0 10px gold);}
+35%{opacity:1;transform:scale(1.5) rotate(8deg);filter:brightness(2.4) drop-shadow(0 0 40px #fff2b0);}
+100%{opacity:0;transform:scale(.15) rotate(20deg);filter:brightness(3) drop-shadow(0 0 0 transparent);}
+}
+
+.lanternSparkle{
+position:absolute;
+width:6px;
+height:6px;
+border-radius:50%;
+background:#ffe9a8;
+box-shadow:0 0 10px 2px #ffdd88;
+pointer-events:none;
+animation:lanternSparkleFly .6s ease-out forwards;
+}
+
+@keyframes lanternSparkleFly{
+0%{opacity:1;transform:translate(0,0) scale(1);}
+100%{opacity:0;transform:translate(var(--sx,0),var(--sy,-60px)) scale(.2);}
+}
