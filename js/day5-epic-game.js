@@ -36,6 +36,8 @@ const loadingMessage = $("#loadingMessage");
 const gameWorld = $("#gameWorld");
 
 const player       = $("#player");
+const slashEffect  = $("#slashEffect");
+const dashTrailEl  = $("#dashTrail");
 
 const healthFill     = $("#healthFill");
 const spiritFill     = $("#spiritFill");
@@ -480,6 +482,27 @@ function updatePlayerHUD() {
 }
 
 /*=========================================================
+VISUAL EFFECT TRIGGERS
+(FIX: #slashEffect and #dashTrail existed in the HTML/CSS but were never
+turned on by any JS. These small helpers restart the CSS "play" animation
+each time they're called so the effects actually show up in combat.)
+=========================================================*/
+
+function triggerSlashEffect() {
+    if (!slashEffect) return;
+    slashEffect.classList.remove("play");
+    void slashEffect.offsetWidth; // force reflow so the animation restarts
+    slashEffect.classList.add("play");
+}
+
+function triggerDashTrail() {
+    if (!dashTrailEl) return;
+    dashTrailEl.classList.remove("play");
+    void dashTrailEl.offsetWidth;
+    dashTrailEl.classList.add("play");
+}
+
+/*=========================================================
 DASH
 =========================================================*/
 
@@ -504,6 +527,7 @@ function startDash() {
     PLAYER.stamina -= 20;
 
     safePlay(heroDashSound);
+    triggerDashTrail();
     if (player) player.classList.add("dash");
 }
 
@@ -543,6 +567,7 @@ function startAttack() {
     ATTACK.combo = (ATTACK.combo % 3) + 1;
 
     safePlay(swordSlashSound);
+    triggerSlashEffect();
 
     if (player) {
         player.classList.remove("attack1", "attack2", "attack3");
