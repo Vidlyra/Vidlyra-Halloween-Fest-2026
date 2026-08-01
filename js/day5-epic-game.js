@@ -3,8 +3,17 @@
 /*=========================================================
 VIDLYRA HALLOWEEN FEST 2026
 DAY 5 - THE HAUNTED CEMETERY
-FIXED COMPLETE BUILD
-DAY 5 → DAY 6 VIDEO
+FULL FIXED BUILD
+
+DAY 5
+  ↓
+DEFEAT GHOST KING
+  ↓
+VICTORY SCREEN
+  ↓
+CONTINUE
+  ↓
+day6-video.html
 =========================================================*/
 
 
@@ -48,8 +57,6 @@ const loadingMessage = $("#loadingMessage");
 const gameWorld = $("#gameWorld");
 
 const player = $("#player");
-const playerContainer = $("#playerContainer");
-
 const slashEffect = $("#slashEffect");
 const dashTrailEl = $("#dashTrail");
 
@@ -129,6 +136,7 @@ const compassNeedle = $("#compassNeedle");
 
 const bgMusic = $("#bgMusic");
 const ambientWind = $("#ambientWind");
+
 const ghostAttackSound = $("#ghostAttack");
 const lanternSound = $("#lanternLight");
 const swordSlashSound = $("#swordSlash");
@@ -144,7 +152,6 @@ CONFIG
 =========================================================*/
 
 const CONFIG = {
-
     PLAYER_SPEED: 6,
     DASH_SPEED: 16,
 
@@ -168,10 +175,7 @@ const CONFIG = {
 
     /*
      * IMPORTANT:
-     * Day 5 redirects to this file.
-     *
-     * If your Day 6 video has another filename,
-     * change ONLY this line.
+     * Day 5 finishes by opening Day 6 video.
      */
     NEXT_LEVEL_URL: "day6-video.html"
 };
@@ -182,7 +186,6 @@ GLOBAL GAME STATE
 =========================================================*/
 
 const GAME = {
-
     running: false,
     paused: false,
     loading: true,
@@ -199,11 +202,10 @@ const GAME = {
 
 
 /*=========================================================
-PLAYER STATE
+PLAYER
 =========================================================*/
 
 const PLAYER = {
-
     x: 500,
     y: 1600,
 
@@ -236,7 +238,6 @@ INPUT
 =========================================================*/
 
 const INPUT = {
-
     left: false,
     right: false,
     up: false,
@@ -249,7 +250,6 @@ JOYSTICK
 =========================================================*/
 
 const JOYSTICK = {
-
     active: false,
 
     startX: 0,
@@ -263,23 +263,20 @@ const JOYSTICK = {
 
 
 /*=========================================================
-AUDIO / EFFECT SETTINGS
+AUDIO / SETTINGS
 =========================================================*/
 
 const AUDIOSETTINGS = {
-
     effects: 0.9,
-
     screenShake: true
 };
 
 
 /*=========================================================
-DAY 6 PORTAL
+DAY 6 PORTAL STATE
 =========================================================*/
 
 const PORTAL = {
-
     active: false,
     entered: false,
 
@@ -292,17 +289,11 @@ const PORTAL = {
 HELPERS
 =========================================================*/
 
-function clamp(v, min, max) {
-
-    return Math.max(
-        min,
-        Math.min(max, v)
-    );
+function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
 }
 
-
 function random(min, max) {
-
     return Math.random() * (max - min) + min;
 }
 
@@ -315,40 +306,27 @@ function detectDevice() {
 
     const touchCapable =
         ("ontouchstart" in window) ||
-        (navigator.maxTouchPoints &&
-         navigator.maxTouchPoints > 0);
+        (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
-    const narrowViewport =
-        window.innerWidth <= 992;
+    const narrowViewport = window.innerWidth <= 992;
 
-    GAME.mobile =
-        touchCapable && narrowViewport;
+    GAME.mobile = touchCapable && narrowViewport;
 
     if (mobileControls) {
-
         mobileControls.style.display =
             GAME.mobile ? "flex" : "none";
     }
 }
 
-
-window.addEventListener(
-    "resize",
-    detectDevice
-);
-
-window.addEventListener(
-    "orientationchange",
-    detectDevice
-);
+window.addEventListener("resize", detectDevice);
+window.addEventListener("orientationchange", detectDevice);
 
 
 /*=========================================================
-LOADING SCREEN
+LOADING
 =========================================================*/
 
 const loadingMessages = [
-
     "Entering the cemetery...",
     "Summoning spirits...",
     "Lighting cursed lanterns...",
@@ -376,24 +354,22 @@ function startLoading() {
         }
 
         if (loadingPercent) {
-
             loadingPercent.textContent =
                 Math.floor(progress) + "%";
         }
 
         if (loadingMessage) {
 
-            const idx =
-                Math.min(
-                    loadingMessages.length - 1,
-                    Math.floor(
-                        (progress / 100) *
-                        loadingMessages.length
-                    )
-                );
+            const index = Math.min(
+                loadingMessages.length - 1,
+                Math.floor(
+                    (progress / 100) *
+                    loadingMessages.length
+                )
+            );
 
             loadingMessage.textContent =
-                loadingMessages[idx];
+                loadingMessages[index];
         }
 
         if (progress >= 100) {
@@ -422,8 +398,7 @@ function finishLoading() {
 
         setTimeout(() => {
 
-            loadingScreen.style.display =
-                "none";
+            loadingScreen.style.display = "none";
 
         }, 500);
     }
@@ -459,124 +434,107 @@ function finishLoading() {
 KEYBOARD INPUT
 =========================================================*/
 
-window.addEventListener(
-    "keydown",
-    (e) => {
+window.addEventListener("keydown", (event) => {
 
-        if (e.repeat) return;
+    if (event.repeat) return;
 
-        switch (e.code) {
+    switch (event.code) {
 
-            case "ArrowLeft":
-            case "KeyA":
+        case "ArrowLeft":
+        case "KeyA":
+            INPUT.left = true;
+            break;
 
-                INPUT.left = true;
-                break;
+        case "ArrowRight":
+        case "KeyD":
+            INPUT.right = true;
+            break;
 
-            case "ArrowRight":
-            case "KeyD":
+        case "ArrowUp":
+        case "KeyW":
+            INPUT.up = true;
+            break;
 
-                INPUT.right = true;
-                break;
+        case "ArrowDown":
+        case "KeyS":
+            INPUT.down = true;
+            break;
 
-            case "ArrowUp":
-            case "KeyW":
+        case "Space":
 
-                INPUT.up = true;
-                break;
+            event.preventDefault();
 
-            case "ArrowDown":
-            case "KeyS":
+            startAttack();
 
-                INPUT.down = true;
-                break;
+            break;
 
-            case "Space":
+        case "ShiftLeft":
+        case "ShiftRight":
 
-                e.preventDefault();
+            startDash();
 
-                startAttack();
+            break;
 
-                break;
+        case "KeyE":
 
-            case "ShiftLeft":
-            case "ShiftRight":
+            castSpiritSkill();
 
-                startDash();
+            break;
 
-                break;
+        case "KeyF":
 
-            case "KeyE":
+            tryInteract();
 
-                castSpiritSkill();
+            break;
 
-                break;
+        case "Escape":
 
-            case "KeyF":
+            togglePause();
 
-                tryInteract();
-
-                break;
-
-            case "Escape":
-
-                togglePause();
-
-                break;
-        }
-
+            break;
     }
-);
+});
 
 
-window.addEventListener(
-    "keyup",
-    (e) => {
+window.addEventListener("keyup", (event) => {
 
-        switch (e.code) {
+    switch (event.code) {
 
-            case "ArrowLeft":
-            case "KeyA":
+        case "ArrowLeft":
+        case "KeyA":
+            INPUT.left = false;
+            break;
 
-                INPUT.left = false;
-                break;
+        case "ArrowRight":
+        case "KeyD":
+            INPUT.right = false;
+            break;
 
-            case "ArrowRight":
-            case "KeyD":
+        case "ArrowUp":
+        case "KeyW":
+            INPUT.up = false;
+            break;
 
-                INPUT.right = false;
-                break;
-
-            case "ArrowUp":
-            case "KeyW":
-
-                INPUT.up = false;
-                break;
-
-            case "ArrowDown":
-            case "KeyS":
-
-                INPUT.down = false;
-                break;
-        }
-
+        case "ArrowDown":
+        case "KeyS":
+            INPUT.down = false;
+            break;
     }
-);
+});
 
 
 /*=========================================================
 MOBILE JOYSTICK
 =========================================================*/
 
-function joystickPointFromEvent(e) {
+function joystickPointFromEvent(event) {
 
     const touch =
-        e.touches ?
-        e.touches[0] :
-        e;
+        event.touches ?
+        event.touches[0] :
+        event;
 
     return {
-
         x: touch.clientX,
         y: touch.clientY
     };
@@ -586,17 +544,17 @@ function joystickPointFromEvent(e) {
 on(
     joystickBase,
     "touchstart",
-    (e) => {
+    (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
 
-        const p =
-            joystickPointFromEvent(e);
+        const point =
+            joystickPointFromEvent(event);
 
         JOYSTICK.active = true;
 
-        JOYSTICK.startX = p.x;
-        JOYSTICK.startY = p.y;
+        JOYSTICK.startX = point.x;
+        JOYSTICK.startY = point.y;
 
     },
     { passive: false }
@@ -606,25 +564,27 @@ on(
 on(
     joystickBase,
     "touchmove",
-    (e) => {
+    (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
 
         if (!JOYSTICK.active) return;
 
-        const p =
-            joystickPointFromEvent(e);
+        const point =
+            joystickPointFromEvent(event);
 
         let dx =
-            p.x - JOYSTICK.startX;
+            point.x -
+            JOYSTICK.startX;
 
         let dy =
-            p.y - JOYSTICK.startY;
+            point.y -
+            JOYSTICK.startY;
 
-        const dist =
+        const distance =
             Math.hypot(dx, dy);
 
-        if (dist > JOYSTICK.radius) {
+        if (distance > JOYSTICK.radius) {
 
             const angle =
                 Math.atan2(dy, dx);
@@ -644,8 +604,7 @@ on(
         if (joystickStick) {
 
             joystickStick.style.transform =
-                `translate(-50%,-50%)
-                 translate(${dx}px, ${dy}px)`;
+                `translate(-50%,-50%) translate(${dx}px, ${dy}px)`;
         }
 
     },
@@ -684,11 +643,12 @@ on(
 on(
     attackButton,
     "touchstart",
-    (e) => {
+    (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
 
         startAttack();
+
     }
 );
 
@@ -696,11 +656,12 @@ on(
 on(
     dashButton,
     "touchstart",
-    (e) => {
+    (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
 
         startDash();
+
     }
 );
 
@@ -708,11 +669,12 @@ on(
 on(
     skillButton,
     "touchstart",
-    (e) => {
+    (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
 
         castSpiritSkill();
+
     }
 );
 
@@ -720,11 +682,12 @@ on(
 on(
     interactButton,
     "touchstart",
-    (e) => {
+    (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
 
         tryInteract();
+
     }
 );
 
@@ -732,11 +695,12 @@ on(
 on(
     pauseButton,
     "touchstart",
-    (e) => {
+    (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
 
         togglePause();
+
     }
 );
 
@@ -775,7 +739,6 @@ on(
         GAME.paused = false;
 
         if (pauseMenu) {
-
             pauseMenu.style.display =
                 "none";
         }
@@ -789,6 +752,7 @@ on(
     () => {
 
         window.location.reload();
+
     }
 );
 
@@ -799,7 +763,6 @@ on(
     () => {
 
         if (settingsPanel) {
-
             settingsPanel.style.display =
                 "flex";
         }
@@ -813,7 +776,6 @@ on(
     () => {
 
         if (settingsPanel) {
-
             settingsPanel.style.display =
                 "none";
         }
@@ -827,6 +789,7 @@ on(
     () => {
 
         window.location.reload();
+
     }
 );
 
@@ -834,12 +797,12 @@ on(
 on(
     musicSlider,
     "input",
-    (e) => {
+    (event) => {
 
         if (bgMusic) {
 
             bgMusic.volume =
-                e.target.value / 100;
+                event.target.value / 100;
         }
     }
 );
@@ -848,10 +811,10 @@ on(
 on(
     effectsSlider,
     "input",
-    (e) => {
+    (event) => {
 
         AUDIOSETTINGS.effects =
-            e.target.value / 100;
+            event.target.value / 100;
     }
 );
 
@@ -859,10 +822,10 @@ on(
 on(
     screenShakeToggle,
     "change",
-    (e) => {
+    (event) => {
 
         AUDIOSETTINGS.screenShake =
-            e.target.checked;
+            event.target.checked;
     }
 );
 
@@ -879,14 +842,10 @@ const CAMERA = {
     targetX: 0,
     targetY: 0,
 
-    smooth:
-        CONFIG.CAMERA_SMOOTH,
+    smooth: CONFIG.CAMERA_SMOOTH,
 
-    width:
-        window.innerWidth,
-
-    height:
-        window.innerHeight
+    width: window.innerWidth,
+    height: window.innerHeight
 };
 
 
@@ -899,6 +858,7 @@ window.addEventListener(
 
         CAMERA.height =
             window.innerHeight;
+
     }
 );
 
@@ -913,19 +873,15 @@ function updateCamera() {
         PLAYER.y -
         CAMERA.height / 2;
 
+
     CAMERA.x +=
-        (
-            CAMERA.targetX -
-            CAMERA.x
-        ) *
+        (CAMERA.targetX - CAMERA.x) *
         CAMERA.smooth;
 
     CAMERA.y +=
-        (
-            CAMERA.targetY -
-            CAMERA.y
-        ) *
+        (CAMERA.targetY - CAMERA.y) *
         CAMERA.smooth;
+
 
     CAMERA.x =
         clamp(
@@ -938,6 +894,7 @@ function updateCamera() {
             )
         );
 
+
     CAMERA.y =
         clamp(
             CAMERA.y,
@@ -949,13 +906,11 @@ function updateCamera() {
             )
         );
 
+
     if (gameWorld) {
 
         gameWorld.style.transform =
-            `translate(
-                ${-CAMERA.x}px,
-                ${-CAMERA.y}px
-            )`;
+            `translate(${-CAMERA.x}px, ${-CAMERA.y}px)`;
     }
 }
 
@@ -975,21 +930,21 @@ function cameraShake(
     const start =
         performance.now();
 
+
     function shake(time) {
 
         const elapsed =
             time - start;
 
+
         if (elapsed >= duration) {
 
             gameWorld.style.transform =
-                `translate(
-                    ${-CAMERA.x}px,
-                    ${-CAMERA.y}px
-                )`;
+                `translate(${-CAMERA.x}px, ${-CAMERA.y}px)`;
 
             return;
         }
+
 
         const offsetX =
             (Math.random() - 0.5) *
@@ -999,14 +954,14 @@ function cameraShake(
             (Math.random() - 0.5) *
             power;
 
+
         gameWorld.style.transform =
-            `translate(
-                ${-CAMERA.x + offsetX}px,
-                ${-CAMERA.y + offsetY}px
-            )`;
+            `translate(${-CAMERA.x + offsetX}px, ${-CAMERA.y + offsetY}px)`;
+
 
         requestAnimationFrame(shake);
     }
+
 
     requestAnimationFrame(shake);
 }
@@ -1020,6 +975,7 @@ function applyMovement() {
 
     PLAYER.velocityX = 0;
     PLAYER.velocityY = 0;
+
 
     if (INPUT.left) {
         PLAYER.velocityX--;
@@ -1037,6 +993,7 @@ function applyMovement() {
         PLAYER.velocityY++;
     }
 
+
     if (JOYSTICK.active) {
 
         PLAYER.velocityX +=
@@ -1048,77 +1005,92 @@ function applyMovement() {
             JOYSTICK.radius;
     }
 
+
     PLAYER.moving =
         PLAYER.velocityX !== 0 ||
         PLAYER.velocityY !== 0;
 
-    if (PLAYER.moving) {
 
-        const len =
-            Math.hypot(
-                PLAYER.velocityX,
-                PLAYER.velocityY
-            );
+    if (!PLAYER.moving) {
 
-        PLAYER.velocityX /= len;
-        PLAYER.velocityY /= len;
-
-        const speed =
-            DASH.active ?
-            DASH.speed :
-            PLAYER.runSpeed;
-
-        PLAYER.x +=
-            PLAYER.velocityX *
-            speed;
-
-        PLAYER.y +=
-            PLAYER.velocityY *
-            speed;
-
-        PLAYER.x =
-            clamp(
-                PLAYER.x,
-                60,
-                CONFIG.WORLD_WIDTH - 60
-            );
-
-        PLAYER.y =
-            clamp(
-                PLAYER.y,
-                60,
-                CONFIG.WORLD_HEIGHT - 60
-            );
-
-        if (PLAYER.velocityX < -0.1) {
-            PLAYER.facing = -1;
+        if (!PLAYER.attacking) {
+            PLAYER.state = "idle";
         }
 
-        if (PLAYER.velocityX > 0.1) {
-            PLAYER.facing = 1;
-        }
-
-        PLAYER.state =
-            DASH.active ?
-            "dash" :
-            "walk";
-
-    } else if (!PLAYER.attacking) {
-
-        PLAYER.state = "idle";
+        return;
     }
+
+
+    const length =
+        Math.hypot(
+            PLAYER.velocityX,
+            PLAYER.velocityY
+        );
+
+
+    PLAYER.velocityX /=
+        length;
+
+    PLAYER.velocityY /=
+        length;
+
+
+    const speed =
+        DASH.active ?
+        DASH.speed :
+        PLAYER.runSpeed;
+
+
+    PLAYER.x +=
+        PLAYER.velocityX *
+        speed;
+
+    PLAYER.y +=
+        PLAYER.velocityY *
+        speed;
+
+
+    PLAYER.x =
+        clamp(
+            PLAYER.x,
+            60,
+            CONFIG.WORLD_WIDTH - 60
+        );
+
+
+    PLAYER.y =
+        clamp(
+            PLAYER.y,
+            60,
+            CONFIG.WORLD_HEIGHT - 60
+        );
+
+
+    if (PLAYER.velocityX < -0.1) {
+        PLAYER.facing = -1;
+    }
+
+    if (PLAYER.velocityX > 0.1) {
+        PLAYER.facing = 1;
+    }
+
+
+    PLAYER.state =
+        DASH.active ?
+        "dash" :
+        "walk";
 }
 
 
 function renderPlayer() {
 
     const container =
-        playerContainer ||
         document.getElementById(
             "playerContainer"
         );
 
     if (!container) return;
+
 
     container.style.left =
         PLAYER.x + "px";
@@ -1126,46 +1098,41 @@ function renderPlayer() {
     container.style.top =
         PLAYER.y + "px";
 
+
     container.style.transform =
-        `translate(-50%,-100%)
-         scaleX(${PLAYER.facing})`;
+        `translate(-50%,-100%) scaleX(${PLAYER.facing})`;
 }
 
 
 function updatePlayerHUD() {
 
     const hp =
-        Math.round(
-            PLAYER.health
-        );
+        Math.round(PLAYER.health);
 
     const sp =
-        Math.round(
-            PLAYER.spirit
-        );
+        Math.round(PLAYER.spirit);
+
 
     if (healthFill) {
-
         healthFill.style.width =
             hp + "%";
     }
 
     if (spiritFill) {
-
         spiritFill.style.width =
             sp + "%";
     }
 
-    if (healthText) {
 
+    if (healthText) {
         healthText.textContent =
             hp +
             " / " +
             PLAYER.maxHealth;
     }
 
-    if (spiritText) {
 
+    if (spiritText) {
         spiritText.textContent =
             sp +
             " / " +
@@ -1182,15 +1149,11 @@ function triggerSlashEffect() {
 
     if (!slashEffect) return;
 
-    slashEffect.classList.remove(
-        "play"
-    );
+    slashEffect.classList.remove("play");
 
     void slashEffect.offsetWidth;
 
-    slashEffect.classList.add(
-        "play"
-    );
+    slashEffect.classList.add("play");
 }
 
 
@@ -1198,15 +1161,11 @@ function triggerDashTrail() {
 
     if (!dashTrailEl) return;
 
-    dashTrailEl.classList.remove(
-        "play"
-    );
+    dashTrailEl.classList.remove("play");
 
     void dashTrailEl.offsetWidth;
 
-    dashTrailEl.classList.add(
-        "play"
-    );
+    dashTrailEl.classList.add("play");
 }
 
 
@@ -1222,8 +1181,7 @@ const DASH = {
 
     cooldown: 700,
 
-    speed:
-        CONFIG.DASH_SPEED,
+    speed: CONFIG.DASH_SPEED,
 
     timer: 0,
 
@@ -1240,6 +1198,7 @@ function startDash() {
         return;
     }
 
+
     if (
         DASH.active ||
         DASH.cooldownTimer > 0
@@ -1247,9 +1206,11 @@ function startDash() {
         return;
     }
 
+
     if (PLAYER.stamina < 20) {
         return;
     }
+
 
     DASH.active = true;
 
@@ -1259,19 +1220,19 @@ function startDash() {
     DASH.cooldownTimer =
         DASH.cooldown;
 
+
     PLAYER.invincible = true;
 
     PLAYER.stamina -= 20;
+
 
     safePlay(heroDashSound);
 
     triggerDashTrail();
 
-    if (player) {
 
-        player.classList.add(
-            "dash"
-        );
+    if (player) {
+        player.classList.add("dash");
     }
 }
 
@@ -1282,11 +1243,18 @@ function updateDash(delta) {
 
         DASH.cooldownTimer -=
             delta;
+
+        if (DASH.cooldownTimer < 0) {
+            DASH.cooldownTimer = 0;
+        }
     }
+
 
     if (!DASH.active) return;
 
+
     DASH.timer -= delta;
+
 
     if (DASH.timer <= 0) {
 
@@ -1294,11 +1262,9 @@ function updateDash(delta) {
 
         PLAYER.invincible = false;
 
-        if (player) {
 
-            player.classList.remove(
-                "dash"
-            );
+        if (player) {
+            player.classList.remove("dash");
         }
     }
 }
@@ -1316,8 +1282,7 @@ const ATTACK = {
 
     duration: 250,
 
-    damage:
-        CONFIG.ATTACK_DAMAGE,
+    damage: CONFIG.ATTACK_DAMAGE,
 
     range: 140
 };
@@ -1332,23 +1297,27 @@ function startAttack() {
         return;
     }
 
+
     if (ATTACK.cooldown) {
         return;
     }
 
+
     ATTACK.cooldown = true;
 
     PLAYER.attacking = true;
+
     PLAYER.state = "attack";
+
 
     ATTACK.combo =
         (ATTACK.combo % 3) + 1;
 
-    safePlay(
-        swordSlashSound
-    );
+
+    safePlay(swordSlashSound);
 
     triggerSlashEffect();
+
 
     if (player) {
 
@@ -1366,29 +1335,24 @@ function startAttack() {
         );
     }
 
+
     damageGhosts();
 
     damageBossIfInRange();
 
-    setTimeout(
-        () => {
 
-            PLAYER.attacking =
-                false;
+    setTimeout(() => {
 
-        },
-        ATTACK.duration
-    );
+        PLAYER.attacking = false;
 
-    setTimeout(
-        () => {
+    }, ATTACK.duration);
 
-            ATTACK.cooldown =
-                false;
 
-        },
-        200
-    );
+    setTimeout(() => {
+
+        ATTACK.cooldown = false;
+
+    }, 200);
 }
 
 
@@ -1397,13 +1361,14 @@ function getSwordHitbox() {
     const box = {
 
         x: PLAYER.x,
+
         y: PLAYER.y,
 
-        width:
-            ATTACK.range,
+        width: ATTACK.range,
 
         height: 160
     };
+
 
     if (PLAYER.facing > 0) {
 
@@ -1415,6 +1380,7 @@ function getSwordHitbox() {
             ATTACK.range + 40;
     }
 
+
     return box;
 }
 
@@ -1422,7 +1388,6 @@ function getSwordHitbox() {
 function rectCollision(a, b) {
 
     return (
-
         a.x <
         b.x + b.width &&
 
@@ -1447,19 +1412,23 @@ const GHOSTS = [];
 
 function initGhosts() {
 
-    const els =
+    const elements =
         $$(".ghost");
 
-    els.forEach(
-        (el, index) => {
+
+    elements.forEach(
+        (element, index) => {
 
             const angle =
-                (index / els.length) *
-                Math.PI * 2;
+                (index / elements.length) *
+                Math.PI *
+                2;
+
 
             const radius =
                 700 +
                 random(-150, 250);
+
 
             const spawnX =
                 clamp(
@@ -1472,6 +1441,7 @@ function initGhosts() {
                     CONFIG.WORLD_WIDTH -
                     200
                 );
+
 
             const spawnY =
                 clamp(
@@ -1486,23 +1456,25 @@ function initGhosts() {
                     200
                 );
 
-            el.style.position =
+
+            element.style.position =
                 "absolute";
 
-            el.style.left =
+            element.style.left =
                 spawnX + "px";
 
-            el.style.top =
+            element.style.top =
                 spawnY + "px";
 
-            el.style.display =
+            element.style.display =
                 "flex";
+
 
             GHOSTS.push({
 
                 id: index,
 
-                element: el,
+                element: element,
 
                 alive: true,
 
@@ -1516,11 +1488,13 @@ function initGhosts() {
                     random(1.4, 2.2),
 
                 x: spawnX,
+
                 y: spawnY,
 
                 state: "wander",
 
                 velocityX: 0,
+
                 velocityY: 0,
 
                 attackTimer: 0,
@@ -1532,6 +1506,13 @@ function initGhosts() {
             });
         }
     );
+
+
+    if (aliveGhostsLabel) {
+
+        aliveGhostsLabel.textContent =
+            GHOSTS.length;
+    }
 }
 
 
@@ -1550,7 +1531,10 @@ function updateGhostAI(delta) {
     GHOSTS.forEach(
         (ghost) => {
 
-            if (!ghost.alive) return;
+            if (!ghost.alive) {
+                return;
+            }
+
 
             const dx =
                 PLAYER.x -
@@ -1560,11 +1544,10 @@ function updateGhostAI(delta) {
                 PLAYER.y -
                 ghost.y;
 
+
             const distance =
-                Math.hypot(
-                    dx,
-                    dy
-                );
+                Math.hypot(dx, dy);
+
 
             if (
                 distance <
@@ -1585,27 +1568,31 @@ function updateGhostAI(delta) {
                 ghost.state =
                     "chase";
 
-                ghost.velocityX =
-                    (dx / distance) *
-                    ghost.speed;
 
-                ghost.velocityY =
-                    (dy / distance) *
-                    ghost.speed;
+                if (distance > 0) {
+
+                    ghost.velocityX =
+                        (dx / distance) *
+                        ghost.speed;
+
+                    ghost.velocityY =
+                        (dy / distance) *
+                        ghost.speed;
+                }
 
             } else {
 
                 ghost.state =
                     "wander";
 
-                if (
-                    Math.random() <
-                    0.01
-                ) {
+
+                if (Math.random() < 0.01) {
 
                     const angle =
                         Math.random() *
-                        Math.PI * 2;
+                        Math.PI *
+                        2;
+
 
                     ghost.velocityX =
                         Math.cos(angle) *
@@ -1616,6 +1603,7 @@ function updateGhostAI(delta) {
                         0.6;
                 }
             }
+
 
             ghost.x =
                 clamp(
@@ -1628,6 +1616,7 @@ function updateGhostAI(delta) {
                     60
                 );
 
+
             ghost.y =
                 clamp(
                     ghost.y +
@@ -1639,6 +1628,7 @@ function updateGhostAI(delta) {
                     60
                 );
 
+
             const floatY =
                 Math.sin(
                     performance.now() *
@@ -1646,18 +1636,20 @@ function updateGhostAI(delta) {
                     ghost.floatOffset
                 ) * 8;
 
+
             ghost.element.style.left =
                 ghost.x + "px";
 
             ghost.element.style.top =
-                ghost.y +
-                floatY +
+                (ghost.y + floatY) +
                 "px";
+
 
             ghost.element.style.transform =
                 PLAYER.x > ghost.x ?
                 "scaleX(1)" :
                 "scaleX(-1)";
+
 
             if (
                 ghost.state ===
@@ -1667,9 +1659,9 @@ function updateGhostAI(delta) {
                 ghost.attackTimer -=
                     delta;
 
+
                 if (
-                    ghost.attackTimer <=
-                    0
+                    ghost.attackTimer <= 0
                 ) {
 
                     ghost.attackTimer =
@@ -1690,23 +1682,26 @@ function damageGhosts() {
     const sword =
         getSwordHitbox();
 
+
     GHOSTS.forEach(
         (ghost) => {
 
-            if (!ghost.alive) return;
+            if (!ghost.alive) {
+                return;
+            }
+
 
             const enemyBox = {
 
-                x:
-                    ghost.x - 45,
+                x: ghost.x - 45,
 
-                y:
-                    ghost.y - 60,
+                y: ghost.y - 60,
 
                 width: 90,
 
                 height: 120
             };
+
 
             if (
                 !rectCollision(
@@ -1717,6 +1712,7 @@ function damageGhosts() {
                 return;
             }
 
+
             if (
                 performance.now() -
                 ghost.lastHit <
@@ -1725,53 +1721,53 @@ function damageGhosts() {
                 return;
             }
 
+
             ghost.lastHit =
                 performance.now();
+
 
             ghost.health -=
                 ATTACK.damage;
 
+
             updateGhostHealthBar(
                 ghost
             );
+
 
             cameraShake(
                 5,
                 120
             );
 
+
             if (
-                ghost.health <=
-                0
+                ghost.health <= 0
             ) {
 
-                killGhost(
-                    ghost
-                );
+                killGhost(ghost);
             }
         }
     );
 }
 
 
-function updateGhostHealthBar(
-    ghost
-) {
+function updateGhostHealthBar(ghost) {
 
     const fill =
         ghost.element.querySelector(
             ".enemyHealthFill"
         );
 
+
     if (fill) {
 
         fill.style.width =
             Math.max(
                 0,
-                (
-                    ghost.health /
-                    ghost.maxHealth
-                ) * 100
+                (ghost.health /
+                ghost.maxHealth) *
+                100
             ) + "%";
     }
 }
@@ -1779,7 +1775,10 @@ function updateGhostHealthBar(
 
 function killGhost(ghost) {
 
-    if (!ghost.alive) return;
+    if (!ghost.alive) {
+        return;
+    }
+
 
     ghost.alive = false;
 
@@ -1787,13 +1786,15 @@ function killGhost(ghost) {
 
     GAME.score += 250;
 
+
     if (scoreCounter) {
 
         scoreCounter.textContent =
             GAME.score
-            .toString()
-            .padStart(6, "0");
+                .toString()
+                .padStart(6, "0");
     }
+
 
     if (aliveGhostsLabel) {
 
@@ -1803,25 +1804,26 @@ function killGhost(ghost) {
             ).length;
     }
 
+
     ghost.element.style.transition =
         "opacity .5s, transform .5s";
 
     ghost.element.style.opacity =
         "0";
 
-    setTimeout(
-        () => {
 
-            ghost.element.style.display =
-                "none";
+    setTimeout(() => {
 
-        },
-        500
-    );
+        ghost.element.style.display =
+            "none";
+
+    }, 500);
+
 
     showNotification(
         "+250 SCORE"
     );
+
 
     checkGhostsCleared();
 }
@@ -1833,6 +1835,7 @@ function ghostAttacksPlayer(ghost) {
         return;
     }
 
+
     PLAYER.health =
         Math.max(
             0,
@@ -1840,14 +1843,17 @@ function ghostAttacksPlayer(ghost) {
             ghost.damage
         );
 
+
     safePlay(
         ghostAttackSound
     );
+
 
     cameraShake(
         8,
         180
     );
+
 
     if (player) {
 
@@ -1855,22 +1861,18 @@ function ghostAttacksPlayer(ghost) {
             "hurt"
         );
 
-        setTimeout(
-            () => {
 
-                player.classList.remove(
-                    "hurt"
-                );
+        setTimeout(() => {
 
-            },
-            250
-        );
+            player.classList.remove(
+                "hurt"
+            );
+
+        }, 250);
     }
 
-    if (
-        PLAYER.health <=
-        0
-    ) {
+
+    if (PLAYER.health <= 0) {
 
         playerDie();
     }
@@ -1881,7 +1883,7 @@ function checkGhostsCleared() {
 
     if (
         GHOSTS.every(
-            g => !g.alive
+            ghost => !ghost.alive
         )
     ) {
 
@@ -1891,9 +1893,11 @@ function checkGhostsCleared() {
                 "line-through";
         }
 
+
         showNotification(
             "All ghosts defeated!"
         );
+
 
         maybeSpawnBoss();
     }
@@ -1909,18 +1913,21 @@ const LANTERNS = [];
 
 function initLanterns() {
 
-    const els =
+    const elements =
         $$(".lantern");
 
-    els.forEach(
-        (el, index) => {
+
+    elements.forEach(
+        (element, index) => {
 
             const angle =
-                (index / els.length) *
-                Math.PI * 2;
+                (index / elements.length) *
+                Math.PI *
+                2;
 
-            const radius =
-                1100;
+
+            const radius = 1100;
+
 
             const x =
                 clamp(
@@ -1933,6 +1940,7 @@ function initLanterns() {
                     CONFIG.WORLD_WIDTH -
                     200
                 );
+
 
             const y =
                 clamp(
@@ -1947,17 +1955,20 @@ function initLanterns() {
                     200
                 );
 
-            el.style.left =
+
+            element.style.left =
                 x + "px";
 
-            el.style.top =
+            element.style.top =
                 y + "px";
+
 
             const data = {
 
-                element: el,
+                element: element,
 
                 x: x,
+
                 y: y,
 
                 lit: false,
@@ -1965,47 +1976,49 @@ function initLanterns() {
                 inRange: false
             };
 
-            LANTERNS.push(
-                data
-            );
 
-            el.addEventListener(
+            LANTERNS.push(data);
+
+
+            on(
+                element,
                 "click",
                 () => {
-
-                    lightLantern(
-                        data
-                    );
+                    lightLantern(data);
                 }
             );
 
-            el.addEventListener(
+
+            on(
+                element,
                 "touchstart",
-                (e) => {
+                (event) => {
 
-                    e.preventDefault();
+                    event.preventDefault();
 
-                    lightLantern(
-                        data
-                    );
+                    lightLantern(data);
 
-                }
+                },
+                { passive: false }
             );
         }
     );
 }
 
 
-function spawnLanternSparkles(
-    data
-) {
+function spawnLanternSparkles(data) {
 
     const layer =
         $("#lanternLayer");
 
-    if (!layer) return;
+
+    if (!layer) {
+        return;
+    }
+
 
     const count = 10;
+
 
     for (
         let i = 0;
@@ -2018,8 +2031,10 @@ function spawnLanternSparkles(
                 "div"
             );
 
+
         spark.className =
             "lanternSparkle";
+
 
         const angle =
             random(
@@ -2027,71 +2042,85 @@ function spawnLanternSparkles(
                 Math.PI * 2
             );
 
-        const dist =
+
+        const distance =
             random(
                 30,
                 70
             );
 
+
         spark.style.setProperty(
             "--sx",
             Math.cos(angle) *
-            dist +
+            distance +
             "px"
         );
 
+
         spark.style.setProperty(
             "--sy",
-            (
-                Math.sin(angle) *
-                dist -
-                40
-            ) +
+            Math.sin(angle) *
+            distance -
+            40 +
             "px"
         );
+
 
         spark.style.left =
             data.x +
             35 +
             "px";
 
+
         spark.style.top =
             data.y +
             20 +
             "px";
 
+
         layer.appendChild(
             spark
         );
 
-        setTimeout(
-            () => spark.remove(),
-            650
-        );
+
+        setTimeout(() => {
+
+            spark.remove();
+
+        }, 650);
     }
 }
 
 
 function lightLantern(data) {
 
-    if (data.lit) return;
+    if (data.lit) {
+        return;
+    }
+
 
     data.lit = true;
     data.inRange = false;
+
 
     data.element.classList.remove(
         "inRange"
     );
 
+
     data.element.classList.add(
         "collected"
     );
+
 
     spawnLanternSparkles(
         data
     );
 
+
     GAME.lanterns++;
+
 
     if (lanternCounter) {
 
@@ -2099,39 +2128,43 @@ function lightLantern(data) {
             `${GAME.lanterns} / ${CONFIG.TOTAL_LANTERNS}`;
     }
 
+
     if (activeLanternsLabel) {
 
         activeLanternsLabel.textContent =
             GAME.lanterns;
     }
 
+
     safePlay(
         lanternSound
     );
+
 
     showNotification(
         "Spirit Lantern Restored!"
     );
 
+
     GAME.score += 100;
+
 
     if (scoreCounter) {
 
         scoreCounter.textContent =
             GAME.score
-            .toString()
-            .padStart(6, "0");
+                .toString()
+                .padStart(6, "0");
     }
 
-    setTimeout(
-        () => {
 
-            data.element.style.display =
-                "none";
+    setTimeout(() => {
 
-        },
-        550
-    );
+        data.element.style.display =
+            "none";
+
+    }, 550);
+
 
     if (
         GAME.lanterns >=
@@ -2144,9 +2177,11 @@ function lightLantern(data) {
                 "line-through";
         }
 
+
         showNotification(
             "All Lanterns Restored!"
         );
+
 
         maybeSpawnBoss();
     }
@@ -2158,9 +2193,12 @@ function updateLanternProximity() {
     LANTERNS.forEach(
         (data) => {
 
-            if (data.lit) return;
+            if (data.lit) {
+                return;
+            }
 
-            const dist =
+
+            const distance =
                 Math.hypot(
                     PLAYER.x -
                     data.x,
@@ -2169,35 +2207,38 @@ function updateLanternProximity() {
                     data.y
                 );
 
-            const nowInRange =
-                dist <=
+
+            const inRange =
+                distance <=
                 CONFIG.LANTERN_HINT_RADIUS;
 
+
             if (
-                nowInRange !==
+                inRange !==
                 data.inRange
             ) {
 
                 data.inRange =
-                    nowInRange;
+                    inRange;
+
 
                 data.element.classList.toggle(
                     "inRange",
-                    nowInRange
+                    inRange
                 );
             }
 
+
             if (
-                dist <=
+                distance <=
                 CONFIG.LANTERN_PICKUP_RADIUS
             ) {
 
-                lightLantern(
-                    data
-                );
+                lightLantern(data);
             }
         }
     );
+
 
     if (interactionPrompt) {
 
@@ -2207,6 +2248,7 @@ function updateLanternProximity() {
                     !l.lit &&
                     l.inRange
             );
+
 
         if (nearAny) {
 
@@ -2244,16 +2286,21 @@ function tryInteract() {
         return;
     }
 
+
     const nearLantern =
         LANTERNS.find(
-            l =>
-                !l.lit &&
+            lantern =>
+                !lantern.lit &&
                 Math.hypot(
-                    PLAYER.x - l.x,
-                    PLAYER.y - l.y
+                    PLAYER.x -
+                    lantern.x,
+
+                    PLAYER.y -
+                    lantern.y
                 ) <
                 CONFIG.LANTERN_HINT_RADIUS
         );
+
 
     if (nearLantern) {
 
@@ -2264,12 +2311,13 @@ function tryInteract() {
         return;
     }
 
+
     if (
         PORTAL.active &&
         !PORTAL.entered
     ) {
 
-        const dist =
+        const distance =
             Math.hypot(
                 PLAYER.x -
                 PORTAL.x,
@@ -2278,8 +2326,9 @@ function tryInteract() {
                 PORTAL.y
             );
 
+
         if (
-            dist <=
+            distance <=
             CONFIG.PORTAL_HINT_RADIUS
         ) {
 
@@ -2290,7 +2339,7 @@ function tryInteract() {
 
 
 /*=========================================================
-BOSS
+GHOST KING BOSS
 =========================================================*/
 
 const BOSS = {
@@ -2323,7 +2372,10 @@ const BOSS = {
 
 function maybeSpawnBoss() {
 
-    if (BOSS.active) return;
+    if (BOSS.active) {
+        return;
+    }
+
 
     if (
         GAME.lanterns <
@@ -2332,13 +2384,15 @@ function maybeSpawnBoss() {
         return;
     }
 
+
     if (
         GHOSTS.some(
-            g => g.alive
+            ghost => ghost.alive
         )
     ) {
         return;
     }
+
 
     activateGhostKing();
 }
@@ -2348,6 +2402,7 @@ function activateGhostKing() {
 
     BOSS.active = true;
     BOSS.intro = true;
+
 
     if (bossEl) {
 
@@ -2361,61 +2416,67 @@ function activateGhostKing() {
             BOSS.y + "px";
     }
 
+
     if (bossHUD) {
 
         bossHUD.style.display =
             "block";
     }
 
+
+    if (bossHealthFill) {
+
+        bossHealthFill.style.width =
+            "100%";
+    }
+
+
     if (bossWarning) {
 
         bossWarning.style.display =
             "flex";
 
-        setTimeout(
-            () => {
 
-                bossWarning.style.display =
-                    "none";
+        setTimeout(() => {
 
-            },
-            2200
-        );
+            bossWarning.style.display =
+                "none";
+
+        }, 2200);
     }
+
 
     if (bossIntroScreen) {
 
         bossIntroScreen.style.display =
             "flex";
 
-        setTimeout(
-            () => {
 
-                bossIntroScreen.style.display =
-                    "none";
+        setTimeout(() => {
 
-            },
-            2600
-        );
+            bossIntroScreen.style.display =
+                "none";
+
+        }, 2600);
     }
+
 
     cameraShake(
         20,
         900
     );
 
+
     safePlay(
         bossRoarSound
     );
 
-    setTimeout(
-        () => {
 
-            BOSS.intro = false;
+    setTimeout(() => {
 
-        },
-        2800
-    );
+        BOSS.intro = false;
+
+    }, 2800);
 }
 
 
@@ -2429,44 +2490,52 @@ function updateBoss(delta) {
         return;
     }
 
+
     const dx =
         PLAYER.x -
         BOSS.x;
+
 
     const dy =
         PLAYER.y -
         BOSS.y;
 
+
     const distance =
-        Math.hypot(
-            dx,
-            dy
-        );
+        Math.hypot(dx, dy);
 
-    if (distance > 180) {
 
-        const angle =
-            Math.atan2(
-                dy,
-                dx
-            );
+    if (
+        distance > 180
+    ) {
 
-        BOSS.x +=
-            Math.cos(angle) *
-            BOSS.speed;
+        if (distance > 0) {
 
-        BOSS.y +=
-            Math.sin(angle) *
-            BOSS.speed;
+            const angle =
+                Math.atan2(
+                    dy,
+                    dx
+                );
+
+
+            BOSS.x +=
+                Math.cos(angle) *
+                BOSS.speed;
+
+
+            BOSS.y +=
+                Math.sin(angle) *
+                BOSS.speed;
+        }
 
     } else {
 
         BOSS.attackTimer -=
             delta;
 
+
         if (
-            BOSS.attackTimer <=
-            0
+            BOSS.attackTimer <= 0
         ) {
 
             BOSS.attackTimer =
@@ -2475,6 +2544,7 @@ function updateBoss(delta) {
             bossHitPlayer();
         }
     }
+
 
     if (bossEl) {
 
@@ -2498,6 +2568,7 @@ function bossHitPlayer() {
         return;
     }
 
+
     PLAYER.health =
         Math.max(
             0,
@@ -2505,10 +2576,12 @@ function bossHitPlayer() {
             BOSS.damage
         );
 
+
     cameraShake(
         14,
         220
     );
+
 
     if (player) {
 
@@ -2516,22 +2589,18 @@ function bossHitPlayer() {
             "hurt"
         );
 
-        setTimeout(
-            () => {
 
-                player.classList.remove(
-                    "hurt"
-                );
+        setTimeout(() => {
 
-            },
-            250
-        );
+            player.classList.remove(
+                "hurt"
+            );
+
+        }, 250);
     }
 
-    if (
-        PLAYER.health <=
-        0
-    ) {
+
+    if (PLAYER.health <= 0) {
 
         playerDie();
     }
@@ -2548,6 +2617,7 @@ function damageBossIfInRange() {
         return;
     }
 
+
     const distance =
         Math.hypot(
             PLAYER.x -
@@ -2557,12 +2627,14 @@ function damageBossIfInRange() {
             BOSS.y
         );
 
+
     if (
         distance >
         ATTACK.range + 60
     ) {
         return;
     }
+
 
     BOSS.health =
         Math.max(
@@ -2571,6 +2643,7 @@ function damageBossIfInRange() {
             ATTACK.damage
         );
 
+
     if (bossHealthFill) {
 
         bossHealthFill.style.width =
@@ -2578,14 +2651,15 @@ function damageBossIfInRange() {
                 BOSS.health /
                 BOSS.maxHealth *
                 100
-            ) +
-            "%";
+            ) + "%";
     }
+
 
     cameraShake(
         6,
         120
     );
+
 
     if (ghostKingSprite) {
 
@@ -2599,6 +2673,7 @@ function damageBossIfInRange() {
             "hit"
         );
     }
+
 
     if (
         BOSS.phase === 1 &&
@@ -2614,16 +2689,19 @@ function damageBossIfInRange() {
         BOSS.attackCooldown =
             1500;
 
+
         if (bossHealthFill) {
 
             bossHealthFill.style.background =
                 "linear-gradient(90deg,#c40000,#ff6a00)";
         }
 
+
         showNotification(
             "The Ghost King grows stronger!"
         );
     }
+
 
     if (
         BOSS.phase === 2 &&
@@ -2639,25 +2717,28 @@ function damageBossIfInRange() {
         BOSS.attackCooldown =
             1100;
 
+
         if (bossHealthFill) {
 
             bossHealthFill.style.background =
                 "linear-gradient(90deg,#8b00ff,#ff2f6c)";
         }
 
+
         cameraShake(
             16,
             400
         );
+
 
         showNotification(
             "RAGE MODE!"
         );
     }
 
+
     if (
-        BOSS.health <=
-        0
+        BOSS.health <= 0
     ) {
 
         bossDefeated();
@@ -2675,8 +2756,11 @@ function bossDefeated() {
         return;
     }
 
+
     BOSS.defeated = true;
+
     BOSS.active = false;
+
 
     if (mission3) {
 
@@ -2684,24 +2768,29 @@ function bossDefeated() {
             "line-through";
     }
 
+
     GAME.score += 5000;
+
 
     if (scoreCounter) {
 
         scoreCounter.textContent =
             GAME.score
-            .toString()
-            .padStart(6, "0");
+                .toString()
+                .padStart(6, "0");
     }
+
 
     cameraShake(
         24,
         700
     );
 
+
     safePlay(
         bossRoarSound
     );
+
 
     if (bossEl) {
 
@@ -2714,16 +2803,15 @@ function bossDefeated() {
         bossEl.style.transform =
             "translateY(-50px) scale(1.2)";
 
-        setTimeout(
-            () => {
 
-                bossEl.style.display =
-                    "none";
+        setTimeout(() => {
 
-            },
-            800
-        );
+            bossEl.style.display =
+                "none";
+
+        }, 800);
     }
+
 
     if (bossHUD) {
 
@@ -2731,36 +2819,33 @@ function bossDefeated() {
             "none";
     }
 
+
     showNotification(
         "THE GHOST KING HAS FALLEN!"
     );
 
+
     /*
-     * Open Day 6 portal.
+     * Open the Day 6 portal.
      */
-    setTimeout(
-        () => {
+    setTimeout(() => {
 
-            activatePortal(
-                BOSS.x,
-                BOSS.y
-            );
+        activatePortal(
+            BOSS.x,
+            BOSS.y
+        );
 
-        },
-        1000
-    );
+    }, 1000);
+
 
     /*
      * Show victory screen.
      */
-    setTimeout(
-        () => {
+    setTimeout(() => {
 
-            winGame();
+        winGame();
 
-        },
-        2200
-    );
+    }, 2200);
 }
 
 
@@ -2768,78 +2853,97 @@ function bossDefeated() {
 DAY 6 PORTAL
 =========================================================*/
 
-function activatePortal(
-    x,
-    y
-) {
+function activatePortal(x, y) {
 
     if (PORTAL.active) {
         return;
     }
 
+
     PORTAL.active = true;
+
     PORTAL.entered = false;
 
     PORTAL.x = x;
+
     PORTAL.y = y;
 
+
     if (!day6Portal) {
+
+        /*
+         * Even if the visual portal element
+         * doesn't exist, the game can still
+         * finish and continue to Day 6.
+         */
+
+        showNotification(
+            "DAY 6 PORTAL READY!"
+        );
+
         return;
     }
+
 
     day6Portal.style.display =
         "flex";
 
+
     day6Portal.style.position =
         "absolute";
+
 
     day6Portal.style.left =
         x + "px";
 
+
     day6Portal.style.top =
         y + "px";
+
 
     day6Portal.style.opacity =
         "0";
 
+
     day6Portal.style.pointerEvents =
         "auto";
+
 
     day6Portal.style.transform =
         "translate(-50%, -60%) scale(.2)";
 
+
     day6Portal.style.transition =
         "opacity .8s ease, transform .8s ease";
 
-    requestAnimationFrame(
-        () => {
 
-            day6Portal.style.opacity =
-                "1";
+    requestAnimationFrame(() => {
 
-            day6Portal.style.transform =
-                "translate(-50%, -60%) scale(1)";
-        }
-    );
+        day6Portal.style.opacity =
+            "1";
+
+        day6Portal.style.transform =
+            "translate(-50%, -60%) scale(1)";
+    });
+
 
     safePlay(
         portalSound
     );
 
+
     showNotification(
         "PORTAL TO DAY 6 HAS OPENED!"
     );
 
-    setTimeout(
-        () => {
 
-            showNotification(
-                "Enter the portal or press CONTINUE!"
-            );
+    setTimeout(() => {
 
-        },
-        1200
-    );
+        showNotification(
+            "Press CONTINUE to enter Day 6!"
+        );
+
+    }, 1200);
 }
 
 
@@ -2850,16 +2954,20 @@ DAY 6 REDIRECT
 function goToDay6() {
 
     /*
-     * Prevent duplicate redirects.
+     * Prevent multiple redirects.
      */
     if (PORTAL.entered) {
         return;
     }
 
+
     PORTAL.entered = true;
 
+
     GAME.running = false;
+
     GAME.paused = false;
+
 
     /*
      * Save Day 5 completion.
@@ -2871,37 +2979,57 @@ function goToDay6() {
             "true"
         );
 
+
         localStorage.setItem(
             "day5Score",
             String(GAME.score)
         );
 
-    } catch (e) {}
+    } catch (error) {
+
+        console.warn(
+            "Could not save Day 5 progress.",
+            error
+        );
+    }
+
 
     safePlay(
         portalSound
     );
 
+
+    /*
+     * Hide victory screen.
+     */
     if (victoryScreen) {
 
         victoryScreen.style.display =
             "none";
     }
 
+
+    /*
+     * Hide portal.
+     */
     if (day6Portal) {
 
         day6Portal.style.pointerEvents =
             "none";
 
+
         day6Portal.style.transition =
             "opacity .5s ease, transform .5s ease";
+
 
         day6Portal.style.opacity =
             "0";
 
+
         day6Portal.style.transform =
             "translate(-50%, -60%) scale(1.8)";
     }
+
 
     /*
      * Full-screen cinematic transition.
@@ -2911,60 +3039,69 @@ function goToDay6() {
             "div"
         );
 
+
     transition.id =
         "day6Transition";
+
 
     transition.style.position =
         "fixed";
 
+
     transition.style.inset =
         "0";
+
 
     transition.style.width =
         "100%";
 
+
     transition.style.height =
         "100%";
+
 
     transition.style.background =
         "#000";
 
+
     transition.style.zIndex =
         "999999";
+
 
     transition.style.opacity =
         "0";
 
+
     transition.style.transition =
         "opacity 1s ease";
 
+
     transition.style.pointerEvents =
         "all";
+
 
     document.body.appendChild(
         transition
     );
 
-    requestAnimationFrame(
-        () => {
 
-            transition.style.opacity =
-                "1";
-        }
-    );
+    requestAnimationFrame(() => {
+
+        transition.style.opacity =
+            "1";
+    });
+
 
     /*
-     * Redirect to Day 6 video.
+     * IMPORTANT:
+     * This is the Day 6 video page.
      */
-    setTimeout(
-        () => {
+    setTimeout(() => {
 
-            window.location.href =
-                CONFIG.NEXT_LEVEL_URL;
+        window.location.href =
+            CONFIG.NEXT_LEVEL_URL;
 
-        },
-        1100
-    );
+    }, 1100);
 }
 
 
@@ -2975,9 +3112,10 @@ PORTAL CLICK
 on(
     day6Portal,
     "click",
-    (e) => {
+    (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
+
 
         if (GAME.victory) {
 
@@ -2996,9 +3134,10 @@ on(
 on(
     day6Portal,
     "touchstart",
-    (e) => {
+    (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
+
 
         if (GAME.victory) {
 
@@ -3029,6 +3168,7 @@ function updatePortalProximity() {
         return;
     }
 
+
     const distance =
         Math.hypot(
             PLAYER.x -
@@ -3038,9 +3178,11 @@ function updatePortalProximity() {
             PORTAL.y
         );
 
+
     const inRange =
         distance <=
         CONFIG.PORTAL_HINT_RADIUS;
+
 
     if (day6Portal) {
 
@@ -3049,6 +3191,7 @@ function updatePortalProximity() {
             inRange
         );
     }
+
 
     if (interactionPrompt) {
 
@@ -3065,9 +3208,9 @@ function updatePortalProximity() {
 
         } else if (
             !LANTERNS.some(
-                l =>
-                    !l.lit &&
-                    l.inRange
+                lantern =>
+                    !lantern.lit &&
+                    lantern.inRange
             )
         ) {
 
@@ -3098,8 +3241,11 @@ function updateSkill(delta) {
 
     if (SKILL.timer > 0) {
 
-        SKILL.timer -=
-            delta;
+        SKILL.timer -= delta;
+
+        if (SKILL.timer < 0) {
+            SKILL.timer = 0;
+        }
     }
 }
 
@@ -3113,9 +3259,11 @@ function castSpiritSkill() {
         return;
     }
 
+
     if (SKILL.timer > 0) {
         return;
     }
+
 
     if (
         PLAYER.spirit <
@@ -3129,18 +3277,25 @@ function castSpiritSkill() {
         return;
     }
 
+
     PLAYER.spirit -=
         SKILL.spiritCost;
+
 
     SKILL.timer =
         SKILL.cooldown;
 
+
+    /*
+     * Damage nearby ghosts.
+     */
     GHOSTS.forEach(
         (ghost) => {
 
             if (!ghost.alive) {
                 return;
             }
+
 
             const distance =
                 Math.hypot(
@@ -3151,20 +3306,23 @@ function castSpiritSkill() {
                     PLAYER.y
                 );
 
+
             if (distance > 260) {
                 return;
             }
 
+
             ghost.health -=
                 SKILL.damage;
+
 
             updateGhostHealthBar(
                 ghost
             );
 
+
             if (
-                ghost.health <=
-                0
+                ghost.health <= 0
             ) {
 
                 killGhost(
@@ -3174,25 +3332,62 @@ function castSpiritSkill() {
         }
     );
 
+
+    /*
+     * Damage boss if nearby.
+     */
     if (
         BOSS.active &&
-        !BOSS.defeated &&
-        Math.hypot(
-            BOSS.x -
-            PLAYER.x,
-
-            BOSS.y -
-            PLAYER.y
-        ) < 260
+        !BOSS.intro &&
+        !BOSS.defeated
     ) {
 
-        damageBossIfInRange();
+        const bossDistance =
+            Math.hypot(
+                BOSS.x -
+                PLAYER.x,
+
+                BOSS.y -
+                PLAYER.y
+            );
+
+
+        if (bossDistance < 260) {
+
+            BOSS.health =
+                Math.max(
+                    0,
+                    BOSS.health -
+                    SKILL.damage
+                );
+
+
+            if (bossHealthFill) {
+
+                bossHealthFill.style.width =
+                    (
+                        BOSS.health /
+                        BOSS.maxHealth *
+                        100
+                    ) + "%";
+            }
+
+
+            if (
+                BOSS.health <= 0
+            ) {
+
+                bossDefeated();
+            }
+        }
     }
+
 
     cameraShake(
         10,
         200
     );
+
 
     showNotification(
         "Spirit Burst!"
@@ -3214,13 +3409,14 @@ function regenerate(delta) {
         PLAYER.health =
             clamp(
                 PLAYER.health +
-                0.002 *
-                delta,
+                0.002 * delta,
 
                 0,
+
                 PLAYER.maxHealth
             );
     }
+
 
     if (
         PLAYER.spirit <
@@ -3230,13 +3426,14 @@ function regenerate(delta) {
         PLAYER.spirit =
             clamp(
                 PLAYER.spirit +
-                0.01 *
-                delta,
+                0.01 * delta,
 
                 0,
+
                 PLAYER.maxSpirit
             );
     }
+
 
     if (
         PLAYER.stamina <
@@ -3246,10 +3443,10 @@ function regenerate(delta) {
         PLAYER.stamina =
             clamp(
                 PLAYER.stamina +
-                0.03 *
-                delta,
+                0.03 * delta,
 
                 0,
+
                 PLAYER.maxStamina
             );
     }
@@ -3260,28 +3457,21 @@ function regenerate(delta) {
 MINIMAP
 =========================================================*/
 
-function worldToMiniMap(
-    x,
-    y
-) {
+function worldToMiniMap(x, y) {
 
-    const frameSize =
-        200;
+    const frameSize = 200;
+
 
     return {
 
         left:
-            (
-                x /
-                CONFIG.WORLD_WIDTH
-            ) *
+            (x /
+            CONFIG.WORLD_WIDTH) *
             frameSize,
 
         top:
-            (
-                y /
-                CONFIG.WORLD_HEIGHT
-            ) *
+            (y /
+            CONFIG.WORLD_HEIGHT) *
             frameSize
     };
 }
@@ -3293,46 +3483,58 @@ function updateMiniMap() {
         return;
     }
 
+
     if (miniPlayerEl) {
 
-        const p =
+        const position =
             worldToMiniMap(
                 PLAYER.x,
                 PLAYER.y
             );
 
+
         miniPlayerEl.style.left =
-            p.left + "px";
+            position.left + "px";
+
 
         miniPlayerEl.style.top =
-            p.top + "px";
+            position.top + "px";
     }
 
+
     LANTERNS.forEach(
-        (lantern, i) => {
+        (lantern, index) => {
 
             const dot =
                 document.getElementById(
                     "miniLantern" +
-                    (i + 1)
+                    (index + 1)
                 );
 
-            if (!dot) return;
 
-            const p =
+            if (!dot) {
+                return;
+            }
+
+
+            const position =
                 worldToMiniMap(
                     lantern.x,
                     lantern.y
                 );
 
+
             dot.style.position =
                 "absolute";
 
+
             dot.style.left =
-                p.left + "px";
+                position.left + "px";
+
 
             dot.style.top =
-                p.top + "px";
+                position.top + "px";
+
 
             dot.style.opacity =
                 lantern.lit ?
@@ -3342,6 +3544,7 @@ function updateMiniMap() {
                     "1" :
                     "0.75"
                 );
+
 
             dot.style.transform =
                 (
@@ -3353,6 +3556,7 @@ function updateMiniMap() {
         }
     );
 
+
     if (miniBossEl) {
 
         if (
@@ -3360,20 +3564,23 @@ function updateMiniMap() {
             !BOSS.defeated
         ) {
 
-            const p =
+            const position =
                 worldToMiniMap(
                     BOSS.x,
                     BOSS.y
                 );
 
+
             miniBossEl.style.display =
                 "block";
 
+
             miniBossEl.style.left =
-                p.left + "px";
+                position.left + "px";
+
 
             miniBossEl.style.top =
-                p.top + "px";
+                position.top + "px";
 
         } else {
 
@@ -3388,33 +3595,42 @@ function nearestUnlitLantern() {
 
     let closest = null;
 
-    let closestDist =
+    let closestDistance =
         Infinity;
 
-    LANTERNS.forEach(
-        (l) => {
 
-            if (l.lit) {
+    LANTERNS.forEach(
+        (lantern) => {
+
+            if (lantern.lit) {
                 return;
             }
 
-            const d =
+
+            const distance =
                 Math.hypot(
-                    PLAYER.x - l.x,
-                    PLAYER.y - l.y
+                    PLAYER.x -
+                    lantern.x,
+
+                    PLAYER.y -
+                    lantern.y
                 );
 
+
             if (
-                d <
-                closestDist
+                distance <
+                closestDistance
             ) {
 
-                closestDist = d;
+                closestDistance =
+                    distance;
 
-                closest = l;
+                closest =
+                    lantern;
             }
         }
     );
+
 
     return closest;
 }
@@ -3426,8 +3642,10 @@ function updateCompass() {
         return;
     }
 
+
     let target =
         nearestUnlitLantern();
+
 
     if (
         !target &&
@@ -3438,6 +3656,7 @@ function updateCompass() {
         target = BOSS;
     }
 
+
     if (!target) {
 
         compassNeedle.style.transform =
@@ -3446,27 +3665,30 @@ function updateCompass() {
         return;
     }
 
+
     const dx =
         target.x -
         PLAYER.x;
+
 
     const dy =
         target.y -
         PLAYER.y;
 
-    const angleDeg =
+
+    const angleDegrees =
         (
             Math.atan2(
                 dy,
                 dx
             ) *
-            180
-        ) /
-        Math.PI +
-        90;
+            180 /
+            Math.PI
+        ) + 90;
+
 
     compassNeedle.style.transform =
-        `rotate(${angleDeg}deg)`;
+        `rotate(${angleDegrees}deg)`;
 }
 
 
@@ -3480,29 +3702,31 @@ function showNotification(text) {
         return;
     }
 
-    const n =
+
+    const notification =
         document.createElement(
             "div"
         );
 
-    n.className =
+
+    notification.className =
         "notification";
 
-    n.textContent =
+
+    notification.textContent =
         text;
 
+
     notificationContainer.appendChild(
-        n
+        notification
     );
 
-    setTimeout(
-        () => {
 
-            n.remove();
+    setTimeout(() => {
 
-        },
-        1800
-    );
+        notification.remove();
+
+    }, 1800);
 }
 
 
@@ -3516,12 +3740,16 @@ function playerDie() {
         return;
     }
 
+
     GAME.gameOver = true;
+
     GAME.running = false;
+
 
     safePlay(
         gameOverSound
     );
+
 
     if (gameOverScreen) {
 
@@ -3532,7 +3760,7 @@ function playerDie() {
 
 
 /*=========================================================
-DAY 5 VICTORY
+VICTORY
 =========================================================*/
 
 function winGame() {
@@ -3541,13 +3769,16 @@ function winGame() {
         return;
     }
 
+
     GAME.victory = true;
 
     GAME.running = false;
+
     GAME.paused = false;
 
+
     /*
-     * Save completion.
+     * Save Day 5 completion.
      */
     try {
 
@@ -3556,40 +3787,53 @@ function winGame() {
             "true"
         );
 
+
         localStorage.setItem(
             "day5Score",
             String(GAME.score)
         );
 
-    } catch (e) {}
+    } catch (error) {
+
+        console.warn(
+            "Could not save completion.",
+            error
+        );
+    }
+
 
     safePlay(
         victorySound
     );
 
+
+    /*
+     * Show victory screen.
+     */
     if (victoryScreen) {
 
         victoryScreen.style.display =
             "flex";
 
+
         victoryScreen.style.opacity =
             "0";
+
 
         victoryScreen.style.transition =
             "opacity .6s ease";
 
-        requestAnimationFrame(
-            () => {
 
-                victoryScreen.style.opacity =
-                    "1";
-            }
-        );
+        requestAnimationFrame(() => {
+
+            victoryScreen.style.opacity =
+                "1";
+        });
     }
 
+
     /*
-     * IMPORTANT:
-     * Enable the CONTINUE button.
+     * Enable CONTINUE.
      */
     if (continueButton) {
 
@@ -3606,44 +3850,35 @@ function winGame() {
 
 
 /*=========================================================
-CONTINUE BUTTON → DAY 6 VIDEO
+CONTINUE → DAY 6 VIDEO
 =========================================================*/
 
 on(
     continueButton,
     "click",
-    (e) => {
+    (event) => {
 
-        e.preventDefault();
-
-        /*
-         * Continue is only available
-         * after Day 5 victory.
-         */
-        if (!GAME.victory) {
-
-            showNotification(
-                "Defeat the Ghost King first!"
-            );
-
-            return;
-        }
-
-        /*
-         * Make sure the portal is active.
-         * This also protects against a
-         * missing portal element.
-         */
-        if (!PORTAL.active) {
-
-            activatePortal(
-                BOSS.x,
-                BOSS.y
-            );
-        }
+        event.preventDefault();
 
         goToDay6();
     }
+);
+
+
+/*
+ * Mobile support for CONTINUE.
+ */
+on(
+    continueButton,
+    "touchstart",
+    (event) => {
+
+        event.preventDefault();
+
+        goToDay6();
+
+    },
+    { passive: false }
 );
 
 
@@ -3657,6 +3892,7 @@ on(
     () => {
 
         window.location.reload();
+
     }
 );
 
@@ -3668,6 +3904,7 @@ on(
 
         window.location.href =
             "index.html";
+
     }
 );
 
@@ -3698,8 +3935,10 @@ function gameLoop(time) {
             16
         );
 
+
     ENGINE.lastTime =
         time;
+
 
     if (
         GAME.running &&
@@ -3731,12 +3970,15 @@ function gameLoop(time) {
         updateCompass();
     }
 
+
     updatePlayerHUD();
+
 
     ENGINE.frame++;
 
     ENGINE.fpsTimer +=
         delta;
+
 
     if (
         ENGINE.fpsTimer >=
@@ -3750,12 +3992,14 @@ function gameLoop(time) {
 
         ENGINE.fpsTimer = 0;
 
+
         if (fpsValue) {
 
             fpsValue.textContent =
                 ENGINE.fps;
         }
     }
+
 
     if (playerXLabel) {
 
@@ -3765,6 +4009,7 @@ function gameLoop(time) {
             );
     }
 
+
     if (playerYLabel) {
 
         playerYLabel.textContent =
@@ -3772,6 +4017,7 @@ function gameLoop(time) {
                 PLAYER.y
             );
     }
+
 
     requestAnimationFrame(
         gameLoop
@@ -3788,14 +4034,17 @@ function spawnAmbientBats() {
     const layer =
         $("#batLayer");
 
+
     if (!layer) {
         return;
     }
+
 
     const count =
         GAME.mobile ?
         6 :
         14;
+
 
     for (
         let i = 0;
@@ -3808,29 +4057,31 @@ function spawnAmbientBats() {
                 "div"
             );
 
+
         bat.className =
             "bat";
+
 
         bat.style.top =
             random(
                 50,
                 500
-            ) +
-            "px";
+            ) + "px";
+
 
         bat.style.animationDuration =
             random(
                 10,
                 18
-            ) +
-            "s";
+            ) + "s";
+
 
         bat.style.animationDelay =
             random(
                 0,
                 8
-            ) +
-            "s";
+            ) + "s";
+
 
         layer.appendChild(
             bat
@@ -3849,14 +4100,17 @@ function scheduleLightning() {
         return;
     }
 
+
     const delay =
         random(
             6000,
             14000
         );
 
-    setTimeout(
-        () => {
+
+    setTimeout(() => {
+
+        if (!GAME.gameOver) {
 
             lightningLayer.style.transition =
                 "opacity .1s";
@@ -3864,25 +4118,27 @@ function scheduleLightning() {
             lightningLayer.style.opacity =
                 "0.9";
 
+
             safePlay(
                 lightningSound
             );
 
-            setTimeout(
-                () => {
+
+            setTimeout(() => {
+
+                if (lightningLayer) {
 
                     lightningLayer.style.opacity =
                         "0";
+                }
 
-                },
-                150
-            );
+            }, 150);
+        }
 
-            scheduleLightning();
 
-        },
-        delay
-    );
+        scheduleLightning();
+
+    }, delay);
 }
 
 
@@ -3892,16 +4148,35 @@ INITIALIZE GAME
 
 function initializeGame() {
 
+    /*
+     * Device.
+     */
     detectDevice();
 
+
+    /*
+     * Initialize enemies.
+     */
     initGhosts();
 
+
+    /*
+     * Initialize lanterns.
+     */
     initLanterns();
 
+
+    /*
+     * Ambient effects.
+     */
     spawnAmbientBats();
 
     scheduleLightning();
 
+
+    /*
+     * Inventory close.
+     */
     on(
         closeInventory,
         "click",
@@ -3916,32 +4191,50 @@ function initializeGame() {
         }
     );
 
+
+    /*
+     * Initial counters.
+     */
     if (lanternCounter) {
 
         lanternCounter.textContent =
             `0 / ${CONFIG.TOTAL_LANTERNS}`;
     }
 
+
+    if (scoreCounter) {
+
+        scoreCounter.textContent =
+            "000000";
+    }
+
+
+    if (aliveGhostsLabel) {
+
+        aliveGhostsLabel.textContent =
+            GHOSTS.length;
+    }
+
+
+    if (activeLanternsLabel) {
+
+        activeLanternsLabel.textContent =
+            "0";
+    }
+
+
+    /*
+     * Hide interaction prompt.
+     */
     if (interactionPrompt) {
 
         interactionPrompt.style.display =
             "none";
     }
 
-    /*
-     * Reset Day 6 portal.
-     */
-    if (day6Portal) {
-
-        day6Portal.style.display =
-            "none";
-
-        day6Portal.style.pointerEvents =
-            "none";
-    }
 
     /*
-     * Reset victory screen.
+     * Hide victory screen at start.
      */
     if (victoryScreen) {
 
@@ -3949,16 +4242,66 @@ function initializeGame() {
             "none";
     }
 
+
+    /*
+     * Hide game-over screen at start.
+     */
+    if (gameOverScreen) {
+
+        gameOverScreen.style.display =
+            "none";
+    }
+
+
+    /*
+     * Hide boss initially.
+     */
+    if (bossEl) {
+
+        bossEl.style.display =
+            "none";
+    }
+
+
+    if (bossHUD) {
+
+        bossHUD.style.display =
+            "none";
+    }
+
+
+    /*
+     * Hide Day 6 portal initially.
+     */
+    if (day6Portal) {
+
+        day6Portal.style.display =
+            "none";
+    }
+
+
+    /*
+     * Start loading.
+     */
     startLoading();
 
+
+    /*
+     * Start engine.
+     */
     ENGINE.lastTime =
         performance.now();
+
 
     requestAnimationFrame(
         gameLoop
     );
 }
 
+
+/*=========================================================
+START
+=========================================================*/
 
 window.addEventListener(
     "load",
