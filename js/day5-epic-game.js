@@ -1637,11 +1637,11 @@ function winGame() {
 CONTINUE → DAY 6 VIDEO
 =========================================================*/
 
-on(continueButton, "click", (e) => {
-    e.preventDefault();
-    goToDay6();
-});
-
+const CONFIG = {
+    ...
+    // Day 5 goes to the Day 6 video next.
+    NEXT_LEVEL_URL: "day6-video.html"
+};
 
 /*=========================================================
 RETRY / QUIT
