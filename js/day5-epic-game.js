@@ -86,6 +86,8 @@ const quitEventButton = $("#quitEventButton");
 
 const notificationContainer = $("#notificationContainer");
 
+const interactionPrompt = $("#interactionPrompt");
+
 const fpsValue     = $("#fpsValue");
 const playerXLabel = $("#playerX");
 const playerYLabel = $("#playerY");
@@ -126,7 +128,12 @@ const CONFIG = {
     TOTAL_LANTERNS: 7,
     WORLD_WIDTH: 5000,
     WORLD_HEIGHT: 2200,
-    CAMERA_SMOOTH: 0.1
+    CAMERA_SMOOTH: 0.1,
+    // FIX: lanterns now have two distances - a slightly larger "in range"
+    // ring that lights up as a visual hint, and the actual pickup radius.
+    // Both are generous so lanterns never feel finicky to collect.
+    LANTERN_HINT_RADIUS: 220,
+    LANTERN_PICKUP_RADIUS: 130
 };
 
 /*=========================================================
@@ -760,6 +767,17 @@ function checkGhostsCleared() {
 
 /*=========================================================
 LANTERNS
+(FIX: previously a lantern only "lit up" (brightness filter) when clicked
+exactly on its small hitbox, required a strict 160px click-distance check
+that felt inconsistent, never actually disappeared, and had no feedback
+telling the player they were close enough to collect. Now:
+  1. Walking within LANTERN_HINT_RADIUS shows a glowing "in range" state.
+  2. Walking within LANTERN_PICKUP_RADIUS auto-collects it (no click
+     needed) - this is what makes them reliably collectible on both
+     desktop and mobile.
+  3. Clicking/tapping still works too as a manual backup.
+  4. On collection the lantern bursts with light + sparkles and then
+     fully vanishes (removed from layout, not just dimmed).
 =========================================================*/
 
 const LANTERNS = [];
@@ -777,25 +795,48 @@ function initLanterns() {
         el.style.left = x + "px";
         el.style.top = y + "px";
 
-        const data = { element: el, x, y, lit: false };
+        const data = { element: el, x, y, lit: false, inRange: false };
         LANTERNS.push(data);
 
+        // Manual click/tap still works as a fallback, regardless of the
+        // strict distance the old code required.
         el.addEventListener("click", () => lightLantern(data));
         el.addEventListener("touchstart", (e) => { e.preventDefault(); lightLantern(data); });
     });
 }
 
+function spawnLanternSparkles(data) {
+    const layer = $("#lanternLayer");
+    if (!layer) return;
+
+    const count = 10;
+    for (let i = 0; i < count; i++) {
+        const spark = document.createElement("div");
+        spark.className = "lanternSparkle";
+
+        const angle = random(0, Math.PI * 2);
+        const dist = random(30, 70);
+        spark.style.setProperty("--sx", Math.cos(angle) * dist + "px");
+        spark.style.setProperty("--sy", (Math.sin(angle) * dist - 40) + "px");
+
+        spark.style.left = (data.x + 35) + "px";
+        spark.style.top = (data.y + 20) + "px";
+
+        layer.appendChild(spark);
+        setTimeout(() => spark.remove(), 650);
+    }
+}
+
 function lightLantern(data) {
     if (data.lit) return;
 
-    const dist = Math.hypot(PLAYER.x - data.x, PLAYER.y - data.y);
-    if (dist > 160) {
-        showNotification("Get closer to the lantern");
-        return;
-    }
-
     data.lit = true;
-    data.element.style.filter = "brightness(1.6) drop-shadow(0 0 20px gold)";
+    data.inRange = false;
+
+    // Play the burst + vanish animation defined in CSS (.lantern.collected)
+    data.element.classList.remove("inRange");
+    data.element.classList.add("collected");
+    spawnLanternSparkles(data);
 
     GAME.lanterns++;
 
@@ -804,6 +845,14 @@ function lightLantern(data) {
 
     safePlay(lanternSound);
     showNotification("Spirit Lantern Restored!");
+    GAME.score += 100;
+    if (scoreCounter) scoreCounter.textContent = GAME.score.toString().padStart(6, "0");
+
+    // Fully remove the lantern from layout once its vanish animation
+    // finishes (matches the .55s lanternVanish keyframe duration in CSS).
+    setTimeout(() => {
+        data.element.style.display = "none";
+    }, 550);
 
     if (GAME.lanterns >= CONFIG.TOTAL_LANTERNS) {
         if (mission1) mission1.style.textDecoration = "line-through";
@@ -812,12 +861,37 @@ function lightLantern(data) {
     }
 }
 
+// Called every frame: highlights nearby unlit lanterns and auto-collects
+// any lantern the player walks close enough to.
+function updateLanternProximity() {
+    LANTERNS.forEach((data) => {
+        if (data.lit) return;
+
+        const dist = Math.hypot(PLAYER.x - data.x, PLAYER.y - data.y);
+        const nowInRange = dist <= CONFIG.LANTERN_HINT_RADIUS;
+
+        if (nowInRange !== data.inRange) {
+            data.inRange = nowInRange;
+            data.element.classList.toggle("inRange", nowInRange);
+        }
+
+        if (dist <= CONFIG.LANTERN_PICKUP_RADIUS) {
+            lightLantern(data);
+        }
+    });
+
+    if (interactionPrompt) {
+        const nearAny = LANTERNS.some(l => !l.lit && l.inRange);
+        interactionPrompt.style.display = nearAny ? "flex" : "none";
+    }
+}
+
 /*=========================================================
 INTERACT
 =========================================================*/
 
 function tryInteract() {
-    const nearLantern = LANTERNS.find(l => !l.lit && Math.hypot(PLAYER.x - l.x, PLAYER.y - l.y) < 160);
+    const nearLantern = LANTERNS.find(l => !l.lit && Math.hypot(PLAYER.x - l.x, PLAYER.y - l.y) < CONFIG.LANTERN_HINT_RADIUS);
     if (nearLantern) lightLantern(nearLantern);
 }
 
@@ -1049,7 +1123,8 @@ function updateMiniMap() {
         dot.style.position = "absolute";
         dot.style.left = p.left + "px";
         dot.style.top = p.top + "px";
-        dot.style.opacity = lantern.lit ? "0.25" : "1";
+        dot.style.opacity = lantern.lit ? "0" : (lantern.inRange ? "1" : "0.75");
+        dot.style.transform = lantern.inRange && !lantern.lit ? "scale(1.6)" : "scale(1)";
     });
 
     if (miniBossEl) {
@@ -1152,6 +1227,7 @@ function gameLoop(time) {
         regenerate(delta);
         updateGhostAI(delta);
         updateBoss(delta);
+        updateLanternProximity();
         updateCamera();
         renderPlayer();
         updateMiniMap();
@@ -1225,6 +1301,7 @@ function initializeGame() {
     on(closeInventory, "click", () => { if (inventoryPanel) inventoryPanel.classList.remove("active"); });
 
     if (lanternCounter) lanternCounter.textContent = `0 / ${CONFIG.TOTAL_LANTERNS}`;
+    if (interactionPrompt) interactionPrompt.style.display = "none";
 
     startLoading();
 
