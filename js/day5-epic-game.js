@@ -97,6 +97,11 @@ const bossWarning     = $("#bossWarning");
 
 const lightningLayer = $("#lightningLayer");
 
+const miniPlayerEl = $("#miniPlayer");
+const miniBossEl   = $("#miniBoss");
+const miniMapFrame = $("#miniMapFrame");
+const compassNeedle = $("#compassNeedle");
+
 const bgMusic       = $("#bgMusic");
 const ambientWind   = $("#ambientWind");
 const ghostAttackSound = $("#ghostAttack");
@@ -1012,6 +1017,82 @@ function regenerate(delta) {
 }
 
 /*=========================================================
+MINIMAP + COMPASS
+(FIX: #miniMapFrame and #compassNeedle existed in HTML/CSS with IDs for
+every lantern dot, but nothing in the JS ever positioned them — so the
+minimap was just an empty box and the compass needle never moved. This is
+the main reason lanterns felt impossible to find. Now both update live.)
+=========================================================*/
+
+function worldToMiniMap(x, y) {
+    // minimap frame is roughly 200x200 usable px after its own padding
+    const frameSize = 200;
+    return {
+        left: (x / CONFIG.WORLD_WIDTH) * frameSize,
+        top: (y / CONFIG.WORLD_HEIGHT) * frameSize
+    };
+}
+
+function updateMiniMap() {
+    if (!miniMapFrame) return;
+
+    if (miniPlayerEl) {
+        const p = worldToMiniMap(PLAYER.x, PLAYER.y);
+        miniPlayerEl.style.left = p.left + "px";
+        miniPlayerEl.style.top = p.top + "px";
+    }
+
+    LANTERNS.forEach((lantern, i) => {
+        const dot = document.getElementById("miniLantern" + (i + 1));
+        if (!dot) return;
+        const p = worldToMiniMap(lantern.x, lantern.y);
+        dot.style.position = "absolute";
+        dot.style.left = p.left + "px";
+        dot.style.top = p.top + "px";
+        dot.style.opacity = lantern.lit ? "0.25" : "1";
+    });
+
+    if (miniBossEl) {
+        if (BOSS.active && !BOSS.defeated) {
+            const p = worldToMiniMap(BOSS.x, BOSS.y);
+            miniBossEl.style.display = "block";
+            miniBossEl.style.left = p.left + "px";
+            miniBossEl.style.top = p.top + "px";
+        } else {
+            miniBossEl.style.display = "none";
+        }
+    }
+}
+
+function nearestUnlitLantern() {
+    let closest = null;
+    let closestDist = Infinity;
+    LANTERNS.forEach((l) => {
+        if (l.lit) return;
+        const d = Math.hypot(PLAYER.x - l.x, PLAYER.y - l.y);
+        if (d < closestDist) { closestDist = d; closest = l; }
+    });
+    return closest;
+}
+
+function updateCompass() {
+    if (!compassNeedle) return;
+
+    let target = nearestUnlitLantern();
+    if (!target && BOSS.active && !BOSS.defeated) target = BOSS;
+
+    if (!target) {
+        compassNeedle.style.transform = "rotate(0deg)";
+        return;
+    }
+
+    const dx = target.x - PLAYER.x;
+    const dy = target.y - PLAYER.y;
+    const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
+    compassNeedle.style.transform = `rotate(${angleDeg}deg)`;
+}
+
+/*=========================================================
 NOTIFICATIONS
 =========================================================*/
 
@@ -1073,6 +1154,8 @@ function gameLoop(time) {
         updateBoss(delta);
         updateCamera();
         renderPlayer();
+        updateMiniMap();
+        updateCompass();
     }
 
     updatePlayerHUD();
