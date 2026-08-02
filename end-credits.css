@@ -1,0 +1,727 @@
+/* =========================================================
+   VIDLYRA HALLOWEEN FEST 2026
+   OFFICIAL END CREDITS
+   end-credits.css
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    color: #fff;
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+body {
+    position: relative;
+}
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.background {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(70, 20, 5, 0.35),
+            rgba(0, 0, 0, 0.96) 68%
+        ),
+        #000;
+}
+
+.fog {
+    position: fixed;
+    inset: -20%;
+    z-index: 2;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at 25% 60%,
+            rgba(255, 255, 255, 0.035),
+            transparent 45%
+        ),
+        radial-gradient(
+            ellipse at 75% 40%,
+            rgba(255, 255, 255, 0.025),
+            transparent 45%
+        );
+
+    filter: blur(40px);
+
+    animation:
+        fogMove 18s ease-in-out infinite alternate;
+}
+
+@keyframes fogMove {
+
+    0% {
+        transform: translateX(-4%);
+    }
+
+    100% {
+        transform: translateX(4%);
+    }
+}
+
+/* =========================================================
+   CREDITS STAGE
+========================================================= */
+
+.credits-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+
+    overflow: hidden;
+}
+
+/* =========================================================
+   MAIN CREDIT ROLL
+========================================================= */
+
+.credits {
+    position: absolute;
+
+    width: min(900px, 90vw);
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    text-align: center;
+
+    padding-top: 100vh;
+    padding-bottom: 100vh;
+
+    animation:
+        creditsRoll 105s linear forwards;
+}
+
+@keyframes creditsRoll {
+
+    from {
+        transform:
+            translate(-50%, 0);
+    }
+
+    to {
+        transform:
+            translate(-50%, -210%);
+    }
+}
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.title {
+    margin-bottom: 90px;
+}
+
+.pumpkin {
+    display: block;
+
+    font-size: 58px;
+
+    margin-bottom: 25px;
+
+    animation:
+        pumpkinGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes pumpkinGlow {
+
+    0%,
+    100% {
+        filter:
+            drop-shadow(
+                0 0 5px
+                rgba(255, 100, 0, 0.2)
+            );
+    }
+
+    50% {
+        filter:
+            drop-shadow(
+                0 0 25px
+                rgba(255, 100, 0, 0.9)
+            );
+    }
+}
+
+.festival-title {
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(30px, 6vw, 64px);
+
+    letter-spacing: 7px;
+
+    font-weight: bold;
+
+    color: #fff;
+
+    text-shadow:
+        0 0 8px
+        rgba(255, 80, 0, 0.5),
+
+        0 0 30px
+        rgba(255, 50, 0, 0.25);
+}
+
+.festival-subtitle {
+    margin-top: 18px;
+
+    font-size:
+        clamp(18px, 3vw, 28px);
+
+    letter-spacing: 6px;
+
+    color: #aaa;
+}
+
+/* =========================================================
+   CREDIT SECTIONS
+========================================================= */
+
+.credit-section {
+    margin-bottom: 75px;
+}
+
+.credit-heading {
+    color: #888;
+
+    text-transform: uppercase;
+
+    letter-spacing: 4px;
+
+    font-size: 15px;
+
+    margin-bottom: 18px;
+}
+
+.credit-name {
+    font-size:
+        clamp(22px, 4vw, 36px);
+
+    font-weight: bold;
+
+    color: #fff;
+
+    letter-spacing: 2px;
+
+    text-shadow:
+        0 0 8px
+        rgba(255, 255, 255, 0.05);
+}
+
+.credit-name.highlight {
+    color: #ff7518;
+
+    text-shadow:
+        0 0 10px
+        rgba(255, 80, 0, 0.45);
+}
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.divider {
+    width: 90px;
+
+    height: 1px;
+
+    background:
+        rgba(255, 117, 24, 0.6);
+
+    margin:
+        80px auto;
+}
+
+/* =========================================================
+   SPECIAL THANKS
+========================================================= */
+
+.special-thanks {
+    max-width: 700px;
+
+    margin:
+        0 auto 80px;
+}
+
+.special-thanks p {
+    margin-top: 25px;
+
+    color: #bbb;
+
+    font-size:
+        clamp(16px, 2.5vw, 22px);
+
+    line-height: 1.8;
+}
+
+/* =========================================================
+   VIDLYRA STUDIO
+========================================================= */
+
+.studio {
+    margin-bottom: 70px;
+}
+
+.studio-name {
+    font-size:
+        clamp(28px, 5vw, 48px);
+
+    color: #ff7518;
+
+    font-weight: bold;
+
+    letter-spacing: 5px;
+
+    text-shadow:
+        0 0 12px
+        rgba(255, 80, 0, 0.5);
+}
+
+.copyright {
+    color: #777;
+
+    font-size: 15px;
+
+    letter-spacing: 2px;
+
+    margin-top: 25px;
+}
+
+.tagline {
+    margin-top: 30px;
+
+    color: #aaa;
+
+    font-style: italic;
+
+    font-size:
+        clamp(17px, 3vw, 24px);
+}
+
+/* =========================================================
+   HALLOWEEN 2027
+========================================================= */
+
+.next-event {
+    margin-top: 100px;
+
+    margin-bottom: 120px;
+}
+
+.see-you {
+    color: #aaa;
+
+    font-size:
+        clamp(17px, 3vw, 25px);
+
+    font-style: italic;
+
+    margin-bottom: 25px;
+}
+
+.next-year {
+    color: #ff7518;
+
+    font-size:
+        clamp(30px, 6vw, 58px);
+
+    letter-spacing: 5px;
+
+    font-weight: bold;
+
+    text-shadow:
+        0 0 15px
+        rgba(255, 80, 0, 0.5);
+}
+
+/* =========================================================
+   POST CREDIT SCENE
+========================================================= */
+
+.post-credit {
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding:
+        40px 20px;
+}
+
+.post-credit-title {
+    color: #555;
+
+    font-size: 14px;
+
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 80px;
+}
+
+/* =========================================================
+   PUMPKIN LANTERN
+========================================================= */
+
+.lantern {
+    width: 90px;
+
+    height: 100px;
+
+    position: relative;
+
+    margin-bottom: 65px;
+
+    animation:
+        lanternFloat 3s ease-in-out infinite;
+}
+
+.lantern-body {
+    position: absolute;
+
+    width: 70px;
+
+    height: 65px;
+
+    left: 10px;
+
+    top: 25px;
+
+    border-radius:
+        35% 35% 42% 42%;
+
+    background: #161616;
+
+    border: 3px solid #333;
+
+    box-shadow:
+        0 0 20px
+        rgba(255, 100, 0, 0.25);
+}
+
+.lantern-glow {
+    position: absolute;
+
+    width: 28px;
+
+    height: 28px;
+
+    left: 31px;
+
+    top: 44px;
+
+    border-radius: 50%;
+
+    background: #ff7518;
+
+    box-shadow:
+        0 0 15px #ff7518,
+
+        0 0 40px
+        rgba(255, 100, 0, 0.8),
+
+        0 0 80px
+        rgba(255, 60, 0, 0.5);
+
+    animation:
+        lanternFlicker 0.8s
+        infinite alternate;
+}
+
+.lantern-handle {
+    position: absolute;
+
+    width: 50px;
+
+    height: 35px;
+
+    left: 20px;
+
+    top: 5px;
+
+    border:
+        3px solid #333;
+
+    border-bottom: none;
+
+    border-radius:
+        50px 50px 0 0;
+}
+
+@keyframes lanternFlicker {
+
+    from {
+        opacity: 0.7;
+
+        transform:
+            scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            scale(1.08);
+    }
+}
+
+@keyframes lanternFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-8px);
+    }
+}
+
+/* =========================================================
+   POST CREDIT TEXT
+========================================================= */
+
+.post-credit-text {
+    max-width: 700px;
+
+    text-align: center;
+}
+
+.post-credit-text p {
+    color: #999;
+
+    font-size:
+        clamp(18px, 3vw, 27px);
+
+    line-height: 1.8;
+
+    margin-bottom: 28px;
+}
+
+.post-credit-text .mystery {
+    color: #fff;
+
+    font-weight: bold;
+
+    font-size:
+        clamp(23px, 4vw, 36px);
+
+    text-shadow:
+        0 0 15px
+        rgba(255, 255, 255, 0.15);
+}
+
+.coming-soon {
+    margin-top: 70px;
+
+    color: #ff7518;
+
+    font-size:
+        clamp(22px, 4vw, 38px);
+
+    letter-spacing: 8px;
+
+    font-weight: bold;
+
+    text-shadow:
+        0 0 20px
+        rgba(255, 70, 0, 0.6);
+}
+
+/* =========================================================
+   SKIP BUTTON
+========================================================= */
+
+#skipButton {
+    position: fixed;
+
+    right: 22px;
+
+    bottom: 22px;
+
+    z-index: 50;
+
+    border:
+        1px solid
+        rgba(255, 117, 24, 0.5);
+
+    background:
+        rgba(0, 0, 0, 0.75);
+
+    color: #aaa;
+
+    padding:
+        11px 18px;
+
+    border-radius: 30px;
+
+    font-size: 13px;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    backdrop-filter:
+        blur(8px);
+
+    transition:
+        all 0.25s ease;
+}
+
+#skipButton:hover {
+    color: #fff;
+
+    border-color:
+        #ff7518;
+
+    box-shadow:
+        0 0 15px
+        rgba(255, 117, 24, 0.25);
+}
+
+#skipButton:active {
+    transform:
+        scale(0.95);
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .credits {
+        width: 88vw;
+
+        animation-duration:
+            95s;
+    }
+
+    .credit-section {
+        margin-bottom: 60px;
+    }
+
+    .divider {
+        margin:
+            60px auto;
+    }
+
+    .festival-title {
+        letter-spacing: 4px;
+    }
+
+    .festival-subtitle {
+        letter-spacing: 3px;
+    }
+
+    .credit-heading {
+        font-size: 12px;
+
+        letter-spacing: 3px;
+    }
+
+    .credit-name {
+        letter-spacing: 1px;
+    }
+
+    .studio-name {
+        letter-spacing: 3px;
+    }
+
+    .next-year {
+        letter-spacing: 3px;
+    }
+
+    .coming-soon {
+        letter-spacing: 5px;
+    }
+
+    #skipButton {
+        right: 12px;
+
+        bottom: 12px;
+
+        padding:
+            10px 15px;
+    }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .pumpkin {
+        font-size: 45px;
+    }
+
+    .festival-title {
+        font-size: 27px;
+
+        letter-spacing: 3px;
+    }
+
+    .festival-subtitle {
+        font-size: 17px;
+    }
+
+    .credit-section {
+        margin-bottom: 50px;
+    }
+
+    .post-credit-title {
+        margin-bottom: 55px;
+    }
+
+    .lantern {
+        margin-bottom: 45px;
+    }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .fog,
+    .pumpkin,
+    .lantern,
+    .lantern-glow,
+    .credits {
+        animation: none !important;
+    }
+}
