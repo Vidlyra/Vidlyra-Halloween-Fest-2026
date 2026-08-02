@@ -8,125 +8,887 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Vidlyra Halloween Fest 2026 | Event Map</title>
+<title>
+Vidlyra Halloween Fest 2026 — Adventure Map
+</title>
 
-<link rel="stylesheet" href="css/map.css">
-<link rel="stylesheet" href="css/map-animations.css">
-<link rel="stylesheet" href="css/map-responsive.css">
+<style>
+
+* {
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,
+body {
+
+    width:100%;
+    min-height:100%;
+
+    background:#050008;
+
+    color:white;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+}
+
+body {
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(100,0,150,.25),
+            transparent 40%
+        ),
+
+        linear-gradient(
+            180deg,
+            #09000f,
+            #020003
+        );
+
+}
+
+
+/* ================================
+   HEADER
+================================ */
+
+.header {
+
+    text-align:center;
+
+    padding:
+        35px 20px 20px;
+
+}
+
+.header h1 {
+
+    font-size:
+        clamp(30px,7vw,65px);
+
+    letter-spacing:
+        .12em;
+
+    text-shadow:
+
+        0 0 10px #ff6500,
+        0 0 30px #ff3200,
+        0 0 60px #7700ff;
+
+}
+
+.header p {
+
+    margin-top:10px;
+
+    color:#bcaec6;
+
+    letter-spacing:.1em;
+
+}
+
+
+/* ================================
+   MAP
+================================ */
+
+.map {
+
+    position:relative;
+
+    width:min(1000px,94%);
+
+    min-height:900px;
+
+    margin:0 auto;
+
+    padding:
+        50px 20px 100px;
+
+}
+
+
+/* ================================
+   PATH
+================================ */
+
+.path {
+
+    position:absolute;
+
+    width:8px;
+
+    left:50%;
+
+    top:70px;
+
+    bottom:100px;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        linear-gradient(
+            180deg,
+            #ff7200,
+            #8c00ff,
+            #ff7200
+        );
+
+    box-shadow:
+        0 0 12px #ff7200,
+        0 0 30px #7200ff;
+
+    border-radius:20px;
+
+}
+
+
+/* ================================
+   DAY NODE
+================================ */
+
+.day {
+
+    position:relative;
+
+    display:flex;
+
+    width:100%;
+
+    margin-bottom:70px;
+
+    z-index:2;
+
+}
+
+
+.day:nth-child(odd) {
+
+    justify-content:flex-start;
+
+    padding-right:52%;
+
+}
+
+.day:nth-child(even) {
+
+    justify-content:flex-end;
+
+    padding-left:52%;
+
+}
+
+
+.card {
+
+    width:100%;
+
+    padding:25px;
+
+    border-radius:22px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(30,10,40,.96),
+            rgba(8,4,15,.96)
+        );
+
+    border:1px solid rgba(255,115,0,.45);
+
+    box-shadow:
+        0 0 20px rgba(255,90,0,.15);
+
+    text-align:center;
+
+    transition:.25s ease;
+
+}
+
+
+.card:hover {
+
+    transform:
+        translateY(-5px)
+        scale(1.02);
+
+    border-color:#ff7900;
+
+    box-shadow:
+        0 0 30px rgba(255,100,0,.35);
+
+}
+
+
+.day-number {
+
+    font-size:13px;
+
+    letter-spacing:.2em;
+
+    color:#ff8a00;
+
+}
+
+
+.card h2 {
+
+    margin-top:8px;
+
+    font-size:25px;
+
+}
+
+
+.card p {
+
+    margin-top:10px;
+
+    color:#b9a9c3;
+
+    line-height:1.5;
+
+}
+
+
+.play {
+
+    display:inline-block;
+
+    margin-top:18px;
+
+    padding:
+        11px 22px;
+
+    border-radius:30px;
+
+    border:1px solid #ff7200;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff7200,
+            #8e00ff
+        );
+
+    color:white;
+
+    font-weight:bold;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+
+.play:hover {
+
+    transform:scale(1.06);
+
+}
+
+
+/* ================================
+   LOCKED
+================================ */
+
+.locked {
+
+    opacity:.5;
+
+    filter:grayscale(.5);
+
+}
+
+
+.locked .play {
+
+    background:#201a24;
+
+    border-color:#4b4150;
+
+    cursor:not-allowed;
+
+}
+
+
+/* ================================
+   CENTER MARKER
+================================ */
+
+.marker {
+
+    position:absolute;
+
+    left:50%;
+
+    top:50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    width:70px;
+
+    height:70px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#09000f;
+
+    border:2px solid #ff7200;
+
+    box-shadow:
+        0 0 15px #ff7200,
+        0 0 35px #7200ff;
+
+    font-size:28px;
+
+}
+
+
+/* ================================
+   BACK
+================================ */
+
+.back {
+
+    display:block;
+
+    width:max-content;
+
+    margin:
+        0 auto 30px;
+
+    color:#b9a9c3;
+
+    text-decoration:none;
+
+}
+
+.back:hover {
+
+    color:#ff8a00;
+
+}
+
+
+/* ================================
+   FOOTER
+================================ */
+
+footer {
+
+    text-align:center;
+
+    padding:30px;
+
+    color:#625768;
+
+    font-size:12px;
+
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media(max-width:700px) {
+
+    .map {
+
+        min-height:auto;
+
+    }
+
+    .path {
+
+        left:30px;
+
+        transform:none;
+
+        top:60px;
+
+    }
+
+    .marker {
+
+        left:30px;
+
+        width:58px;
+
+        height:58px;
+
+        font-size:22px;
+
+    }
+
+    .day,
+    .day:nth-child(odd),
+    .day:nth-child(even) {
+
+        justify-content:flex-start;
+
+        padding-left:75px;
+
+        padding-right:0;
+
+    }
+
+    .card {
+
+        text-align:left;
+
+    }
+
+    .play {
+
+        text-align:center;
+
+    }
+
+}
+
+</style>
 
 </head>
 
+
 <body>
 
-<!-- Background -->
-<div class="background"></div>
-<div class="background-layer"></div>
 
-<!-- Clouds -->
-<div class="cloud cloud1"></div>
-<div class="cloud cloud2"></div>
+<header class="header">
 
-<!-- Castle -->
-<div class="castle"></div>
+    <h1>
+        🎃 VIDLYRA
+    </h1>
 
-<!-- Forest -->
-<img src="assets/images/forest.svg.png"
-class="forest"
-alt="Forest">
+    <p>
+        HALLOWEEN FEST 2026 — THE HAUNTED JOURNEY
+    </p>
 
-<!-- Fog -->
-<div class="fog fog-back"></div>
-<div class="fog fog-front"></div>
+</header>
 
-<!-- Hero -->
 
-<section class="hero">
+<a
+href="home.html"
+class="back">
 
-<h1>VIDLYRA</h1>
+    ← Back to Haunted Realm
 
-<h2>Halloween Fest 2026</h2>
+</a>
 
-<p>
 
-Choose your destination...
+<main class="map">
 
-</p>
+    <div class="path"></div>
 
-</section>
 
-<!-- Event Path -->
+    <!-- DAY 1 -->
 
-<section class="event-map">
+    <section
+    class="day"
+    data-day="1">
 
-<div class="path"></div>
+        <div class="marker">
+            🎃
+        </div>
 
-<div class="node active">
+        <div class="card">
 
-<div class="circle">
+            <div class="day-number">
+                DAY 01
+            </div>
 
-1
+            <h2>
+                The Haunted Beginning
+            </h2>
 
-</div>
+            <p>
+                Enter the first mysterious location
+                and begin your Halloween journey.
+            </p>
 
-<p>Day 1</p>
+            <a
+            class="play"
+            href="day1-video.html">
 
-</div>
+                ENTER DAY 1
 
-<div class="node locked">
+            </a>
 
-<div class="circle">
+        </div>
 
-2
+    </section>
 
-</div>
 
-<p>Day 2</p>
+    <!-- DAY 2 -->
 
-</div>
+    <section
+    class="day"
+    data-day="2">
 
-<div class="node locked">
+        <div class="marker">
+            🕯️
+        </div>
 
-<div class="circle">
+        <div class="card">
 
-3
+            <div class="day-number">
+                DAY 02
+            </div>
 
-</div>
+            <h2>
+                The Cursed Path
+            </h2>
 
-<p>Day 3</p>
+            <p>
+                The journey continues deeper
+                into the unknown.
+            </p>
 
-</div>
+            <a
+            class="play"
+            href="day2-video.html">
 
-<div class="node locked">
+                ENTER DAY 2
 
-<div class="circle">
+            </a>
 
-4
+        </div>
 
-</div>
+    </section>
 
-<p>Day 4</p>
 
-</div>
+    <!-- DAY 3 -->
 
-<div class="node locked">
+    <section
+    class="day"
+    data-day="3">
 
-<div class="circle">
+        <div class="marker">
+            👻
+        </div>
 
-🏰
+        <div class="card">
 
-</div>
+            <div class="day-number">
+                DAY 03
+            </div>
 
-<p>Final</p>
+            <h2>
+                Ghostly Shadows
+            </h2>
 
-</div>
+            <p>
+                Something is watching from
+                beyond the darkness.
+            </p>
 
-</section>
+            <a
+            class="play"
+            href="day3-video.html">
 
-<audio id="buttonSound">
-    <source src="assets/button.mp3" type="audio/mpeg">
-</audio>
+                ENTER DAY 3
 
-<script src="js/map.js"></script>
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- DAY 4 -->
+
+    <section
+    class="day"
+    data-day="4">
+
+        <div class="marker">
+            🧙
+        </div>
+
+        <div class="card">
+
+            <div class="day-number">
+                DAY 04
+            </div>
+
+            <h2>
+                The Witch's Domain
+            </h2>
+
+            <p>
+                A forbidden power awakens
+                within the forest.
+            </p>
+
+            <a
+            class="play"
+            href="day4-video.html">
+
+                ENTER DAY 4
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- DAY 5 -->
+
+    <section
+    class="day"
+    data-day="5">
+
+        <div class="marker">
+            ⚔️
+        </div>
+
+        <div class="card">
+
+            <div class="day-number">
+                DAY 05
+            </div>
+
+            <h2>
+                The Haunted Cemetery
+            </h2>
+
+            <p>
+                Fight through the cemetery,
+                restore the lanterns and defeat
+                the Ghost King.
+            </p>
+
+            <a
+            class="play"
+            href="day5-epic-game.html">
+
+                PLAY DAY 5
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- DAY 6 -->
+
+    <section
+    class="day"
+    data-day="6">
+
+        <div class="marker">
+            🏚️
+        </div>
+
+        <div class="card">
+
+            <div class="day-number">
+                DAY 06
+            </div>
+
+            <h2>
+                The Haunted Mansion
+            </h2>
+
+            <p>
+                The portal opens.
+                Enter the mansion and discover
+                what waits inside.
+            </p>
+
+            <a
+            class="play"
+            href="day6-video.html">
+
+                ENTER DAY 6
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- DAY 7 -->
+
+    <section
+    class="day"
+    data-day="7">
+
+        <div class="marker">
+            🌑
+        </div>
+
+        <div class="card">
+
+            <div class="day-number">
+                DAY 07
+            </div>
+
+            <h2>
+                The Final Mystery
+            </h2>
+
+            <p>
+                The final chapter begins.
+                One last secret remains.
+            </p>
+
+            <a
+            class="play"
+            href="day7-video.html">
+
+                ENTER DAY 7
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- END -->
+
+    <section class="day">
+
+        <div class="marker">
+            🎬
+        </div>
+
+        <div class="card">
+
+            <div class="day-number">
+                FINALE
+            </div>
+
+            <h2>
+                End Credits
+            </h2>
+
+            <p>
+                The Halloween journey comes to an end...
+                but perhaps something remains.
+            </p>
+
+            <a
+            class="play"
+            href="end-credits.html">
+
+                WATCH END CREDITS
+
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    © 2026 Vidlyra Studio —
+    Halloween Fest
+
+</footer>
+
+
+<script>
+
+"use strict";
+
+
+/*
+    Progress system
+
+    The pages themselves remain accessible,
+    but completed days receive a visual
+    completion state.
+*/
+
+const completedDays = {
+
+    1:
+        localStorage.getItem("day1Complete") === "true",
+
+    2:
+        localStorage.getItem("day2Complete") === "true",
+
+    3:
+        localStorage.getItem("day3Complete") === "true",
+
+    4:
+        localStorage.getItem("day4Complete") === "true",
+
+    5:
+        localStorage.getItem("day5Complete") === "true",
+
+    6:
+        localStorage.getItem("day6Complete") === "true",
+
+    7:
+        localStorage.getItem("day7Complete") === "true"
+
+};
+
+
+document
+.querySelectorAll(".day[data-day]")
+.forEach(function(day) {
+
+    const number =
+        Number(day.dataset.day);
+
+    if (completedDays[number]) {
+
+        day.classList.add("completed");
+
+        const button =
+            day.querySelector(".play");
+
+        if (button) {
+
+            button.textContent =
+                "✓ COMPLETED";
+
+        }
+
+    }
+
+});
+
+
+</script>
+
+
 </body>
 
 </html>
