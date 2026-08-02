@@ -1,80 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<title>Vidlyra Halloween Fest 2026 — Story</title>
 
-<title>Day 1 | Into the Haunted Forest</title>
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
-<link rel="stylesheet" href="css/story.css">
-<link rel="stylesheet" href="css/story-animations.css">
+html,body{
+    width:100%;
+    min-height:100%;
+    background:#05030a;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
 
+body{
+    overflow-x:hidden;
+}
+
+.story-page{
+    min-height:100vh;
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px 18px;
+    background:
+        radial-gradient(circle at 50% 20%,rgba(120,0,160,.25),transparent 35%),
+        linear-gradient(#09020d,#020104);
+}
+
+.glow{
+    position:fixed;
+    width:420px;
+    height:420px;
+    border-radius:50%;
+    background:rgba(120,0,255,.08);
+    filter:blur(80px);
+    pointer-events:none;
+}
+
+.glow.one{
+    top:-150px;
+    left:-120px;
+}
+
+.glow.two{
+    right:-150px;
+    bottom:-150px;
+    background:rgba(255,70,0,.06);
+}
+
+.story-card{
+    position:relative;
+    width:min(900px,100%);
+    padding:42px 30px;
+    border:1px solid rgba(190,80,255,.35);
+    border-radius:24px;
+    background:rgba(10,5,18,.88);
+    box-shadow:
+        0 0 35px rgba(130,0,255,.2),
+        inset 0 0 30px rgba(100,0,150,.08);
+    text-align:center;
+}
+
+.badge{
+    display:inline-block;
+    padding:8px 16px;
+    border-radius:30px;
+    border:1px solid rgba(255,120,0,.5);
+    color:#ffad45;
+    font-size:12px;
+    letter-spacing:3px;
+    margin-bottom:18px;
+}
+
+h1{
+    font-size:clamp(32px,7vw,64px);
+    letter-spacing:6px;
+    text-shadow:0 0 18px #a000ff;
+}
+
+.subtitle{
+    margin-top:10px;
+    color:#c98cff;
+    letter-spacing:3px;
+    font-size:14px;
+}
+
+.divider{
+    width:120px;
+    height:2px;
+    margin:28px auto;
+    background:linear-gradient(90deg,transparent,#c000ff,transparent);
+}
+
+.story-text{
+    max-width:720px;
+    margin:auto;
+    line-height:1.8;
+    color:#ddd;
+    font-size:16px;
+}
+
+.story-text p{
+    margin-bottom:20px;
+}
+
+.chapter{
+    margin:30px auto;
+    padding:22px;
+    max-width:720px;
+    border-left:3px solid #9c00ff;
+    background:rgba(120,0,180,.07);
+    text-align:left;
+}
+
+.chapter h2{
+    color:#d98aff;
+    margin-bottom:10px;
+}
+
+.chapter p{
+    color:#ccc;
+    line-height:1.7;
+}
+
+.buttons{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:14px;
+    margin-top:35px;
+}
+
+button{
+    border:0;
+    padding:14px 22px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:14px;
+    color:white;
+    background:linear-gradient(135deg,#7d00d9,#35006b);
+    box-shadow:0 0 18px rgba(150,0,255,.3);
+    transition:.25s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 0 28px rgba(180,0,255,.55);
+}
+
+.back{
+    background:#17111d;
+}
+
+footer{
+    margin-top:30px;
+    color:#777;
+    font-size:12px;
+}
+
+@media(max-width:600px){
+    .story-card{
+        padding:30px 18px;
+    }
+
+    .story-text{
+        font-size:14px;
+    }
+
+    .chapter{
+        padding:18px;
+    }
+
+    button{
+        width:100%;
+    }
+}
+</style>
 </head>
 
 <body>
 
-<!-- Background -->
+<div class="story-page">
 
-<div class="background"></div>
+    <div class="glow one"></div>
+    <div class="glow two"></div>
 
-<div class="background-layer"></div>
+    <main class="story-card">
 
-<!-- Clouds -->
+        <div class="badge">VIDLYRA HALLOWEEN FEST 2026</div>
 
-<div class="cloud cloud1"></div>
+        <h1>THE STORY</h1>
 
-<div class="cloud cloud2"></div>
+        <div class="subtitle">
+            BEYOND THE VEIL
+        </div>
 
-<!-- Castle -->
+        <div class="divider"></div>
 
-<div class="castle"></div>
+        <div class="story-text">
 
-<!-- Forest -->
+            <p>
+                Every Halloween, the boundary between the Vidlyra Universe
+                and the forgotten world becomes weaker.
+            </p>
 
-<img
-src="assets/images/forest.svg.png"
-class="forest"
-alt="Forest">
+            <p>
+                This year, something ancient has awakened.
+            </p>
 
-<!-- Fog -->
+            <div class="chapter">
+                <h2>Chapter I — The Forgotten Realm</h2>
 
-<div class="fog fog-back"></div>
+                <p>
+                    A mysterious signal leads you beyond the familiar
+                    Vidlyra world and into a haunted realm filled with
+                    abandoned places, restless spirits and forgotten secrets.
+                </p>
+            </div>
 
-<div class="fog fog-front"></div>
+            <div class="chapter">
+                <h2>Chapter II — The Seven Days</h2>
 
-<!-- Story -->
+                <p>
+                    Seven days stand between you and the truth.
+                    Each day reveals another part of the mystery.
+                    Complete the challenges, discover hidden secrets,
+                    and continue deeper into the realm.
+                </p>
+            </div>
 
-<section class="story">
+            <div class="chapter">
+                <h2>Chapter III — The Final Mystery</h2>
 
-<h1>DAY 1</h1>
+                <p>
+                    Somewhere beyond the final gate lies the source of the
+                    disturbance. But reaching it will require more than
+                    courage. You must uncover the clues hidden throughout
+                    the festival.
+                </p>
+            </div>
 
-<h2>Into the Haunted Forest</h2>
+            <p>
+                The journey has already begun.
+            </p>
 
-<div id="storyText">
+            <p>
+                <strong>Enter the realm. Complete the seven days.
+                Discover what waits beyond the veil.</strong>
+            </p>
+
+        </div>
+
+        <div class="buttons">
+
+            <button
+                onclick="location.href='map.html'">
+                🗺️ Enter the Map
+            </button>
+
+            <button
+                class="back"
+                onclick="location.href='home.html'">
+                ← Back to Home
+            </button>
+
+        </div>
+
+        <footer>
+            © 2026 Vidlyra Halloween Fest
+        </footer>
+
+    </main>
 
 </div>
 
-<button id="nextBtn">
-
-Begin Adventure
-
-</button>
-
-</section>
-
-<audio id="bgMusic" loop>
-
-<source src="assets/ambience.mp3"
-type="audio/mpeg">
-
-</audio>
-
-<script src="js/story.js"></script>
-
 </body>
-
 </html>
