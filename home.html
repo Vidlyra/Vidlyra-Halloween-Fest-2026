@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Vidlyra Halloween Fest 2026</title>
 
-<link rel="stylesheet" href="css/world.css">
+<link
+rel="stylesheet"
+href="css/world.css">
 
 </head>
 
 <body>
 
-<!-- =========================
-     WORLD BACKGROUND
-========================== -->
+<!-- =================================
+     WORLD
+================================= -->
 
 <div class="world">
 
@@ -33,7 +38,6 @@
 
     <div class="fog fog-back"></div>
 
-    <!-- Vidlyra Emblem -->
     <div class="emblem">
 
         <div class="emblem-ring"></div>
@@ -42,7 +46,6 @@
 
     </div>
 
-    <!-- Castle -->
     <div class="castle">
 
         <div class="tower left"></div>
@@ -53,134 +56,315 @@
 
     </div>
 
-    <!-- Forest -->
     <div class="forest"></div>
 
-    <!-- Hidden Eyes -->
     <div class="eyes eye-left"></div>
 
     <div class="eyes eye-right"></div>
 
-    <!-- Pumpkins -->
     <div class="pumpkin pumpkin1"></div>
 
     <div class="pumpkin pumpkin2"></div>
 
     <div class="pumpkin pumpkin3"></div>
 
-    <!-- Front Fog -->
     <div class="fog fog-front"></div>
 
 </div>
 
-<!-- =========================
-     HERO CONTENT
-========================== -->
+
+<!-- =================================
+     HERO
+================================= -->
 
 <section class="hero">
 
-<div class="hero-box">
+    <div class="hero-box">
 
-<h1>
+        <h1>
+            VIDLYRA
+        </h1>
 
-VIDLYRA
+        <h2>
+            HALLOWEEN FEST 2026
+        </h2>
 
-</h1>
+        <p>
+            Beyond the Veil
+        </p>
 
-<h2>
+        <div class="buttons">
 
-HALLOWEEN FEST 2026
+            <button id="enterButton">
+                🎃 ENTER THE HAUNTED REALM
+            </button>
 
-</h2>
+            <button id="aboutButton">
+                📜 EVENT STORY
+            </button>
 
-<p>
+        </div>
 
-Beyond the Veil
-
-</p>
-
-<div class="buttons">
-
-<button id="enterButton">
-
-🎃 Enter the Haunted Realm
-
-</button>
-
-<button id="aboutButton">
-
-📜 Event Story
-
-</button>
-
-</div>
-
-</div>
+    </div>
 
 </section>
 
-<!-- =========================
+
+<!-- =================================
+     STORY POPUP
+================================= -->
+
+<div
+id="storyPopup"
+style="
+display:none;
+position:fixed;
+inset:0;
+z-index:9999;
+align-items:center;
+justify-content:center;
+background:rgba(0,0,0,.85);
+padding:20px;
+">
+
+    <div
+    style="
+    width:min(650px,95%);
+    padding:30px;
+    background:#100814;
+    border:1px solid #ff7200;
+    border-radius:20px;
+    text-align:center;
+    color:white;
+    box-shadow:0 0 40px rgba(255,80,0,.4);
+    ">
+
+        <h2>
+            🎃 THE STORY
+        </h2>
+
+        <p style="margin-top:20px;line-height:1.8;color:#d4c6db;">
+
+            Once every Halloween, the gates of the Vidlyra
+            Universe open.
+
+            <br><br>
+
+            Seven mysterious days await those brave enough
+            to cross the veil.
+
+            <br><br>
+
+            Explore haunted places, survive supernatural
+            encounters, discover hidden secrets and uncover
+            what waits beyond the final gate.
+
+        </p>
+
+        <button
+        id="closeStory"
+        style="
+        margin-top:25px;
+        padding:12px 25px;
+        border:1px solid #ff7200;
+        border-radius:30px;
+        background:#ff7200;
+        color:white;
+        cursor:pointer;
+        ">
+
+            CLOSE
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =================================
      HUD
-========================== -->
+================================= -->
 
 <div class="hud">
 
-<div class="hud-left">
+    <div class="hud-left">
 
-<span>🎃 Quest: 0 / 13</span>
+        <span>
+            🎃 Quest: 0 / 13
+        </span>
+
+    </div>
+
+    <div class="hud-right">
+
+        <span>
+            ⭐ Secrets Found: 0
+        </span>
+
+    </div>
 
 </div>
 
-<div class="hud-right">
 
-<span>⭐ Secrets Found: 0</span>
-
-</div>
-
-</div>
-
-<!-- =========================
+<!-- =================================
      FOOTER
-========================== -->
+================================= -->
 
 <footer>
 
-<p>
-
-© 2026 Vidlyra Halloween Fest
-
-</p>
+    <p>
+        © 2026 Vidlyra Halloween Fest
+    </p>
 
 </footer>
 
-<!-- =========================
+
+<!-- =================================
      AUDIO
-========================== -->
+================================= -->
 
 <audio
 id="ambient"
-loop>
+loop
+preload="auto">
 
-<source
-src="assets/ambience.mp3.mp3"
-type="audio/mpeg">
+    <source
+    src="assets/ambience.mp3.mp3"
+    type="audio/mpeg">
 
 </audio>
 
 <audio
-id="thunder">
+id="thunder"
+preload="auto">
 
-<source
-src="assets/thunder.mp3"
-type="audio/mpeg">
+    <source
+    src="assets/thunder.mp3"
+    type="audio/mpeg">
 
 </audio>
 
-<!-- =========================
-     JAVASCRIPT
-========================== -->
 
-<script src="js/world.js"></script>
+<!-- =================================
+     SCRIPT
+================================= -->
+
+<script>
+
+"use strict";
+
+const enterButton =
+document.getElementById("enterButton");
+
+const aboutButton =
+document.getElementById("aboutButton");
+
+const storyPopup =
+document.getElementById("storyPopup");
+
+const closeStory =
+document.getElementById("closeStory");
+
+const ambient =
+document.getElementById("ambient");
+
+const thunder =
+document.getElementById("thunder");
+
+
+/* ================================
+   ENTER
+================================ */
+
+enterButton.addEventListener("click", function () {
+
+    try {
+        ambient.volume = 0.35;
+        ambient.play().catch(function(){});
+    } catch(e) {}
+
+    enterButton.disabled = true;
+
+    document.body.style.transition =
+        "opacity .8s ease";
+
+    document.body.style.opacity = "0";
+
+    setTimeout(function () {
+
+        window.location.href = "map.html";
+
+    }, 800);
+
+});
+
+
+/* ================================
+   STORY
+================================ */
+
+aboutButton.addEventListener("click", function () {
+
+    storyPopup.style.display = "flex";
+
+});
+
+
+closeStory.addEventListener("click", function () {
+
+    storyPopup.style.display = "none";
+
+});
+
+
+storyPopup.addEventListener("click", function (e) {
+
+    if (e.target === storyPopup) {
+        storyPopup.style.display = "none";
+    }
+
+});
+
+
+/* ================================
+   THUNDER
+================================ */
+
+function thunderFlash() {
+
+    const lightning =
+        document.querySelector(".lightning");
+
+    if (!lightning) return;
+
+    lightning.style.opacity = "1";
+
+    try {
+        thunder.currentTime = 0;
+        thunder.volume = 0.45;
+        thunder.play().catch(function(){});
+    } catch(e) {}
+
+    setTimeout(function () {
+
+        lightning.style.opacity = "0";
+
+    }, 120);
+
+}
+
+
+setInterval(function () {
+
+    if (Math.random() < 0.35) {
+        thunderFlash();
+    }
+
+}, 7000);
+
+</script>
 
 </body>
+
 </html>
