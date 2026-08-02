@@ -1,929 +1,1582 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>VIDLYRA HALLOWEEN FEST 2026 — End Credits</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #000;
-            color: #fff;
-            font-family: Georgia, "Times New Roman", serif;
-        }
-
-        body {
-            position: relative;
-        }
-
-        /* =========================================
-           BACKGROUND
-        ========================================= */
-
-        .background {
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(
-                    circle at center,
-                    rgba(70, 20, 5, 0.35),
-                    rgba(0, 0, 0, 0.95) 65%
-                ),
-                #000;
-            z-index: 1;
-        }
-
-        .fog {
-            position: fixed;
-            inset: -20%;
-            background:
-                radial-gradient(
-                    ellipse at 30% 60%,
-                    rgba(255, 255, 255, 0.035),
-                    transparent 45%
-                ),
-                radial-gradient(
-                    ellipse at 70% 40%,
-                    rgba(255, 255, 255, 0.025),
-                    transparent 45%
-                );
-            filter: blur(35px);
-            animation: fogMove 18s ease-in-out infinite alternate;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        @keyframes fogMove {
-            from {
-                transform: translateX(-3%);
-            }
-
-            to {
-                transform: translateX(3%);
-            }
-        }
-
-        /* =========================================
-           CREDITS CONTAINER
-        ========================================= */
-
-        .credits-stage {
-            position: fixed;
-            inset: 0;
-            overflow: hidden;
-            z-index: 5;
-        }
-
-        .credits {
-            position: absolute;
-            width: min(900px, 90vw);
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            padding: 100vh 0 100vh;
-            animation: creditsRoll 105s linear forwards;
-        }
-
-        @keyframes creditsRoll {
-            from {
-                transform: translate(-50%, 0);
-            }
-
-            to {
-                transform: translate(-50%, -210%);
-            }
-        }
-
-        /* =========================================
-           TITLE
-        ========================================= */
-
-        .title {
-            margin-bottom: 90px;
-        }
-
-        .pumpkin {
-            font-size: 58px;
-            display: block;
-            margin-bottom: 25px;
-            animation: pumpkinGlow 2.5s ease-in-out infinite;
-        }
-
-        @keyframes pumpkinGlow {
-            0%,
-            100% {
-                filter: drop-shadow(0 0 5px rgba(255, 100, 0, 0.2));
-            }
-
-            50% {
-                filter: drop-shadow(0 0 25px rgba(255, 100, 0, 0.9));
-            }
-        }
-
-        .festival-title {
-            font-family: Georgia, serif;
-            font-size: clamp(30px, 6vw, 64px);
-            letter-spacing: 7px;
-            font-weight: bold;
-            color: #fff;
-            text-shadow:
-                0 0 8px rgba(255, 80, 0, 0.5),
-                0 0 30px rgba(255, 50, 0, 0.25);
-        }
-
-        .festival-subtitle {
-            margin-top: 18px;
-            font-size: clamp(18px, 3vw, 28px);
-            letter-spacing: 6px;
-            color: #aaa;
-        }
-
-        /* =========================================
-           CREDIT SECTIONS
-        ========================================= */
-
-        .credit-section {
-            margin-bottom: 75px;
-        }
-
-        .credit-heading {
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            font-size: 15px;
-            margin-bottom: 18px;
-        }
-
-        .credit-name {
-            font-size: clamp(22px, 4vw, 36px);
-            font-weight: bold;
-            color: #fff;
-            letter-spacing: 2px;
-        }
-
-        .credit-name.highlight {
-            color: #ff7518;
-            text-shadow:
-                0 0 10px rgba(255, 80, 0, 0.45);
-        }
-
-        .divider {
-            width: 90px;
-            height: 1px;
-            background: rgba(255, 117, 24, 0.6);
-            margin: 80px auto;
-        }
-
-        /* =========================================
-           SPECIAL THANKS
-        ========================================= */
-
-        .special-thanks {
-            max-width: 700px;
-            margin: 0 auto 80px;
-        }
-
-        .special-thanks p {
-            margin-top: 25px;
-            color: #bbb;
-            font-size: clamp(16px, 2.5vw, 22px);
-            line-height: 1.8;
-        }
-
-        /* =========================================
-           PRODUCED BY
-        ========================================= */
-
-        .studio {
-            margin-bottom: 70px;
-        }
-
-        .studio-name {
-            font-size: clamp(28px, 5vw, 48px);
-            color: #ff7518;
-            font-weight: bold;
-            letter-spacing: 5px;
-            text-shadow:
-                0 0 12px rgba(255, 80, 0, 0.5);
-        }
-
-        .copyright {
-            color: #777;
-            font-size: 15px;
-            letter-spacing: 2px;
-            margin-top: 25px;
-        }
-
-        .tagline {
-            margin-top: 30px;
-            color: #aaa;
-            font-style: italic;
-            font-size: clamp(17px, 3vw, 24px);
-        }
-
-        /* =========================================
-           HALLOWEEN 2027
-        ========================================= */
-
-        .next-event {
-            margin-top: 100px;
-            margin-bottom: 120px;
-        }
-
-        .see-you {
-            color: #aaa;
-            font-size: clamp(17px, 3vw, 25px);
-            font-style: italic;
-            margin-bottom: 25px;
-        }
-
-        .next-year {
-            color: #ff7518;
-            font-size: clamp(30px, 6vw, 58px);
-            letter-spacing: 5px;
-            font-weight: bold;
-            text-shadow:
-                0 0 15px rgba(255, 80, 0, 0.5);
-        }
-
-        /* =========================================
-           POST CREDIT
-        ========================================= */
-
-        .post-credit {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-        }
-
-        .post-credit-title {
-            color: #555;
-            font-size: 14px;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            margin-bottom: 80px;
-        }
-
-        .lantern {
-            width: 90px;
-            height: 100px;
-            position: relative;
-            margin-bottom: 65px;
-            animation: lanternFloat 3s ease-in-out infinite;
-        }
-
-        .lantern-body {
-            position: absolute;
-            width: 70px;
-            height: 65px;
-            left: 10px;
-            top: 25px;
-            border-radius: 35% 35% 42% 42%;
-            background: #161616;
-            border: 3px solid #333;
-            box-shadow:
-                0 0 20px rgba(255, 100, 0, 0.25);
-        }
-
-        .lantern-glow {
-            position: absolute;
-            width: 28px;
-            height: 28px;
-            left: 31px;
-            top: 44px;
-            border-radius: 50%;
-            background: #ff7518;
-            box-shadow:
-                0 0 15px #ff7518,
-                0 0 40px rgba(255, 100, 0, 0.8),
-                0 0 80px rgba(255, 60, 0, 0.5);
-            animation: lanternFlicker 0.8s infinite alternate;
-        }
-
-        .lantern-handle {
-            position: absolute;
-            width: 50px;
-            height: 35px;
-            left: 20px;
-            top: 5px;
-            border: 3px solid #333;
-            border-bottom: none;
-            border-radius: 50px 50px 0 0;
-        }
-
-        @keyframes lanternFlicker {
-            from {
-                opacity: 0.7;
-                transform: scale(0.9);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1.08);
-            }
-        }
-
-        @keyframes lanternFloat {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-8px);
-            }
-        }
-
-        .post-credit-text {
-            max-width: 700px;
-            text-align: center;
-        }
-
-        .post-credit-text p {
-            color: #999;
-            font-size: clamp(18px, 3vw, 27px);
-            line-height: 1.8;
-            margin-bottom: 28px;
-        }
-
-        .mystery {
-            color: #fff !important;
-            font-weight: bold;
-            font-size: clamp(23px, 4vw, 36px) !important;
-            text-shadow:
-                0 0 15px rgba(255, 255, 255, 0.15);
-        }
-
-        .coming-soon {
-            margin-top: 70px;
-            color: #ff7518;
-            font-size: clamp(22px, 4vw, 38px);
-            letter-spacing: 8px;
-            font-weight: bold;
-            text-shadow:
-                0 0 20px rgba(255, 70, 0, 0.6);
-        }
-
-        /* =========================================
-           SKIP BUTTON
-        ========================================= */
-
-        #skipButton {
-            position: fixed;
-            right: 22px;
-            bottom: 22px;
-            z-index: 50;
-
-            border: 1px solid rgba(255, 117, 24, 0.5);
-            background: rgba(0, 0, 0, 0.75);
-            color: #aaa;
-
-            padding: 11px 18px;
-            border-radius: 30px;
-
-            font-size: 13px;
-            letter-spacing: 1px;
-
-            cursor: pointer;
-
-            backdrop-filter: blur(8px);
-        }
-
-        #skipButton:hover {
-            color: #fff;
-            border-color: #ff7518;
-        }
-
-        /* =========================================
-           MOBILE
-        ========================================= */
-
-        @media (max-width: 600px) {
-
-            .credits {
-                width: 88vw;
-                animation-duration: 95s;
-            }
-
-            .credit-section {
-                margin-bottom: 60px;
-            }
-
-            .divider {
-                margin: 60px auto;
-            }
-
-            .festival-title {
-                letter-spacing: 4px;
-            }
-
-            .festival-subtitle {
-                letter-spacing: 3px;
-            }
-
-            #skipButton {
-                right: 12px;
-                bottom: 12px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#050505">
+
+<title>VIDLYRA HALLOWEEN FEST 2026 — End Credits</title>
+
+<style>
+/* =========================================================
+   VIDLYRA HALLOWEEN FEST 2026
+   OFFICIAL END CREDITS
+   COMPLETE SELF-CONTAINED VERSION
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+    color: #fff;
+}
+
+body {
+    position: relative;
+}
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+#creditsWorld {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            ellipse at center,
+            #191919 0%,
+            #080808 45%,
+            #000 100%
+        );
+}
+
+/* Dark atmospheric glow */
+
+#creditsWorld::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background:
+        radial-gradient(
+            circle at 50% 70%,
+            rgba(120, 30, 180, 0.13),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(255, 80, 20, 0.07),
+            transparent 30%
+        );
+    animation: atmosphere 8s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes atmosphere {
+    from {
+        transform: scale(1);
+        opacity: .65;
+    }
+
+    to {
+        transform: scale(1.12);
+        opacity: 1;
+    }
+}
+
+/* =========================================================
+   FOG
+========================================================= */
+
+.fog {
+    position: absolute;
+    left: -20%;
+    width: 140%;
+    height: 35%;
+    pointer-events: none;
+    filter: blur(25px);
+    opacity: .13;
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(255,255,255,.28),
+            transparent 65%
+        );
+}
+
+.fog.one {
+    bottom: 5%;
+    animation: fogMove 18s linear infinite;
+}
+
+.fog.two {
+    bottom: 18%;
+    opacity: .08;
+    animation: fogMoveReverse 24s linear infinite;
+}
+
+@keyframes fogMove {
+    from {
+        transform: translateX(-8%);
+    }
+
+    to {
+        transform: translateX(8%);
+    }
+}
+
+@keyframes fogMoveReverse {
+    from {
+        transform: translateX(8%);
+    }
+
+    to {
+        transform: translateX(-8%);
+    }
+}
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.6);
+    pointer-events: none;
+    animation: particleFloat linear infinite;
+}
+
+@keyframes particleFloat {
+    from {
+        transform: translateY(110vh);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .7;
+    }
+
+    85% {
+        opacity: .7;
+    }
+
+    to {
+        transform: translateY(-10vh);
+        opacity: 0;
+    }
+}
+
+/* =========================================================
+   TOP BRAND
+========================================================= */
+
+#brand {
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+
+    color: rgba(255,255,255,.55);
+
+    text-align: center;
+
+    opacity: 0;
+    animation: brandFade 3s ease forwards;
+}
+
+@keyframes brandFade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* =========================================================
+   CREDITS VIEWPORT
+========================================================= */
+
+#creditsViewport {
+    position: absolute;
+    inset: 0;
+
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 12%,
+            black 86%,
+            transparent 100%
+        );
+
+    -webkit-mask-image:
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 12%,
+            black 86%,
+            transparent 100%
+        );
+}
+
+/* =========================================================
+   CREDIT ROLL
+========================================================= */
+
+#creditsRoll {
+    position: absolute;
+    top: 100vh;
+    width: min(900px, 90vw);
+
+    text-align: center;
+
+    will-change: transform;
+}
+
+/* =========================================================
+   OPENING TITLE
+========================================================= */
+
+.titleBlock {
+    margin-bottom: 110px;
+}
+
+.halloweenIcon {
+    font-size: 60px;
+    margin-bottom: 25px;
+
+    animation:
+        pumpkinGlow 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes pumpkinGlow {
+    from {
+        filter: drop-shadow(0 0 5px rgba(255,120,0,.25));
+    }
+
+    to {
+        filter: drop-shadow(0 0 25px rgba(255,100,0,.75));
+    }
+}
+
+.mainTitle {
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(34px, 7vw, 76px);
+
+    letter-spacing: 5px;
+    line-height: 1.15;
+
+    color: #fff;
+
+    text-shadow:
+        0 0 12px rgba(255,255,255,.18);
+}
+
+.subtitle {
+    margin-top: 20px;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size:
+        clamp(12px, 2vw, 18px);
+
+    letter-spacing: 6px;
+    text-transform: uppercase;
+
+    color: rgba(255,255,255,.55);
+}
+
+/* =========================================================
+   CREDIT GROUPS
+========================================================= */
+
+.creditGroup {
+    margin-bottom: 90px;
+}
+
+.creditRole {
+    margin-bottom: 18px;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size:
+        clamp(11px, 1.8vw, 16px);
+
+    letter-spacing: 4px;
+    text-transform: uppercase;
+
+    color: rgba(255,255,255,.48);
+}
+
+.creditName {
+    font-size:
+        clamp(25px, 4vw, 42px);
+
+    line-height: 1.3;
+
+    color: #fff;
+
+    text-shadow:
+        0 0 15px rgba(255,255,255,.1);
+}
+
+.creditName.highlight {
+    color: #fff;
+}
+
+/* =========================================================
+   SPECIAL THANKS
+========================================================= */
+
+.specialThanks {
+    margin-top: 40px;
+    margin-bottom: 110px;
+}
+
+.specialThanks h2 {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size:
+        clamp(13px, 2vw, 19px);
+
+    letter-spacing: 5px;
+    text-transform: uppercase;
+
+    color: rgba(255,255,255,.55);
+
+    margin-bottom: 35px;
+}
+
+.specialThanks p {
+    max-width: 650px;
+    margin: auto;
+
+    font-size:
+        clamp(18px, 3vw, 28px);
+
+    line-height: 1.7;
+
+    color: rgba(255,255,255,.88);
+}
+
+/* =========================================================
+   PRODUCED BY
+========================================================= */
+
+.producedBy {
+    margin-bottom: 100px;
+}
+
+.producedBy .small {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 13px;
+    letter-spacing: 5px;
+
+    color: rgba(255,255,255,.45);
+
+    margin-bottom: 18px;
+}
+
+.studio {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size:
+        clamp(25px, 5vw, 48px);
+
+    font-weight: 800;
+
+    letter-spacing: 7px;
+
+    color: #fff;
+}
+
+/* =========================================================
+   COPYRIGHT
+========================================================= */
+
+.copyright {
+    margin-bottom: 110px;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 12px;
+    letter-spacing: 3px;
+
+    color: rgba(255,255,255,.4);
+}
+
+/* =========================================================
+   FINAL QUOTE
+========================================================= */
+
+.finalQuote {
+    margin-bottom: 100px;
+
+    font-size:
+        clamp(22px, 4vw, 38px);
+
+    font-style: italic;
+
+    line-height: 1.6;
+
+    color: rgba(255,255,255,.9);
+}
+
+/* =========================================================
+   NEXT HALLOWEEN
+========================================================= */
+
+.nextHalloween {
+    margin-bottom: 140px;
+}
+
+.nextHalloween .smallText {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size:
+        clamp(11px, 1.8vw, 15px);
+
+    letter-spacing: 5px;
+    text-transform: uppercase;
+
+    color: rgba(255,255,255,.45);
+
+    margin-bottom: 25px;
+}
+
+.nextHalloween h2 {
+    font-size:
+        clamp(35px, 8vw, 75px);
+
+    letter-spacing: 4px;
+
+    color: #fff;
+
+    text-shadow:
+        0 0 20px rgba(255,255,255,.15);
+}
+
+/* =========================================================
+   POST CREDIT
+========================================================= */
+
+#postCredit {
+    position: fixed;
+    inset: 0;
+
+    z-index: 50;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    background: #000;
+
+    opacity: 0;
+
+    transition:
+        opacity 2s ease;
+}
+
+/* Pumpkin */
+
+#pumpkin {
+    position: relative;
+
+    width: 105px;
+    height: 90px;
+
+    margin-bottom: 55px;
+
+    opacity: 0;
+
+    transform:
+        scale(.65)
+        translateY(20px);
+
+    transition:
+        opacity 2s ease,
+        transform 2s ease;
+
+    filter:
+        drop-shadow(
+            0 0 15px
+            rgba(255,100,0,.35)
+        );
+}
+
+/* pumpkin body */
+
+.pumpkinBody {
+    position: absolute;
+
+    left: 50%;
+    bottom: 0;
+
+    width: 90px;
+    height: 65px;
+
+    transform: translateX(-50%);
+
+    border-radius:
+        45%
+        45%
+        42%
+        42%;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            #ff9d22,
+            #d85b00 65%,
+            #702800
+        );
+}
+
+/* pumpkin grooves */
+
+.pumpkinBody::before,
+.pumpkinBody::after {
+    content: "";
+
+    position: absolute;
+
+    top: 2px;
+    bottom: 2px;
+
+    width: 25px;
+
+    border-radius: 50%;
+
+    border-left:
+        3px solid
+        rgba(70,25,0,.5);
+}
+
+.pumpkinBody::before {
+    left: 20px;
+}
+
+.pumpkinBody::after {
+    right: 20px;
+}
+
+/* stem */
+
+.pumpkinStem {
+    position: absolute;
+
+    left: 50%;
+    top: -9px;
+
+    width: 13px;
+    height: 20px;
+
+    transform:
+        translateX(-50%)
+        rotate(5deg);
+
+    border-radius: 4px;
+
+    background: #453016;
+}
+
+/* eyes */
+
+.pumpkinEye {
+    position: absolute;
+
+    top: 26px;
+
+    width: 0;
+    height: 0;
+
+    border-left:
+        8px solid transparent;
+
+    border-right:
+        8px solid transparent;
+
+    border-bottom:
+        12px solid
+        #180500;
+
+    filter:
+        drop-shadow(
+            0 0 5px
+            rgba(255,80,0,.5)
+        );
+}
+
+.pumpkinEye.left {
+    left: 25px;
+}
+
+.pumpkinEye.right {
+    right: 25px;
+}
+
+/* smile */
+
+.pumpkinSmile {
+    position: absolute;
+
+    left: 50%;
+    bottom: 17px;
+
+    width: 36px;
+    height: 12px;
+
+    transform:
+        translateX(-50%);
+
+    border-bottom:
+        4px solid #180500;
+
+    border-radius:
+        0 0 50% 50%;
+}
+
+/* =========================================================
+   POST CREDIT TEXT
+========================================================= */
+
+.postText {
+    width: min(800px, 88vw);
+
+    text-align: center;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    opacity: 0;
+
+    transition:
+        opacity 2s ease;
+}
+
+.postText .line {
+    margin-bottom: 25px;
+
+    font-size:
+        clamp(15px, 2.5vw, 23px);
+
+    letter-spacing: 2px;
+
+    color: rgba(255,255,255,.7);
+}
+
+.postText .mystery {
+    margin-top: 35px;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(24px, 5vw, 48px);
+
+    font-style: italic;
+
+    color: #fff;
+}
+
+.comingSoon {
+    margin-top: 45px;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size:
+        clamp(12px, 2vw, 17px);
+
+    font-weight: 700;
+
+    letter-spacing: 7px;
+
+    color: rgba(255,255,255,.65);
+}
+
+/* =========================================================
+   SKIP BUTTON
+========================================================= */
+
+#skipButton {
+    position: fixed;
+
+    right: 20px;
+    bottom: 20px;
+
+    z-index: 100;
+
+    padding:
+        10px
+        18px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+
+    border-radius: 30px;
+
+    background:
+        rgba(0,0,0,.55);
+
+    color:
+        rgba(255,255,255,.65);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    transition:
+        .25s ease;
+}
+
+#skipButton:hover {
+    background:
+        rgba(255,255,255,.1);
+
+    color: #fff;
+
+    border-color:
+        rgba(255,255,255,.55);
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    #brand {
+        top: 18px;
+        font-size: 9px;
+        letter-spacing: 4px;
+    }
+
+    .creditGroup {
+        margin-bottom: 70px;
+    }
+
+    .titleBlock {
+        margin-bottom: 80px;
+    }
+
+    .specialThanks {
+        margin-bottom: 80px;
+    }
+
+    .producedBy {
+        margin-bottom: 80px;
+    }
+
+    .copyright {
+        margin-bottom: 80px;
+    }
+
+    .nextHalloween {
+        margin-bottom: 100px;
+    }
+
+    #skipButton {
+        right: 12px;
+        bottom: 12px;
+        padding: 9px 14px;
+    }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+</style>
 </head>
 
 <body>
 
-    <div class="background"></div>
-    <div class="fog"></div>
+<!-- =======================================================
+     WORLD
+======================================================= -->
 
-    <div class="credits-stage">
+<div id="creditsWorld">
 
-        <main class="credits">
+    <div class="fog one"></div>
+    <div class="fog two"></div>
 
-            <!-- =====================================
-                 OPENING
-            ====================================== -->
+    <div id="particles"></div>
 
-            <section class="title">
+</div>
 
-                <span class="pumpkin">🎃</span>
+<!-- =======================================================
+     BRAND
+======================================================= -->
 
-                <div class="festival-title">
-                    VIDLYRA HALLOWEEN FEST
-                </div>
+<div id="brand">
+    VIDLYRA HALLOWEEN FEST 2026
+</div>
 
-                <div class="festival-subtitle">
-                    2026
-                </div>
+<!-- =======================================================
+     CREDITS
+======================================================= -->
 
-            </section>
+<div id="creditsViewport">
 
+    <div id="creditsRoll">
 
-            <!-- =====================================
-                 OFFICIAL END CREDITS
-            ====================================== -->
+        <!-- OPENING -->
 
-            <div class="divider"></div>
+        <section class="titleBlock">
 
-            <section class="credit-section">
+            <div class="halloweenIcon">
+                🎃
+            </div>
 
-                <div class="credit-heading">
-                    Official End Credits
-                </div>
+            <h1 class="mainTitle">
+                VIDLYRA
+            </h1>
 
-            </section>
+            <div class="subtitle">
+                Halloween Fest 2026
+            </div>
 
+        </section>
 
-            <!-- EXECUTIVE PRODUCER -->
 
-            <section class="credit-section">
+        <!-- EXECUTIVE PRODUCER -->
 
-                <div class="credit-heading">
-                    Executive Producer &amp; Director
-                </div>
+        <section class="creditGroup">
 
-                <div class="credit-name highlight">
-                    Alwin Dison R
-                </div>
+            <div class="creditRole">
+                Executive Producer &amp; Director
+            </div>
 
-            </section>
+            <div class="creditName highlight">
+                Alwin Dison R
+            </div>
 
+        </section>
 
-            <!-- CREATIVE AI -->
 
-            <section class="credit-section">
+        <!-- CREATIVE AI -->
 
-                <div class="credit-heading">
-                    Creative AI Assistant
-                </div>
+        <section class="creditGroup">
 
-                <div class="credit-name">
-                    Lyra
-                </div>
+            <div class="creditRole">
+                Creative AI Assistant
+            </div>
 
-            </section>
+            <div class="creditName">
+                Lyra
+            </div>
 
+        </section>
 
-            <!-- CHARACTER -->
 
-            <section class="credit-section">
+        <!-- CHARACTER -->
 
-                <div class="credit-heading">
-                    Lead Character Artist
-                </div>
+        <section class="creditGroup">
 
-                <div class="credit-name">
-                    Luna
-                </div>
+            <div class="creditRole">
+                Lead Character Artist
+            </div>
 
-            </section>
+            <div class="creditName">
+                Luna
+            </div>
 
+        </section>
 
-            <!-- SOUND -->
 
-            <section class="credit-section">
+        <!-- SOUND -->
 
-                <div class="credit-heading">
-                    Sound Design &amp; Audio
-                </div>
+        <section class="creditGroup">
 
-                <div class="credit-name">
-                    Rex
-                </div>
+            <div class="creditRole">
+                Sound Design &amp; Audio
+            </div>
 
-            </section>
+            <div class="creditName">
+                Rex
+            </div>
 
+        </section>
 
-            <!-- STORY -->
 
-            <section class="credit-section">
+        <!-- STORY -->
 
-                <div class="credit-heading">
-                    Story Development
-                </div>
+        <section class="creditGroup">
 
-                <div class="credit-name">
-                    Nova
-                </div>
+            <div class="creditRole">
+                Story Development
+            </div>
 
-            </section>
+            <div class="creditName">
+                Nova
+            </div>
 
+        </section>
 
-            <!-- BACKGROUND -->
 
-            <section class="credit-section">
+        <!-- BACKGROUND -->
 
-                <div class="credit-heading">
-                    Background Art &amp; Environment Design
-                </div>
+        <section class="creditGroup">
 
-                <div class="credit-name">
-                    Aiden
-                </div>
+            <div class="creditRole">
+                Background Art &amp; Environment Design
+            </div>
 
-            </section>
+            <div class="creditName">
+                Aiden
+            </div>
 
+        </section>
 
-            <!-- ANIMATION -->
 
-            <section class="credit-section">
+        <!-- ANIMATION -->
 
-                <div class="credit-heading">
-                    Animation Supervisor
-                </div>
+        <section class="creditGroup">
 
-                <div class="credit-name">
-                    Aria
-                </div>
+            <div class="creditRole">
+                Animation Supervisor
+            </div>
 
-            </section>
+            <div class="creditName">
+                Aria
+            </div>
 
+        </section>
 
-            <!-- VFX -->
 
-            <section class="credit-section">
+        <!-- VFX -->
 
-                <div class="credit-heading">
-                    Visual Effects (VFX)
-                </div>
+        <section class="creditGroup">
 
-                <div class="credit-name">
-                    Kai
-                </div>
+            <div class="creditRole">
+                Visual Effects (VFX)
+            </div>
 
-            </section>
+            <div class="creditName">
+                Kai
+            </div>
 
+        </section>
 
-            <!-- UI -->
 
-            <section class="credit-section">
+        <!-- UI -->
 
-                <div class="credit-heading">
-                    UI / Motion Graphics
-                </div>
+        <section class="creditGroup">
 
-                <div class="credit-name">
-                    Mira
-                </div>
+            <div class="creditRole">
+                UI / Motion Graphics
+            </div>
 
-            </section>
+            <div class="creditName">
+                Mira
+            </div>
 
+        </section>
 
-            <!-- QA -->
 
-            <section class="credit-section">
+        <!-- QA -->
 
-                <div class="credit-heading">
-                    Quality Assurance &amp; Production Support
-                </div>
+        <section class="creditGroup">
 
-                <div class="credit-name">
-                    Zane
-                </div>
+            <div class="creditRole">
+                Quality Assurance &amp; Production Support
+            </div>
 
-            </section>
+            <div class="creditName">
+                Zane
+            </div>
 
+        </section>
 
-            <!-- =====================================
-                 SPECIAL THANKS
-            ====================================== -->
 
-            <div class="divider"></div>
+        <!-- SPECIAL THANKS -->
 
-            <section class="special-thanks">
+        <section class="specialThanks">
 
-                <div class="credit-heading">
-                    Special Thanks
-                </div>
+            <h2>
+                Special Thanks
+            </h2>
 
-                <p>
-                    To everyone who entered the Vidlyra Universe
-                    and celebrated Halloween Fest 2026.
-                </p>
+            <p>
+                To everyone who entered the Vidlyra Universe
+                and celebrated Halloween Fest 2026.
+            </p>
 
-                <p>
-                    Your support inspires every story we create.
-                </p>
+            <p style="margin-top:25px;">
+                Your support inspires every story we create.
+            </p>
 
-            </section>
+        </section>
 
 
-            <!-- =====================================
-                 PRODUCED BY
-            ====================================== -->
+        <!-- PRODUCED BY -->
 
-            <section class="studio">
+        <section class="producedBy">
 
-                <div class="credit-heading">
-                    Produced By
-                </div>
+            <div class="small">
+                Produced By
+            </div>
 
-                <div class="studio-name">
-                    VIDLYRA STUDIO
-                </div>
+            <div class="studio">
+                VIDLYRA STUDIO
+            </div>
 
-                <div class="copyright">
-                    © 2026 Vidlyra. All Rights Reserved.
-                </div>
+        </section>
 
-                <div class="tagline">
-                    "Every ending reveals another mystery."
-                </div>
 
-            </section>
+        <!-- COPYRIGHT -->
 
+        <section class="copyright">
 
-            <!-- =====================================
-                 NEXT HALLOWEEN
-            ====================================== -->
+            © 2026 Vidlyra. All Rights Reserved.
 
-            <section class="next-event">
+        </section>
 
-                <div class="see-you">
-                    🎃 See You Next Halloween...
-                </div>
 
-                <div class="next-year">
-                    HALLOWEEN FEST 2027
-                </div>
+        <!-- QUOTE -->
 
-            </section>
+        <section class="finalQuote">
 
+            "Every ending reveals another mystery."
 
-            <!-- =====================================
-                 POST CREDIT SCENE
-            ====================================== -->
+        </section>
 
-            <section class="post-credit">
 
-                <div class="post-credit-title">
-                    Post-Credit Scene
-                </div>
+        <!-- NEXT HALLOWEEN -->
 
-                <div class="lantern">
+        <section class="nextHalloween">
 
-                    <div class="lantern-handle"></div>
+            <div class="smallText">
+                🎃 See You Next Halloween...
+            </div>
 
-                    <div class="lantern-body"></div>
+            <h2>
+                Halloween Fest 2027
+            </h2>
 
-                    <div class="lantern-glow"></div>
+        </section>
 
-                </div>
+    </div>
 
-                <div class="post-credit-text">
+</div>
 
-                    <p>
-                        A forgotten pumpkin lantern
-                        glows in the distance.
-                    </p>
 
-                    <p>
-                        A shadow smiles.
-                    </p>
+<!-- =======================================================
+     POST CREDIT SCENE
+======================================================= -->
 
-                    <p class="mystery">
-                        "This was only the beginning..."
-                    </p>
+<div id="postCredit">
 
-                    <div class="coming-soon">
-                        COMING SOON
-                    </div>
+    <div id="pumpkin">
 
-                </div>
+        <div class="pumpkinStem"></div>
 
-            </section>
+        <div class="pumpkinBody">
 
-        </main>
+            <div class="pumpkinEye left"></div>
+            <div class="pumpkinEye right"></div>
+
+            <div class="pumpkinSmile"></div>
+
+        </div>
 
     </div>
 
 
-    <!-- SKIP -->
+    <div class="postText">
 
-    <button id="skipButton">
-        SKIP CREDITS
-    </button>
+        <div class="line">
+            A forgotten pumpkin lantern glows in the distance.
+        </div>
 
+        <div class="line">
+            A shadow smiles.
+        </div>
 
-    <script>
-        "use strict";
+        <div class="mystery">
+            "This was only the beginning..."
+        </div>
 
-        /* =========================================
-           VIDLYRA HALLOWEEN FEST 2026
-           END CREDITS
-        ========================================= */
+        <div class="comingSoon">
+            COMING SOON
+        </div>
 
-        const credits = document.querySelector(".credits");
-        const skipButton = document.getElementById("skipButton");
+    </div>
 
-        let skipped = false;
-
-
-        /* =========================================
-           SKIP CREDITS
-        ========================================= */
-
-        function skipCredits() {
-
-            if (skipped) return;
-
-            skipped = true;
-
-            if (credits) {
-                credits.style.animationPlayState = "paused";
-                credits.style.opacity = "0";
-
-                credits.style.transition =
-                    "opacity 1s ease";
-            }
-
-            if (skipButton) {
-                skipButton.style.opacity = "0";
-                skipButton.style.pointerEvents = "none";
-            }
-
-            setTimeout(() => {
-
-                showFinalMessage();
-
-            }, 1000);
-        }
+</div>
 
 
-        /* =========================================
-           FINAL MESSAGE
-        ========================================= */
+<!-- =======================================================
+     SKIP
+======================================================= -->
 
-        function showFinalMessage() {
-
-            const finalScreen =
-                document.createElement("div");
-
-            finalScreen.style.position = "fixed";
-            finalScreen.style.inset = "0";
-            finalScreen.style.zIndex = "100";
-
-            finalScreen.style.background = "#000";
-
-            finalScreen.style.display = "flex";
-            finalScreen.style.flexDirection = "column";
-
-            finalScreen.style.alignItems = "center";
-            finalScreen.style.justifyContent = "center";
-
-            finalScreen.style.textAlign = "center";
-
-            finalScreen.style.padding = "30px";
-
-            finalScreen.innerHTML = `
-                <div style="
-                    font-size:55px;
-                    margin-bottom:25px;
-                ">🎃</div>
-
-                <div style="
-                    font-size:clamp(24px,5vw,48px);
-                    letter-spacing:5px;
-                    font-weight:bold;
-                    color:#ff7518;
-                    text-shadow:0 0 20px rgba(255,70,0,.6);
-                ">
-                    VIDLYRA
-                </div>
-
-                <div style="
-                    margin-top:20px;
-                    color:#aaa;
-                    font-size:18px;
-                    letter-spacing:3px;
-                ">
-                    HALLOWEEN FEST 2026
-                </div>
-
-                <div style="
-                    margin-top:45px;
-                    color:#777;
-                    font-style:italic;
-                    font-size:18px;
-                ">
-                    Every ending reveals another mystery.
-                </div>
-            `;
-
-            document.body.appendChild(finalScreen);
-        }
+<button id="skipButton">
+    SKIP CREDITS
+</button>
 
 
-        /* =========================================
-           BUTTON
-        ========================================= */
+<!-- =======================================================
+     JAVASCRIPT
+======================================================= -->
 
-        if (skipButton) {
+<script>
+"use strict";
 
-            skipButton.addEventListener(
-                "click",
-                skipCredits
-            );
+/* =========================================================
+   VIDLYRA HALLOWEEN FEST 2026
+   END CREDITS ENGINE
+========================================================= */
 
-        }
+const creditsRoll =
+    document.getElementById("creditsRoll");
+
+const creditsViewport =
+    document.getElementById("creditsViewport");
+
+const postCredit =
+    document.getElementById("postCredit");
+
+const pumpkin =
+    document.getElementById("pumpkin");
+
+const postText =
+    document.querySelector(".postText");
+
+const skipButton =
+    document.getElementById("skipButton");
+
+const particles =
+    document.getElementById("particles");
 
 
-        /* =========================================
-           CLICK ANYWHERE AFTER CREDITS
-        ========================================= */
+/* =========================================================
+   SETTINGS
+========================================================= */
 
-        document.addEventListener(
-            "keydown",
-            function (event) {
+const SETTINGS = {
 
-                if (event.code === "Escape") {
-                    skipCredits();
-                }
+    /* Credits speed.
+       Increase for faster credits. */
 
-            }
+    speed: 45,
+
+    /* Delay before post-credit scene */
+
+    postCreditDelay: 1800
+
+};
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let started = false;
+
+let finished = false;
+
+let startTime = 0;
+
+let animationFrame = null;
+
+let creditsHeight = 0;
+
+let viewportHeight = 0;
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+function createParticles() {
+
+    if (!particles) return;
+
+    const count =
+        window.innerWidth <= 600
+            ? 18
+            : 35;
+
+    for (let i = 0; i < count; i++) {
+
+        const particle =
+            document.createElement("div");
+
+        particle.className =
+            "particle";
+
+        particle.style.left =
+            Math.random() * 100 + "%";
+
+        particle.style.animationDuration =
+            (10 + Math.random() * 15) + "s";
+
+        particle.style.animationDelay =
+            (-Math.random() * 20) + "s";
+
+        const size =
+            1 + Math.random() * 2;
+
+        particle.style.width =
+            size + "px";
+
+        particle.style.height =
+            size + "px";
+
+        particles.appendChild(particle);
+    }
+}
+
+
+/* =========================================================
+   MEASURE
+========================================================= */
+
+function measureCredits() {
+
+    if (!creditsRoll) return;
+
+    creditsHeight =
+        creditsRoll.offsetHeight;
+
+    viewportHeight =
+        window.innerHeight;
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+function startCredits() {
+
+    if (started) return;
+
+    started = true;
+
+    measureCredits();
+
+    startTime =
+        performance.now();
+
+    requestAnimationFrame(animateCredits);
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+function animateCredits(now) {
+
+    if (finished) return;
+
+    const elapsed =
+        (now - startTime) / 1000;
+
+    const distance =
+        elapsed * SETTINGS.speed;
+
+    const startPosition =
+        viewportHeight;
+
+    const y =
+        startPosition - distance;
+
+    creditsRoll.style.transform =
+        "translate3d(0," +
+        y +
+        "px,0)";
+
+    const finishPoint =
+        -(creditsHeight + 100);
+
+    if (y <= finishPoint) {
+
+        finishCredits();
+
+        return;
+    }
+
+    animationFrame =
+        requestAnimationFrame(
+            animateCredits
+        );
+}
+
+
+/* =========================================================
+   FINISH
+========================================================= */
+
+function finishCredits() {
+
+    if (finished) return;
+
+    finished = true;
+
+    if (animationFrame) {
+
+        cancelAnimationFrame(
+            animationFrame
         );
 
+    }
 
-        /* =========================================
-           CREDITS FINISHED
-        ========================================= */
+    setTimeout(
+        showPostCredit,
+        SETTINGS.postCreditDelay
+    );
+}
 
-        if (credits) {
 
-            credits.addEventListener(
-                "animationend",
-                function () {
+/* =========================================================
+   POST CREDIT
+========================================================= */
 
-                    if (skipped) return;
+function showPostCredit() {
 
-                    skipped = true;
+    if (!postCredit) return;
 
-                    setTimeout(() => {
+    postCredit.style.display =
+        "flex";
 
-                        showFinalMessage();
+    requestAnimationFrame(() => {
 
-                    }, 2500);
+        postCredit.style.opacity =
+            "1";
 
-                }
-            );
+        setTimeout(() => {
+
+            if (pumpkin) {
+
+                pumpkin.style.opacity =
+                    "1";
+
+                pumpkin.style.transform =
+                    "scale(1) translateY(0)";
+
+            }
+
+        }, 700);
+
+        setTimeout(() => {
+
+            if (postText) {
+
+                postText.style.opacity =
+                    "1";
+
+            }
+
+        }, 2300);
+
+    });
+
+    if (skipButton) {
+
+        skipButton.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =========================================================
+   SKIP
+========================================================= */
+
+function skipCredits() {
+
+    if (finished) return;
+
+    finished = true;
+
+    if (animationFrame) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+    }
+
+    if (creditsRoll) {
+
+        creditsRoll.style.transform =
+            "translate3d(0," +
+            -(creditsHeight + 200) +
+            "px,0)";
+
+    }
+
+    setTimeout(
+        showPostCredit,
+        500
+    );
+
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+if (skipButton) {
+
+    skipButton.addEventListener(
+        "click",
+        skipCredits
+    );
+
+}
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (event.code === "Space") {
+
+            event.preventDefault();
+
+            skipCredits();
 
         }
 
-    </script>
+    }
+);
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        if (!started) return;
+
+        measureCredits();
+
+    }
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+window.addEventListener(
+    "load",
+    () => {
+
+        createParticles();
+
+        measureCredits();
+
+        /*
+         * Small cinematic pause before
+         * the credits begin.
+         */
+
+        setTimeout(
+            startCredits,
+            1800
+        );
+
+    }
+);
+
+</script>
 
 </body>
 </html>
