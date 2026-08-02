@@ -1,0 +1,661 @@
+/* =========================================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 7 VIDEO — CINEMATIC CSS
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================================================
+   VIDEO SCREEN
+   ========================================================= */
+
+#videoScreen {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
+
+/* =========================================================
+   VIDEO
+   ========================================================= */
+
+#day7Video {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    background: #000;
+
+    display: block;
+}
+
+/* =========================================================
+   CINEMATIC OVERLAY
+   ========================================================= */
+
+#cinematicOverlay {
+    position: absolute;
+    inset: 0;
+
+    z-index: 5;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.65) 0%,
+            rgba(0, 0, 0, 0.08) 25%,
+            rgba(0, 0, 0, 0.05) 65%,
+            rgba(0, 0, 0, 0.75) 100%
+        );
+}
+
+/* =========================================================
+   DAY 7 TITLE
+   ========================================================= */
+
+#dayTitle {
+    position: absolute;
+
+    top: 7%;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 10;
+
+    width: 90%;
+
+    text-align: center;
+
+    color: #fff;
+
+    font-size: clamp(24px, 5vw, 64px);
+
+    font-weight: 700;
+
+    letter-spacing: 8px;
+
+    line-height: 1.1;
+
+    text-shadow:
+        0 0 8px rgba(80, 220, 255, 0.9),
+        0 0 20px rgba(0, 150, 255, 0.8),
+        0 0 45px rgba(0, 80, 255, 0.7);
+
+    opacity: 1;
+
+    transition:
+        opacity 1.5s ease,
+        transform 1.5s ease;
+}
+
+#dayTitle span {
+    display: block;
+
+    margin-top: 12px;
+
+    font-size: clamp(10px, 1.6vw, 20px);
+
+    font-weight: 400;
+
+    letter-spacing: 5px;
+
+    color: #b8efff;
+
+    text-shadow:
+        0 0 8px #00bfff,
+        0 0 20px #0077ff;
+
+    opacity: 0.9;
+}
+
+/* =========================================================
+   START SCREEN
+   ========================================================= */
+
+#startScreen {
+    position: fixed;
+    inset: 0;
+
+    z-index: 50;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    text-align: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(0, 80, 150, 0.16),
+            #000 65%
+        );
+
+    transition:
+        opacity 1s ease;
+
+    overflow: hidden;
+}
+
+/* Atmospheric glow */
+
+#startScreen::before {
+    content: "";
+
+    position: absolute;
+
+    width: 45vw;
+    height: 45vw;
+
+    max-width: 600px;
+    max-height: 600px;
+
+    border-radius: 50%;
+
+    background: rgba(0, 150, 255, 0.08);
+
+    filter: blur(80px);
+
+    animation: bluePulse 4s ease-in-out infinite;
+
+    pointer-events: none;
+}
+
+@keyframes bluePulse {
+
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: scale(0.9);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+/* =========================================================
+   START TITLE
+   ========================================================= */
+
+#startScreen h1 {
+    position: relative;
+    z-index: 2;
+
+    color: #fff;
+
+    font-size: clamp(35px, 8vw, 90px);
+
+    font-weight: 800;
+
+    letter-spacing: 10px;
+
+    line-height: 1;
+
+    text-shadow:
+        0 0 10px #00d9ff,
+        0 0 25px #008cff,
+        0 0 55px #0055ff,
+        0 0 100px rgba(0, 100, 255, 0.8);
+
+    animation:
+        titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+
+    0%,
+    100% {
+        text-shadow:
+            0 0 10px #00d9ff,
+            0 0 25px #008cff,
+            0 0 55px #0055ff;
+    }
+
+    50% {
+        text-shadow:
+            0 0 15px #8eeeff,
+            0 0 35px #00aaff,
+            0 0 75px #0066ff;
+    }
+}
+
+/* =========================================================
+   FEST SUBTITLE
+   ========================================================= */
+
+#startScreen p {
+    position: relative;
+    z-index: 2;
+
+    margin-top: 20px;
+
+    color: #b9edff;
+
+    font-size: clamp(11px, 2vw, 20px);
+
+    letter-spacing: 5px;
+
+    text-shadow:
+        0 0 10px #008cff;
+}
+
+/* =========================================================
+   START BUTTON
+   ========================================================= */
+
+#startButton {
+    position: relative;
+    z-index: 2;
+
+    margin-top: 42px;
+
+    min-width: 210px;
+
+    padding: 15px 38px;
+
+    border: 1px solid #55ddff;
+
+    border-radius: 50px;
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 190, 255, 0.12),
+            rgba(0, 70, 255, 0.32)
+        );
+
+    color: #fff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    letter-spacing: 4px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 15px rgba(0, 190, 255, 0.45),
+        inset 0 0 15px rgba(0, 190, 255, 0.12);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        background 0.3s ease;
+}
+
+#startButton:hover {
+    transform: scale(1.08);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 210, 255, 0.25),
+            rgba(0, 90, 255, 0.45)
+        );
+
+    box-shadow:
+        0 0 20px rgba(0, 210, 255, 0.7),
+        0 0 45px rgba(0, 100, 255, 0.35),
+        inset 0 0 25px rgba(0, 210, 255, 0.2);
+}
+
+#startButton:active {
+    transform: scale(0.96);
+}
+
+/* =========================================================
+   LOADING TEXT
+   ========================================================= */
+
+#loading {
+    position: absolute;
+
+    left: 50%;
+    bottom: 7%;
+
+    transform: translateX(-50%);
+
+    z-index: 15;
+
+    color: #9eeaff;
+
+    font-size: 12px;
+
+    letter-spacing: 4px;
+
+    white-space: nowrap;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    text-shadow:
+        0 0 8px #00bfff;
+
+    transition:
+        opacity 0.5s ease;
+}
+
+#loading.show {
+    opacity: 1;
+
+    animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+
+    0%,
+    100% {
+        opacity: 0.45;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* =========================================================
+   CONTINUE BUTTON
+   ========================================================= */
+
+#continueButton {
+    position: absolute;
+
+    right: 28px;
+    bottom: 28px;
+
+    z-index: 25;
+
+    padding: 12px 24px;
+
+    border: 1px solid rgba(120, 220, 255, 0.8);
+
+    border-radius: 30px;
+
+    outline: none;
+
+    background:
+        rgba(0, 0, 0, 0.65);
+
+    color: #fff;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform: translateY(10px);
+
+    box-shadow:
+        0 0 12px rgba(0, 180, 255, 0.3);
+
+    transition:
+        opacity 0.4s ease,
+        transform 0.4s ease,
+        background 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+#continueButton.show {
+    opacity: 1;
+
+    pointer-events: auto;
+
+    transform: translateY(0);
+}
+
+#continueButton:hover {
+    background:
+        rgba(0, 130, 220, 0.45);
+
+    box-shadow:
+        0 0 20px rgba(0, 200, 255, 0.75);
+}
+
+/* =========================================================
+   FINAL BLACK FADE
+   ========================================================= */
+
+#fadeScreen {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    background: #000;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 2s ease;
+}
+
+#fadeScreen.active {
+    opacity: 1;
+
+    pointer-events: all;
+}
+
+/* =========================================================
+   CINEMATIC VIGNETTE
+   ========================================================= */
+
+#videoScreen::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 6;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 45%,
+            rgba(0, 0, 0, 0.35) 75%,
+            rgba(0, 0, 0, 0.8) 100%
+        );
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    #day7Video {
+        object-fit: cover;
+    }
+
+    #dayTitle {
+        top: 5%;
+
+        letter-spacing: 4px;
+
+        font-size: clamp(22px, 8vw, 42px);
+    }
+
+    #dayTitle span {
+        margin-top: 8px;
+
+        font-size: 10px;
+
+        letter-spacing: 3px;
+    }
+
+    #startScreen h1 {
+        font-size: clamp(38px, 15vw, 70px);
+
+        letter-spacing: 6px;
+    }
+
+    #startScreen p {
+        margin-top: 15px;
+
+        font-size: 10px;
+
+        letter-spacing: 3px;
+    }
+
+    #startButton {
+        margin-top: 30px;
+
+        min-width: 180px;
+
+        padding: 13px 25px;
+
+        font-size: 11px;
+
+        letter-spacing: 3px;
+    }
+
+    #loading {
+        bottom: 10%;
+
+        font-size: 9px;
+
+        letter-spacing: 3px;
+    }
+
+    #continueButton {
+        right: 15px;
+
+        bottom: 15px;
+
+        padding: 10px 17px;
+
+        font-size: 10px;
+
+        letter-spacing: 1.5px;
+    }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    #dayTitle {
+        top: 4%;
+    }
+
+    #startScreen h1 {
+        letter-spacing: 4px;
+    }
+
+    #startButton {
+        min-width: 165px;
+
+        padding: 12px 20px;
+    }
+}
+
+/* =========================================================
+   LANDSCAPE MOBILE
+   ========================================================= */
+
+@media (max-height: 500px) and (orientation: landscape) {
+
+    #dayTitle {
+        top: 4%;
+
+        font-size: 25px;
+    }
+
+    #dayTitle span {
+        margin-top: 4px;
+
+        font-size: 9px;
+    }
+
+    #startScreen h1 {
+        font-size: 40px;
+    }
+
+    #startScreen p {
+        margin-top: 8px;
+    }
+
+    #startButton {
+        margin-top: 15px;
+
+        padding: 10px 25px;
+    }
+
+    #loading {
+        bottom: 5%;
+    }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+button:focus-visible {
+    outline: 2px solid #8eeeff;
+
+    outline-offset: 4px;
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+    }
+}
