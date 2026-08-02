@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VIDLYRA HALLOWEEN FEST 2026 — DAY 7</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ================================
+   VIDEO CONTAINER
+================================ */
+
+#videoScreen {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+}
+
+/* ================================
+   VIDEO
+================================ */
+
+#day7Video {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    background: #000;
+}
+
+/* ================================
+   DARK CINEMATIC OVERLAY
+================================ */
+
+#cinematicOverlay {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.45),
+            transparent 25%,
+            transparent 70%,
+            rgba(0,0,0,0.65)
+        );
+
+    z-index: 5;
+}
+
+/* ================================
+   DAY 7 TITLE
+================================ */
+
+#dayTitle {
+    position: absolute;
+
+    top: 7%;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 10;
+
+    text-align: center;
+
+    color: #fff;
+
+    letter-spacing: 7px;
+
+    font-size: clamp(20px, 4vw, 52px);
+
+    text-shadow:
+        0 0 10px #4fdcff,
+        0 0 25px #168cff,
+        0 0 50px #0066ff;
+
+    opacity: 1;
+
+    transition:
+        opacity 1.5s ease,
+        transform 1.5s ease;
+}
+
+#dayTitle span {
+    display: block;
+
+    margin-top: 10px;
+
+    font-size: clamp(10px, 1.5vw, 18px);
+
+    letter-spacing: 5px;
+
+    opacity: 0.8;
+}
+
+/* ================================
+   START BUTTON
+================================ */
+
+#startScreen {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    background: #000;
+
+    z-index: 50;
+
+    transition: opacity 1s ease;
+}
+
+#startScreen h1 {
+    color: #fff;
+
+    font-size: clamp(28px, 6vw, 70px);
+
+    letter-spacing: 8px;
+
+    text-align: center;
+
+    text-shadow:
+        0 0 15px #00c8ff,
+        0 0 35px #008cff,
+        0 0 70px #0066ff;
+}
+
+#startScreen p {
+    margin-top: 15px;
+
+    color: #9eeaff;
+
+    letter-spacing: 4px;
+
+    font-size: clamp(11px, 2vw, 18px);
+}
+
+#startButton {
+    margin-top: 40px;
+
+    padding: 15px 42px;
+
+    border: 1px solid #55ddff;
+
+    border-radius: 50px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,180,255,0.15),
+            rgba(0,80,255,0.35)
+        );
+
+    color: #fff;
+
+    font-size: 15px;
+
+    letter-spacing: 4px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 15px rgba(0,200,255,0.5),
+        inset 0 0 15px rgba(0,200,255,0.15);
+
+    transition: 0.3s;
+}
+
+#startButton:hover {
+    transform: scale(1.08);
+
+    box-shadow:
+        0 0 30px rgba(0,200,255,0.9),
+        inset 0 0 25px rgba(0,200,255,0.3);
+}
+
+/* ================================
+   SKIP / CONTINUE
+================================ */
+
+#continueButton {
+    position: absolute;
+
+    right: 25px;
+    bottom: 25px;
+
+    z-index: 20;
+
+    padding: 12px 22px;
+
+    border: 1px solid rgba(120,220,255,0.7);
+
+    border-radius: 30px;
+
+    background: rgba(0,0,0,0.55);
+
+    color: #fff;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: 0.3s;
+}
+
+#continueButton.show {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+#continueButton:hover {
+    background: rgba(0,150,255,0.35);
+
+    box-shadow:
+        0 0 20px rgba(0,180,255,0.7);
+}
+
+/* ================================
+   LOADING
+================================ */
+
+#loading {
+    position: absolute;
+
+    left: 50%;
+    bottom: 7%;
+
+    transform: translateX(-50%);
+
+    z-index: 15;
+
+    color: #9eeaff;
+
+    font-size: 12px;
+
+    letter-spacing: 4px;
+
+    opacity: 0;
+
+    transition: opacity 0.5s ease;
+}
+
+#loading.show {
+    opacity: 1;
+}
+
+/* ================================
+   END FADE
+================================ */
+
+#fadeScreen {
+    position: fixed;
+
+    inset: 0;
+
+    background: #000;
+
+    z-index: 100;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: opacity 2s ease;
+}
+
+#fadeScreen.active {
+    opacity: 1;
+}
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 700px) {
+
+    #day7Video {
+        object-fit: cover;
+    }
+
+    #dayTitle {
+        top: 5%;
+
+        letter-spacing: 4px;
+    }
+
+    #dayTitle span {
+        letter-spacing: 3px;
+    }
+
+    #startScreen h1 {
+        padding: 0 20px;
+
+        letter-spacing: 5px;
+    }
+
+    #startButton {
+        padding: 14px 32px;
+    }
+
+    #continueButton {
+        right: 15px;
+        bottom: 15px;
+
+        padding: 10px 16px;
+
+        font-size: 11px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =================================
+     VIDEO SCREEN
+================================= -->
+
+<div id="videoScreen">
+
+    <!-- DAY 7 VIDEO -->
+
+    <video
+        id="day7Video"
+        preload="auto"
+        playsinline
+        muted
+    >
+        <source
+            src="assets/video/day7-video.mp4"
+            type="video/mp4"
+        >
+
+        Your browser does not support HTML5 video.
+    </video>
+
+
+    <!-- CINEMATIC OVERLAY -->
+
+    <div id="cinematicOverlay"></div>
+
+
+    <!-- TITLE -->
+
+    <div id="dayTitle">
+
+        DAY 7
+
+        <span>
+            THE FINAL GATE
+        </span>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div id="loading">
+        LOADING FINAL CHAPTER...
+    </div>
+
+
+    <!-- CONTINUE -->
+
+    <button id="continueButton">
+        CONTINUE →
+    </button>
+
+</div>
+
+
+<!-- =================================
+     START SCREEN
+================================= -->
+
+<div id="startScreen">
+
+    <h1>VIDLYRA</h1>
+
+    <p>
+        HALLOWEEN FEST 2026
+    </p>
+
+    <button id="startButton">
+        ENTER DAY 7
+    </button>
+
+</div>
+
+
+<!-- =================================
+     BLACK FADE
+================================= -->
+
+<div id="fadeScreen"></div>
+
+
+<script>
+"use strict";
+
+/* ==========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 7 VIDEO
+   DAY 7 VIDEO → END CREDITS
+========================================== */
+
+
+/* ==========================================
+   CONFIGURATION
+========================================== */
+
+const CONFIG = {
+
+    VIDEO_URL:
+        "assets/video/day7-video.mp4",
+
+    NEXT_PAGE:
+        "end-credits.html",
+
+    FADE_DURATION:
+        2000
+
+};
+
+
+/* ==========================================
+   DOM
+========================================== */
+
+const video =
+    document.getElementById("day7Video");
+
+const startScreen =
+    document.getElementById("startScreen");
+
+const startButton =
+    document.getElementById("startButton");
+
+const fadeScreen =
+    document.getElementById("fadeScreen");
+
+const dayTitle =
+    document.getElementById("dayTitle");
+
+const continueButton =
+    document.getElementById("continueButton");
+
+const loading =
+    document.getElementById("loading");
+
+
+/* ==========================================
+   INITIAL STATE
+========================================== */
+
+let finished = false;
+
+
+/* ==========================================
+   SAVE DAY 7 VISIT
+========================================== */
+
+try {
+
+    localStorage.setItem(
+        "day7Started",
+        "true"
+    );
+
+} catch (error) {}
+
+
+/* ==========================================
+   START DAY 7
+========================================== */
+
+function startDay7() {
+
+    if (!video) return;
+
+    startScreen.style.opacity = "0";
+    startScreen.style.pointerEvents = "none";
+
+    setTimeout(() => {
+
+        startScreen.style.display = "none";
+
+    }, 1000);
+
+
+    loading.classList.add("show");
+
+
+    video.currentTime = 0;
+
+    video.muted = true;
+
+
+    const playPromise =
+        video.play();
+
+
+    if (playPromise) {
+
+        playPromise
+            .then(() => {
+
+                loading.classList.remove(
+                    "show"
+                );
+
+            })
+            .catch(() => {
+
+                loading.textContent =
+                    "TAP TO PLAY";
+
+            });
+
+    }
+
+}
+
+
+/* ==========================================
+   START BUTTON
+========================================== */
+
+startButton.addEventListener(
+    "click",
+    startDay7
+);
+
+
+/* ==========================================
+   VIDEO CLICK
+   Mobile fallback
+========================================== */
+
+video.addEventListener(
+    "click",
+    () => {
+
+        if (
+            video.paused &&
+            !finished
+        ) {
+
+            video.play().catch(() => {});
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   VIDEO STARTED
+========================================== */
+
+video.addEventListener(
+    "playing",
+    () => {
+
+        loading.classList.remove(
+            "show"
+        );
+
+        dayTitle.style.opacity = "1";
+
+    }
+);
+
+
+/* ==========================================
+   FADE TITLE
+========================================== */
+
+video.addEventListener(
+    "timeupdate",
+    () => {
+
+        if (!video.duration) return;
+
+
+        const remaining =
+            video.duration -
+            video.currentTime;
+
+
+        /*
+         * Hide title near the end
+         */
+
+        if (remaining < 4) {
+
+            dayTitle.style.opacity =
+                "0";
+
+        }
+
+
+        /*
+         * Show continue button
+         * during final seconds
+         */
+
+        if (
+            remaining <= 3 &&
+            !finished
+        ) {
+
+            continueButton.classList.add(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   VIDEO FINISHED
+========================================== */
+
+video.addEventListener(
+    "ended",
+    () => {
+
+        finishDay7();
+
+    }
+);
+
+
+/* ==========================================
+   FINISH DAY 7
+========================================== */
+
+function finishDay7() {
+
+    if (finished) return;
+
+    finished = true;
+
+
+    /*
+     * Save completion
+     */
+
+    try {
+
+        localStorage.setItem(
+            "day7Complete",
+            "true"
+        );
+
+        localStorage.setItem(
+            "halloweenFestComplete",
+            "true"
+        );
+
+    } catch (error) {}
+
+
+    /*
+     * Stop video
+     */
+
+    video.pause();
+
+
+    /*
+     * Hide continue button
+     */
+
+    continueButton.classList.remove(
+        "show"
+    );
+
+
+    /*
+     * Fade to black
+     */
+
+    fadeScreen.classList.add(
+        "active"
+    );
+
+
+    /*
+     * Redirect to credits
+     */
+
+    setTimeout(
+        () => {
+
+            window.location.href =
+                CONFIG.NEXT_PAGE;
+
+        },
+        CONFIG.FADE_DURATION
+    );
+
+}
+
+
+/* ==========================================
+   CONTINUE BUTTON
+========================================== */
+
+continueButton.addEventListener(
+    "click",
+    () => {
+
+        finishDay7();
+
+    }
+);
+
+
+/* ==========================================
+   VIDEO ERROR
+========================================== */
+
+video.addEventListener(
+    "error",
+    () => {
+
+        loading.textContent =
+            "VIDEO COULD NOT BE LOADED";
+
+        loading.classList.add(
+            "show"
+        );
+
+        console.error(
+            "Day 7 video could not be loaded:",
+            CONFIG.VIDEO_URL
+        );
+
+    }
+);
+
+
+/* ==========================================
+   PRELOAD
+========================================== */
+
+video.load();
+
+
+/* ==========================================
+   PREVENT RIGHT CLICK
+========================================== */
+
+video.addEventListener(
+    "contextmenu",
+    (event) => {
+
+        event.preventDefault();
+
+    }
+);
+</script>
+
+</body>
+</html>
