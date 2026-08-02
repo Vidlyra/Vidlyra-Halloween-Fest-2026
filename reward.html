@@ -1,70 +1,469 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<title>Vidlyra Halloween Fest 2026 — Rewards</title>
 
-<title>Mission Complete</title>
+<style>
 
-<link rel="stylesheet" href="css/reward.css">
-<link rel="stylesheet" href="css/reward-animations.css">
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,body{
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    background:
+        radial-gradient(circle at 50% 15%,rgba(140,0,255,.25),transparent 35%),
+        linear-gradient(180deg,#08020d,#020104);
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    overflow-x:hidden;
+}
+
+.reward-page{
+    min-height:100vh;
+    padding:35px 18px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.reward-card{
+    width:min(900px,100%);
+    text-align:center;
+    padding:40px 25px;
+    border-radius:25px;
+    border:1px solid rgba(180,60,255,.4);
+    background:rgba(10,5,18,.9);
+    box-shadow:
+        0 0 45px rgba(140,0,255,.2),
+        inset 0 0 30px rgba(130,0,255,.06);
+}
+
+.badge{
+    display:inline-block;
+    padding:8px 16px;
+    border-radius:30px;
+    color:#ffb347;
+    border:1px solid rgba(255,150,50,.5);
+    font-size:12px;
+    letter-spacing:3px;
+    margin-bottom:18px;
+}
+
+h1{
+    font-size:clamp(35px,7vw,65px);
+    letter-spacing:5px;
+    text-shadow:0 0 20px #b000ff;
+}
+
+.subtitle{
+    color:#ca8cff;
+    margin-top:10px;
+    letter-spacing:2px;
+}
+
+.reward-icon{
+    font-size:80px;
+    margin:25px 0;
+    filter:drop-shadow(0 0 20px #ff7900);
+    animation:float 2s ease-in-out infinite;
+}
+
+@keyframes float{
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-10px);
+    }
+}
+
+.message{
+    color:#ddd;
+    line-height:1.7;
+    max-width:650px;
+    margin:auto;
+}
+
+.progress{
+    margin:30px auto;
+    max-width:650px;
+}
+
+.progress-title{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+    color:#bbb;
+    font-size:13px;
+}
+
+.progress-bar{
+    height:14px;
+    border-radius:20px;
+    background:#17121d;
+    overflow:hidden;
+    border:1px solid #30243b;
+}
+
+.progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#7200ff,#d100ff,#ff6900);
+    box-shadow:0 0 15px #b000ff;
+    transition:width .8s ease;
+}
+
+.rewards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin:30px auto;
+    max-width:700px;
+}
+
+.reward{
+    padding:22px 12px;
+    border-radius:16px;
+    background:rgba(255,255,255,.035);
+    border:1px solid rgba(180,80,255,.2);
+}
+
+.reward-icon-small{
+    font-size:35px;
+    margin-bottom:10px;
+}
+
+.reward h3{
+    font-size:15px;
+    color:#d795ff;
+}
+
+.reward p{
+    font-size:12px;
+    color:#888;
+    margin-top:6px;
+}
+
+.reward.locked{
+    opacity:.35;
+    filter:grayscale(1);
+}
+
+.reward.unlocked{
+    border-color:rgba(255,140,0,.5);
+    box-shadow:0 0 20px rgba(255,100,0,.12);
+}
+
+.buttons{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:12px;
+    margin-top:30px;
+}
+
+button{
+    border:0;
+    border-radius:12px;
+    padding:14px 22px;
+    cursor:pointer;
+    color:#fff;
+    font-weight:bold;
+    background:linear-gradient(135deg,#7900d8,#350060);
+    box-shadow:0 0 18px rgba(140,0,255,.25);
+    transition:.25s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 0 28px rgba(180,0,255,.5);
+}
+
+.secondary{
+    background:#17121d;
+}
+
+#status{
+    margin-top:18px;
+    color:#aaa;
+    font-size:13px;
+}
+
+footer{
+    margin-top:30px;
+    color:#666;
+    font-size:11px;
+}
+
+@media(max-width:650px){
+
+    .reward-card{
+        padding:30px 16px;
+    }
+
+    .rewards{
+        grid-template-columns:1fr;
+    }
+
+    button{
+        width:100%;
+    }
+
+}
+
+</style>
 
 </head>
 
 <body>
 
-<div class="background"></div>
+<div class="reward-page">
 
-<div class="background-layer"></div>
+<main class="reward-card">
 
-<div class="fog"></div>
+    <div class="badge">
+        🎃 VIDLYRA HALLOWEEN FEST 2026
+    </div>
 
-<section class="reward-card">
+    <h1>REWARD</h1>
 
-    <h1>🎉 Mission Complete!</h1>
+    <div class="subtitle">
+        YOUR JOURNEY CONTINUES
+    </div>
 
-    <h2>Day 1 Cleared</h2>
+    <div class="reward-icon">
+        🏆
+    </div>
 
-    <div class="xp-box">
+    <div class="message">
 
-        +100 XP
+        <p id="rewardMessage">
+            Checking your Halloween Fest progress...
+        </p>
 
     </div>
 
-    <div class="stats">
+    <div class="progress">
 
-        <p>Total XP</p>
+        <div class="progress-title">
+            <span>Festival Progress</span>
+            <span id="progressText">0 / 7</span>
+        </div>
 
-        <h3 id="totalXP">0</h3>
+        <div class="progress-bar">
+            <div
+                id="progressFill"
+                class="progress-fill">
+            </div>
+        </div>
 
     </div>
 
-    <div class="unlock">
+    <div class="rewards">
 
-        🔓 Day 2 Unlocked
+        <div
+            id="rewardDay5"
+            class="reward locked">
+
+            <div class="reward-icon-small">🏮</div>
+
+            <h3>Day 5</h3>
+
+            <p>The Haunted Cemetery</p>
+
+        </div>
+
+        <div
+            id="rewardDay6"
+            class="reward locked">
+
+            <div class="reward-icon-small">👻</div>
+
+            <h3>Day 6</h3>
+
+            <p>Epic Challenge</p>
+
+        </div>
+
+        <div
+            id="rewardDay7"
+            class="reward locked">
+
+            <div class="reward-icon-small">🎃</div>
+
+            <h3>Day 7</h3>
+
+            <p>Final Mystery</p>
+
+        </div>
 
     </div>
 
-    <button id="mapBtn">
+    <div class="buttons">
 
-        Return to Event Map
+        <button
+            onclick="location.href='map.html'">
+            🗺️ Return to Map
+        </button>
 
-    </button>
+        <button
+            class="secondary"
+            onclick="location.href='home.html'">
+            🏠 Home
+        </button>
 
-</section>
+    </div>
 
-<audio id="rewardMusic">
+    <div id="status"></div>
 
-    <source src="assets/reward.mp3" type="audio/mpeg">
+    <footer>
+        © 2026 Vidlyra Halloween Fest
+    </footer>
 
-</audio>
+</main>
 
-<script src="js/reward.js"></script>
+</div>
+
+<script>
+
+"use strict";
+
+function completed(key){
+    return localStorage.getItem(key) === "true";
+}
+
+function setReward(id, unlocked){
+
+    const element = document.getElementById(id);
+
+    if(!element) return;
+
+    element.classList.toggle("locked", !unlocked);
+    element.classList.toggle("unlocked", unlocked);
+}
+
+function updateRewards(){
+
+    const day5 = completed("day5Complete");
+    const day6 = completed("day6Complete");
+    const day7 = completed("day7Complete");
+
+    setReward("rewardDay5", day5);
+    setReward("rewardDay6", day6);
+    setReward("rewardDay7", day7);
+
+    let completedDays = 0;
+
+    /*
+     * The full festival contains seven days.
+     * These flags represent the completed days currently
+     * used by the game flow.
+     */
+
+    if(day5) completedDays++;
+    if(day6) completedDays++;
+    if(day7) completedDays++;
+
+    const percentage = Math.min(
+        100,
+        Math.round((completedDays / 3) * 100)
+    );
+
+    const progressFill =
+        document.getElementById("progressFill");
+
+    const progressText =
+        document.getElementById("progressText");
+
+    if(progressFill){
+        progressFill.style.width = percentage + "%";
+    }
+
+    if(progressText){
+        progressText.textContent =
+            completedDays + " / 3 unlocked";
+    }
+
+    const message =
+        document.getElementById("rewardMessage");
+
+    const status =
+        document.getElementById("status");
+
+    if(day7){
+
+        if(message){
+            message.textContent =
+                "The final mystery has been revealed. You have completed the Halloween Fest journey.";
+        }
+
+        if(status){
+            status.textContent =
+                "🎃 Halloween Fest 2026 — COMPLETE";
+        }
+
+        return;
+    }
+
+    if(day6){
+
+        if(message){
+            message.textContent =
+                "Day 6 completed! The final chapter is waiting. Prepare yourself for Day 7.";
+        }
+
+        if(status){
+            status.textContent =
+                "Day 7 is your next destination.";
+        }
+
+        return;
+    }
+
+    if(day5){
+
+        if(message){
+            message.textContent =
+                "The Haunted Cemetery has been conquered. Your next destination is Day 6.";
+        }
+
+        if(status){
+            status.textContent =
+                "Day 6 unlocked.";
+        }
+
+        return;
+    }
+
+    if(message){
+        message.textContent =
+            "Complete the Halloween challenges to unlock your rewards.";
+    }
+
+    if(status){
+        status.textContent =
+            "No major festival completion has been recorded yet.";
+    }
+}
+
+window.addEventListener(
+    "DOMContentLoaded",
+    updateRewards
+);
+
+</script>
 
 </body>
-
 </html>
