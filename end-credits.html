@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>VIDLYRA HALLOWEEN FEST 2026 — End Credits</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+            font-family: Georgia, "Times New Roman", serif;
+        }
+
+        body {
+            position: relative;
+        }
+
+        /* =========================================
+           BACKGROUND
+        ========================================= */
+
+        .background {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(
+                    circle at center,
+                    rgba(70, 20, 5, 0.35),
+                    rgba(0, 0, 0, 0.95) 65%
+                ),
+                #000;
+            z-index: 1;
+        }
+
+        .fog {
+            position: fixed;
+            inset: -20%;
+            background:
+                radial-gradient(
+                    ellipse at 30% 60%,
+                    rgba(255, 255, 255, 0.035),
+                    transparent 45%
+                ),
+                radial-gradient(
+                    ellipse at 70% 40%,
+                    rgba(255, 255, 255, 0.025),
+                    transparent 45%
+                );
+            filter: blur(35px);
+            animation: fogMove 18s ease-in-out infinite alternate;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        @keyframes fogMove {
+            from {
+                transform: translateX(-3%);
+            }
+
+            to {
+                transform: translateX(3%);
+            }
+        }
+
+        /* =========================================
+           CREDITS CONTAINER
+        ========================================= */
+
+        .credits-stage {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .credits {
+            position: absolute;
+            width: min(900px, 90vw);
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            padding: 100vh 0 100vh;
+            animation: creditsRoll 105s linear forwards;
+        }
+
+        @keyframes creditsRoll {
+            from {
+                transform: translate(-50%, 0);
+            }
+
+            to {
+                transform: translate(-50%, -210%);
+            }
+        }
+
+        /* =========================================
+           TITLE
+        ========================================= */
+
+        .title {
+            margin-bottom: 90px;
+        }
+
+        .pumpkin {
+            font-size: 58px;
+            display: block;
+            margin-bottom: 25px;
+            animation: pumpkinGlow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pumpkinGlow {
+            0%,
+            100% {
+                filter: drop-shadow(0 0 5px rgba(255, 100, 0, 0.2));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 25px rgba(255, 100, 0, 0.9));
+            }
+        }
+
+        .festival-title {
+            font-family: Georgia, serif;
+            font-size: clamp(30px, 6vw, 64px);
+            letter-spacing: 7px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow:
+                0 0 8px rgba(255, 80, 0, 0.5),
+                0 0 30px rgba(255, 50, 0, 0.25);
+        }
+
+        .festival-subtitle {
+            margin-top: 18px;
+            font-size: clamp(18px, 3vw, 28px);
+            letter-spacing: 6px;
+            color: #aaa;
+        }
+
+        /* =========================================
+           CREDIT SECTIONS
+        ========================================= */
+
+        .credit-section {
+            margin-bottom: 75px;
+        }
+
+        .credit-heading {
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 15px;
+            margin-bottom: 18px;
+        }
+
+        .credit-name {
+            font-size: clamp(22px, 4vw, 36px);
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .credit-name.highlight {
+            color: #ff7518;
+            text-shadow:
+                0 0 10px rgba(255, 80, 0, 0.45);
+        }
+
+        .divider {
+            width: 90px;
+            height: 1px;
+            background: rgba(255, 117, 24, 0.6);
+            margin: 80px auto;
+        }
+
+        /* =========================================
+           SPECIAL THANKS
+        ========================================= */
+
+        .special-thanks {
+            max-width: 700px;
+            margin: 0 auto 80px;
+        }
+
+        .special-thanks p {
+            margin-top: 25px;
+            color: #bbb;
+            font-size: clamp(16px, 2.5vw, 22px);
+            line-height: 1.8;
+        }
+
+        /* =========================================
+           PRODUCED BY
+        ========================================= */
+
+        .studio {
+            margin-bottom: 70px;
+        }
+
+        .studio-name {
+            font-size: clamp(28px, 5vw, 48px);
+            color: #ff7518;
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-shadow:
+                0 0 12px rgba(255, 80, 0, 0.5);
+        }
+
+        .copyright {
+            color: #777;
+            font-size: 15px;
+            letter-spacing: 2px;
+            margin-top: 25px;
+        }
+
+        .tagline {
+            margin-top: 30px;
+            color: #aaa;
+            font-style: italic;
+            font-size: clamp(17px, 3vw, 24px);
+        }
+
+        /* =========================================
+           HALLOWEEN 2027
+        ========================================= */
+
+        .next-event {
+            margin-top: 100px;
+            margin-bottom: 120px;
+        }
+
+        .see-you {
+            color: #aaa;
+            font-size: clamp(17px, 3vw, 25px);
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+
+        .next-year {
+            color: #ff7518;
+            font-size: clamp(30px, 6vw, 58px);
+            letter-spacing: 5px;
+            font-weight: bold;
+            text-shadow:
+                0 0 15px rgba(255, 80, 0, 0.5);
+        }
+
+        /* =========================================
+           POST CREDIT
+        ========================================= */
+
+        .post-credit {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .post-credit-title {
+            color: #555;
+            font-size: 14px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 80px;
+        }
+
+        .lantern {
+            width: 90px;
+            height: 100px;
+            position: relative;
+            margin-bottom: 65px;
+            animation: lanternFloat 3s ease-in-out infinite;
+        }
+
+        .lantern-body {
+            position: absolute;
+            width: 70px;
+            height: 65px;
+            left: 10px;
+            top: 25px;
+            border-radius: 35% 35% 42% 42%;
+            background: #161616;
+            border: 3px solid #333;
+            box-shadow:
+                0 0 20px rgba(255, 100, 0, 0.25);
+        }
+
+        .lantern-glow {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            left: 31px;
+            top: 44px;
+            border-radius: 50%;
+            background: #ff7518;
+            box-shadow:
+                0 0 15px #ff7518,
+                0 0 40px rgba(255, 100, 0, 0.8),
+                0 0 80px rgba(255, 60, 0, 0.5);
+            animation: lanternFlicker 0.8s infinite alternate;
+        }
+
+        .lantern-handle {
+            position: absolute;
+            width: 50px;
+            height: 35px;
+            left: 20px;
+            top: 5px;
+            border: 3px solid #333;
+            border-bottom: none;
+            border-radius: 50px 50px 0 0;
+        }
+
+        @keyframes lanternFlicker {
+            from {
+                opacity: 0.7;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+        }
+
+        @keyframes lanternFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .post-credit-text {
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .post-credit-text p {
+            color: #999;
+            font-size: clamp(18px, 3vw, 27px);
+            line-height: 1.8;
+            margin-bottom: 28px;
+        }
+
+        .mystery {
+            color: #fff !important;
+            font-weight: bold;
+            font-size: clamp(23px, 4vw, 36px) !important;
+            text-shadow:
+                0 0 15px rgba(255, 255, 255, 0.15);
+        }
+
+        .coming-soon {
+            margin-top: 70px;
+            color: #ff7518;
+            font-size: clamp(22px, 4vw, 38px);
+            letter-spacing: 8px;
+            font-weight: bold;
+            text-shadow:
+                0 0 20px rgba(255, 70, 0, 0.6);
+        }
+
+        /* =========================================
+           SKIP BUTTON
+        ========================================= */
+
+        #skipButton {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 50;
+
+            border: 1px solid rgba(255, 117, 24, 0.5);
+            background: rgba(0, 0, 0, 0.75);
+            color: #aaa;
+
+            padding: 11px 18px;
+            border-radius: 30px;
+
+            font-size: 13px;
+            letter-spacing: 1px;
+
+            cursor: pointer;
+
+            backdrop-filter: blur(8px);
+        }
+
+        #skipButton:hover {
+            color: #fff;
+            border-color: #ff7518;
+        }
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 600px) {
+
+            .credits {
+                width: 88vw;
+                animation-duration: 95s;
+            }
+
+            .credit-section {
+                margin-bottom: 60px;
+            }
+
+            .divider {
+                margin: 60px auto;
+            }
+
+            .festival-title {
+                letter-spacing: 4px;
+            }
+
+            .festival-subtitle {
+                letter-spacing: 3px;
+            }
+
+            #skipButton {
+                right: 12px;
+                bottom: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="background"></div>
+    <div class="fog"></div>
+
+    <div class="credits-stage">
+
+        <main class="credits">
+
+            <!-- =====================================
+                 OPENING
+            ====================================== -->
+
+            <section class="title">
+
+                <span class="pumpkin">🎃</span>
+
+                <div class="festival-title">
+                    VIDLYRA HALLOWEEN FEST
+                </div>
+
+                <div class="festival-subtitle">
+                    2026
+                </div>
+
+            </section>
+
+
+            <!-- =====================================
+                 OFFICIAL END CREDITS
+            ====================================== -->
+
+            <div class="divider"></div>
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    Official End Credits
+                </div>
+
+            </section>
+
+
+            <!-- EXECUTIVE PRODUCER -->
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    Executive Producer &amp; Director
+                </div>
+
+                <div class="credit-name highlight">
+                    Alwin Dison R
+                </div>
+
+            </section>
+
+
+            <!-- CREATIVE AI -->
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    Creative AI Assistant
+                </div>
+
+                <div class="credit-name">
+                    Lyra
+                </div>
+
+            </section>
+
+
+            <!-- CHARACTER -->
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    Lead Character Artist
+                </div>
+
+                <div class="credit-name">
+                    Luna
+                </div>
+
+            </section>
+
+
+            <!-- SOUND -->
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    Sound Design &amp; Audio
+                </div>
+
+                <div class="credit-name">
+                    Rex
+                </div>
+
+            </section>
+
+
+            <!-- STORY -->
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    Story Development
+                </div>
+
+                <div class="credit-name">
+                    Nova
+                </div>
+
+            </section>
+
+
+            <!-- BACKGROUND -->
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    Background Art &amp; Environment Design
+                </div>
+
+                <div class="credit-name">
+                    Aiden
+                </div>
+
+            </section>
+
+
+            <!-- ANIMATION -->
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    Animation Supervisor
+                </div>
+
+                <div class="credit-name">
+                    Aria
+                </div>
+
+            </section>
+
+
+            <!-- VFX -->
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    Visual Effects (VFX)
+                </div>
+
+                <div class="credit-name">
+                    Kai
+                </div>
+
+            </section>
+
+
+            <!-- UI -->
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    UI / Motion Graphics
+                </div>
+
+                <div class="credit-name">
+                    Mira
+                </div>
+
+            </section>
+
+
+            <!-- QA -->
+
+            <section class="credit-section">
+
+                <div class="credit-heading">
+                    Quality Assurance &amp; Production Support
+                </div>
+
+                <div class="credit-name">
+                    Zane
+                </div>
+
+            </section>
+
+
+            <!-- =====================================
+                 SPECIAL THANKS
+            ====================================== -->
+
+            <div class="divider"></div>
+
+            <section class="special-thanks">
+
+                <div class="credit-heading">
+                    Special Thanks
+                </div>
+
+                <p>
+                    To everyone who entered the Vidlyra Universe
+                    and celebrated Halloween Fest 2026.
+                </p>
+
+                <p>
+                    Your support inspires every story we create.
+                </p>
+
+            </section>
+
+
+            <!-- =====================================
+                 PRODUCED BY
+            ====================================== -->
+
+            <section class="studio">
+
+                <div class="credit-heading">
+                    Produced By
+                </div>
+
+                <div class="studio-name">
+                    VIDLYRA STUDIO
+                </div>
+
+                <div class="copyright">
+                    © 2026 Vidlyra. All Rights Reserved.
+                </div>
+
+                <div class="tagline">
+                    "Every ending reveals another mystery."
+                </div>
+
+            </section>
+
+
+            <!-- =====================================
+                 NEXT HALLOWEEN
+            ====================================== -->
+
+            <section class="next-event">
+
+                <div class="see-you">
+                    🎃 See You Next Halloween...
+                </div>
+
+                <div class="next-year">
+                    HALLOWEEN FEST 2027
+                </div>
+
+            </section>
+
+
+            <!-- =====================================
+                 POST CREDIT SCENE
+            ====================================== -->
+
+            <section class="post-credit">
+
+                <div class="post-credit-title">
+                    Post-Credit Scene
+                </div>
+
+                <div class="lantern">
+
+                    <div class="lantern-handle"></div>
+
+                    <div class="lantern-body"></div>
+
+                    <div class="lantern-glow"></div>
+
+                </div>
+
+                <div class="post-credit-text">
+
+                    <p>
+                        A forgotten pumpkin lantern
+                        glows in the distance.
+                    </p>
+
+                    <p>
+                        A shadow smiles.
+                    </p>
+
+                    <p class="mystery">
+                        "This was only the beginning..."
+                    </p>
+
+                    <div class="coming-soon">
+                        COMING SOON
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- SKIP -->
+
+    <button id="skipButton">
+        SKIP CREDITS
+    </button>
+
+
+    <script>
+        "use strict";
+
+        /* =========================================
+           VIDLYRA HALLOWEEN FEST 2026
+           END CREDITS
+        ========================================= */
+
+        const credits = document.querySelector(".credits");
+        const skipButton = document.getElementById("skipButton");
+
+        let skipped = false;
+
+
+        /* =========================================
+           SKIP CREDITS
+        ========================================= */
+
+        function skipCredits() {
+
+            if (skipped) return;
+
+            skipped = true;
+
+            if (credits) {
+                credits.style.animationPlayState = "paused";
+                credits.style.opacity = "0";
+
+                credits.style.transition =
+                    "opacity 1s ease";
+            }
+
+            if (skipButton) {
+                skipButton.style.opacity = "0";
+                skipButton.style.pointerEvents = "none";
+            }
+
+            setTimeout(() => {
+
+                showFinalMessage();
+
+            }, 1000);
+        }
+
+
+        /* =========================================
+           FINAL MESSAGE
+        ========================================= */
+
+        function showFinalMessage() {
+
+            const finalScreen =
+                document.createElement("div");
+
+            finalScreen.style.position = "fixed";
+            finalScreen.style.inset = "0";
+            finalScreen.style.zIndex = "100";
+
+            finalScreen.style.background = "#000";
+
+            finalScreen.style.display = "flex";
+            finalScreen.style.flexDirection = "column";
+
+            finalScreen.style.alignItems = "center";
+            finalScreen.style.justifyContent = "center";
+
+            finalScreen.style.textAlign = "center";
+
+            finalScreen.style.padding = "30px";
+
+            finalScreen.innerHTML = `
+                <div style="
+                    font-size:55px;
+                    margin-bottom:25px;
+                ">🎃</div>
+
+                <div style="
+                    font-size:clamp(24px,5vw,48px);
+                    letter-spacing:5px;
+                    font-weight:bold;
+                    color:#ff7518;
+                    text-shadow:0 0 20px rgba(255,70,0,.6);
+                ">
+                    VIDLYRA
+                </div>
+
+                <div style="
+                    margin-top:20px;
+                    color:#aaa;
+                    font-size:18px;
+                    letter-spacing:3px;
+                ">
+                    HALLOWEEN FEST 2026
+                </div>
+
+                <div style="
+                    margin-top:45px;
+                    color:#777;
+                    font-style:italic;
+                    font-size:18px;
+                ">
+                    Every ending reveals another mystery.
+                </div>
+            `;
+
+            document.body.appendChild(finalScreen);
+        }
+
+
+        /* =========================================
+           BUTTON
+        ========================================= */
+
+        if (skipButton) {
+
+            skipButton.addEventListener(
+                "click",
+                skipCredits
+            );
+
+        }
+
+
+        /* =========================================
+           CLICK ANYWHERE AFTER CREDITS
+        ========================================= */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.code === "Escape") {
+                    skipCredits();
+                }
+
+            }
+        );
+
+
+        /* =========================================
+           CREDITS FINISHED
+        ========================================= */
+
+        if (credits) {
+
+            credits.addEventListener(
+                "animationend",
+                function () {
+
+                    if (skipped) return;
+
+                    skipped = true;
+
+                    setTimeout(() => {
+
+                        showFinalMessage();
+
+                    }, 2500);
+
+                }
+            );
+
+        }
+
+    </script>
+
+</body>
+</html>
