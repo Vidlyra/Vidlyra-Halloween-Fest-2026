@@ -1,0 +1,283 @@
+/* =========================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 1 VIDEO
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+
+/* =========================================
+   VIDEO PAGE
+========================================= */
+
+.video-page {
+    position: relative;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+    background: #000;
+}
+
+
+/* =========================================
+   VIDEO
+========================================= */
+
+.day1-video {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    background: #000;
+
+    z-index: 1;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.loading {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 18px;
+
+    background: #000;
+
+    z-index: 10;
+
+    transition:
+        opacity 0.5s ease,
+        visibility 0.5s ease;
+}
+
+.loading.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loading p {
+    color: #fff;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+}
+
+
+/* Spinner */
+
+.loading-spinner {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    border:
+        2px solid rgba(255,255,255,0.15);
+
+    border-top-color: #fff;
+
+    animation:
+        spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =========================================
+   END OVERLAY
+========================================= */
+
+.end-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    background:
+        rgba(0,0,0,0.82);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    z-index: 20;
+
+    transition:
+        opacity 0.8s ease,
+        visibility 0.8s ease;
+}
+
+.end-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* =========================================
+   END CONTENT
+========================================= */
+
+.end-content {
+    width: min(90%, 650px);
+
+    transform:
+        translateY(20px);
+
+    opacity: 0;
+
+    transition:
+        transform 0.8s ease,
+        opacity 0.8s ease;
+}
+
+.end-overlay.show .end-content {
+    transform:
+        translateY(0);
+
+    opacity: 1;
+}
+
+
+/* Label */
+
+.end-label {
+    margin-bottom: 18px;
+
+    color: #aaa;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+}
+
+
+/* Title */
+
+.end-content h1 {
+    color: #fff;
+
+    font-size:
+        clamp(32px, 7vw, 75px);
+
+    letter-spacing: 5px;
+
+    text-shadow:
+        0 0 20px rgba(255,255,255,0.35);
+}
+
+
+/* Subtitle */
+
+.end-content p {
+    margin-top: 15px;
+
+    color: #ccc;
+
+    font-size:
+        clamp(12px, 2vw, 17px);
+
+    letter-spacing: 4px;
+}
+
+
+/* Redirect */
+
+.redirect-text {
+    margin-top: 35px;
+
+    color: #fff;
+
+    font-size: 10px;
+
+    letter-spacing: 5px;
+
+    animation:
+        blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .day1-video {
+        object-fit: contain;
+    }
+
+    .end-content h1 {
+        letter-spacing: 3px;
+    }
+
+    .end-content p {
+        letter-spacing: 2px;
+    }
+
+    .redirect-text {
+        letter-spacing: 3px;
+    }
+
+}
+```
