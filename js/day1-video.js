@@ -3,6 +3,11 @@
    DAY 1 VIDEO
 ========================================= */
 
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
 const video =
     document.getElementById("day1Video");
 
@@ -18,14 +23,19 @@ const endOverlay =
 ========================================= */
 
 let videoEnded = false;
+
 let redirectStarted = false;
 
 
 /* =========================================
-   HIDE LOADING
+   HIDE LOADING SCREEN
 ========================================= */
 
 function hideLoading() {
+
+    if (!loading) {
+        return;
+    }
 
     loading.classList.add("hidden");
 
@@ -44,7 +54,7 @@ video.addEventListener("canplay", () => {
 
 
 /* =========================================
-   VIDEO STARTED
+   VIDEO PLAYING
 ========================================= */
 
 video.addEventListener("playing", () => {
@@ -60,6 +70,8 @@ video.addEventListener("playing", () => {
 
 video.addEventListener("ended", () => {
 
+    /* Prevent duplicate execution */
+
     if (videoEnded) {
         return;
     }
@@ -67,7 +79,7 @@ video.addEventListener("ended", () => {
     videoEnded = true;
 
 
-    /* Show ending overlay */
+    /* Show Day 1 complete overlay */
 
     endOverlay.classList.add("show");
 
@@ -111,14 +123,14 @@ video.addEventListener("error", () => {
     hideLoading();
 
     console.error(
-        "Day 1 video could not be loaded."
+        "VidLyra Day 1 video could not be loaded."
     );
 
 });
 
 
 /* =========================================
-   INITIAL CHECK
+   INITIAL VIDEO STATE CHECK
 ========================================= */
 
 if (video.readyState >= 3) {
@@ -126,4 +138,3 @@ if (video.readyState >= 3) {
     hideLoading();
 
 }
-```
