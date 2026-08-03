@@ -2,1324 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
-
-    <meta
-        name="theme-color"
-        content="#090014"
-    >
+    <meta name="theme-color" content="#090313">
 
     <title>
-        VIDLYRA HALLOWEEN FEST 2026 — DAY 6
+        VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — THE HAUNTED MANSION
     </title>
 
-    <link
-        rel="stylesheet"
-        href="day6.css"
-    >
-
-    <style>
-
-        /* =====================================================
-           DAY 6 HTML BRIDGE
-           Responsive structure + asset connections
-        ===================================================== */
-
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background: #050008;
-        }
-
-        body {
-            touch-action: none;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
-        }
-
-        #game {
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            background: #050008;
-        }
-
-        /* =====================================================
-           LOADING SCREEN
-        ===================================================== */
-
-        #loadingScreen {
-            position: fixed;
-            inset: 0;
-            z-index: 100000;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-
-            background:
-                radial-gradient(
-                    circle at center,
-                    rgba(115, 0, 180, 0.22),
-                    transparent 45%
-                ),
-                #050008;
-
-            transition:
-                opacity 0.7s ease,
-                visibility 0.7s ease;
-        }
-
-        .loadingTitle {
-            font-size: clamp(42px, 9vw, 90px);
-            font-weight: 900;
-            letter-spacing: 0.15em;
-            color: #ffffff;
-            text-shadow:
-                0 0 10px #a000ff,
-                0 0 30px #8b00ff,
-                0 0 70px rgba(180, 0, 255, 0.8);
-        }
-
-        .loadingSubtitle {
-            margin-top: 10px;
-            text-align: center;
-            font-size: clamp(11px, 2vw, 17px);
-            letter-spacing: 0.2em;
-            color: #dca8ff;
-        }
-
-        .loadingBar {
-            width: min(480px, 75vw);
-            height: 8px;
-            margin-top: 35px;
-
-            overflow: hidden;
-
-            border: 1px solid rgba(210, 130, 255, 0.6);
-            border-radius: 20px;
-
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow:
-                0 0 15px rgba(160, 0, 255, 0.3);
-        }
-
-        #loadingFill {
-            width: 0%;
-            height: 100%;
-
-            border-radius: inherit;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #6200ff,
-                    #d100ff,
-                    #ff7cff
-                );
-
-            box-shadow:
-                0 0 20px #b000ff;
-
-            transition: width 0.15s linear;
-        }
-
-        #loadingPercent {
-            margin-top: 15px;
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        /* =====================================================
-           GAME WORLD
-        ===================================================== */
-
-        #gameWorld {
-            position: absolute;
-
-            left: 0;
-            top: 0;
-
-            width: 5000px;
-            height: 2200px;
-
-            transform: translate(0, 0);
-
-            transform-origin: top left;
-
-            will-change: transform;
-
-            overflow: hidden;
-
-            background: #0b0012;
-        }
-
-        #bgImageLayer {
-            position: absolute;
-            inset: 0;
-
-            width: 100%;
-            height: 100%;
-
-            background-image:
-                url("assets/images/day6/background.png");
-
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
-
-            opacity: 0.8;
-
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        #ground {
-            position: absolute;
-            inset: 0;
-
-            background:
-                radial-gradient(
-                    ellipse at 50% 55%,
-                    rgba(130, 30, 180, 0.16),
-                    transparent 55%
-                );
-
-            z-index: 1;
-        }
-
-        /* =====================================================
-           ATMOSPHERE
-        ===================================================== */
-
-        #dustLayer {
-            position: absolute;
-            inset: 0;
-
-            background-image:
-                url("assets/images/day6/dust-particles.png");
-
-            background-repeat: repeat;
-            background-size: 600px 600px;
-
-            opacity: 0.22;
-
-            pointer-events: none;
-            z-index: 3;
-        }
-
-        #fogLayer {
-            position: absolute;
-            inset: 0;
-
-            background-image:
-                url("assets/images/day6/fog 1.png"),
-                url("assets/images/day6/fog 2.png");
-
-            background-size: cover, cover;
-            background-position: center, center;
-            background-repeat: no-repeat;
-
-            opacity: 0.42;
-
-            pointer-events: none;
-            z-index: 4;
-        }
-
-        #vignette {
-            position: fixed;
-            inset: 0;
-
-            background:
-                url("assets/images/day6/vignette-overlay.png")
-                center / cover no-repeat;
-
-            pointer-events: none;
-
-            z-index: 900;
-        }
-
-        #lightningLayer {
-            position: fixed;
-            inset: 0;
-
-            background:
-                radial-gradient(
-                    circle at random,
-                    rgba(255,255,255,0.8),
-                    transparent 35%
-                );
-
-            opacity: 0;
-
-            pointer-events: none;
-
-            z-index: 850;
-        }
-
-        /* =====================================================
-           BATS
-        ===================================================== */
-
-        #batLayer {
-            position: absolute;
-            inset: 0;
-
-            pointer-events: none;
-
-            z-index: 10;
-
-            overflow: hidden;
-        }
-
-        .bat {
-            position: absolute;
-
-            width: 55px;
-            height: 30px;
-
-            background:
-                radial-gradient(
-                    ellipse at center,
-                    #120018 30%,
-                    transparent 31%
-                );
-
-            opacity: 0.75;
-        }
-
-        /* =====================================================
-           CRYSTALS
-        ===================================================== */
-
-        .crystal {
-            position: absolute;
-
-            width: 80px;
-            height: 100px;
-
-            z-index: 35;
-
-            background:
-                url("assets/images/day6/crystal-glow.png")
-                center / contain
-                no-repeat;
-
-            cursor: pointer;
-
-            filter:
-                drop-shadow(0 0 10px #d400ff)
-                drop-shadow(0 0 30px rgba(180, 0, 255, 0.7));
-
-            transition:
-                transform 0.25s ease,
-                filter 0.25s ease,
-                opacity 0.4s ease;
-        }
-
-        .crystal:hover,
-        .crystal.inRange {
-            transform: scale(1.15);
-
-            filter:
-                drop-shadow(0 0 15px #ffffff)
-                drop-shadow(0 0 40px #d000ff);
-        }
-
-        .crystal.collected {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(1.8);
-        }
-
-        /* =====================================================
-           ENEMIES
-        ===================================================== */
-
-        .enemy {
-            position: absolute;
-
-            width: 100px;
-            height: 130px;
-
-            z-index: 45;
-
-            background:
-                radial-gradient(
-                    ellipse at center,
-                    rgba(120, 0, 180, 0.5),
-                    transparent 65%
-                );
-
-            border-radius: 50%;
-
-            filter:
-                drop-shadow(0 0 12px #7400a8);
-        }
-
-        .enemy::before {
-            content: "";
-
-            position: absolute;
-
-            inset: 15px;
-
-            border-radius: 50%;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(40, 10, 50, 0.95),
-                    rgba(5, 0, 10, 0.9)
-                );
-
-            border: 2px solid rgba(190, 70, 255, 0.35);
-
-            box-shadow:
-                0 0 20px rgba(150, 0, 255, 0.3);
-        }
-
-        /* =====================================================
-           BOSS
-        ===================================================== */
-
-        #boss {
-            position: absolute;
-
-            width: 190px;
-            height: 240px;
-
-            display: none;
-
-            align-items: center;
-            justify-content: center;
-
-            z-index: 80;
-
-            transform-origin: center bottom;
-
-            filter:
-                drop-shadow(0 0 15px #a000ff)
-                drop-shadow(
-                    0 0 45px
-                    rgba(180, 0, 255, 0.65)
-                );
-        }
-
-        .witchBody {
-            position: relative;
-
-            width: 100%;
-            height: 100%;
-        }
-
-        .witchHead {
-            position: absolute;
-
-            left: 50%;
-            top: 20px;
-
-            width: 150px;
-            height: 200px;
-
-            transform: translateX(-50%);
-
-            background:
-                url("assets/images/day6/boss.png")
-                center / contain
-                no-repeat;
-        }
-
-        .witchEyes {
-            position: absolute;
-
-            left: 50%;
-            top: 42%;
-
-            width: 70px;
-            height: 20px;
-
-            transform: translateX(-50%);
-
-            background:
-                radial-gradient(
-                    ellipse,
-                    #ff65ff,
-                    transparent 65%
-                );
-
-            filter:
-                blur(2px)
-                drop-shadow(0 0 10px #ff00ff);
-        }
-
-        /* =====================================================
-           PLAYER
-        ===================================================== */
-
-        #playerContainer {
-            position: absolute;
-
-            width: 130px;
-            height: 160px;
-
-            z-index: 70;
-
-            pointer-events: none;
-
-            transform-origin:
-                center bottom;
-        }
-
-        #player {
-            width: 100%;
-            height: 100%;
-
-            background:
-                url("assets/images/day6/day6-player.png")
-                center / contain
-                no-repeat;
-
-            background-position: center;
-
-            filter:
-                drop-shadow(0 0 8px rgba(130, 0, 255, 0.7));
-        }
-
-        #slashEffect {
-            position: absolute;
-
-            left: 50%;
-            top: 45%;
-
-            width: 170px;
-            height: 100px;
-
-            transform:
-                translate(-50%, -50%)
-                rotate(-20deg)
-                scale(0);
-
-            border-radius: 50%;
-
-            border-top:
-                5px solid rgba(255,255,255,0.9);
-
-            border-right:
-                5px solid #d000ff;
-
-            opacity: 0;
-
-            pointer-events: none;
-        }
-
-        #slashEffect.play {
-            animation: day6Slash 0.25s ease-out;
-        }
-
-        @keyframes day6Slash {
-
-            0% {
-                transform:
-                    translate(-50%, -50%)
-                    rotate(-20deg)
-                    scale(0.2);
-
-                opacity: 0;
-            }
-
-            40% {
-                transform:
-                    translate(-50%, -50%)
-                    rotate(-20deg)
-                    scale(1);
-
-                opacity: 1;
-            }
-
-            100% {
-                transform:
-                    translate(-50%, -50%)
-                    rotate(-20deg)
-                    scale(1.2);
-
-                opacity: 0;
-            }
-
-        }
-
-        #dashTrail {
-            position: absolute;
-            inset: 10px;
-
-            opacity: 0;
-
-            pointer-events: none;
-
-            border-radius: 50%;
-
-            background:
-                radial-gradient(
-                    circle,
-                    rgba(180, 0, 255, 0.35),
-                    transparent 70%
-                );
-        }
-
-        #dashTrail.play {
-            animation: dashFlash 0.3s ease-out;
-        }
-
-        @keyframes dashFlash {
-
-            0% {
-                opacity: 0.9;
-                transform: scale(0.5);
-            }
-
-            100% {
-                opacity: 0;
-                transform: scale(1.5);
-            }
-
-        }
-
-        #player.hurt {
-            animation: playerHurt 0.25s linear;
-        }
-
-        @keyframes playerHurt {
-
-            0%,
-            100% {
-                filter:
-                    drop-shadow(0 0 8px #8f00ff);
-            }
-
-            50% {
-                filter:
-                    brightness(2)
-                    drop-shadow(0 0 25px #ffffff);
-            }
-
-        }
-
-        /* =====================================================
-           DAY 7 PORTAL
-        ===================================================== */
-
-        #day7Portal {
-            position: absolute;
-
-            width: 180px;
-            height: 220px;
-
-            display: none;
-
-            align-items: center;
-            justify-content: center;
-
-            z-index: 75;
-
-            border-radius: 50%;
-
-            background:
-                radial-gradient(
-                    ellipse,
-                    rgba(255,255,255,0.8),
-                    rgba(140,0,255,0.55) 20%,
-                    rgba(50,0,100,0.35) 50%,
-                    transparent 72%
-                );
-
-            box-shadow:
-                0 0 20px #b000ff,
-                0 0 60px #8b00ff,
-                0 0 120px rgba(180,0,255,0.5);
-
-            cursor: pointer;
-
-            pointer-events: auto;
-        }
-
-        #day7Portal.inRange {
-            filter:
-                brightness(1.4)
-                drop-shadow(0 0 30px #ffffff);
-        }
-
-        .portalText {
-            position: absolute;
-
-            bottom: -45px;
-
-            width: 260px;
-
-            text-align: center;
-
-            color: #ffffff;
-
-            font-size: 14px;
-            font-weight: 800;
-
-            letter-spacing: 0.12em;
-
-            text-shadow:
-                0 0 10px #b000ff;
-        }
-
-        /* =====================================================
-           HUD
-        ===================================================== */
-
-        #hud {
-            position: fixed;
-
-            left: 0;
-            right: 0;
-            top: 0;
-
-            z-index: 1000;
-
-            display: flex;
-            justify-content: space-between;
-
-            padding:
-                clamp(12px, 2vw, 25px);
-
-            pointer-events: none;
-        }
-
-        .hudPanel {
-            min-width: 190px;
-
-            padding: 14px;
-
-            border:
-                1px solid
-                rgba(200, 100, 255, 0.4);
-
-            border-radius: 12px;
-
-            background:
-                rgba(8, 0, 15, 0.72);
-
-            backdrop-filter: blur(8px);
-
-            box-shadow:
-                0 0 25px
-                rgba(140, 0, 255, 0.15);
-        }
-
-        .hudTitle {
-            color: #c982ff;
-
-            font-size: 11px;
-
-            font-weight: 800;
-
-            letter-spacing: 0.12em;
-        }
-
-        .hudValue {
-            margin-top: 5px;
-
-            color: #ffffff;
-
-            font-weight: 800;
-        }
-
-        .bar {
-            width: 180px;
-            max-width: 100%;
-
-            height: 7px;
-
-            margin-top: 6px;
-
-            overflow: hidden;
-
-            border-radius: 20px;
-
-            background:
-                rgba(255,255,255,0.1);
-        }
-
-        #healthFill {
-            width: 100%;
-            height: 100%;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #ff1f4d,
-                    #ff5577
-                );
-        }
-
-        #spiritFill {
-            width: 100%;
-            height: 100%;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #6900ff,
-                    #d500ff
-                );
-        }
-
-        /* =====================================================
-           BUTTONS
-        ===================================================== */
-
-        .gameButton {
-            border: 1px solid rgba(220, 130, 255, 0.65);
-
-            border-radius: 8px;
-
-            padding: 10px 18px;
-
-            color: #ffffff;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(90,0,150,0.9),
-                    rgba(170,0,220,0.7)
-                );
-
-            cursor: pointer;
-
-            font-weight: 800;
-
-            transition:
-                transform 0.2s ease,
-                filter 0.2s ease;
-        }
-
-        .gameButton:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.25);
-        }
-
-        #pauseButton {
-            margin-top: 10px;
-
-            pointer-events: auto;
-        }
-
-        /* =====================================================
-           MISSIONS
-        ===================================================== */
-
-        #missionPopup {
-            position: fixed;
-
-            left: 50%;
-            top: 50%;
-
-            transform:
-                translate(-50%, -50%);
-
-            z-index: 1100;
-
-            width: min(430px, 86vw);
-
-            padding: 25px;
-
-            text-align: center;
-
-            border:
-                1px solid
-                rgba(220, 120, 255, 0.5);
-
-            border-radius: 16px;
-
-            background:
-                rgba(8,0,15,0.92);
-
-            box-shadow:
-                0 0 60px
-                rgba(150,0,255,0.3);
-
-            color: #ffffff;
-
-            pointer-events: none;
-
-            transition: opacity 0.5s ease;
-        }
-
-        #missionPopup h2 {
-            margin-top: 0;
-
-            color: #d58cff;
-
-            letter-spacing: 0.1em;
-        }
-
-        .mission {
-            margin: 12px 0;
-
-            font-size: 14px;
-        }
-
-        /* =====================================================
-           BOSS HUD
-        ===================================================== */
-
-        #bossHUD {
-            position: fixed;
-
-            left: 50%;
-            top: 22px;
-
-            transform: translateX(-50%);
-
-            z-index: 1200;
-
-            width: min(520px, 65vw);
-
-            text-align: center;
-
-            display: none;
-
-            pointer-events: none;
-        }
-
-        .bossName {
-            margin-bottom: 7px;
-
-            color: #ffb2ff;
-
-            font-size: 13px;
-
-            font-weight: 900;
-
-            letter-spacing: 0.15em;
-
-            text-shadow:
-                0 0 12px #a000ff;
-        }
-
-        #bossHealthBar {
-            height: 12px;
-
-            overflow: hidden;
-
-            border:
-                1px solid
-                rgba(255,255,255,0.4);
-
-            border-radius: 20px;
-
-            background:
-                rgba(0,0,0,0.65);
-        }
-
-        #bossHealthFill {
-            width: 100%;
-            height: 100%;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #7300ff,
-                    #d000ff
-                );
-
-            transition: width 0.2s ease;
-        }
-
-        /* =====================================================
-           INTERACTION
-        ===================================================== */
-
-        #interactionPrompt {
-            position: fixed;
-
-            left: 50%;
-            bottom: 16%;
-
-            transform: translateX(-50%);
-
-            z-index: 1500;
-
-            display: none;
-
-            padding: 10px 18px;
-
-            color: #ffffff;
-
-            font-size: 12px;
-            font-weight: 900;
-
-            letter-spacing: 0.08em;
-
-            border-radius: 30px;
-
-            background:
-                rgba(20,0,30,0.85);
-
-            border:
-                1px solid
-                rgba(210,100,255,0.7);
-
-            box-shadow:
-                0 0 25px
-                rgba(160,0,255,0.35);
-
-            pointer-events: none;
-        }
-
-        /* =====================================================
-           NOTIFICATIONS
-        ===================================================== */
-
-        #notificationContainer {
-            position: fixed;
-
-            top: 115px;
-            left: 50%;
-
-            transform: translateX(-50%);
-
-            z-index: 1800;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-
-            gap: 8px;
-
-            pointer-events: none;
-        }
-
-        .notification {
-            padding: 9px 18px;
-
-            border-radius: 30px;
-
-            color: #ffffff;
-
-            background:
-                rgba(20,0,35,0.9);
-
-            border:
-                1px solid
-                rgba(190,80,255,0.6);
-
-            box-shadow:
-                0 0 20px
-                rgba(150,0,255,0.25);
-
-            animation:
-                notificationIn 0.25s ease-out;
-        }
-
-        @keyframes notificationIn {
-
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-        }
-
-        /* =====================================================
-           OVERLAYS
-        ===================================================== */
-
-        .overlay {
-            position: fixed;
-            inset: 0;
-
-            z-index: 5000;
-
-            display: none;
-
-            align-items: center;
-            justify-content: center;
-
-            flex-direction: column;
-
-            padding: 30px;
-
-            text-align: center;
-
-            background:
-                rgba(3,0,7,0.92);
-
-            backdrop-filter: blur(10px);
-
-            color: #ffffff;
-        }
-
-        .overlay h1 {
-            margin: 0 0 15px;
-
-            font-size:
-                clamp(32px, 7vw, 70px);
-
-            text-shadow:
-                0 0 15px #a000ff,
-                0 0 45px rgba(160,0,255,0.7);
-        }
-
-        .overlay p {
-            max-width: 600px;
-
-            line-height: 1.7;
-
-            color: #d9bce8;
-        }
-
-        /* =====================================================
-           MOBILE CONTROLS
-        ===================================================== */
-
-        #mobileControls {
-            position: fixed;
-
-            inset: auto 0 0 0;
-
-            z-index: 3000;
-
-            display: none;
-
-            justify-content: space-between;
-
-            align-items: flex-end;
-
-            padding:
-                18px;
-
-            pointer-events: none;
-        }
-
-        #joystickBase {
-            width: 125px;
-            height: 125px;
-
-            border-radius: 50%;
-
-            background:
-                rgba(120,0,180,0.18);
-
-            border:
-                2px solid
-                rgba(210,130,255,0.45);
-
-            pointer-events: auto;
-
-            position: relative;
-
-            touch-action: none;
-        }
-
-        #joystickStick {
-            position: absolute;
-
-            left: 50%;
-            top: 50%;
-
-            width: 58px;
-            height: 58px;
-
-            transform:
-                translate(-50%, -50%);
-
-            border-radius: 50%;
-
-            background:
-                radial-gradient(
-                    circle,
-                    #d900ff,
-                    #6200a0
-                );
-
-            box-shadow:
-                0 0 20px
-                rgba(200,0,255,0.7);
-        }
-
-        .mobileButtons {
-            display: flex;
-
-            gap: 10px;
-
-            align-items: flex-end;
-
-            pointer-events: auto;
-        }
-
-        .mobileButton {
-            width: 58px;
-            height: 58px;
-
-            border-radius: 50%;
-
-            border:
-                1px solid
-                rgba(220,130,255,0.55);
-
-            color: #ffffff;
-
-            background:
-                rgba(35,0,55,0.85);
-
-            font-size: 23px;
-
-            box-shadow:
-                0 0 15px
-                rgba(160,0,255,0.3);
-        }
-
-        /* =====================================================
-           RESPONSIVE
-        ===================================================== */
-
-        @media (max-width: 992px) {
-
-            #mobileControls {
-                display: flex;
-            }
-
-            .hudPanel {
-                min-width: 145px;
-                padding: 10px;
-            }
-
-            .hudTitle {
-                font-size: 9px;
-            }
-
-            .hudValue {
-                font-size: 12px;
-            }
-
-            .bar {
-                width: 135px;
-            }
-
-            #bossHUD {
-                top: 10px;
-                width: 60vw;
-            }
-
-            #interactionPrompt {
-                bottom: 185px;
-            }
-
-        }
-
-        @media (max-width: 600px) {
-
-            #hud {
-                padding: 8px;
-            }
-
-            .hudPanel {
-                min-width: 115px;
-                padding: 8px;
-            }
-
-            .hudPanel:nth-child(2) {
-                text-align: right;
-            }
-
-            .bar {
-                width: 105px;
-            }
-
-            #pauseButton {
-                padding: 6px 9px;
-                font-size: 10px;
-            }
-
-            .crystal {
-                width: 65px;
-                height: 85px;
-            }
-
-            #playerContainer {
-                width: 105px;
-                height: 135px;
-            }
-
-            #boss {
-                width: 150px;
-                height: 200px;
-            }
-
-            #day7Portal {
-                width: 145px;
-                height: 180px;
-            }
-
-            #mobileControls {
-                padding: 12px;
-            }
-
-            #joystickBase {
-                width: 105px;
-                height: 105px;
-            }
-
-            #joystickStick {
-                width: 48px;
-                height: 48px;
-            }
-
-            .mobileButton {
-                width: 52px;
-                height: 52px;
-                font-size: 20px;
-            }
-
-            #missionPopup {
-                padding: 18px;
-            }
-
-        }
-
-        @media (max-width: 380px) {
-
-            .mobileButtons {
-                gap: 5px;
-            }
-
-            .mobileButton {
-                width: 46px;
-                height: 46px;
-            }
-
-            #joystickBase {
-                width: 92px;
-                height: 92px;
-            }
-
-        }
-
-    </style>
+    <link rel="stylesheet" href="day6-epic-game.css">
 </head>
 
 <body>
@@ -1327,132 +19,172 @@
 <div id="game">
 
     <!-- =====================================================
-         LOADING
+         LOADING SCREEN
     ====================================================== -->
 
-    <div id="loadingScreen">
+    <section id="loadingScreen">
 
-        <div class="loadingTitle">
-            VIDLYRA
+        <div class="loadingContent">
+
+            <div class="loadingLogo">
+                VIDLYRA
+            </div>
+
+            <div class="loadingEvent">
+                HALLOWEEN FEST 2026
+            </div>
+
+            <div class="loadingDay">
+                DAY 6
+            </div>
+
+            <div class="loadingSubtitle">
+                THE HAUNTED MANSION
+            </div>
+
+            <div class="loadingBar">
+                <div id="loadingFill"></div>
+            </div>
+
+            <div id="loadingPercent">
+                0%
+            </div>
+
+            <div id="loadingMessage">
+                Entering the haunted mansion...
+            </div>
+
         </div>
 
-        <div class="loadingSubtitle">
-            HALLOWEEN FEST 2026
-        </div>
-
-        <div class="loadingSubtitle">
-            DAY 6 • THE WITCH'S DOMAIN
-        </div>
-
-        <div class="loadingBar">
-            <div id="loadingFill"></div>
-        </div>
-
-        <div id="loadingPercent">
-            0%
-        </div>
-
-        <div
-            id="loadingMessage"
-            class="loadingSubtitle"
-        >
-            Entering the Witch's Domain...
-        </div>
-
-    </div>
+    </section>
 
 
     <!-- =====================================================
          GAME WORLD
     ====================================================== -->
 
-    <div id="gameWorld">
+    <main id="gameWorld">
 
         <!-- Background -->
-        <div id="bgImageLayer"></div>
+        <div id="backgroundLayer"></div>
 
-        <!-- Ground -->
-        <div id="ground"></div>
-
-        <!-- Dust -->
+        <!-- Mansion atmosphere -->
+        <div id="mistLayer"></div>
         <div id="dustLayer"></div>
+        <div id="darkEnergyLayer"></div>
+        <div id="particleLayer"></div>
 
-        <!-- Fog -->
-        <div id="fogLayer"></div>
+        <!-- Decorative runes -->
+        <div id="runeLayer">
 
-
-        <!-- =================================================
-             BATS
-        ================================================== -->
-
-        <div id="batLayer">
-
-            <div
-                class="bat"
-                style="top:8%;animation-delay:0s;"
-            ></div>
-
-            <div
-                class="bat"
-                style="top:18%;animation-delay:4s;"
-            ></div>
-
-            <div
-                class="bat"
-                style="top:30%;animation-delay:8s;"
-            ></div>
-
-            <div
-                class="bat"
-                style="top:14%;animation-delay:12s;"
-            ></div>
-
-            <div
-                class="bat"
-                style="top:40%;animation-delay:16s;"
-            ></div>
+            <div class="rune rune1">✦</div>
+            <div class="rune rune2">◇</div>
+            <div class="rune rune3">✧</div>
+            <div class="rune rune4">◈</div>
+            <div class="rune rune5">✦</div>
 
         </div>
 
 
         <!-- =================================================
              CRYSTALS
-             6 REQUIRED
         ================================================== -->
 
-        <div class="crystal lantern"></div>
-        <div class="crystal lantern"></div>
-        <div class="crystal lantern"></div>
-        <div class="crystal lantern"></div>
-        <div class="crystal lantern"></div>
-        <div class="crystal lantern"></div>
+        <div id="crystalLayer">
+
+            <div class="crystal" data-crystal="1">
+                <div class="crystalGlow"></div>
+                <span>◆</span>
+            </div>
+
+            <div class="crystal" data-crystal="2">
+                <div class="crystalGlow"></div>
+                <span>◆</span>
+            </div>
+
+            <div class="crystal" data-crystal="3">
+                <div class="crystalGlow"></div>
+                <span>◆</span>
+            </div>
+
+            <div class="crystal" data-crystal="4">
+                <div class="crystalGlow"></div>
+                <span>◆</span>
+            </div>
+
+            <div class="crystal" data-crystal="5">
+                <div class="crystalGlow"></div>
+                <span>◆</span>
+            </div>
+
+            <div class="crystal" data-crystal="6">
+                <div class="crystalGlow"></div>
+                <span>◆</span>
+            </div>
+
+        </div>
 
 
         <!-- =================================================
-             ANCIENT GUARDIANS
-             4 REQUIRED
+             GUARDIANS
         ================================================== -->
 
-        <div class="enemy"></div>
-        <div class="enemy"></div>
-        <div class="enemy"></div>
-        <div class="enemy"></div>
+        <div id="enemyLayer">
+
+            <div class="guardian enemy">
+                <div class="enemyBody"></div>
+                <div class="enemyHealth">
+                    <div class="enemyHealthFill"></div>
+                </div>
+            </div>
+
+            <div class="guardian enemy">
+                <div class="enemyBody"></div>
+                <div class="enemyHealth">
+                    <div class="enemyHealthFill"></div>
+                </div>
+            </div>
+
+            <div class="guardian enemy">
+                <div class="enemyBody"></div>
+                <div class="enemyHealth">
+                    <div class="enemyHealthFill"></div>
+                </div>
+            </div>
+
+            <div class="guardian enemy">
+                <div class="enemyBody"></div>
+                <div class="enemyHealth">
+                    <div class="enemyHealthFill"></div>
+                </div>
+            </div>
+
+            <div class="guardian enemy">
+                <div class="enemyBody"></div>
+                <div class="enemyHealth">
+                    <div class="enemyHealthFill"></div>
+                </div>
+            </div>
+
+        </div>
 
 
         <!-- =================================================
-             DAY 6 BOSS
+             BOSS
         ================================================== -->
 
         <div id="boss">
 
-            <div class="witchBody">
+            <div class="bossAura"></div>
 
-                <div class="witchHead">
+            <div class="bossSprite">
 
-                    <div class="witchEyes"></div>
+                <div class="bossEyes"></div>
 
-                </div>
+            </div>
 
+            <div class="bossNameTag">
+                THE HAUNTED GUARDIAN
             </div>
 
         </div>
@@ -1463,6 +195,21 @@
         ================================================== -->
 
         <div id="day7Portal">
+
+            <div class="portalRing"></div>
+
+            <div class="portalCore"></div>
+
+            <div class="portalParticles">
+
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </div>
 
             <div class="portalText">
                 PATH TO DAY 7
@@ -1477,158 +224,151 @@
 
         <div id="playerContainer">
 
-            <div id="player"></div>
+            <div id="player">
+
+                <div id="playerGlow"></div>
+
+            </div>
 
             <div id="slashEffect"></div>
 
             <div id="dashTrail"></div>
 
+            <div id="hurtEffect"></div>
+
         </div>
 
-    </div>
+
+        <!-- =================================================
+             VIGNETTE
+        ================================================== -->
+
+        <div id="vignette"></div>
+
+    </main>
 
 
     <!-- =====================================================
-         SCREEN EFFECTS
+         LIGHTNING / SCREEN EFFECT
     ====================================================== -->
 
     <div id="lightningLayer"></div>
 
-    <div id="vignette"></div>
+    <div id="screenFlash"></div>
 
 
     <!-- =====================================================
          HUD
     ====================================================== -->
 
-    <div id="hud">
+    <header id="hud">
 
-        <div class="hudPanel">
+        <!-- LEFT -->
+        <div class="hudPanel hudLeft">
 
-            <div class="hudTitle">
+            <div class="hudHeading">
                 VITALITY
             </div>
 
-            <div class="bar">
+            <div class="statBar">
                 <div id="healthFill"></div>
             </div>
 
-            <div
-                class="hudValue"
-                id="healthText"
-            >
+            <div id="healthText">
                 100 / 100
             </div>
 
 
-            <div
-                class="hudTitle"
-                style="margin-top:10px;"
-            >
+            <div class="hudHeading spiritHeading">
                 SPIRIT
             </div>
 
-            <div class="bar">
+            <div class="statBar">
                 <div id="spiritFill"></div>
             </div>
 
-            <div
-                class="hudValue"
-                id="spiritText"
-            >
+            <div id="spiritText">
                 100 / 100
             </div>
 
         </div>
 
 
-        <div
-            class="hudPanel"
-            style="text-align:right;"
-        >
+        <!-- CENTER -->
+        <div class="hudCenter">
 
-            <div class="hudTitle">
-                ANCIENT CRYSTALS
+            <div class="dayTitle">
+                DAY 6
             </div>
 
-            <div
-                class="hudValue"
-                id="crystalCounter"
-            >
+            <div class="locationTitle">
+                THE HAUNTED MANSION
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT -->
+        <div class="hudPanel hudRight">
+
+            <div class="hudHeading">
+                CRYSTALS
+            </div>
+
+            <div id="crystalCounter">
                 0 / 6
             </div>
 
-
-            <div
-                class="hudTitle"
-                style="margin-top:10px;"
-            >
+            <div class="hudHeading scoreHeading">
                 SCORE
             </div>
 
-            <div
-                class="hudValue"
-                id="scoreCounter"
-            >
+            <div id="scoreCounter">
                 000000
             </div>
 
-
-            <button
-                id="pauseButton"
-                class="gameButton"
-                type="button"
-            >
-                ⏸ PAUSE
+            <button id="pauseButton" class="hudButton">
+                ⏸
             </button>
 
         </div>
 
-    </div>
+    </header>
 
 
     <!-- =====================================================
-         MISSION POPUP
+         OBJECTIVE PANEL
     ====================================================== -->
 
-    <div id="missionPopup">
+    <section id="missionPopup">
 
-        <h2>
+        <div class="missionTitle">
             DAY 6 OBJECTIVES
-        </h2>
+        </div>
 
-        <div
-            class="mission"
-            id="mission1"
-        >
+        <div class="mission" id="mission1">
             ◆ Collect all 6 Ancient Crystals
         </div>
 
-        <div
-            class="mission"
-            id="mission2"
-        >
-            ◆ Defeat the Ancient Guardians
+        <div class="mission" id="mission2">
+            ◆ Defeat the Haunted Guardians
         </div>
 
-        <div
-            class="mission"
-            id="mission3"
-        >
-            ◆ Defeat the Ancient Guardian
+        <div class="mission" id="mission3">
+            ◆ Defeat the Mansion Guardian
         </div>
 
-    </div>
+    </section>
 
 
     <!-- =====================================================
          BOSS HUD
     ====================================================== -->
 
-    <div id="bossHUD">
+    <section id="bossHUD">
 
-        <div class="bossName">
-            THE ANCIENT GUARDIAN
+        <div id="bossTitle">
+            THE HAUNTED GUARDIAN
         </div>
 
         <div id="bossHealthBar">
@@ -1637,7 +377,11 @@
 
         </div>
 
-    </div>
+        <div id="bossPhase">
+            PHASE I
+        </div>
+
+    </section>
 
 
     <!-- =====================================================
@@ -1657,98 +401,116 @@
 
 
     <!-- =====================================================
-         PAUSE
+         PAUSE MENU
     ====================================================== -->
 
-    <div
-        id="pauseMenu"
-        class="overlay"
-    >
+    <section id="pauseMenu" class="overlay">
 
-        <h1>
-            PAUSED
-        </h1>
+        <div class="overlayBox">
 
-        <p>
-            The Witch's Domain waits in silence.
-        </p>
+            <h1>
+                PAUSED
+            </h1>
 
-        <button
-            id="resumeButton"
-            class="gameButton"
-            type="button"
-        >
-            RESUME
-        </button>
+            <p>
+                The mansion waits in silence...
+            </p>
 
-    </div>
+            <button id="resumeButton" class="gameButton">
+                RESUME
+            </button>
+
+            <button id="restartButton" class="gameButton">
+                RESTART
+            </button>
+
+            <button id="exitButton" class="gameButton dangerButton">
+                EXIT
+            </button>
+
+        </div>
+
+    </section>
 
 
     <!-- =====================================================
-         VICTORY
+         VICTORY SCREEN
     ====================================================== -->
 
-    <div
-        id="victoryScreen"
-        class="overlay"
-    >
+    <section id="victoryScreen" class="overlay">
 
-        <h1>
-            DAY 6 COMPLETE
-        </h1>
+        <div class="overlayBox victoryBox">
 
-        <p>
-            The Witch's Domain has fallen silent.
-            <br>
-            The path to Day 7 lies open before you.
-        </p>
+            <div class="victorySymbol">
+                ✦
+            </div>
 
-        <button
-            id="continueButton"
-            class="gameButton"
-            type="button"
-        >
-            CONTINUE TO DAY 7
-        </button>
+            <h1>
+                DAY 6 COMPLETE
+            </h1>
 
-    </div>
+            <p>
+                The Haunted Mansion has fallen silent.
+            </p>
+
+            <p>
+                A mysterious path has appeared beyond the darkness...
+            </p>
+
+            <div class="victoryScore">
+                SCORE:
+                <span id="finalScore">
+                    000000
+                </span>
+            </div>
+
+            <button id="continueButton" class="gameButton">
+                CONTINUE TO DAY 7
+            </button>
+
+        </div>
+
+    </section>
 
 
     <!-- =====================================================
          GAME OVER
     ====================================================== -->
 
-    <div
-        id="gameOverScreen"
-        class="overlay"
-    >
+    <section id="gameOverScreen" class="overlay">
 
-        <h1>
-            YOU HAVE FALLEN
-        </h1>
+        <div class="overlayBox">
 
-        <p>
-            The shadows have claimed you.
-            <br>
-            Try again, brave soul.
-        </p>
+            <div class="gameOverSymbol">
+                ☠
+            </div>
 
-        <button
-            id="retryButton"
-            class="gameButton"
-            type="button"
-        >
-            RETRY
-        </button>
+            <h1>
+                YOU HAVE FALLEN
+            </h1>
 
-    </div>
+            <p>
+                The mansion has claimed another soul.
+            </p>
+
+            <button id="retryButton" class="gameButton">
+                TRY AGAIN
+            </button>
+
+            <button id="quitButton" class="gameButton dangerButton">
+                EXIT
+            </button>
+
+        </div>
+
+    </section>
 
 
     <!-- =====================================================
          MOBILE CONTROLS
     ====================================================== -->
 
-    <div id="mobileControls">
+    <section id="mobileControls">
 
         <div id="joystickBase">
 
@@ -1757,140 +519,137 @@
         </div>
 
 
-        <div class="mobileButtons">
+        <div id="mobileButtons">
 
             <button
                 id="skillButton"
-                class="mobileButton"
-                type="button"
-                aria-label="Spirit Skill"
-            >
+                class="mobileButton">
                 ✦
             </button>
 
             <button
                 id="dashButton"
-                class="mobileButton"
-                type="button"
-                aria-label="Dash"
-            >
+                class="mobileButton">
                 ⚡
             </button>
 
             <button
                 id="attackButton"
-                class="mobileButton"
-                type="button"
-                aria-label="Attack"
-            >
+                class="mobileButton attackButton">
                 ⚔
+            </button>
+
+            <button
+                id="interactButton"
+                class="mobileButton">
+                E
             </button>
 
         </div>
 
-    </div>
+    </section>
+
+
+    <!-- =====================================================
+         AUDIO
+    ====================================================== -->
+
+    <audio
+        id="bgMusic"
+        loop
+        preload="auto">
+
+        <source
+            src="assets/images/day6/day6-main-theme.mp3"
+            type="audio/mpeg">
+
+    </audio>
+
+
+    <audio
+        id="victorySound"
+        preload="auto">
+
+        <source
+            src="assets/images/day6/day6-victory-theme.mp3"
+            type="audio/mpeg">
+
+    </audio>
+
+
+    <audio
+        id="gameOverSound"
+        preload="auto">
+
+        <source
+            src="assets/images/day6/loss.mp3"
+            type="audio/mpeg">
+
+    </audio>
+
+
+    <audio
+        id="swordSlash"
+        preload="auto">
+
+        <source
+            src="assets/images/day6/slash.mp3"
+            type="audio/mpeg">
+
+    </audio>
+
+
+    <audio
+        id="heroDash"
+        preload="auto">
+
+        <source
+            src="assets/images/day6/slice.mp3"
+            type="audio/mpeg">
+
+    </audio>
+
+
+    <audio
+        id="bossRoar"
+        preload="auto">
+
+        <source
+            src="assets/images/day6/boss-battle-theme.mp3"
+            type="audio/mpeg">
+
+    </audio>
+
+
+    <audio
+        id="crystalSound"
+        preload="auto">
+
+        <source
+            src="assets/images/day6/slice.mp3"
+            type="audio/mpeg">
+
+    </audio>
+
+
+    <audio
+        id="portalSound"
+        preload="auto">
+
+        <source
+            src="assets/images/day6/sanctuary-theme.mp3"
+            type="audio/mpeg">
+
+    </audio>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="day6-epic-game.js"></script>
 
 </div>
-
-
-<!-- =========================================================
-     AUDIO
-========================================================= -->
-
-<audio
-    id="bgMusic"
-    loop
-    preload="auto"
->
-    <source
-        src="assets/images/day6/day6-main-theme.mp3"
-        type="audio/mpeg"
-    >
-</audio>
-
-
-<audio
-    id="victorySound"
-    preload="auto"
->
-    <source
-        src="assets/images/day6/day6-victory-theme.mp3"
-        type="audio/mpeg"
-    >
-</audio>
-
-
-<audio
-    id="gameOverSound"
-    preload="auto"
->
-    <source
-        src="assets/images/day6/loss.mp3"
-        type="audio/mpeg"
-    >
-</audio>
-
-
-<audio
-    id="swordSlash"
-    preload="auto"
->
-    <source
-        src="assets/images/day6/slash.mp3"
-        type="audio/mpeg"
-    >
-</audio>
-
-
-<audio
-    id="heroDash"
-    preload="auto"
->
-    <source
-        src="assets/images/day6/slice.mp3"
-        type="audio/mpeg"
-    >
-</audio>
-
-
-<audio
-    id="bossRoar"
-    preload="auto"
->
-    <source
-        src="assets/images/day6/boss-battle-theme.mp3"
-        type="audio/mpeg"
-    >
-</audio>
-
-
-<audio
-    id="crystalSound"
-    preload="auto"
->
-    <source
-        src="assets/images/day6/slice.mp3"
-        type="audio/mpeg"
-    >
-</audio>
-
-
-<audio
-    id="portalSound"
-    preload="auto"
->
-    <source
-        src="assets/images/day6/sanctuary-theme.mp3"
-        type="audio/mpeg"
-    >
-</audio>
-
-
-<!-- =========================================================
-     DAY 6 GAME ENGINE
-========================================================= -->
-
-<script src="day6.js"></script>
 
 </body>
 </html>
