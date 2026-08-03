@@ -2,43 +2,10 @@
 
 /* =========================================================
    VIDLYRA HALLOWEEN FEST 2026
-   DAY 6 EPIC GAME
-   FLOW:
-   DAY 6 VIDEO
-        ↓
-   DAY 6 EPIC GAME
-        ↓
-   DAY 7 VIDEO
-        ↓
-   END CREDITS
-
-   COMPLETE REPLACEMENT JS
+   DAY 6 — THE WITCH'S DOMAIN
+   COMPLETE GAME ENGINE
+   DAY 6 → DAY 7 VIDEO
 ========================================================= */
-
-
-/* =========================================================
-   CONFIG
-========================================================= */
-
-const CONFIG = {
-    NEXT_LEVEL_URL: "day7-video.html",
-
-    WORLD_WIDTH: 3600,
-    WORLD_HEIGHT: 2000,
-
-    PLAYER_SPEED: 5,
-    DASH_SPEED: 14,
-
-    MAX_HEALTH: 100,
-    MAX_SPIRIT: 100,
-
-    ATTACK_DAMAGE: 25,
-    ATTACK_RANGE: 150,
-
-    TOTAL_CRYSTALS: 6,
-
-    BOSS_HEALTH: 1200
-};
 
 
 /* =========================================================
@@ -46,13 +13,26 @@ const CONFIG = {
 ========================================================= */
 
 const $ = (selector) => document.querySelector(selector);
-
 const $$ = (selector) => document.querySelectorAll(selector);
 
 function on(element, event, handler, options) {
     if (element) {
         element.addEventListener(event, handler, options);
     }
+}
+
+function playSound(audio) {
+    if (!audio) return;
+
+    try {
+        audio.currentTime = 0;
+
+        const promise = audio.play();
+
+        if (promise && promise.catch) {
+            promise.catch(() => {});
+        }
+    } catch (error) {}
 }
 
 
@@ -66,9 +46,11 @@ const loadingPercent = $("#loadingPercent");
 const loadingMessage = $("#loadingMessage");
 
 const gameWorld = $("#gameWorld");
-
-const player = $("#player");
 const playerContainer = $("#playerContainer");
+const player = $("#player");
+
+const slashEffect = $("#slashEffect");
+const dashTrail = $("#dashTrail");
 
 const healthFill = $("#healthFill");
 const spiritFill = $("#spiritFill");
@@ -79,13 +61,21 @@ const spiritText = $("#spiritText");
 const crystalCounter = $("#crystalCounter");
 const scoreCounter = $("#scoreCounter");
 
+const missionPopup = $("#missionPopup");
 const mission1 = $("#mission1");
 const mission2 = $("#mission2");
 const mission3 = $("#mission3");
 
 const boss = $("#boss");
-const bossHealthFill = $("#bossHealthFill");
 const bossHUD = $("#bossHUD");
+const bossHealthFill = $("#bossHealthFill");
+
+const interactionPrompt = $("#interactionPrompt");
+const notificationContainer = $("#notificationContainer");
+
+const pauseMenu = $("#pauseMenu");
+const resumeButton = $("#resumeButton");
+const pauseButton = $("#pauseButton");
 
 const victoryScreen = $("#victoryScreen");
 const continueButton = $("#continueButton");
@@ -93,32 +83,72 @@ const continueButton = $("#continueButton");
 const gameOverScreen = $("#gameOverScreen");
 const retryButton = $("#retryButton");
 
-const notificationContainer = $("#notificationContainer");
-
-const interactionPrompt = $("#interactionPrompt");
-
-const pauseMenu = $("#pauseMenu");
-const pauseButton = $("#pauseButton");
-const resumeButton = $("#resumeButton");
+const mobileControls = $("#mobileControls");
+const joystickBase = $("#joystickBase");
+const joystickStick = $("#joystickStick");
 
 const attackButton = $("#attackButton");
 const dashButton = $("#dashButton");
 const skillButton = $("#skillButton");
 
-const mobileControls = $("#mobileControls");
+const lightningLayer = $("#lightningLayer");
 
-const slashEffect = $("#slashEffect");
+
+/* =========================================================
+   AUDIO
+========================================================= */
 
 const bgMusic = $("#bgMusic");
 const victorySound = $("#victorySound");
 const gameOverSound = $("#gameOverSound");
-const swordSound = $("#swordSlash");
-const dashSound = $("#heroDash");
-const bossSound = $("#bossRoar");
+const swordSlashSound = $("#swordSlash");
+const heroDashSound = $("#heroDash");
+const bossRoarSound = $("#bossRoar");
 const crystalSound = $("#crystalSound");
 const portalSound = $("#portalSound");
 
-const day7Portal = $("#day7Portal");
+
+/* =========================================================
+   CONFIG
+========================================================= */
+
+const CONFIG = {
+
+    PLAYER_SPEED: 6,
+
+    DASH_SPEED: 18,
+
+    ATTACK_DAMAGE: 25,
+
+    SKILL_DAMAGE: 60,
+
+    MAX_HEALTH: 100,
+
+    MAX_SPIRIT: 100,
+
+    MAX_STAMINA: 100,
+
+    TOTAL_CRYSTALS: 6,
+
+    WORLD_WIDTH: 5000,
+
+    WORLD_HEIGHT: 2200,
+
+    CRYSTAL_PICKUP_RADIUS: 125,
+
+    CRYSTAL_HINT_RADIUS: 220,
+
+    ENEMY_DETECT_RANGE: 600,
+
+    ENEMY_ATTACK_RANGE: 100,
+
+    BOSS_ATTACK_RANGE: 150,
+
+    BOSS_START_HEALTH: 1200,
+
+    NEXT_LEVEL_URL: "day7-video.html"
+
+};
 
 
 /* =========================================================
@@ -126,15 +156,25 @@ const day7Portal = $("#day7Portal");
 ========================================================= */
 
 const GAME = {
-    loading: true,
+
     running: false,
+
     paused: false,
-    gameOver: false,
+
+    loading: true,
+
     victory: false,
 
+    gameOver: false,
+
+    mobile: false,
+
     score: 0,
+
     crystals: 0,
+
     kills: 0
+
 };
 
 
@@ -143,22 +183,39 @@ const GAME = {
 ========================================================= */
 
 const PLAYER = {
+
     x: 500,
-    y: 1500,
+
+    y: 1600,
 
     health: CONFIG.MAX_HEALTH,
+
+    maxHealth: CONFIG.MAX_HEALTH,
+
     spirit: CONFIG.MAX_SPIRIT,
+
+    maxSpirit: CONFIG.MAX_SPIRIT,
+
+    stamina: CONFIG.MAX_STAMINA,
+
+    maxStamina: CONFIG.MAX_STAMINA,
+
+    speed: CONFIG.PLAYER_SPEED,
 
     facing: 1,
 
     moving: false,
+
     attacking: false,
+
     invincible: false,
 
-    stamina: 100,
+    state: "idle",
 
-    velocityX: 0,
-    velocityY: 0
+    vx: 0,
+
+    vy: 0
+
 };
 
 
@@ -167,154 +224,60 @@ const PLAYER = {
 ========================================================= */
 
 const INPUT = {
+
     left: false,
+
     right: false,
+
     up: false,
+
     down: false
+
 };
 
 
 /* =========================================================
-   DASH
+   JOYSTICK
 ========================================================= */
 
-const DASH = {
+const JOYSTICK = {
+
     active: false,
-    timer: 0,
-    duration: 220,
 
-    cooldown: false,
-    cooldownTimer: 0,
+    dx: 0,
 
-    cooldownDuration: 700
+    dy: 0,
+
+    radius: 55,
+
+    startX: 0,
+
+    startY: 0
+
 };
 
 
 /* =========================================================
-   ATTACK
+   SETTINGS
 ========================================================= */
 
-const ATTACK = {
-    cooldown: false,
-    cooldownDuration: 250
+const SETTINGS = {
+
+    screenShake: true
+
 };
 
 
 /* =========================================================
-   SKILL
-========================================================= */
-
-const SKILL = {
-    cooldown: false,
-    cooldownDuration: 5000
-};
-
-
-/* =========================================================
-   CAMERA
-========================================================= */
-
-const CAMERA = {
-    x: 0,
-    y: 0,
-
-    width: window.innerWidth,
-    height: window.innerHeight,
-
-    smooth: 0.12
-};
-
-
-/* =========================================================
-   CRYSTALS
-========================================================= */
-
-const CRYSTALS = [];
-
-
-/* =========================================================
-   ENEMIES
-========================================================= */
-
-const ENEMIES = [];
-
-
-/* =========================================================
-   BOSS
-========================================================= */
-
-const BOSS = {
-    active: false,
-    defeated: false,
-
-    x: 2900,
-    y: 850,
-
-    health: CONFIG.BOSS_HEALTH,
-    maxHealth: CONFIG.BOSS_HEALTH,
-
-    speed: 2,
-
-    attackTimer: 0,
-    attackCooldown: 1600
-};
-
-
-/* =========================================================
-   PORTAL
-========================================================= */
-
-const PORTAL = {
-    active: false,
-    x: 0,
-    y: 0,
-
-    entered: false
-};
-
-
-/* =========================================================
-   AUDIO
-========================================================= */
-
-function safePlay(audio) {
-
-    if (!audio) {
-        return;
-    }
-
-    try {
-
-        audio.currentTime = 0;
-
-        const promise = audio.play();
-
-        if (promise && promise.catch) {
-            promise.catch(() => {});
-        }
-
-    } catch (error) {}
-
-}
-
-
-/* =========================================================
-   CLAMP
+   UTILITY
 ========================================================= */
 
 function clamp(value, min, max) {
 
-    return Math.max(
-        min,
-        Math.min(max, value)
-    );
+    return Math.max(min, Math.min(max, value));
 
 }
 
-
-/* =========================================================
-   RANDOM
-========================================================= */
 
 function random(min, max) {
 
@@ -323,116 +286,149 @@ function random(min, max) {
 }
 
 
-/* =========================================================
-   NOTIFICATION
-========================================================= */
+function distanceBetween(x1, y1, x2, y2) {
 
-function showNotification(message) {
-
-    if (!notificationContainer) {
-        return;
-    }
-
-    const element = document.createElement("div");
-
-    element.className = "notification";
-
-    element.textContent = message;
-
-    notificationContainer.appendChild(element);
-
-    setTimeout(() => {
-
-        element.remove();
-
-    }, 2000);
+    return Math.hypot(x2 - x1, y2 - y1);
 
 }
+
+
+/* =========================================================
+   DEVICE DETECTION
+========================================================= */
+
+function detectDevice() {
+
+    const touch =
+        "ontouchstart" in window ||
+        navigator.maxTouchPoints > 0;
+
+    GAME.mobile =
+        touch &&
+        window.innerWidth <= 992;
+
+    if (mobileControls) {
+
+        mobileControls.style.display =
+            GAME.mobile ? "flex" : "none";
+
+    }
+
+}
+
+window.addEventListener("resize", detectDevice);
 
 
 /* =========================================================
    LOADING
 ========================================================= */
 
+const loadingMessages = [
+
+    "Entering the Witch's Domain...",
+
+    "Awakening ancient crystals...",
+
+    "Summoning the guardians...",
+
+    "Opening the cursed sanctuary...",
+
+    "The Ancient Guardian awaits...",
+
+    "Preparing Day 6..."
+
+];
+
+
 function startLoading() {
 
     let progress = 0;
 
-    const messages = [
-        "Entering the cursed ruins...",
-        "Awakening ancient spirits...",
-        "Gathering moon crystals...",
-        "Opening the forbidden gate...",
-        "Summoning the guardian...",
-        "Preparing the final battle..."
-    ];
-
     const timer = setInterval(() => {
 
-        progress += random(5, 11);
+        progress += random(3, 9);
 
         if (progress >= 100) {
+
             progress = 100;
+
         }
 
         if (loadingFill) {
-            loadingFill.style.width = progress + "%";
+
+            loadingFill.style.width =
+                progress + "%";
+
         }
 
         if (loadingPercent) {
+
             loadingPercent.textContent =
                 Math.floor(progress) + "%";
+
         }
 
         if (loadingMessage) {
 
-            const index = Math.min(
-                messages.length - 1,
-                Math.floor(
-                    (progress / 100) * messages.length
-                )
-            );
+            const index =
+                Math.min(
+                    loadingMessages.length - 1,
+                    Math.floor(
+                        progress /
+                        100 *
+                        loadingMessages.length
+                    )
+                );
 
             loadingMessage.textContent =
-                messages[index];
+                loadingMessages[index];
+
         }
 
         if (progress >= 100) {
 
             clearInterval(timer);
 
-            setTimeout(() => {
-
-                finishLoading();
-
-            }, 500);
+            setTimeout(finishLoading, 500);
 
         }
 
-    }, 130);
+    }, 120);
 
 }
 
 
-/* =========================================================
-   FINISH LOADING
-========================================================= */
-
 function finishLoading() {
 
     GAME.loading = false;
+
     GAME.running = true;
 
     if (loadingScreen) {
 
         loadingScreen.style.opacity = "0";
-        loadingScreen.style.pointerEvents = "none";
+
+        loadingScreen.style.pointerEvents =
+            "none";
 
         setTimeout(() => {
 
-            loadingScreen.style.display = "none";
+            loadingScreen.style.display =
+                "none";
 
-        }, 600);
+        }, 700);
+
+    }
+
+    if (missionPopup) {
+
+        missionPopup.style.opacity = "1";
+
+        setTimeout(() => {
+
+            missionPopup.style.opacity = "0";
+
+        }, 4000);
 
     }
 
@@ -440,13 +436,9 @@ function finishLoading() {
 
         bgMusic.volume = 0.45;
 
-        safePlay(bgMusic);
+        playSound(bgMusic);
 
     }
-
-    showNotification(
-        "THE RUINS AWAIT..."
-    );
 
 }
 
@@ -455,221 +447,304 @@ function finishLoading() {
    KEYBOARD
 ========================================================= */
 
-window.addEventListener(
-    "keydown",
-    (event) => {
+window.addEventListener("keydown", (event) => {
 
-        if (event.repeat) {
-            return;
-        }
+    if (event.repeat) return;
 
-        switch (event.code) {
+    switch (event.code) {
 
-            case "ArrowLeft":
-            case "KeyA":
+        case "ArrowLeft":
+        case "KeyA":
+            INPUT.left = true;
+            break;
 
-                INPUT.left = true;
+        case "ArrowRight":
+        case "KeyD":
+            INPUT.right = true;
+            break;
 
-                break;
+        case "ArrowUp":
+        case "KeyW":
+            INPUT.up = true;
+            break;
 
-            case "ArrowRight":
-            case "KeyD":
+        case "ArrowDown":
+        case "KeyS":
+            INPUT.down = true;
+            break;
 
-                INPUT.right = true;
+        case "Space":
+            event.preventDefault();
+            attack();
+            break;
 
-                break;
+        case "ShiftLeft":
+        case "ShiftRight":
+            dash();
+            break;
 
-            case "ArrowUp":
-            case "KeyW":
+        case "KeyE":
+            spiritSkill();
+            break;
 
-                INPUT.up = true;
+        case "KeyF":
+            interact();
+            break;
 
-                break;
-
-            case "ArrowDown":
-            case "KeyS":
-
-                INPUT.down = true;
-
-                break;
-
-            case "Space":
-
-                event.preventDefault();
-
-                attack();
-
-                break;
-
-            case "ShiftLeft":
-            case "ShiftRight":
-
-                dash();
-
-                break;
-
-            case "KeyE":
-
-                spiritSkill();
-
-                break;
-
-            case "Escape":
-
-                togglePause();
-
-                break;
-
-        }
+        case "Escape":
+            togglePause();
+            break;
 
     }
-);
+
+});
 
 
-window.addEventListener(
-    "keyup",
-    (event) => {
+window.addEventListener("keyup", (event) => {
 
-        switch (event.code) {
+    switch (event.code) {
 
-            case "ArrowLeft":
-            case "KeyA":
+        case "ArrowLeft":
+        case "KeyA":
+            INPUT.left = false;
+            break;
 
-                INPUT.left = false;
+        case "ArrowRight":
+        case "KeyD":
+            INPUT.right = false;
+            break;
 
-                break;
+        case "ArrowUp":
+        case "KeyW":
+            INPUT.up = false;
+            break;
 
-            case "ArrowRight":
-            case "KeyD":
-
-                INPUT.right = false;
-
-                break;
-
-            case "ArrowUp":
-            case "KeyW":
-
-                INPUT.up = false;
-
-                break;
-
-            case "ArrowDown":
-            case "KeyS":
-
-                INPUT.down = false;
-
-                break;
-
-        }
+        case "ArrowDown":
+        case "KeyS":
+            INPUT.down = false;
+            break;
 
     }
-);
+
+});
 
 
 /* =========================================================
-   MOVEMENT
+   MOBILE JOYSTICK
 ========================================================= */
 
-function updateMovement() {
+function joystickPosition(event) {
 
-    if (!GAME.running || GAME.paused) {
-        return;
+    const touch =
+        event.touches[0];
+
+    return {
+
+        x: touch.clientX,
+
+        y: touch.clientY
+
+    };
+
+}
+
+
+on(joystickBase, "touchstart", (event) => {
+
+    event.preventDefault();
+
+    const point =
+        joystickPosition(event);
+
+    JOYSTICK.active = true;
+
+    JOYSTICK.startX =
+        point.x;
+
+    JOYSTICK.startY =
+        point.y;
+
+}, { passive: false });
+
+
+on(joystickBase, "touchmove", (event) => {
+
+    event.preventDefault();
+
+    if (!JOYSTICK.active) return;
+
+    const point =
+        joystickPosition(event);
+
+    let dx =
+        point.x -
+        JOYSTICK.startX;
+
+    let dy =
+        point.y -
+        JOYSTICK.startY;
+
+    const length =
+        Math.hypot(dx, dy);
+
+    if (length > JOYSTICK.radius) {
+
+        const angle =
+            Math.atan2(dy, dx);
+
+        dx =
+            Math.cos(angle) *
+            JOYSTICK.radius;
+
+        dy =
+            Math.sin(angle) *
+            JOYSTICK.radius;
+
     }
 
-    let x = 0;
-    let y = 0;
+    JOYSTICK.dx = dx;
+    JOYSTICK.dy = dy;
 
-    if (INPUT.left) {
-        x--;
+    if (joystickStick) {
+
+        joystickStick.style.transform =
+            `translate(-50%,-50%) translate(${dx}px,${dy}px)`;
+
     }
 
-    if (INPUT.right) {
-        x++;
-    }
+}, { passive: false });
 
-    if (INPUT.up) {
-        y--;
-    }
 
-    if (INPUT.down) {
-        y++;
-    }
+function resetJoystick() {
 
-    const length = Math.hypot(x, y);
+    JOYSTICK.active = false;
 
-    if (length === 0) {
+    JOYSTICK.dx = 0;
 
-        PLAYER.moving = false;
+    JOYSTICK.dy = 0;
 
-        return;
-    }
+    if (joystickStick) {
 
-    x /= length;
-    y /= length;
+        joystickStick.style.transform =
+            "translate(-50%,-50%)";
 
-    PLAYER.moving = true;
-
-    const speed =
-        DASH.active
-            ? CONFIG.DASH_SPEED
-            : CONFIG.PLAYER_SPEED;
-
-    PLAYER.x += x * speed;
-    PLAYER.y += y * speed;
-
-    PLAYER.x = clamp(
-        PLAYER.x,
-        60,
-        CONFIG.WORLD_WIDTH - 60
-    );
-
-    PLAYER.y = clamp(
-        PLAYER.y,
-        60,
-        CONFIG.WORLD_HEIGHT - 60
-    );
-
-    if (x < -0.1) {
-        PLAYER.facing = -1;
-    }
-
-    if (x > 0.1) {
-        PLAYER.facing = 1;
     }
 
 }
 
 
+on(joystickBase, "touchend", resetJoystick);
+
+on(joystickBase, "touchcancel", resetJoystick);
+
+
 /* =========================================================
-   PLAYER RENDER
+   MOBILE BUTTONS
 ========================================================= */
 
-function renderPlayer() {
+on(attackButton, "touchstart", (event) => {
 
-    if (!playerContainer) {
+    event.preventDefault();
+
+    attack();
+
+}, { passive: false });
+
+
+on(dashButton, "touchstart", (event) => {
+
+    event.preventDefault();
+
+    dash();
+
+}, { passive: false });
+
+
+on(skillButton, "touchstart", (event) => {
+
+    event.preventDefault();
+
+    spiritSkill();
+
+}, { passive: false });
+
+
+/* =========================================================
+   PAUSE
+========================================================= */
+
+function togglePause() {
+
+    if (GAME.gameOver ||
+        GAME.victory) {
+
         return;
+
     }
 
-    playerContainer.style.left =
-        PLAYER.x + "px";
+    GAME.paused =
+        !GAME.paused;
 
-    playerContainer.style.top =
-        PLAYER.y + "px";
+    if (pauseMenu) {
 
-    playerContainer.style.transform =
-        `translate(-50%,-100%) scaleX(${PLAYER.facing})`;
+        pauseMenu.style.display =
+            GAME.paused
+                ? "flex"
+                : "none";
+
+    }
 
 }
+
+
+on(pauseButton, "click", togglePause);
+
+
+on(resumeButton, "click", () => {
+
+    GAME.paused = false;
+
+    if (pauseMenu) {
+
+        pauseMenu.style.display =
+            "none";
+
+    }
+
+});
 
 
 /* =========================================================
    CAMERA
 ========================================================= */
 
-function updateCamera() {
+const CAMERA = {
 
-    CAMERA.width = window.innerWidth;
-    CAMERA.height = window.innerHeight;
+    x: 0,
+
+    y: 0,
+
+    width: window.innerWidth,
+
+    height: window.innerHeight,
+
+    smooth: 0.1
+
+};
+
+
+window.addEventListener("resize", () => {
+
+    CAMERA.width =
+        window.innerWidth;
+
+    CAMERA.height =
+        window.innerHeight;
+
+});
+
+
+function updateCamera() {
 
     const targetX =
         PLAYER.x -
@@ -687,25 +762,27 @@ function updateCamera() {
         (targetY - CAMERA.y) *
         CAMERA.smooth;
 
-    CAMERA.x = clamp(
-        CAMERA.x,
-        0,
-        Math.max(
+    CAMERA.x =
+        clamp(
+            CAMERA.x,
             0,
-            CONFIG.WORLD_WIDTH -
-            CAMERA.width
-        )
-    );
+            Math.max(
+                0,
+                CONFIG.WORLD_WIDTH -
+                CAMERA.width
+            )
+        );
 
-    CAMERA.y = clamp(
-        CAMERA.y,
-        0,
-        Math.max(
+    CAMERA.y =
+        clamp(
+            CAMERA.y,
             0,
-            CONFIG.WORLD_HEIGHT -
-            CAMERA.height
-        )
-    );
+            Math.max(
+                0,
+                CONFIG.WORLD_HEIGHT -
+                CAMERA.height
+            )
+        );
 
     if (gameWorld) {
 
@@ -717,17 +794,188 @@ function updateCamera() {
 }
 
 
+function cameraShake(power = 8, duration = 200) {
+
+    if (!SETTINGS.screenShake ||
+        !gameWorld) {
+
+        return;
+
+    }
+
+    const start =
+        performance.now();
+
+    function shake(time) {
+
+        const elapsed =
+            time - start;
+
+        if (elapsed >= duration) {
+
+            updateCamera();
+
+            return;
+
+        }
+
+        const x =
+            (Math.random() - 0.5) *
+            power;
+
+        const y =
+            (Math.random() - 0.5) *
+            power;
+
+        gameWorld.style.transform =
+            `translate(${-CAMERA.x + x}px,${-CAMERA.y + y}px)`;
+
+        requestAnimationFrame(shake);
+
+    }
+
+    requestAnimationFrame(shake);
+
+}
+
+
 /* =========================================================
-   HUD
+   PLAYER MOVEMENT
+========================================================= */
+
+function updateMovement() {
+
+    PLAYER.vx = 0;
+    PLAYER.vy = 0;
+
+    if (INPUT.left)
+        PLAYER.vx--;
+
+    if (INPUT.right)
+        PLAYER.vx++;
+
+    if (INPUT.up)
+        PLAYER.vy--;
+
+    if (INPUT.down)
+        PLAYER.vy++;
+
+    if (JOYSTICK.active) {
+
+        PLAYER.vx +=
+            JOYSTICK.dx /
+            JOYSTICK.radius;
+
+        PLAYER.vy +=
+            JOYSTICK.dy /
+            JOYSTICK.radius;
+
+    }
+
+    const length =
+        Math.hypot(
+            PLAYER.vx,
+            PLAYER.vy
+        );
+
+    PLAYER.moving =
+        length > 0;
+
+    if (!PLAYER.moving) {
+
+        if (!PLAYER.attacking) {
+
+            PLAYER.state =
+                "idle";
+
+        }
+
+        return;
+
+    }
+
+    PLAYER.vx /= length;
+
+    PLAYER.vy /= length;
+
+    let speed =
+        PLAYER.speed;
+
+    if (DASH.active) {
+
+        speed =
+            CONFIG.DASH_SPEED;
+
+    }
+
+    PLAYER.x +=
+        PLAYER.vx *
+        speed;
+
+    PLAYER.y +=
+        PLAYER.vy *
+        speed;
+
+    PLAYER.x =
+        clamp(
+            PLAYER.x,
+            60,
+            CONFIG.WORLD_WIDTH - 60
+        );
+
+    PLAYER.y =
+        clamp(
+            PLAYER.y,
+            60,
+            CONFIG.WORLD_HEIGHT - 60
+        );
+
+    if (PLAYER.vx < -0.1)
+        PLAYER.facing = -1;
+
+    if (PLAYER.vx > 0.1)
+        PLAYER.facing = 1;
+
+    PLAYER.state =
+        DASH.active
+            ? "dash"
+            : "walk";
+
+}
+
+
+function renderPlayer() {
+
+    if (!playerContainer)
+        return;
+
+    playerContainer.style.left =
+        PLAYER.x + "px";
+
+    playerContainer.style.top =
+        PLAYER.y + "px";
+
+    playerContainer.style.transform =
+        `translate(-50%,-100%) scaleX(${PLAYER.facing})`;
+
+}
+
+
+/* =========================================================
+   PLAYER HUD
 ========================================================= */
 
 function updateHUD() {
 
     const health =
-        Math.round(PLAYER.health);
+        Math.round(
+            PLAYER.health
+        );
 
     const spirit =
-        Math.round(PLAYER.spirit);
+        Math.round(
+            PLAYER.spirit
+        );
 
     if (healthFill) {
 
@@ -746,16 +994,14 @@ function updateHUD() {
     if (healthText) {
 
         healthText.textContent =
-            health + " / " +
-            CONFIG.MAX_HEALTH;
+            `${health} / ${PLAYER.maxHealth}`;
 
     }
 
     if (spiritText) {
 
         spiritText.textContent =
-            spirit + " / " +
-            CONFIG.MAX_SPIRIT;
+            `${spirit} / ${PLAYER.maxSpirit}`;
 
     }
 
@@ -778,312 +1024,119 @@ function updateHUD() {
 
 
 /* =========================================================
-   CRYSTALS
+   DASH
 ========================================================= */
 
-function initializeCrystals() {
+const DASH = {
 
-    const elements =
-        $$(".crystal");
+    active: false,
 
-    elements.forEach(
-        (element, index) => {
+    timer: 0,
 
-            const angle =
-                (index / elements.length) *
-                Math.PI * 2;
+    cooldown: 0,
 
-            const radius = 850;
+    duration: 220,
 
-            const x =
-                1800 +
-                Math.cos(angle) *
-                radius;
+    cooldownDuration: 750
 
-            const y =
-                1000 +
-                Math.sin(angle) *
-                radius *
-                0.55;
-
-            element.style.position =
-                "absolute";
-
-            element.style.left =
-                x + "px";
-
-            element.style.top =
-                y + "px";
-
-            CRYSTALS.push({
-
-                element: element,
-
-                x: x,
-                y: y,
-
-                collected: false
-
-            });
-
-        }
-    );
-
-}
+};
 
 
-function updateCrystals() {
+function dash() {
 
-    CRYSTALS.forEach(
-        (crystal) => {
+    if (!GAME.running ||
+        GAME.paused ||
+        GAME.victory ||
+        GAME.gameOver) {
 
-            if (crystal.collected) {
-                return;
-            }
-
-            const distance =
-                Math.hypot(
-                    PLAYER.x - crystal.x,
-                    PLAYER.y - crystal.y
-                );
-
-            if (distance <= 90) {
-
-                collectCrystal(crystal);
-
-            }
-
-        }
-    );
-
-}
-
-
-function collectCrystal(crystal) {
-
-    if (crystal.collected) {
         return;
+
     }
 
-    crystal.collected = true;
+    if (DASH.active ||
+        DASH.cooldown > 0) {
 
-    GAME.crystals++;
+        return;
 
-    GAME.score += 500;
+    }
 
-    if (crystal.element) {
+    if (PLAYER.stamina < 20) {
 
-        crystal.element.style.transition =
-            "opacity .5s, transform .5s";
+        showNotification(
+            "Not enough stamina"
+        );
 
-        crystal.element.style.opacity =
-            "0";
+        return;
 
-        crystal.element.style.transform =
-            "scale(2)";
+    }
+
+    DASH.active = true;
+
+    DASH.timer =
+        DASH.duration;
+
+    DASH.cooldown =
+        DASH.cooldownDuration;
+
+    PLAYER.invincible = true;
+
+    PLAYER.stamina -= 20;
+
+    if (player) {
+
+        player.classList.add(
+            "dash"
+        );
+
+    }
+
+    if (dashTrail) {
+
+        dashTrail.classList.add(
+            "play"
+        );
 
         setTimeout(() => {
 
-            crystal.element.style.display =
-                "none";
+            dashTrail.classList.remove(
+                "play"
+            );
 
-        }, 500);
-
-    }
-
-    safePlay(crystalSound);
-
-    showNotification(
-        "ANCIENT CRYSTAL COLLECTED!"
-    );
-
-    if (GAME.crystals ===
-        CONFIG.TOTAL_CRYSTALS) {
-
-        if (mission1) {
-
-            mission1.style.textDecoration =
-                "line-through";
-
-        }
-
-        showNotification(
-            "ALL CRYSTALS COLLECTED!"
-        );
-
-        spawnEnemies();
+        }, 250);
 
     }
+
+    playSound(heroDashSound);
 
 }
 
 
-/* =========================================================
-   ENEMIES
-========================================================= */
+function updateDash(delta) {
 
-function spawnEnemies() {
+    if (DASH.cooldown > 0) {
 
-    if (ENEMIES.length > 0) {
+        DASH.cooldown -= delta;
+
+    }
+
+    if (!DASH.active)
         return;
-    }
 
-    const elements =
-        $$(".enemy");
+    DASH.timer -= delta;
 
-    elements.forEach(
-        (element, index) => {
+    if (DASH.timer <= 0) {
 
-            const angle =
-                (index / elements.length) *
-                Math.PI * 2;
+        DASH.active = false;
 
-            const radius = 500;
+        PLAYER.invincible = false;
 
-            const x =
-                1800 +
-                Math.cos(angle) *
-                radius;
+        if (player) {
 
-            const y =
-                1000 +
-                Math.sin(angle) *
-                radius;
-
-            element.style.position =
-                "absolute";
-
-            element.style.left =
-                x + "px";
-
-            element.style.top =
-                y + "px";
-
-            element.style.display =
-                "flex";
-
-            ENEMIES.push({
-
-                element: element,
-
-                x: x,
-                y: y,
-
-                health: 100,
-                maxHealth: 100,
-
-                speed: 1.5,
-
-                alive: true,
-
-                attackTimer: 0
-
-            });
+            player.classList.remove(
+                "dash"
+            );
 
         }
-    );
-
-    if (ENEMIES.length === 0) {
-
-        activateBoss();
-
-    } else {
-
-        showNotification(
-            "THE GUARDIANS HAVE AWAKENED!"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   ENEMY AI
-========================================================= */
-
-function updateEnemies(delta) {
-
-    ENEMIES.forEach(
-        (enemy) => {
-
-            if (!enemy.alive) {
-                return;
-            }
-
-            const dx =
-                PLAYER.x - enemy.x;
-
-            const dy =
-                PLAYER.y - enemy.y;
-
-            const distance =
-                Math.hypot(dx, dy);
-
-            if (distance < 500 &&
-                distance > 100) {
-
-                enemy.x +=
-                    (dx / distance) *
-                    enemy.speed;
-
-                enemy.y +=
-                    (dy / distance) *
-                    enemy.speed;
-
-            }
-
-            if (distance <= 100) {
-
-                enemy.attackTimer -=
-                    delta;
-
-                if (enemy.attackTimer <= 0) {
-
-                    enemy.attackTimer =
-                        1300;
-
-                    enemyAttack(enemy);
-
-                }
-
-            }
-
-            if (enemy.element) {
-
-                enemy.element.style.left =
-                    enemy.x + "px";
-
-                enemy.element.style.top =
-                    enemy.y + "px";
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   ENEMY ATTACK
-========================================================= */
-
-function enemyAttack(enemy) {
-
-    if (PLAYER.invincible) {
-        return;
-    }
-
-    PLAYER.health =
-        Math.max(
-            0,
-            PLAYER.health - 10
-        );
-
-    if (PLAYER.health <= 0) {
-
-        loseGame();
 
     }
 
@@ -1094,25 +1147,44 @@ function enemyAttack(enemy) {
    ATTACK
 ========================================================= */
 
+const ATTACK = {
+
+    cooldown: 0,
+
+    duration: 250,
+
+    range: 150,
+
+    damage: CONFIG.ATTACK_DAMAGE
+
+};
+
+
 function attack() {
 
     if (!GAME.running ||
         GAME.paused ||
-        GAME.gameOver ||
-        GAME.victory) {
+        GAME.victory ||
+        GAME.gameOver) {
 
         return;
+
     }
 
-    if (ATTACK.cooldown) {
+    if (ATTACK.cooldown > 0)
         return;
-    }
 
-    ATTACK.cooldown = true;
+    ATTACK.cooldown =
+        280;
 
     PLAYER.attacking = true;
 
-    safePlay(swordSound);
+    PLAYER.state =
+        "attack";
+
+    playSound(
+        swordSlashSound
+    );
 
     if (slashEffect) {
 
@@ -1128,36 +1200,29 @@ function attack() {
 
     }
 
-    ENEMIES.forEach(
-        (enemy) => {
+    if (player) {
 
-            if (!enemy.alive) {
-                return;
-            }
+        player.classList.remove(
+            "attack"
+        );
 
-            const distance =
-                Math.hypot(
-                    PLAYER.x - enemy.x,
-                    PLAYER.y - enemy.y
-                );
+        void player.offsetWidth;
 
-            const correctSide =
-                PLAYER.facing === 1
-                    ? enemy.x >= PLAYER.x
-                    : enemy.x <= PLAYER.x;
+        player.classList.add(
+            "attack"
+        );
 
-            if (
-                distance <=
-                    CONFIG.ATTACK_RANGE &&
-                correctSide
-            ) {
+        setTimeout(() => {
 
-                damageEnemy(enemy);
+            player.classList.remove(
+                "attack"
+            );
 
-            }
+        }, 300);
 
-        }
-    );
+    }
+
+    damageEnemies();
 
     damageBoss();
 
@@ -1165,55 +1230,244 @@ function attack() {
 
         PLAYER.attacking = false;
 
-    }, 250);
-
-    setTimeout(() => {
-
-        ATTACK.cooldown = false;
-
-    }, ATTACK.cooldownDuration);
+    }, ATTACK.duration);
 
 }
 
 
 /* =========================================================
-   DAMAGE ENEMY
+   ENEMY DATA
 ========================================================= */
 
-function damageEnemy(enemy) {
+const ENEMIES = [];
 
-    enemy.health -=
-        CONFIG.ATTACK_DAMAGE;
 
-    if (enemy.health <= 0) {
+function initEnemies() {
 
-        enemy.alive = false;
+    const elements =
+        $$(".enemy");
 
-        GAME.kills++;
+    elements.forEach(
+        (element, index) => {
 
-        GAME.score += 300;
+            const angle =
+                index /
+                elements.length *
+                Math.PI * 2;
 
-        if (enemy.element) {
+            const radius =
+                650 +
+                random(
+                    -100,
+                    300
+                );
 
-            enemy.element.style.transition =
-                "opacity .4s, transform .4s";
+            const x =
+                clamp(
+                    2500 +
+                    Math.cos(angle) *
+                    radius,
+                    150,
+                    CONFIG.WORLD_WIDTH -
+                    150
+                );
 
-            enemy.element.style.opacity =
-                "0";
+            const y =
+                clamp(
+                    1150 +
+                    Math.sin(angle) *
+                    radius *
+                    0.65,
+                    150,
+                    CONFIG.WORLD_HEIGHT -
+                    150
+                );
 
-            enemy.element.style.transform =
-                "scale(0.2)";
+            element.style.position =
+                "absolute";
 
-            setTimeout(() => {
+            element.style.left =
+                x + "px";
 
-                enemy.element.style.display =
-                    "none";
+            element.style.top =
+                y + "px";
 
-            }, 450);
+            element.style.display =
+                "flex";
+
+            ENEMIES.push({
+
+                element,
+
+                x,
+
+                y,
+
+                health: 100,
+
+                maxHealth: 100,
+
+                speed:
+                    random(
+                        1.3,
+                        2
+                    ),
+
+                damage: 8,
+
+                alive: true,
+
+                attackTimer:
+                    random(
+                        500,
+                        1200
+                    ),
+
+                floatOffset:
+                    random(
+                        0,
+                        1000
+                    )
+
+            });
 
         }
+    );
 
-        checkEnemiesDefeated();
+}
+
+
+/* =========================================================
+   ENEMY AI
+========================================================= */
+
+function updateEnemies(delta) {
+
+    ENEMIES.forEach(
+        (enemy) => {
+
+            if (!enemy.alive)
+                return;
+
+            const dx =
+                PLAYER.x -
+                enemy.x;
+
+            const dy =
+                PLAYER.y -
+                enemy.y;
+
+            const distance =
+                Math.hypot(
+                    dx,
+                    dy
+                );
+
+            if (
+                distance <
+                CONFIG.ENEMY_DETECT_RANGE
+            ) {
+
+                if (
+                    distance >
+                    CONFIG.ENEMY_ATTACK_RANGE
+                ) {
+
+                    enemy.x +=
+                        dx /
+                        distance *
+                        enemy.speed;
+
+                    enemy.y +=
+                        dy /
+                        distance *
+                        enemy.speed;
+
+                } else {
+
+                    enemy.attackTimer -=
+                        delta;
+
+                    if (
+                        enemy.attackTimer <= 0
+                    ) {
+
+                        enemy.attackTimer =
+                            1400;
+
+                        enemyAttack(
+                            enemy
+                        );
+
+                    }
+
+                }
+
+            }
+
+            enemy.x =
+                clamp(
+                    enemy.x,
+                    50,
+                    CONFIG.WORLD_WIDTH - 50
+                );
+
+            enemy.y =
+                clamp(
+                    enemy.y,
+                    50,
+                    CONFIG.WORLD_HEIGHT - 50
+                );
+
+            const float =
+                Math.sin(
+                    performance.now() *
+                    0.002 +
+                    enemy.floatOffset
+                ) * 8;
+
+            enemy.element.style.left =
+                enemy.x + "px";
+
+            enemy.element.style.top =
+                enemy.y + float + "px";
+
+            enemy.element.style.transform =
+                PLAYER.x >
+                enemy.x
+                    ? "scaleX(1)"
+                    : "scaleX(-1)";
+
+        }
+    );
+
+}
+
+
+function enemyAttack(enemy) {
+
+    if (PLAYER.invincible)
+        return;
+
+    PLAYER.health =
+        Math.max(
+            0,
+            PLAYER.health -
+            enemy.damage
+        );
+
+    cameraShake(
+        8,
+        180
+    );
+
+    hurtPlayer();
+
+    if (
+        PLAYER.health <= 0
+    ) {
+
+        gameOver();
 
     }
 
@@ -1221,35 +1475,288 @@ function damageEnemy(enemy) {
 
 
 /* =========================================================
-   CHECK ENEMIES
+   DAMAGE ENEMIES
 ========================================================= */
+
+function damageEnemies() {
+
+    ENEMIES.forEach(
+        (enemy) => {
+
+            if (!enemy.alive)
+                return;
+
+            const distance =
+                distanceBetween(
+                    PLAYER.x,
+                    PLAYER.y,
+                    enemy.x,
+                    enemy.y
+                );
+
+            if (
+                distance <=
+                ATTACK.range + 55
+            ) {
+
+                enemy.health -=
+                    ATTACK.damage;
+
+                if (
+                    enemy.health <= 0
+                ) {
+
+                    killEnemy(
+                        enemy
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+function killEnemy(enemy) {
+
+    if (!enemy.alive)
+        return;
+
+    enemy.alive = false;
+
+    GAME.kills++;
+
+    GAME.score += 300;
+
+    enemy.element.style.transition =
+        "opacity .5s ease, transform .5s ease";
+
+    enemy.element.style.opacity =
+        "0";
+
+    enemy.element.style.transform =
+        "scale(.3)";
+
+    setTimeout(() => {
+
+        enemy.element.style.display =
+            "none";
+
+    }, 500);
+
+    showNotification(
+        "+300 SCORE"
+    );
+
+    checkEnemiesDefeated();
+
+}
+
 
 function checkEnemiesDefeated() {
 
     const remaining =
         ENEMIES.filter(
-            enemy => enemy.alive
+            enemy =>
+                enemy.alive
         ).length;
 
-    if (remaining === 0) {
+    if (
+        remaining === 0
+    ) {
 
-        if (mission2) {
-
-            mission2.style.textDecoration =
-                "line-through";
-
-        }
+        completeMission(
+            mission2
+        );
 
         showNotification(
             "ALL GUARDIANS DEFEATED!"
         );
 
-        setTimeout(
-            activateBoss,
-            1000
-        );
+        tryActivateBoss();
 
     }
+
+}
+
+
+/* =========================================================
+   CRYSTALS
+========================================================= */
+
+const CRYSTALS = [];
+
+
+function initCrystals() {
+
+    const elements =
+        $$(".crystal");
+
+    elements.forEach(
+        (element, index) => {
+
+            const angle =
+                index /
+                elements.length *
+                Math.PI * 2;
+
+            const radius =
+                1050;
+
+            const x =
+                clamp(
+                    2500 +
+                    Math.cos(angle) *
+                    radius,
+                    200,
+                    CONFIG.WORLD_WIDTH -
+                    200
+                );
+
+            const y =
+                clamp(
+                    1200 +
+                    Math.sin(angle) *
+                    radius *
+                    0.55,
+                    200,
+                    CONFIG.WORLD_HEIGHT -
+                    200
+                );
+
+            element.style.position =
+                "absolute";
+
+            element.style.left =
+                x + "px";
+
+            element.style.top =
+                y + "px";
+
+            CRYSTALS.push({
+
+                element,
+
+                x,
+
+                y,
+
+                collected: false
+
+            });
+
+            on(
+                element,
+                "click",
+                () => collectCrystal(
+                    CRYSTALS[index]
+                )
+            );
+
+        }
+    );
+
+}
+
+
+function collectCrystal(crystal) {
+
+    if (!crystal ||
+        crystal.collected) {
+
+        return;
+
+    }
+
+    crystal.collected =
+        true;
+
+    GAME.crystals++;
+
+    GAME.score += 150;
+
+    crystal.element.classList.add(
+        "collected"
+    );
+
+    playSound(
+        crystalSound
+    );
+
+    showNotification(
+        "ANCIENT CRYSTAL RESTORED!"
+    );
+
+    setTimeout(() => {
+
+        crystal.element.style.display =
+            "none";
+
+    }, 500);
+
+    if (
+        GAME.crystals >=
+        CONFIG.TOTAL_CRYSTALS
+    ) {
+
+        completeMission(
+            mission1
+        );
+
+        showNotification(
+            "ALL 6 CRYSTALS COLLECTED!"
+        );
+
+        tryActivateBoss();
+
+    }
+
+}
+
+
+function updateCrystalProximity() {
+
+    CRYSTALS.forEach(
+        (crystal) => {
+
+            if (
+                crystal.collected
+            )
+                return;
+
+            const distance =
+                distanceBetween(
+                    PLAYER.x,
+                    PLAYER.y,
+                    crystal.x,
+                    crystal.y
+                );
+
+            if (
+                distance <=
+                CONFIG.CRYSTAL_PICKUP_RADIUS
+            ) {
+
+                collectCrystal(
+                    crystal
+                );
+
+            }
+
+            const nearby =
+                distance <=
+                CONFIG.CRYSTAL_HINT_RADIUS;
+
+            crystal.element.classList.toggle(
+                "inRange",
+                nearby
+            );
+
+        }
+    );
 
 }
 
@@ -1258,15 +1765,82 @@ function checkEnemiesDefeated() {
    BOSS
 ========================================================= */
 
-function activateBoss() {
+const BOSS = {
+
+    active: false,
+
+    intro: false,
+
+    defeated: false,
+
+    x: 2500,
+
+    y: 900,
+
+    health:
+        CONFIG.BOSS_START_HEALTH,
+
+    maxHealth:
+        CONFIG.BOSS_START_HEALTH,
+
+    speed: 2.2,
+
+    damage: 18,
+
+    attackTimer: 1200,
+
+    phase: 1
+
+};
+
+
+/* =========================================================
+   BOSS ACTIVATION
+========================================================= */
+
+function tryActivateBoss() {
 
     if (BOSS.active ||
         BOSS.defeated) {
 
         return;
+
     }
 
+    if (
+        GAME.crystals <
+        CONFIG.TOTAL_CRYSTALS
+    ) {
+
+        return;
+
+    }
+
+    if (
+        ENEMIES.some(
+            enemy =>
+                enemy.alive
+        )
+    ) {
+
+        return;
+
+    }
+
+    activateBoss();
+
+}
+
+
+function activateBoss() {
+
     BOSS.active = true;
+
+    BOSS.intro = true;
+
+    BOSS.x = 2500;
+
+    BOSS.y = 850;
 
     BOSS.health =
         BOSS.maxHealth;
@@ -1276,14 +1850,14 @@ function activateBoss() {
         boss.style.display =
             "flex";
 
-        boss.style.position =
-            "absolute";
-
         boss.style.left =
             BOSS.x + "px";
 
         boss.style.top =
             BOSS.y + "px";
+
+        boss.style.opacity =
+            "1";
 
     }
 
@@ -1301,44 +1875,71 @@ function activateBoss() {
 
     }
 
-    safePlay(bossSound);
+    playSound(
+        bossRoarSound
+    );
+
+    cameraShake(
+        18,
+        800
+    );
 
     showNotification(
         "THE ANCIENT GUARDIAN AWAKENS!"
     );
 
+    setTimeout(() => {
+
+        BOSS.intro = false;
+
+    }, 2200);
+
 }
 
 
 /* =========================================================
-   BOSS UPDATE
+   BOSS AI
 ========================================================= */
 
 function updateBoss(delta) {
 
-    if (!BOSS.active ||
-        BOSS.defeated) {
+    if (
+        !BOSS.active ||
+        BOSS.intro ||
+        BOSS.defeated
+    ) {
 
         return;
+
     }
 
     const dx =
-        PLAYER.x - BOSS.x;
+        PLAYER.x -
+        BOSS.x;
 
     const dy =
-        PLAYER.y - BOSS.y;
+        PLAYER.y -
+        BOSS.y;
 
     const distance =
-        Math.hypot(dx, dy);
+        Math.hypot(
+            dx,
+            dy
+        );
 
-    if (distance > 180) {
+    if (
+        distance >
+        CONFIG.BOSS_ATTACK_RANGE
+    ) {
 
         BOSS.x +=
-            (dx / distance) *
+            dx /
+            distance *
             BOSS.speed;
 
         BOSS.y +=
-            (dy / distance) *
+            dy /
+            distance *
             BOSS.speed;
 
     } else {
@@ -1346,10 +1947,16 @@ function updateBoss(delta) {
         BOSS.attackTimer -=
             delta;
 
-        if (BOSS.attackTimer <= 0) {
+        if (
+            BOSS.attackTimer <= 0
+        ) {
 
             BOSS.attackTimer =
-                BOSS.attackCooldown;
+                BOSS.phase === 1
+                    ? 1600
+                    : BOSS.phase === 2
+                        ? 1250
+                        : 950;
 
             bossAttack();
 
@@ -1365,6 +1972,11 @@ function updateBoss(delta) {
         boss.style.top =
             BOSS.y + "px";
 
+        boss.style.transform =
+            dx >= 0
+                ? "scaleX(1)"
+                : "scaleX(-1)";
+
     }
 
 }
@@ -1376,19 +1988,33 @@ function updateBoss(delta) {
 
 function bossAttack() {
 
-    if (PLAYER.invincible) {
+    if (
+        PLAYER.invincible
+    ) {
+
         return;
+
     }
 
     PLAYER.health =
         Math.max(
             0,
-            PLAYER.health - 20
+            PLAYER.health -
+            BOSS.damage
         );
 
-    if (PLAYER.health <= 0) {
+    hurtPlayer();
 
-        loseGame();
+    cameraShake(
+        14,
+        220
+    );
+
+    if (
+        PLAYER.health <= 0
+    ) {
+
+        gameOver();
 
     }
 
@@ -1401,45 +2027,52 @@ function bossAttack() {
 
 function damageBoss() {
 
-    if (!BOSS.active ||
-        BOSS.defeated) {
+    if (
+        !BOSS.active ||
+        BOSS.intro ||
+        BOSS.defeated
+    ) {
 
         return;
+
     }
 
     const distance =
-        Math.hypot(
-            PLAYER.x - BOSS.x,
-            PLAYER.y - BOSS.y
+        distanceBetween(
+            PLAYER.x,
+            PLAYER.y,
+            BOSS.x,
+            BOSS.y
         );
 
-    if (distance >
-        CONFIG.ATTACK_RANGE + 50) {
+    if (
+        distance >
+        ATTACK.range + 70
+    ) {
 
         return;
-    }
 
-    BOSS.health -=
-        CONFIG.ATTACK_DAMAGE;
+    }
 
     BOSS.health =
         Math.max(
             0,
-            BOSS.health
+            BOSS.health -
+            ATTACK.damage
         );
 
-    if (bossHealthFill) {
+    updateBossHUD();
 
-        bossHealthFill.style.width =
-            (
-                BOSS.health /
-                BOSS.maxHealth *
-                100
-            ) + "%";
+    cameraShake(
+        6,
+        120
+    );
 
-    }
+    updateBossPhase();
 
-    if (BOSS.health <= 0) {
+    if (
+        BOSS.health <= 0
+    ) {
 
         defeatBoss();
 
@@ -1448,45 +2081,136 @@ function damageBoss() {
 }
 
 
+function updateBossPhase() {
+
+    const percent =
+        BOSS.health /
+        BOSS.maxHealth;
+
+    if (
+        BOSS.phase === 1 &&
+        percent <= 0.65
+    ) {
+
+        BOSS.phase = 2;
+
+        BOSS.speed += 0.6;
+
+        BOSS.damage += 5;
+
+        showNotification(
+            "THE GUARDIAN ENTERS PHASE 2!"
+        );
+
+        cameraShake(
+            12,
+            400
+        );
+
+    }
+
+    if (
+        BOSS.phase === 2 &&
+        percent <= 0.30
+    ) {
+
+        BOSS.phase = 3;
+
+        BOSS.speed += 0.7;
+
+        BOSS.damage += 7;
+
+        showNotification(
+            "ANCIENT RAGE AWAKENED!"
+        );
+
+        cameraShake(
+            18,
+            500
+        );
+
+    }
+
+}
+
+
+function updateBossHUD() {
+
+    if (bossHealthFill) {
+
+        const percent =
+            BOSS.health /
+            BOSS.maxHealth *
+            100;
+
+        bossHealthFill.style.width =
+            clamp(
+                percent,
+                0,
+                100
+            ) + "%";
+
+    }
+
+}
+
+
 /* =========================================================
-   DEFEAT BOSS
+   BOSS DEFEATED
 ========================================================= */
 
 function defeatBoss() {
 
-    if (BOSS.defeated) {
+    if (
+        BOSS.defeated
+    ) {
+
         return;
+
     }
 
     BOSS.defeated = true;
+
     BOSS.active = false;
 
     GAME.score += 5000;
 
-    if (mission3) {
+    completeMission(
+        mission3
+    );
 
-        mission3.style.textDecoration =
-            "line-through";
+    updateHUD();
 
-    }
+    showNotification(
+        "THE ANCIENT GUARDIAN HAS FALLEN!"
+    );
+
+    playSound(
+        victorySound
+    );
+
+    cameraShake(
+        25,
+        800
+    );
 
     if (boss) {
 
         boss.style.transition =
-            "opacity .8s, transform .8s";
+            "opacity 1s ease, transform 1s ease";
 
         boss.style.opacity =
             "0";
 
         boss.style.transform =
-            "scale(1.5)";
+            "scale(1.4) translateY(-80px)";
 
         setTimeout(() => {
 
             boss.style.display =
                 "none";
 
-        }, 900);
+        }, 1000);
 
     }
 
@@ -1496,12 +2220,6 @@ function defeatBoss() {
             "none";
 
     }
-
-    safePlay(bossSound);
-
-    showNotification(
-        "THE ANCIENT GUARDIAN HAS FALLEN!"
-    );
 
     setTimeout(() => {
 
@@ -1516,109 +2234,212 @@ function defeatBoss() {
    DAY 7 PORTAL
 ========================================================= */
 
+const PORTAL = {
+
+    active: false,
+
+    entered: false,
+
+    x: 2500,
+
+    y: 850
+
+};
+
+
+const day7Portal =
+    $("#day7Portal");
+
+
 function activateDay7Portal() {
 
     PORTAL.active = true;
 
+    PORTAL.entered = false;
+
     PORTAL.x = BOSS.x;
+
     PORTAL.y = BOSS.y;
 
-    if (day7Portal) {
+    if (!day7Portal)
+        return;
 
-        day7Portal.style.display =
-            "flex";
+    day7Portal.style.display =
+        "flex";
 
-        day7Portal.style.position =
-            "absolute";
+    day7Portal.style.position =
+        "absolute";
 
-        day7Portal.style.left =
-            PORTAL.x + "px";
+    day7Portal.style.left =
+        PORTAL.x + "px";
 
-        day7Portal.style.top =
-            PORTAL.y + "px";
+    day7Portal.style.top =
+        PORTAL.y + "px";
+
+    day7Portal.style.opacity =
+        "0";
+
+    day7Portal.style.transform =
+        "translate(-50%,-50%) scale(.2)";
+
+    day7Portal.style.transition =
+        "opacity .8s ease, transform .8s ease";
+
+    requestAnimationFrame(() => {
 
         day7Portal.style.opacity =
             "1";
 
-        day7Portal.style.pointerEvents =
-            "auto";
-
         day7Portal.style.transform =
             "translate(-50%,-50%) scale(1)";
 
-    }
+    });
 
-    safePlay(portalSound);
+    playSound(
+        portalSound
+    );
 
     showNotification(
-        "THE PATH TO DAY 7 IS OPEN!"
+        "THE PATH TO DAY 7 HAS OPENED!"
     );
 
     setTimeout(() => {
 
         winGame();
 
-    }, 1500);
+    }, 1600);
 
 }
 
 
 /* =========================================================
-   WIN GAME
+   PORTAL INTERACTION
 ========================================================= */
 
-function winGame() {
+on(
+    day7Portal,
+    "click",
+    (event) => {
 
-    if (GAME.victory) {
+        event.preventDefault();
+
+        if (
+            GAME.victory
+        ) {
+
+            goToDay7();
+
+        }
+
+    }
+);
+
+
+function updatePortal() {
+
+    if (
+        !PORTAL.active ||
+        PORTAL.entered
+    ) {
+
         return;
-    }
-
-    GAME.victory = true;
-    GAME.running = false;
-    GAME.paused = false;
-
-    localStorage.setItem(
-        "day6Complete",
-        "true"
-    );
-
-    localStorage.setItem(
-        "day6Score",
-        String(GAME.score)
-    );
-
-    safePlay(victorySound);
-
-    if (victoryScreen) {
-
-        victoryScreen.style.display =
-            "flex";
-
-        victoryScreen.style.opacity =
-            "0";
-
-        requestAnimationFrame(() => {
-
-            victoryScreen.style.transition =
-                "opacity .6s ease";
-
-            victoryScreen.style.opacity =
-                "1";
-
-        });
 
     }
 
-    if (continueButton) {
+    const distance =
+        distanceBetween(
+            PLAYER.x,
+            PLAYER.y,
+            PORTAL.x,
+            PORTAL.y
+        );
 
-        continueButton.style.display =
-            "flex";
+    if (
+        distance <= 220
+    ) {
 
-        continueButton.disabled =
-            false;
+        if (interactionPrompt) {
 
-        continueButton.style.pointerEvents =
-            "auto";
+            interactionPrompt.style.display =
+                "flex";
+
+            interactionPrompt.textContent =
+                "PRESS F TO ENTER DAY 7";
+
+        }
+
+    } else {
+
+        if (interactionPrompt) {
+
+            interactionPrompt.style.display =
+                "none";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   INTERACTION
+========================================================= */
+
+function interact() {
+
+    if (
+        !GAME.running ||
+        GAME.paused
+    ) {
+
+        return;
+
+    }
+
+    if (
+        PORTAL.active &&
+        !PORTAL.entered
+    ) {
+
+        const distance =
+            distanceBetween(
+                PLAYER.x,
+                PLAYER.y,
+                PORTAL.x,
+                PORTAL.y
+            );
+
+        if (
+            distance <= 220
+        ) {
+
+            goToDay7();
+
+            return;
+
+        }
+
+    }
+
+    const crystal =
+        CRYSTALS.find(
+            item =>
+                !item.collected &&
+                distanceBetween(
+                    PLAYER.x,
+                    PLAYER.y,
+                    item.x,
+                    item.y
+                ) <=
+                CONFIG.CRYSTAL_HINT_RADIUS
+        );
+
+    if (crystal) {
+
+        collectCrystal(
+            crystal
+        );
 
     }
 
@@ -1631,13 +2452,18 @@ function winGame() {
 
 function goToDay7() {
 
-    if (PORTAL.entered) {
+    if (
+        PORTAL.entered
+    ) {
+
         return;
+
     }
 
     PORTAL.entered = true;
 
     GAME.running = false;
+
     GAME.paused = false;
 
     localStorage.setItem(
@@ -1650,16 +2476,16 @@ function goToDay7() {
         String(GAME.score)
     );
 
-    safePlay(portalSound);
+    if (bgMusic) {
 
-    /*
-       IMPORTANT:
-       Redirect happens even if the portal animation
-       or victory overlay is missing.
-    */
+        bgMusic.pause();
+
+    }
 
     const transition =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     transition.id =
         "day7Transition";
@@ -1698,10 +2524,6 @@ function goToDay7() {
 
     setTimeout(() => {
 
-        /*
-           FINAL REDIRECT
-        */
-
         window.location.href =
             CONFIG.NEXT_LEVEL_URL;
 
@@ -1711,153 +2533,47 @@ function goToDay7() {
 
 
 /* =========================================================
-   CONTINUE BUTTON
-========================================================= */
-
-on(
-    continueButton,
-    "click",
-    (event) => {
-
-        event.preventDefault();
-
-        goToDay7();
-
-    }
-);
-
-
-/* =========================================================
-   PORTAL CLICK
-========================================================= */
-
-on(
-    day7Portal,
-    "click",
-    (event) => {
-
-        event.preventDefault();
-
-        if (PORTAL.active) {
-
-            goToDay7();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   MOBILE CONTROLS
-========================================================= */
-
-on(
-    attackButton,
-    "touchstart",
-    (event) => {
-
-        event.preventDefault();
-
-        attack();
-
-    },
-    { passive: false }
-);
-
-
-on(
-    dashButton,
-    "touchstart",
-    (event) => {
-
-        event.preventDefault();
-
-        dash();
-
-    },
-    { passive: false }
-);
-
-
-on(
-    skillButton,
-    "touchstart",
-    (event) => {
-
-        event.preventDefault();
-
-        spiritSkill();
-
-    },
-    { passive: false }
-);
-
-
-on(
-    pauseButton,
-    "click",
-    () => {
-
-        togglePause();
-
-    }
-);
-
-
-/* =========================================================
-   DASH
-========================================================= */
-
-function dash() {
-
-    if (!GAME.running ||
-        GAME.paused ||
-        DASH.cooldown) {
-
-        return;
-    }
-
-    DASH.active = true;
-
-    DASH.timer =
-        DASH.duration;
-
-    DASH.cooldown =
-        true;
-
-    DASH.cooldownTimer =
-        DASH.cooldownDuration;
-
-    PLAYER.invincible = true;
-
-    safePlay(dashSound);
-
-    setTimeout(() => {
-
-        DASH.active = false;
-
-        PLAYER.invincible = false;
-
-    }, DASH.duration);
-
-}
-
-
-/* =========================================================
    SPIRIT SKILL
 ========================================================= */
 
+const SKILL = {
+
+    cooldown: 0,
+
+    cooldownDuration: 8000,
+
+    cost: 30,
+
+    range: 300,
+
+    damage: CONFIG.SKILL_DAMAGE
+
+};
+
+
 function spiritSkill() {
 
-    if (!GAME.running ||
-        GAME.paused ||
-        SKILL.cooldown) {
+    if (
+        !GAME.running ||
+        GAME.paused
+    ) {
 
         return;
+
     }
 
-    if (PLAYER.spirit < 30) {
+    if (
+        SKILL.cooldown > 0
+    ) {
+
+        return;
+
+    }
+
+    if (
+        PLAYER.spirit <
+        SKILL.cost
+    ) {
 
         showNotification(
             "NOT ENOUGH SPIRIT"
@@ -1867,30 +2583,41 @@ function spiritSkill() {
 
     }
 
-    PLAYER.spirit -= 30;
+    PLAYER.spirit -=
+        SKILL.cost;
 
-    SKILL.cooldown = true;
+    SKILL.cooldown =
+        SKILL.cooldownDuration;
 
     ENEMIES.forEach(
-        (enemy) => {
+        enemy => {
 
-            if (!enemy.alive) {
+            if (!enemy.alive)
                 return;
-            }
 
             const distance =
-                Math.hypot(
-                    PLAYER.x - enemy.x,
-                    PLAYER.y - enemy.y
+                distanceBetween(
+                    PLAYER.x,
+                    PLAYER.y,
+                    enemy.x,
+                    enemy.y
                 );
 
-            if (distance <= 300) {
+            if (
+                distance <=
+                SKILL.range
+            ) {
 
-                enemy.health -= 75;
+                enemy.health -=
+                    SKILL.damage;
 
-                if (enemy.health <= 0) {
+                if (
+                    enemy.health <= 0
+                ) {
 
-                    damageEnemy(enemy);
+                    killEnemy(
+                        enemy
+                    );
 
                 }
 
@@ -1899,32 +2626,40 @@ function spiritSkill() {
         }
     );
 
-    if (BOSS.active) {
+    if (
+        BOSS.active &&
+        !BOSS.defeated
+    ) {
 
         const distance =
-            Math.hypot(
-                PLAYER.x - BOSS.x,
-                PLAYER.y - BOSS.y
+            distanceBetween(
+                PLAYER.x,
+                PLAYER.y,
+                BOSS.x,
+                BOSS.y
             );
 
-        if (distance <= 300) {
+        if (
+            distance <=
+            SKILL.range
+        ) {
 
-            BOSS.health -= 100;
+            BOSS.health =
+                Math.max(
+                    0,
+                    BOSS.health -
+                    SKILL.damage
+                );
 
-            if (BOSS.health <= 0) {
+            updateBossHUD();
+
+            updateBossPhase();
+
+            if (
+                BOSS.health <= 0
+            ) {
 
                 defeatBoss();
-
-            }
-
-            if (bossHealthFill) {
-
-                bossHealthFill.style.width =
-                    (
-                        BOSS.health /
-                        BOSS.maxHealth *
-                        100
-                    ) + "%";
 
             }
 
@@ -1932,15 +2667,32 @@ function spiritSkill() {
 
     }
 
-    showNotification(
-        "ANCIENT SPIRIT BURST!"
+    cameraShake(
+        10,
+        250
     );
 
-    setTimeout(() => {
+    showNotification(
+        "SPIRIT BURST!"
+    );
 
-        SKILL.cooldown = false;
+}
 
-    }, SKILL.cooldownDuration);
+
+/* =========================================================
+   SKILL UPDATE
+========================================================= */
+
+function updateSkill(delta) {
+
+    if (
+        SKILL.cooldown > 0
+    ) {
+
+        SKILL.cooldown -=
+            delta;
+
+    }
 
 }
 
@@ -1951,30 +2703,34 @@ function spiritSkill() {
 
 function regenerate(delta) {
 
-    if (PLAYER.health <
-        CONFIG.MAX_HEALTH) {
+    if (
+        PLAYER.spirit <
+        PLAYER.maxSpirit
+    ) {
 
-        PLAYER.health +=
-            0.003 * delta;
-
-        PLAYER.health =
-            Math.min(
-                CONFIG.MAX_HEALTH,
-                PLAYER.health
+        PLAYER.spirit =
+            clamp(
+                PLAYER.spirit +
+                0.012 *
+                delta,
+                0,
+                PLAYER.maxSpirit
             );
 
     }
 
-    if (PLAYER.spirit <
-        CONFIG.MAX_SPIRIT) {
+    if (
+        PLAYER.stamina <
+        PLAYER.maxStamina
+    ) {
 
-        PLAYER.spirit +=
-            0.01 * delta;
-
-        PLAYER.spirit =
-            Math.min(
-                CONFIG.MAX_SPIRIT,
-                PLAYER.spirit
+        PLAYER.stamina =
+            clamp(
+                PLAYER.stamina +
+                0.035 *
+                delta,
+                0,
+                PLAYER.maxStamina
             );
 
     }
@@ -1983,26 +2739,106 @@ function regenerate(delta) {
 
 
 /* =========================================================
-   PAUSE
+   PLAYER HURT
 ========================================================= */
 
-function togglePause() {
+function hurtPlayer() {
 
-    if (GAME.gameOver ||
-        GAME.victory) {
+    if (!player)
+        return;
+
+    player.classList.add(
+        "hurt"
+    );
+
+    setTimeout(() => {
+
+        player.classList.remove(
+            "hurt"
+        );
+
+    }, 250);
+
+}
+
+
+/* =========================================================
+   MISSION
+========================================================= */
+
+function completeMission(
+    mission
+) {
+
+    if (!mission)
+        return;
+
+    mission.style.textDecoration =
+        "line-through";
+
+    mission.style.opacity =
+        "0.55";
+
+}
+
+
+/* =========================================================
+   VICTORY
+========================================================= */
+
+function winGame() {
+
+    if (
+        GAME.victory
+    ) {
 
         return;
+
     }
 
-    GAME.paused =
-        !GAME.paused;
+    GAME.victory = true;
 
-    if (pauseMenu) {
+    GAME.running = false;
 
-        pauseMenu.style.display =
-            GAME.paused
-                ? "flex"
-                : "none";
+    GAME.paused = false;
+
+    localStorage.setItem(
+        "day6Complete",
+        "true"
+    );
+
+    localStorage.setItem(
+        "day6Score",
+        String(GAME.score)
+    );
+
+    if (victoryScreen) {
+
+        victoryScreen.style.display =
+            "flex";
+
+        victoryScreen.style.opacity =
+            "0";
+
+        requestAnimationFrame(() => {
+
+            victoryScreen.style.transition =
+                "opacity .7s ease";
+
+            victoryScreen.style.opacity =
+                "1";
+
+        });
+
+    }
+
+    if (continueButton) {
+
+        continueButton.disabled =
+            false;
+
+        continueButton.style.pointerEvents =
+            "auto";
 
     }
 
@@ -2010,18 +2846,11 @@ function togglePause() {
 
 
 on(
-    resumeButton,
+    continueButton,
     "click",
     () => {
 
-        GAME.paused = false;
-
-        if (pauseMenu) {
-
-            pauseMenu.style.display =
-                "none";
-
-        }
+        goToDay7();
 
     }
 );
@@ -2031,17 +2860,23 @@ on(
    GAME OVER
 ========================================================= */
 
-function loseGame() {
+function gameOver() {
 
-    if (GAME.gameOver) {
+    if (
+        GAME.gameOver
+    ) {
+
         return;
+
     }
 
     GAME.gameOver = true;
 
     GAME.running = false;
 
-    safePlay(gameOverSound);
+    playSound(
+        gameOverSound
+    );
 
     if (gameOverScreen) {
 
@@ -2052,10 +2887,6 @@ function loseGame() {
 
 }
 
-
-/* =========================================================
-   RETRY
-========================================================= */
 
 on(
     retryButton,
@@ -2069,63 +2900,211 @@ on(
 
 
 /* =========================================================
-   MOBILE DETECTION
+   NOTIFICATIONS
 ========================================================= */
 
-function detectMobile() {
+function showNotification(
+    message
+) {
 
-    const mobile =
-        window.innerWidth <= 992;
+    if (!notificationContainer)
+        return;
 
-    if (mobileControls) {
+    const notification =
+        document.createElement(
+            "div"
+        );
 
-        mobileControls.style.display =
-            mobile
-                ? "flex"
-                : "none";
+    notification.className =
+        "notification";
+
+    notification.textContent =
+        message;
+
+    notificationContainer.appendChild(
+        notification
+    );
+
+    setTimeout(() => {
+
+        notification.remove();
+
+    }, 2200);
+
+}
+
+
+/* =========================================================
+   LIGHTNING
+========================================================= */
+
+function scheduleLightning() {
+
+    if (!lightningLayer)
+        return;
+
+    const delay =
+        random(
+            7000,
+            15000
+        );
+
+    setTimeout(() => {
+
+        if (!GAME.gameOver) {
+
+            lightningLayer.style.opacity =
+                "0.9";
+
+            setTimeout(() => {
+
+                lightningLayer.style.opacity =
+                    "0";
+
+            }, 140);
+
+        }
+
+        scheduleLightning();
+
+    }, delay);
+
+}
+
+
+/* =========================================================
+   AMBIENT BAT INITIALIZATION
+========================================================= */
+
+function initBats() {
+
+    const batLayer =
+        $("#batLayer");
+
+    if (!batLayer)
+        return;
+
+    const bats =
+        $$(".bat");
+
+    if (
+        bats.length > 0
+    ) {
+
+        return;
+
+    }
+
+    const count =
+        GAME.mobile
+            ? 5
+            : 10;
+
+    for (
+        let i = 0;
+        i < count;
+        i++
+    ) {
+
+        const bat =
+            document.createElement(
+                "div"
+            );
+
+        bat.className =
+            "bat";
+
+        bat.style.top =
+            random(
+                50,
+                500
+            ) + "px";
+
+        bat.style.animationDuration =
+            random(
+                9,
+                18
+            ) + "s";
+
+        bat.style.animationDelay =
+            random(
+                0,
+                10
+            ) + "s";
+
+        batLayer.appendChild(
+            bat
+        );
 
     }
 
 }
 
 
-window.addEventListener(
-    "resize",
-    detectMobile
-);
-
-
 /* =========================================================
    GAME LOOP
 ========================================================= */
 
-let lastTime =
-    performance.now();
+const ENGINE = {
+
+    lastTime: 0,
+
+    fpsFrames: 0,
+
+    fpsTimer: 0
+
+};
 
 
-function gameLoop(currentTime) {
+function gameLoop(time) {
+
+    if (!ENGINE.lastTime) {
+
+        ENGINE.lastTime =
+            time;
+
+    }
 
     const delta =
         Math.min(
             50,
-            currentTime - lastTime
+            time -
+            ENGINE.lastTime
         );
 
-    lastTime =
-        currentTime;
+    ENGINE.lastTime =
+        time;
 
-    if (GAME.running &&
-        !GAME.paused) {
+    if (
+        GAME.running &&
+        !GAME.paused
+    ) {
 
         updateMovement();
 
-        updateCrystals();
+        updateDash(
+            delta
+        );
 
-        updateEnemies(delta);
+        updateSkill(
+            delta
+        );
 
-        updateBoss(delta);
+        regenerate(
+            delta
+        );
 
-        regenerate(delta);
+        updateEnemies(
+            delta
+        );
+
+        updateBoss(
+            delta
+        );
+
+        updateCrystalProximity();
+
+        updatePortal();
 
         updateCamera();
 
@@ -2135,6 +3114,22 @@ function gameLoop(currentTime) {
 
     updateHUD();
 
+    ENGINE.fpsFrames++;
+
+    ENGINE.fpsTimer +=
+        delta;
+
+    if (
+        ENGINE.fpsTimer >=
+        1000
+    ) {
+
+        ENGINE.fpsFrames = 0;
+
+        ENGINE.fpsTimer = 0;
+
+    }
+
     requestAnimationFrame(
         gameLoop
     );
@@ -2143,67 +3138,89 @@ function gameLoop(currentTime) {
 
 
 /* =========================================================
-   INITIALIZATION
+   INITIALIZE
 ========================================================= */
 
 function initializeGame() {
 
-    detectMobile();
+    detectDevice();
 
-    initializeCrystals();
+    initEnemies();
 
-    startLoading();
+    initCrystals();
+
+    initBats();
+
+    scheduleLightning();
+
+    if (boss) {
+
+        boss.style.display =
+            "none";
+
+    }
+
+    if (bossHUD) {
+
+        bossHUD.style.display =
+            "none";
+
+    }
+
+    if (day7Portal) {
+
+        day7Portal.style.display =
+            "none";
+
+    }
+
+    if (pauseMenu) {
+
+        pauseMenu.style.display =
+            "none";
+
+    }
+
+    if (victoryScreen) {
+
+        victoryScreen.style.display =
+            "none";
+
+    }
+
+    if (gameOverScreen) {
+
+        gameOverScreen.style.display =
+            "none";
+
+    }
+
+    if (interactionPrompt) {
+
+        interactionPrompt.style.display =
+            "none";
+
+    }
+
+    CAMERA.width =
+        window.innerWidth;
+
+    CAMERA.height =
+        window.innerHeight;
+
+    ENGINE.lastTime =
+        performance.now();
 
     requestAnimationFrame(
         gameLoop
     );
 
+    startLoading();
+
 }
 
 
-/* =========================================================
-   SAFETY REDIRECT
-   If continue button exists but its HTML/CSS accidentally
-   prevents the click handler, this still gives the user
-   a working path by making the button keyboard-accessible.
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    (event) => {
-
-        if (
-            GAME.victory &&
-            (
-                event.code === "Enter" ||
-                event.code === "NumpadEnter"
-            )
-        ) {
-
-            goToDay7();
-
-        }
-
-    }
+window.addEventListener(
+    "load",
+    initializeGame
 );
-
-
-/* =========================================================
-   START
-========================================================= */
-
-if (
-    document.readyState ===
-    "loading"
-) {
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeGame
-    );
-
-} else {
-
-    initializeGame();
-
-}
