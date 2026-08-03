@@ -14,12 +14,31 @@ const endOverlay =
 
 
 /* =========================================
+   STATE
+========================================= */
+
+let videoEnded = false;
+let redirectStarted = false;
+
+
+/* =========================================
+   HIDE LOADING
+========================================= */
+
+function hideLoading() {
+
+    loading.classList.add("hidden");
+
+}
+
+
+/* =========================================
    VIDEO READY
 ========================================= */
 
 video.addEventListener("canplay", () => {
 
-    loading.classList.add("hidden");
+    hideLoading();
 
 });
 
@@ -30,7 +49,7 @@ video.addEventListener("canplay", () => {
 
 video.addEventListener("playing", () => {
 
-    loading.classList.add("hidden");
+    hideLoading();
 
 });
 
@@ -41,12 +60,37 @@ video.addEventListener("playing", () => {
 
 video.addEventListener("ended", () => {
 
+    if (videoEnded) {
+        return;
+    }
+
+    videoEnded = true;
+
+
     /* Show ending overlay */
 
     endOverlay.classList.add("show");
 
 
-    /* Redirect after overlay */
+    /* Start redirect */
+
+    startRedirect();
+
+});
+
+
+/* =========================================
+   REDIRECT TO DAY 2
+========================================= */
+
+function startRedirect() {
+
+    if (redirectStarted) {
+        return;
+    }
+
+    redirectStarted = true;
+
 
     setTimeout(() => {
 
@@ -55,7 +99,7 @@ video.addEventListener("ended", () => {
 
     }, 2500);
 
-});
+}
 
 
 /* =========================================
@@ -64,11 +108,22 @@ video.addEventListener("ended", () => {
 
 video.addEventListener("error", () => {
 
-    loading.classList.add("hidden");
+    hideLoading();
 
     console.error(
         "Day 1 video could not be loaded."
     );
 
 });
+
+
+/* =========================================
+   INITIAL CHECK
+========================================= */
+
+if (video.readyState >= 3) {
+
+    hideLoading();
+
+}
 ```
