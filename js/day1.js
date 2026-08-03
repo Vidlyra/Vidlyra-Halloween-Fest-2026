@@ -223,7 +223,7 @@ continueBtn.addEventListener("click", () => {
     setTimeout(() => {
 
         window.location.href =
-            "day2.html";
+            "day2-video.html";
 
     }, 800);
 
