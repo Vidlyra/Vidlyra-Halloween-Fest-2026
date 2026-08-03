@@ -1,140 +1,367 @@
-/* =========================================
+"use strict";
+
+/* =========================================================
    VIDLYRA HALLOWEEN FEST 2026
    DAY 1 VIDEO
-========================================= */
+   DAY 1 VIDEO → DAY 2 VIDEO
+========================================================= */
 
+const video = document.getElementById("day1Video");
 
-/* =========================================
-   ELEMENTS
-========================================= */
+const loadingScreen =
+    document.getElementById("loadingScreen");
 
-const video =
-    document.getElementById("day1Video");
+const loadingFill =
+    document.getElementById("loadingFill");
 
-const loading =
-    document.getElementById("loading");
+const loadingPercent =
+    document.getElementById("loadingPercent");
 
 const endOverlay =
     document.getElementById("endOverlay");
 
+const continueButton =
+    document.getElementById("continueButton");
 
-/* =========================================
-   STATE
-========================================= */
+const skipButton =
+    document.getElementById("skipButton");
 
-let videoEnded = false;
-
-let redirectStarted = false;
+const videoError =
+    document.getElementById("videoError");
 
 
-/* =========================================
-   HIDE LOADING SCREEN
-========================================= */
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+const NEXT_VIDEO = "day2-video.html";
+
+
+let videoFinished = false;
+let redirecting = false;
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+function updateLoading(percent) {
+
+    percent = Math.max(
+        0,
+        Math.min(100, percent)
+    );
+
+    if (loadingFill) {
+        loadingFill.style.width =
+            percent + "%";
+    }
+
+    if (loadingPercent) {
+        loadingPercent.textContent =
+            Math.floor(percent) + "%";
+    }
+}
+
 
 function hideLoading() {
 
-    if (!loading) {
-        return;
-    }
+    if (!loadingScreen) return;
 
-    loading.classList.add("hidden");
+    loadingScreen.classList.add("hidden");
+
+    setTimeout(() => {
+
+        loadingScreen.style.display =
+            "none";
+
+    }, 900);
+}
+
+
+/* =========================================================
+   VIDEO READY
+========================================================= */
+
+if (video) {
+
+    video.addEventListener(
+        "loadedmetadata",
+        () => {
+
+            updateLoading(60);
+
+        }
+    );
+
+
+    video.addEventListener(
+        "canplay",
+        () => {
+
+            updateLoading(100);
+
+            video.classList.add("ready");
+
+            setTimeout(() => {
+
+                hideLoading();
+
+                startVideo();
+
+            }, 300);
+
+        }
+    );
+
+
+    video.addEventListener(
+        "error",
+        () => {
+
+            if (loadingScreen) {
+                loadingScreen.style.display =
+                    "none";
+            }
+
+            if (videoError) {
+                videoError.classList.add("show");
+            }
+
+            if (skipButton) {
+                skipButton.classList.add("hidden");
+            }
+
+        }
+    );
+
+
+    video.addEventListener(
+        "ended",
+        () => {
+
+            finishDay1();
+
+        }
+    );
+
+
+    video.addEventListener(
+        "timeupdate",
+        () => {
+
+            if (!video.duration) return;
+
+            const progress =
+                (video.currentTime /
+                    video.duration) * 100;
+
+            if (
+                loadingScreen &&
+                !loadingScreen.classList.contains("hidden")
+            ) {
+                updateLoading(
+                    Math.max(60, progress)
+                );
+            }
+
+        }
+    );
 
 }
 
 
-/* =========================================
-   VIDEO READY
-========================================= */
+/* =========================================================
+   START VIDEO
+========================================================= */
 
-video.addEventListener("canplay", () => {
+function startVideo() {
 
-    hideLoading();
+    if (!video) return;
 
-});
+    /*
+       Browser autoplay policies may block
+       unmuted playback.
 
+       Muted autoplay is allowed more reliably.
+    */
 
-/* =========================================
-   VIDEO PLAYING
-========================================= */
+    video.muted = true;
 
-video.addEventListener("playing", () => {
+    const playPromise =
+        video.play();
 
-    hideLoading();
+    if (
+        playPromise &&
+        typeof playPromise.catch === "function"
+    ) {
 
-});
+        playPromise.catch(() => {
 
+            /*
+                If autoplay is blocked,
+                the video controls remain available.
+            */
 
-/* =========================================
-   VIDEO ENDED
-========================================= */
+        });
 
-video.addEventListener("ended", () => {
-
-    /* Prevent duplicate execution */
-
-    if (videoEnded) {
-        return;
     }
 
-    videoEnded = true;
+}
 
 
-    /* Show Day 1 complete overlay */
+/* =========================================================
+   DAY 1 COMPLETE
+========================================================= */
 
-    endOverlay.classList.add("show");
+function finishDay1() {
+
+    if (videoFinished) return;
+
+    videoFinished = true;
+
+    if (skipButton) {
+        skipButton.classList.add("hidden");
+    }
+
+    if (endOverlay) {
+        endOverlay.classList.add("show");
+    }
+
+    localStorage.setItem(
+        "day1Complete",
+        "true"
+    );
+
+}
 
 
-    /* Start redirect */
-
-    startRedirect();
-
-});
-
-
-/* =========================================
+/* =========================================================
    REDIRECT TO DAY 2
-========================================= */
+========================================================= */
 
-function startRedirect() {
+function goToDay2() {
 
-    if (redirectStarted) {
-        return;
+    if (redirecting) return;
+
+    redirecting = true;
+
+    localStorage.setItem(
+        "day1Complete",
+        "true"
+    );
+
+    if (continueButton) {
+        continueButton.disabled = true;
+        continueButton.textContent =
+            "ENTERING DAY 2...";
     }
 
-    redirectStarted = true;
+    if (endOverlay) {
 
+        endOverlay.style.opacity = "0";
+
+    }
 
     setTimeout(() => {
 
         window.location.href =
-            "day2-video.html";
+            NEXT_VIDEO;
 
-    }, 2500);
+    }, 700);
 
 }
 
 
-/* =========================================
-   VIDEO ERROR
-========================================= */
+/* =========================================================
+   CONTINUE BUTTON
+========================================================= */
 
-video.addEventListener("error", () => {
+if (continueButton) {
 
-    hideLoading();
-
-    console.error(
-        "VidLyra Day 1 video could not be loaded."
+    continueButton.addEventListener(
+        "click",
+        goToDay2
     );
 
-});
+}
 
 
-/* =========================================
-   INITIAL VIDEO STATE CHECK
-========================================= */
+/* =========================================================
+   SKIP BUTTON
+========================================================= */
 
-if (video.readyState >= 3) {
+if (skipButton) {
 
-    hideLoading();
+    skipButton.addEventListener(
+        "click",
+        () => {
+
+            finishDay1();
+
+        }
+    );
 
 }
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Enter" &&
+            videoFinished
+        ) {
+
+            goToDay2();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INITIAL LOADING
+========================================================= */
+
+updateLoading(5);
+
+window.addEventListener(
+    "load",
+    () => {
+
+        updateLoading(20);
+
+        /*
+           If the browser has already loaded
+           enough video data, canplay will
+           finish the process.
+        */
+
+        if (
+            video &&
+            video.readyState >= 3
+        ) {
+
+            updateLoading(100);
+
+            video.classList.add("ready");
+
+            setTimeout(() => {
+
+                hideLoading();
+
+                startVideo();
+
+            }, 300);
+
+        }
+
+    }
+);
