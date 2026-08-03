@@ -3,365 +3,266 @@
 /* =========================================================
    VIDLYRA HALLOWEEN FEST 2026
    DAY 1 VIDEO
-   DAY 1 VIDEO → DAY 2 VIDEO
+   DAY 1 → DAY 2 VIDEO
 ========================================================= */
 
 const video = document.getElementById("day1Video");
-
-const loadingScreen =
-    document.getElementById("loadingScreen");
-
-const loadingFill =
-    document.getElementById("loadingFill");
-
-const loadingPercent =
-    document.getElementById("loadingPercent");
-
-const endOverlay =
-    document.getElementById("endOverlay");
-
-const continueButton =
-    document.getElementById("continueButton");
-
-const skipButton =
-    document.getElementById("skipButton");
-
-const videoError =
-    document.getElementById("videoError");
+const loading = document.getElementById("loading");
+const loadingText = document.getElementById("loadingText");
+const endOverlay = document.getElementById("endOverlay");
+const videoError = document.getElementById("videoError");
 
 
 /* =========================================================
-   SETTINGS
+   NEXT PAGE
 ========================================================= */
 
 const NEXT_VIDEO = "day2-video.html";
 
 
-let videoFinished = false;
-let redirecting = false;
-
-
 /* =========================================================
-   LOADING
+   STATE
 ========================================================= */
 
-function updateLoading(percent) {
-
-    percent = Math.max(
-        0,
-        Math.min(100, percent)
-    );
-
-    if (loadingFill) {
-        loadingFill.style.width =
-            percent + "%";
-    }
-
-    if (loadingPercent) {
-        loadingPercent.textContent =
-            Math.floor(percent) + "%";
-    }
-}
-
-
-function hideLoading() {
-
-    if (!loadingScreen) return;
-
-    loadingScreen.classList.add("hidden");
-
-    setTimeout(() => {
-
-        loadingScreen.style.display =
-            "none";
-
-    }, 900);
-}
+let finished = false;
+let redirecting = false;
 
 
 /* =========================================================
    VIDEO READY
 ========================================================= */
 
-if (video) {
+video.addEventListener("canplay", () => {
 
-    video.addEventListener(
-        "loadedmetadata",
-        () => {
+    video.classList.add("ready");
 
-            updateLoading(60);
-
-        }
-    );
-
-
-    video.addEventListener(
-        "canplay",
-        () => {
-
-            updateLoading(100);
-
-            video.classList.add("ready");
-
-            setTimeout(() => {
-
-                hideLoading();
-
-                startVideo();
-
-            }, 300);
-
-        }
-    );
-
-
-    video.addEventListener(
-        "error",
-        () => {
-
-            if (loadingScreen) {
-                loadingScreen.style.display =
-                    "none";
-            }
-
-            if (videoError) {
-                videoError.classList.add("show");
-            }
-
-            if (skipButton) {
-                skipButton.classList.add("hidden");
-            }
-
-        }
-    );
-
-
-    video.addEventListener(
-        "ended",
-        () => {
-
-            finishDay1();
-
-        }
-    );
-
-
-    video.addEventListener(
-        "timeupdate",
-        () => {
-
-            if (!video.duration) return;
-
-            const progress =
-                (video.currentTime /
-                    video.duration) * 100;
-
-            if (
-                loadingScreen &&
-                !loadingScreen.classList.contains("hidden")
-            ) {
-                updateLoading(
-                    Math.max(60, progress)
-                );
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   START VIDEO
-========================================================= */
-
-function startVideo() {
-
-    if (!video) return;
+    if (loading) {
+        loading.classList.add("hidden");
+    }
 
     /*
-       Browser autoplay policies may block
-       unmuted playback.
-
-       Muted autoplay is allowed more reliably.
+        Start automatically.
+        Muted first because browsers may block
+        autoplay with sound.
     */
 
     video.muted = true;
 
-    const playPromise =
-        video.play();
+    const playPromise = video.play();
 
-    if (
-        playPromise &&
-        typeof playPromise.catch === "function"
-    ) {
+    if (playPromise) {
 
-        playPromise.catch(() => {
+        playPromise
+            .then(() => {
 
-            /*
-                If autoplay is blocked,
-                the video controls remain available.
-            */
+                /*
+                    Keep video silent for autoplay.
+                    If you want sound after user interaction,
+                    the video can be unmuted by interaction.
+                */
+
+            })
+            .catch(() => {
+
+                /*
+                    If autoplay is blocked,
+                    show a simple interaction message.
+                */
+
+                if (loadingText) {
+
+                    loadingText.textContent =
+                        "CLICK TO ENTER DAY 1";
+
+                }
+
+            });
+
+    }
+
+});
+
+
+/* =========================================================
+   USER INTERACTION
+========================================================= */
+
+function startVideoWithInteraction() {
+
+    if (!video) return;
+
+    video.muted = false;
+
+    video.play()
+        .then(() => {
+
+            if (loading) {
+                loading.classList.add("hidden");
+            }
+
+        })
+        .catch(() => {
+
+            video.muted = true;
+
+            video.play().catch(() => {});
 
         });
 
-    }
-
 }
 
-
-/* =========================================================
-   DAY 1 COMPLETE
-========================================================= */
-
-function finishDay1() {
-
-    if (videoFinished) return;
-
-    videoFinished = true;
-
-    if (skipButton) {
-        skipButton.classList.add("hidden");
-    }
-
-    if (endOverlay) {
-        endOverlay.classList.add("show");
-    }
-
-    localStorage.setItem(
-        "day1Complete",
-        "true"
-    );
-
-}
-
-
-/* =========================================================
-   REDIRECT TO DAY 2
-========================================================= */
-
-function goToDay2() {
-
-    if (redirecting) return;
-
-    redirecting = true;
-
-    localStorage.setItem(
-        "day1Complete",
-        "true"
-    );
-
-    if (continueButton) {
-        continueButton.disabled = true;
-        continueButton.textContent =
-            "ENTERING DAY 2...";
-    }
-
-    if (endOverlay) {
-
-        endOverlay.style.opacity = "0";
-
-    }
-
-    setTimeout(() => {
-
-        window.location.href =
-            NEXT_VIDEO;
-
-    }, 700);
-
-}
-
-
-/* =========================================================
-   CONTINUE BUTTON
-========================================================= */
-
-if (continueButton) {
-
-    continueButton.addEventListener(
-        "click",
-        goToDay2
-    );
-
-}
-
-
-/* =========================================================
-   SKIP BUTTON
-========================================================= */
-
-if (skipButton) {
-
-    skipButton.addEventListener(
-        "click",
-        () => {
-
-            finishDay1();
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   KEYBOARD
-========================================================= */
 
 document.addEventListener(
-    "keydown",
-    (event) => {
+    "click",
+    startVideoWithInteraction,
+    {
+        once: true
+    }
+);
 
-        if (
-            event.key === "Enter" &&
-            videoFinished
-        ) {
 
-            goToDay2();
-
-        }
-
+document.addEventListener(
+    "touchstart",
+    startVideoWithInteraction,
+    {
+        once: true,
+        passive: true
     }
 );
 
 
 /* =========================================================
-   INITIAL LOADING
+   VIDEO ENDED
 ========================================================= */
 
-updateLoading(5);
+video.addEventListener("ended", () => {
 
-window.addEventListener(
-    "load",
-    () => {
+    finishDay1();
 
-        updateLoading(20);
+});
 
-        /*
-           If the browser has already loaded
-           enough video data, canplay will
-           finish the process.
-        */
 
-        if (
-            video &&
-            video.readyState >= 3
-        ) {
+/* =========================================================
+   FINISH DAY 1
+========================================================= */
 
-            updateLoading(100);
+function finishDay1() {
 
-            video.classList.add("ready");
+    if (finished) return;
 
-            setTimeout(() => {
+    finished = true;
 
-                hideLoading();
+    /*
+        Save completion.
+    */
 
-                startVideo();
+    try {
 
-            }, 300);
+        localStorage.setItem(
+            "day1Complete",
+            "true"
+        );
 
-        }
+    } catch (error) {}
 
+
+    /*
+        Show cinematic ending.
+    */
+
+    if (endOverlay) {
+
+        endOverlay.classList.add("show");
+
+    }
+
+
+    /*
+        Redirect to Day 2.
+    */
+
+    setTimeout(() => {
+
+        redirectToDay2();
+
+    }, 2200);
+
+}
+
+
+/* =========================================================
+   REDIRECT
+========================================================= */
+
+function redirectToDay2() {
+
+    if (redirecting) return;
+
+    redirecting = true;
+
+    window.location.href = NEXT_VIDEO;
+
+}
+
+
+/* =========================================================
+   VIDEO ERROR
+========================================================= */
+
+video.addEventListener("error", () => {
+
+    if (loading) {
+        loading.classList.add("hidden");
+    }
+
+    if (videoError) {
+        videoError.classList.add("show");
+    }
+
+});
+
+
+/* =========================================================
+   SOURCE CHECK
+========================================================= */
+
+window.addEventListener("load", () => {
+
+    if (!video) return;
+
+    /*
+        If the browser cannot find the source,
+        the error event will handle it.
+    */
+
+    video.load();
+
+});
+
+
+/* =========================================================
+   PREVENT CONTEXT MENU
+========================================================= */
+
+video.addEventListener("contextmenu", (event) => {
+
+    event.preventDefault();
+
+});
+
+
+/* =========================================================
+   PREVENT DOUBLE TOUCH ACTIONS
+========================================================= */
+
+video.addEventListener(
+    "touchstart",
+    (event) => {
+
+        event.preventDefault();
+
+    },
+    {
+        passive: false
     }
 );
