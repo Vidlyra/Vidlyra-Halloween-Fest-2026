@@ -1,114 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>VIDLYRA HALLOWEEN FEST 2026 — DAY 1</title>
 
-    <title>
-        VidLyra Halloween Fest 2026 — Day 1
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="css/day1-video.css"
-    >
-
+    <link rel="stylesheet" href="css/day1-video.css">
 </head>
 
 <body>
 
     <main class="video-page">
 
-        <!-- =====================================
-             DAY 1 VIDEO
-        ====================================== -->
+        <!-- Loading -->
+        <div id="loadingScreen" class="loading-screen">
+            <div class="loading-title">VIDLYRA</div>
+            <div class="loading-subtitle">
+                HALLOWEEN FEST 2026
+            </div>
 
-        <video
-            id="day1Video"
-            class="day1-video"
-            autoplay
-            playsinline
-            controls
-            preload="auto"
-        >
+            <div class="loading-bar">
+                <div id="loadingFill"></div>
+            </div>
 
-            <source
-                src="assets/video/day1-video.mp4"
-                type="video/mp4"
-            >
-
-            Your browser does not support HTML5 video.
-
-        </video>
-
-
-        <!-- =====================================
-             LOADING SCREEN
-        ====================================== -->
-
-        <div
-            id="loading"
-            class="loading"
-        >
-
-            <div class="loading-spinner"></div>
-
-            <p>
-                LOADING DAY 1...
-            </p>
-
+            <div id="loadingPercent">0%</div>
         </div>
 
-
-        <!-- =====================================
-             END OVERLAY
-        ====================================== -->
-
-        <div
-            id="endOverlay"
-            class="end-overlay"
+        <!-- Video -->
+        <video
+            id="day1Video"
+            class="day-video"
+            playsinline
+            preload="auto"
+            controls
         >
+            <source src="assets/video/day1-video.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
 
-            <div class="end-content">
+        <!-- Video error -->
+        <div id="videoError" class="video-error">
+            <h2>DAY 1 VIDEO NOT FOUND</h2>
+            <p>
+                Check that your video exists at:
+            </p>
 
-                <div class="end-label">
-                    VIDLYRA HALLOWEEN FEST 2026
-                </div>
+            <code>assets/videos/day1.mp4</code>
+        </div>
 
-                <h1>
-                    DAY 1 COMPLETE
-                </h1>
+        <!-- End overlay -->
+        <div id="endOverlay" class="end-overlay">
+
+            <div class="end-box">
+
+                <div class="end-symbol">🎃</div>
+
+                <h1>DAY 1 COMPLETE</h1>
 
                 <p>
-                    THE JOURNEY CONTINUES...
+                    The journey has begun.
                 </p>
 
-                <div class="redirect-text">
-                    ENTERING DAY 2
-                </div>
+                <button id="continueButton">
+                    ENTER DAY 2
+                </button>
 
             </div>
 
         </div>
 
+        <!-- Skip / Continue -->
+        <button id="skipButton" class="skip-button">
+            SKIP VIDEO
+        </button>
+
     </main>
 
-
-    <!-- =====================================
-         DAY 1 JAVASCRIPT
-    ====================================== -->
-
-    <script
-        src="js/day1-video.js"
-    ></script>
+    <script src="js/day1-video.js"></script>
 
 </body>
-
 </html>
-```
