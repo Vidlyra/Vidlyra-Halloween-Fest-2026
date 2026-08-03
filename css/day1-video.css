@@ -1,23 +1,8 @@
-/* =========================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 1 VIDEO
-========================================= */
-
-
-/* =========================================
-   RESET
-========================================= */
-
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
-
-
-/* =========================================
-   PAGE
-========================================= */
 
 html,
 body {
@@ -25,36 +10,33 @@ body {
     height: 100%;
     overflow: hidden;
     background: #000;
-}
-
-body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-
-/* =========================================
-   VIDEO PAGE
-========================================= */
+body {
+    color: #fff;
+}
 
 .video-page {
     position: relative;
-
     width: 100vw;
     height: 100vh;
-
+    background:
+        radial-gradient(
+            circle at center,
+            #24102f 0%,
+            #09050d 50%,
+            #000 100%
+        );
     overflow: hidden;
-
-    background: #000;
 }
 
-
-/* =========================================
+/* =========================
    VIDEO
-========================================= */
+========================= */
 
-.day1-video {
+.day-video {
     position: absolute;
-
     inset: 0;
 
     width: 100%;
@@ -64,329 +46,403 @@ body {
 
     background: #000;
 
-    z-index: 1;
+    opacity: 0;
+
+    transition: opacity 0.8s ease;
 }
 
+.day-video.ready {
+    opacity: 1;
+}
 
-/* =========================================
-   LOADING SCREEN
-========================================= */
+/* =========================
+   LOADING
+========================= */
 
-.loading {
-    position: absolute;
-
+.loading-screen {
+    position: fixed;
     inset: 0;
 
-    display: flex;
+    z-index: 100;
 
+    display: flex;
     flex-direction: column;
 
-    align-items: center;
     justify-content: center;
-
-    gap: 18px;
-
-    background: #000;
-
-    z-index: 10;
-
-    opacity: 1;
-    visibility: visible;
-
-    transition:
-        opacity 0.5s ease,
-        visibility 0.5s ease;
-}
-
-
-/* Hide loading */
-
-.loading.hidden {
-    opacity: 0;
-
-    visibility: hidden;
-
-    pointer-events: none;
-}
-
-
-/* =========================================
-   LOADING SPINNER
-========================================= */
-
-.loading-spinner {
-    width: 44px;
-    height: 44px;
-
-    border-radius: 50%;
-
-    border:
-        2px solid rgba(255,255,255,0.15);
-
-    border-top-color: #ffffff;
-
-    animation:
-        loadingSpin 0.8s linear infinite;
-}
-
-@keyframes loadingSpin {
-
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-
-}
-
-
-/* Loading text */
-
-.loading p {
-    color: #ffffff;
-
-    font-size: 11px;
-
-    font-weight: 600;
-
-    letter-spacing: 4px;
-
-    text-align: center;
-}
-
-
-/* =========================================
-   END OVERLAY
-========================================= */
-
-.end-overlay {
-    position: absolute;
-
-    inset: 0;
-
-    display: flex;
-
     align-items: center;
-    justify-content: center;
-
-    text-align: center;
 
     background:
-        rgba(0,0,0,0.84);
-
-    opacity: 0;
-
-    visibility: hidden;
-
-    z-index: 20;
+        radial-gradient(
+            circle,
+            #291035 0%,
+            #0b050f 55%,
+            #000 100%
+        );
 
     transition:
         opacity 0.8s ease,
         visibility 0.8s ease;
 }
 
+.loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
 
-/* Show overlay */
+.loading-title {
+    font-size: clamp(38px, 8vw, 90px);
+
+    font-weight: 900;
+
+    letter-spacing: 8px;
+
+    color: #ff7518;
+
+    text-shadow:
+        0 0 10px #ff7518,
+        0 0 30px #ff3c00,
+        0 0 60px rgba(255, 70, 0, 0.7);
+}
+
+.loading-subtitle {
+    margin-top: 12px;
+
+    font-size: clamp(12px, 2vw, 20px);
+
+    letter-spacing: 4px;
+
+    color: #ddd;
+}
+
+.loading-bar {
+    width: min(420px, 70vw);
+
+    height: 6px;
+
+    margin-top: 35px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.12);
+}
+
+#loadingFill {
+    width: 0%;
+
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: linear-gradient(
+        90deg,
+        #ff3c00,
+        #ff9d00,
+        #ff3c00
+    );
+
+    box-shadow:
+        0 0 15px #ff5a00;
+
+    transition: width 0.15s linear;
+}
+
+#loadingPercent {
+    margin-top: 12px;
+
+    font-size: 14px;
+
+    color: #aaa;
+
+    letter-spacing: 2px;
+}
+
+/* =========================
+   END OVERLAY
+========================= */
+
+.end-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 50;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    background:
+        rgba(0, 0, 0, 0.78);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.8s ease,
+        visibility 0.8s ease;
+}
 
 .end-overlay.show {
     opacity: 1;
 
     visibility: visible;
+
+    pointer-events: auto;
 }
 
+.end-box {
+    width: min(600px, 88vw);
 
-/* =========================================
-   END CONTENT
-========================================= */
+    padding: 45px 30px;
 
-.end-content {
-    width: min(90%, 700px);
+    text-align: center;
 
-    padding: 30px;
+    border: 1px solid rgba(255, 117, 24, 0.5);
 
-    transform:
-        translateY(25px);
+    border-radius: 20px;
 
-    opacity: 0;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(30, 10, 40, 0.96),
+            rgba(5, 5, 10, 0.98)
+        );
 
-    transition:
-        transform 0.8s ease,
-        opacity 0.8s ease;
+    box-shadow:
+        0 0 30px rgba(255, 70, 0, 0.2),
+        inset 0 0 30px rgba(255, 70, 0, 0.05);
+
+    animation: endAppear 0.8s ease;
 }
 
+.end-symbol {
+    font-size: 55px;
 
-/* Animate content */
+    margin-bottom: 15px;
 
-.end-overlay.show .end-content {
-    transform:
-        translateY(0);
-
-    opacity: 1;
+    animation: floatPumpkin 2s ease-in-out infinite;
 }
 
+.end-box h1 {
+    font-size: clamp(28px, 6vw, 52px);
 
-/* =========================================
-   END LABEL
-========================================= */
+    color: #ff7518;
 
-.end-label {
-    margin-bottom: 20px;
-
-    color: #b8b8b8;
-
-    font-size: 11px;
-
-    font-weight: 600;
-
-    letter-spacing: 5px;
-
-    text-transform: uppercase;
+    text-shadow:
+        0 0 15px #ff3c00;
 }
 
+.end-box p {
+    margin-top: 15px;
 
-/* =========================================
-   DAY 1 COMPLETE
-========================================= */
+    color: #ccc;
 
-.end-content h1 {
-    color: #ffffff;
+    font-size: 18px;
+}
 
-    font-size:
-        clamp(34px, 7vw, 76px);
+#continueButton {
+    margin-top: 30px;
+
+    padding: 15px 35px;
+
+    border: none;
+
+    border-radius: 999px;
+
+    cursor: pointer;
+
+    color: #fff;
+
+    font-size: 15px;
 
     font-weight: 800;
 
-    line-height: 1.05;
+    letter-spacing: 1px;
 
-    letter-spacing: 5px;
+    background:
+        linear-gradient(
+            135deg,
+            #ff3c00,
+            #ff8c00
+        );
 
-    text-transform: uppercase;
+    box-shadow:
+        0 0 20px rgba(255, 70, 0, 0.5);
 
-    text-shadow:
-        0 0 10px rgba(255,255,255,0.3),
-        0 0 30px rgba(255,255,255,0.15);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
+#continueButton:hover {
+    transform: scale(1.06);
 
-/* =========================================
-   SUBTITLE
-========================================= */
-
-.end-content p {
-    margin-top: 18px;
-
-    color: #d0d0d0;
-
-    font-size:
-        clamp(12px, 2vw, 17px);
-
-    letter-spacing: 4px;
-
-    text-transform: uppercase;
+    box-shadow:
+        0 0 35px rgba(255, 70, 0, 0.8);
 }
 
-
-/* =========================================
-   REDIRECT TEXT
-========================================= */
-
-.redirect-text {
-    margin-top: 40px;
-
-    color: #ffffff;
-
-    font-size: 10px;
-
-    font-weight: 600;
-
-    letter-spacing: 5px;
-
-    text-transform: uppercase;
-
-    animation:
-        redirectBlink 1.2s ease-in-out infinite;
+#continueButton:active {
+    transform: scale(0.96);
 }
 
-@keyframes redirectBlink {
+/* =========================
+   SKIP
+========================= */
 
+.skip-button {
+    position: fixed;
+
+    right: 20px;
+    bottom: 20px;
+
+    z-index: 20;
+
+    padding: 10px 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    border-radius: 999px;
+
+    background: rgba(0, 0, 0, 0.65);
+
+    color: #fff;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+
+    backdrop-filter: blur(8px);
+
+    transition: 0.2s ease;
+}
+
+.skip-button:hover {
+    background: rgba(255, 70, 0, 0.8);
+}
+
+.skip-button.hidden {
+    display: none;
+}
+
+/* =========================
+   ERROR
+========================= */
+
+.video-error {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 80;
+
+    display: none;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    padding: 30px;
+
+    background: #050505;
+}
+
+.video-error.show {
+    display: flex;
+}
+
+.video-error h2 {
+    color: #ff4d4d;
+
+    margin-bottom: 15px;
+}
+
+.video-error p {
+    color: #bbb;
+
+    margin-bottom: 10px;
+}
+
+.video-error code {
+    padding: 10px 15px;
+
+    border-radius: 8px;
+
+    background: #151515;
+
+    color: #ff9d5c;
+
+    word-break: break-all;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes endAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes floatPumpkin {
     0%,
     100% {
-        opacity: 0.3;
+        transform: translateY(0);
     }
 
     50% {
-        opacity: 1;
+        transform: translateY(-8px);
     }
-
 }
 
-
-/* =========================================
+/* =========================
    MOBILE
-========================================= */
+========================= */
 
 @media (max-width: 600px) {
 
-    .day1-video {
-        object-fit: contain;
+    .loading-title {
+        letter-spacing: 4px;
     }
 
-    .end-content {
-        padding: 20px;
-    }
-
-    .end-label {
-        font-size: 9px;
-
-        letter-spacing: 3px;
-    }
-
-    .end-content h1 {
-        font-size: 34px;
-
-        letter-spacing: 3px;
-    }
-
-    .end-content p {
-        font-size: 10px;
-
+    .loading-subtitle {
         letter-spacing: 2px;
+        text-align: center;
     }
 
-    .redirect-text {
-        margin-top: 30px;
-
-        font-size: 9px;
-
-        letter-spacing: 3px;
+    .end-box {
+        padding: 35px 20px;
     }
 
+    .end-box p {
+        font-size: 15px;
+    }
+
+    #continueButton {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .skip-button {
+        right: 12px;
+        bottom: 12px;
+    }
 }
-
-
-/* =========================================
-   VERY SMALL SCREENS
-========================================= */
-
-@media (max-height: 500px) {
-
-    .end-content {
-        padding: 15px;
-    }
-
-    .end-content h1 {
-        font-size: 30px;
-    }
-
-    .end-content p {
-        margin-top: 10px;
-    }
-
-    .redirect-text {
-        margin-top: 20px;
-    }
-
-}
-```
