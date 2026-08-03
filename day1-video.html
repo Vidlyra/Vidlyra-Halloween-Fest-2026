@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,170 +11,85 @@
     >
 
     <title>
-        VidLyra Halloween Fest 2026 | Day 1
+        VidLyra Halloween Fest 2026 — Day 1
     </title>
 
     <link
         rel="stylesheet"
-        href="css/day1.css"
+        href="css/day1-video.css"
     >
 
 </head>
 
 <body>
 
-    <main class="game" id="game">
+    <main class="video-page">
 
-        <!-- Background -->
-        <div class="stars"></div>
-        <div class="fog"></div>
+        <!-- Video -->
+        <video
+            id="day1Video"
+            class="day1-video"
+            autoplay
+            playsinline
+            controls
+            preload="auto"
+        >
 
-        <!-- Header -->
-        <header class="header">
+            <source
+                src="assets/video/day1-video.mp4"
+                type="video/mp4"
+            >
 
-            <div class="brand">
-                VIDLYRA
-            </div>
+            Your browser does not support HTML5 video.
 
-            <div class="event">
-                HALLOWEEN FEST 2026
-            </div>
-
-        </header>
+        </video>
 
 
-        <!-- Day Label -->
-        <div class="day-label">
-            DAY 01 • THE CURSED GATE
+        <!-- Loading -->
+        <div
+            id="loading"
+            class="loading"
+        >
+            <div class="loading-spinner"></div>
+
+            <p>
+                LOADING DAY 1...
+            </p>
         </div>
 
 
-        <!-- Main Title -->
-        <section class="title">
-
-            <h1>
-                THE CURSED GATE
-            </h1>
-
-            <p>
-                ONE SYMBOL HOLDS THE KEY
-            </p>
-
-        </section>
-
-
-        <!-- Gate -->
-        <section
-            class="gate-area"
-            id="gateArea"
+        <!-- End Overlay -->
+        <div
+            id="endOverlay"
+            class="end-overlay"
         >
 
-            <div class="gate">
+            <div class="end-content">
 
-                <div class="door">
+                <div class="end-label">
+                    VIDLYRA HALLOWEEN FEST 2026
+                </div>
 
-                    <div class="lock">
-                    </div>
+                <h1>
+                    DAY 1 COMPLETE
+                </h1>
 
+                <p>
+                    THE JOURNEY CONTINUES...
+                </p>
+
+                <div class="redirect-text">
+                    ENTERING DAY 2
                 </div>
 
             </div>
 
-        </section>
-
-
-        <!-- Message -->
-        <section
-            class="message"
-            id="message"
-        >
-
-            <h2 id="messageTitle">
-                The gate watches...
-            </h2>
-
-            <p id="messageText">
-                Find the symbol that does not belong.
-            </p>
-
-        </section>
-
-
-        <!-- Challenge -->
-        <section
-            class="symbol-panel"
-            id="symbolPanel"
-        >
-
-            <p class="instruction">
-                FIND THE DIFFERENT SYMBOL
-            </p>
-
-            <div class="symbols">
-
-                <button
-                    class="symbol"
-                    data-correct="false"
-                    aria-label="Symbol 1"
-                >
-                    ✦
-                </button>
-
-                <button
-                    class="symbol"
-                    data-correct="false"
-                    aria-label="Symbol 2"
-                >
-                    ✦
-                </button>
-
-                <button
-                    class="symbol"
-                    data-correct="true"
-                    aria-label="Symbol 3"
-                >
-                    ✧
-                </button>
-
-                <button
-                    class="symbol"
-                    data-correct="false"
-                    aria-label="Symbol 4"
-                >
-                    ✦
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- Portal -->
-        <div
-            class="portal"
-            id="portal"
-        ></div>
-
-
-        <!-- Day 2 Button -->
-        <button
-            class="continue"
-            id="continueBtn"
-        >
-            ENTER DAY 2 →
-        </button>
-
-
-        <!-- Flash -->
-        <div
-            class="flash"
-            id="flash"
-        ></div>
+        </div>
 
     </main>
 
 
-    <script src="js/day1.js"></script>
+    <script src="js/day1-video.js"></script>
 
 </body>
 
