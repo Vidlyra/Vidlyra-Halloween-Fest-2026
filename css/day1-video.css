@@ -3,11 +3,21 @@
    DAY 1 VIDEO
 ========================================= */
 
+
+/* =========================================
+   RESET
+========================================= */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
+
+/* =========================================
+   PAGE
+========================================= */
 
 html,
 body {
@@ -18,7 +28,7 @@ body {
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 
@@ -59,7 +69,7 @@ body {
 
 
 /* =========================================
-   LOADING
+   LOADING SCREEN
 ========================================= */
 
 .loading {
@@ -80,48 +90,70 @@ body {
 
     z-index: 10;
 
+    opacity: 1;
+    visibility: visible;
+
     transition:
         opacity 0.5s ease,
         visibility 0.5s ease;
 }
 
+
+/* Hide loading */
+
 .loading.hidden {
     opacity: 0;
+
     visibility: hidden;
-}
 
-.loading p {
-    color: #fff;
-
-    font-size: 11px;
-
-    letter-spacing: 4px;
+    pointer-events: none;
 }
 
 
-/* Spinner */
+/* =========================================
+   LOADING SPINNER
+========================================= */
 
 .loading-spinner {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
 
     border-radius: 50%;
 
     border:
         2px solid rgba(255,255,255,0.15);
 
-    border-top-color: #fff;
+    border-top-color: #ffffff;
 
     animation:
-        spin 0.8s linear infinite;
+        loadingSpin 0.8s linear infinite;
 }
 
-@keyframes spin {
+@keyframes loadingSpin {
+
+    from {
+        transform: rotate(0deg);
+    }
 
     to {
         transform: rotate(360deg);
     }
 
+}
+
+
+/* Loading text */
+
+.loading p {
+    color: #ffffff;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    letter-spacing: 4px;
+
+    text-align: center;
 }
 
 
@@ -142,7 +174,7 @@ body {
     text-align: center;
 
     background:
-        rgba(0,0,0,0.82);
+        rgba(0,0,0,0.84);
 
     opacity: 0;
 
@@ -155,8 +187,12 @@ body {
         visibility 0.8s ease;
 }
 
+
+/* Show overlay */
+
 .end-overlay.show {
     opacity: 1;
+
     visibility: visible;
 }
 
@@ -166,10 +202,12 @@ body {
 ========================================= */
 
 .end-content {
-    width: min(90%, 650px);
+    width: min(90%, 700px);
+
+    padding: 30px;
 
     transform:
-        translateY(20px);
+        translateY(25px);
 
     opacity: 0;
 
@@ -177,6 +215,9 @@ body {
         transform 0.8s ease,
         opacity 0.8s ease;
 }
+
+
+/* Animate content */
 
 .end-overlay.show .end-content {
     transform:
@@ -186,68 +227,93 @@ body {
 }
 
 
-/* Label */
+/* =========================================
+   END LABEL
+========================================= */
 
 .end-label {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 
-    color: #aaa;
+    color: #b8b8b8;
 
     font-size: 11px;
 
-    letter-spacing: 4px;
-}
-
-
-/* Title */
-
-.end-content h1 {
-    color: #fff;
-
-    font-size:
-        clamp(32px, 7vw, 75px);
+    font-weight: 600;
 
     letter-spacing: 5px;
 
-    text-shadow:
-        0 0 20px rgba(255,255,255,0.35);
+    text-transform: uppercase;
 }
 
 
-/* Subtitle */
+/* =========================================
+   DAY 1 COMPLETE
+========================================= */
+
+.end-content h1 {
+    color: #ffffff;
+
+    font-size:
+        clamp(34px, 7vw, 76px);
+
+    font-weight: 800;
+
+    line-height: 1.05;
+
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+
+    text-shadow:
+        0 0 10px rgba(255,255,255,0.3),
+        0 0 30px rgba(255,255,255,0.15);
+}
+
+
+/* =========================================
+   SUBTITLE
+========================================= */
 
 .end-content p {
-    margin-top: 15px;
+    margin-top: 18px;
 
-    color: #ccc;
+    color: #d0d0d0;
 
     font-size:
         clamp(12px, 2vw, 17px);
 
     letter-spacing: 4px;
+
+    text-transform: uppercase;
 }
 
 
-/* Redirect */
+/* =========================================
+   REDIRECT TEXT
+========================================= */
 
 .redirect-text {
-    margin-top: 35px;
+    margin-top: 40px;
 
-    color: #fff;
+    color: #ffffff;
 
     font-size: 10px;
 
+    font-weight: 600;
+
     letter-spacing: 5px;
 
+    text-transform: uppercase;
+
     animation:
-        blink 1s ease-in-out infinite;
+        redirectBlink 1.2s ease-in-out infinite;
 }
 
-@keyframes blink {
+@keyframes redirectBlink {
 
     0%,
     100% {
-        opacity: 0.35;
+        opacity: 0.3;
     }
 
     50% {
@@ -267,16 +333,59 @@ body {
         object-fit: contain;
     }
 
+    .end-content {
+        padding: 20px;
+    }
+
+    .end-label {
+        font-size: 9px;
+
+        letter-spacing: 3px;
+    }
+
     .end-content h1 {
+        font-size: 34px;
+
         letter-spacing: 3px;
     }
 
     .end-content p {
+        font-size: 10px;
+
         letter-spacing: 2px;
     }
 
     .redirect-text {
+        margin-top: 30px;
+
+        font-size: 9px;
+
         letter-spacing: 3px;
+    }
+
+}
+
+
+/* =========================================
+   VERY SMALL SCREENS
+========================================= */
+
+@media (max-height: 500px) {
+
+    .end-content {
+        padding: 15px;
+    }
+
+    .end-content h1 {
+        font-size: 30px;
+    }
+
+    .end-content p {
+        margin-top: 10px;
+    }
+
+    .redirect-text {
+        margin-top: 20px;
     }
 
 }
