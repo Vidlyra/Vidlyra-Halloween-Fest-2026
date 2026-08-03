@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>VIDLYRA HALLOWEEN FEST 2026 — DAY 1</title>
 
@@ -11,69 +12,72 @@
 
 <body>
 
-    <main class="video-page">
+    <!-- VIDEO PAGE -->
+    <main id="videoPage">
 
         <!-- Loading -->
-        <div id="loadingScreen" class="loading-screen">
+        <div id="loading">
             <div class="loading-title">VIDLYRA</div>
             <div class="loading-subtitle">
                 HALLOWEEN FEST 2026
             </div>
 
-            <div class="loading-bar">
-                <div id="loadingFill"></div>
-            </div>
+            <div class="loading-spinner"></div>
 
-            <div id="loadingPercent">0%</div>
+            <div id="loadingText">
+                ENTERING DAY 1...
+            </div>
         </div>
 
-        <!-- Video -->
+        <!-- VIDEO -->
         <video
             id="day1Video"
-            class="day-video"
             playsinline
             preload="auto"
-            controls
-        >
-            <source src="assets/video/day1-video.mp4" type="video/mp4">
-            Your browser does not support HTML5 video.
+            disablepictureinpicture
+            controlslist="nodownload nofullscreen noremoteplayback">
+
+            <source
+                src="assets/video/day1-video.mp4"
+                type="video/mp4">
+
         </video>
 
-        <!-- Video error -->
-        <div id="videoError" class="video-error">
-            <h2>DAY 1 VIDEO NOT FOUND</h2>
-            <p>
-                Check that your video exists at:
-            </p>
+        <!-- Dark ending -->
+        <div id="endOverlay">
 
-            <code>assets/videos/day1.mp4</code>
-        </div>
+            <div class="end-content">
 
-        <!-- End overlay -->
-        <div id="endOverlay" class="end-overlay">
+                <div class="end-title">
+                    DAY 1 COMPLETE
+                </div>
 
-            <div class="end-box">
+                <div class="end-subtitle">
+                    THE JOURNEY BEGINS...
+                </div>
 
-                <div class="end-symbol">🎃</div>
+                <div class="end-loader">
+                    <span></span>
+                </div>
 
-                <h1>DAY 1 COMPLETE</h1>
-
-                <p>
-                    The journey has begun.
-                </p>
-
-                <button id="continueButton">
-                    ENTER DAY 2
-                </button>
+                <div class="end-text">
+                    ENTERING DAY 2
+                </div>
 
             </div>
 
         </div>
 
-        <!-- Skip / Continue -->
-        <button id="skipButton" class="skip-button">
-            SKIP VIDEO
-        </button>
+        <!-- Error -->
+        <div id="videoError">
+
+            <h1>VIDEO NOT FOUND</h1>
+
+            <p>
+                Please check the Day 1 video file.
+            </p>
+
+        </div>
 
     </main>
 
