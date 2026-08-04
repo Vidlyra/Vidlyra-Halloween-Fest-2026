@@ -11,752 +11,728 @@
 
 <body>
 
-    <!-- =========================================
-         CINEMATIC BACKGROUND
-    ========================================== -->
+<main id="cinema">
 
-    <div id="cinema">
-
-        <div class="background"></div>
-
-        <div class="moon-glow"></div>
-
-        <div class="fog fog-one"></div>
-        <div class="fog fog-two"></div>
-
+    <!-- ATMOSPHERE -->
+    <div class="atmosphere">
+        <div class="sky-glow"></div>
+        <div class="fog fog-a"></div>
+        <div class="fog fog-b"></div>
+        <div class="grain"></div>
         <div id="particles"></div>
-
         <div class="vignette"></div>
+    </div>
 
-        <!-- =====================================
-             INTRO
-        ====================================== -->
 
-        <section id="intro" class="screen active">
+    <!-- ==========================================
+         OPENING
+    =========================================== -->
 
-            <div class="intro-content">
+    <section id="opening" class="scene active">
 
-                <div class="pumpkin-symbol">🎃</div>
+        <div class="opening-inner">
+
+            <div class="eyebrow">
+                A VIDLYRA ORIGINAL
+            </div>
+
+            <div class="vidlyra-mark">
+                VIDLYRA
+            </div>
+
+            <div class="festival-mark">
+                HALLOWEEN FEST 2026
+            </div>
+
+            <div class="opening-rule"></div>
+
+            <div class="opening-subtitle">
+                BEYOND THE VEIL
+            </div>
+
+            <button id="beginButton">
+                BEGIN FINAL CHAPTER
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         CREDITS
+    =========================================== -->
+
+    <section id="creditsViewport">
+
+        <div id="creditsRoll">
+
+            <!-- OPENING CREDIT -->
+
+            <div class="credit-introduction">
+
+                <div class="micro">
+                    VIDLYRA STUDIO
+                </div>
+
+                <h1>
+                    HALLOWEEN FEST 2026
+                </h1>
+
+                <p>
+                    FINAL CREDITS
+                </p>
+
+            </div>
+
+
+            <!-- VISION -->
+
+            <section class="credit-section">
+
+                <div class="section-index">01</div>
+
+                <h2>THE VISION</h2>
+
+                <div class="credit-entry featured">
+                    <span>Executive Producer &amp; Director</span>
+                    <strong>Alwin Dison R</strong>
+                </div>
+
+                <div class="credit-entry featured">
+                    <span>Creative AI Assistant</span>
+                    <strong>Lyra</strong>
+                </div>
+
+            </section>
+
+
+            <!-- CHARACTERS -->
+
+            <section class="credit-section">
+
+                <div class="section-index">02</div>
+
+                <h2>CHARACTER DIRECTION</h2>
+
+                <div class="credit-entry">
+                    <span>Lead Character Artist</span>
+                    <strong>Luna</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Character Design</span>
+                    <strong>Elara</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Character Development</span>
+                    <strong>Ren</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Anime Character Design</span>
+                    <strong>Yuna</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Expressive Design</span>
+                    <strong>Kira</strong>
+                </div>
+
+            </section>
+
+
+            <!-- STORY -->
+
+            <section class="credit-section">
+
+                <div class="section-index">03</div>
+
+                <h2>STORY DEVELOPMENT</h2>
+
+                <div class="credit-entry">
+                    <span>Story Development</span>
+                    <strong>Nova</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Narrative Architecture</span>
+                    <strong>Orion</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>World Lore</span>
+                    <strong>Riven</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Story Continuity</span>
+                    <strong>Selene</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Mythology Development</span>
+                    <strong>Kael</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Episode Structure</span>
+                    <strong>Astra</strong>
+                </div>
+
+            </section>
+
+
+            <!-- WORLD -->
+
+            <section class="credit-section">
+
+                <div class="section-index">04</div>
+
+                <h2>WORLD &amp; ENVIRONMENT</h2>
+
+                <div class="credit-entry">
+                    <span>Background Art &amp; Environment Design</span>
+                    <strong>Aiden</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Environment Concept</span>
+                    <strong>Rowan</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Fantasy World Design</span>
+                    <strong>Ezra</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Haunted Environment Design</span>
+                    <strong>Mirae</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Location Design</span>
+                    <strong>Jace</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Atmospheric Design</span>
+                    <strong>Vera</strong>
+                </div>
+
+            </section>
+
+
+            <!-- ANIMATION -->
+
+            <section class="credit-section">
+
+                <div class="section-index">05</div>
+
+                <h2>ANIMATION &amp; MOTION</h2>
+
+                <div class="credit-entry">
+                    <span>Animation Supervisor</span>
+                    <strong>Aria</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Motion Design</span>
+                    <strong>Leo</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Animation Direction</span>
+                    <strong>Hana</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Character Motion</span>
+                    <strong>Sora</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Cinematic Motion</span>
+                    <strong>Ryo</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Transition Design</span>
+                    <strong>Emi</strong>
+                </div>
+
+            </section>
+
+
+            <!-- VFX -->
+
+            <section class="credit-section">
+
+                <div class="section-index">06</div>
+
+                <h2>VISUAL EFFECTS</h2>
+
+                <div class="credit-entry">
+                    <span>Visual Effects (VFX)</span>
+                    <strong>Kai</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Magical Effects</span>
+                    <strong>Rei</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Lighting Effects</span>
+                    <strong>Akira</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Fog &amp; Atmosphere</span>
+                    <strong>Nami</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Energy Effects</span>
+                    <strong>Shin</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Portal Effects</span>
+                    <strong>Yuki</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Lightning Design</span>
+                    <strong>Rai</strong>
+                </div>
+
+            </section>
+
+
+            <!-- AUDIO -->
+
+            <section class="credit-section">
+
+                <div class="section-index">07</div>
+
+                <h2>SOUND &amp; MUSIC</h2>
+
+                <div class="credit-entry">
+                    <span>Sound Design &amp; Audio</span>
+                    <strong>Rex</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Music Direction</span>
+                    <strong>Echo</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Ambient Sound</span>
+                    <strong>Vale</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Cinematic Audio</span>
+                    <strong>Axel</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Horror Sound Design</span>
+                    <strong>Nyx</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Audio Mixing</span>
+                    <strong>Juno</strong>
+                </div>
+
+            </section>
+
+
+            <!-- UI -->
+
+            <section class="credit-section">
+
+                <div class="section-index">08</div>
+
+                <h2>INTERACTIVE EXPERIENCE</h2>
+
+                <div class="credit-entry">
+                    <span>UI / Motion Graphics</span>
+                    <strong>Mira</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Interaction Design</span>
+                    <strong>Novae</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Game Experience</span>
+                    <strong>Atlas</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Web Experience</span>
+                    <strong>Pixel</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Responsive Experience</span>
+                    <strong>Rio</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Interface Engineering</span>
+                    <strong>Zen</strong>
+                </div>
+
+            </section>
+
+
+            <!-- ENGINEERING -->
+
+            <section class="credit-section">
+
+                <div class="section-index">09</div>
+
+                <h2>TECHNICAL DIRECTION</h2>
+
+                <div class="credit-entry">
+                    <span>Game Systems</span>
+                    <strong>Axion</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Gameplay Engineering</span>
+                    <strong>Zero</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>AI Systems</span>
+                    <strong>Vex</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Interaction Systems</span>
+                    <strong>Neo</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Performance Engineering</span>
+                    <strong>Flux</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Web Engineering</span>
+                    <strong>Byte</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Technical Direction</span>
+                    <strong>Onyx</strong>
+                </div>
+
+            </section>
+
+
+            <!-- QA -->
+
+            <section class="credit-section">
+
+                <div class="section-index">10</div>
+
+                <h2>QUALITY &amp; PRODUCTION</h2>
+
+                <div class="credit-entry">
+                    <span>Quality Assurance &amp; Production Support</span>
+                    <strong>Zane</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Gameplay Testing</span>
+                    <strong>Finn</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Device Testing</span>
+                    <strong>Arlo</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Mobile QA</span>
+                    <strong>Skye</strong>
+                </div>
+
+                <div class="credit-entry">
+                    <span>Accessibility Testing</span>
+                    <strong>Iris</strong>
+                </div>
+
+            </section>
+
+
+            <!-- 50 ADDITIONAL NAMES -->
+
+            <section class="credit-section network-section">
+
+                <div class="section-index">11</div>
+
+                <h2>CREATIVE &amp; PRODUCTION TEAM</h2>
+
+                <p class="section-note">
+                    With appreciation to every creative voice
+                    that helped shape the VidLyra experience.
+                </p>
+
+                <div class="team-names">
+
+                    <span>Ash</span>
+                    <span>Blaze</span>
+                    <span>Cass</span>
+                    <span>Dane</span>
+                    <span>Eli</span>
+                    <span>Faye</span>
+                    <span>Grey</span>
+                    <span>Haru</span>
+                    <span>Indra</span>
+                    <span>Jett</span>
+
+                    <span>Kaiya</span>
+                    <span>Lio</span>
+                    <span>Mae</span>
+                    <span>Niko</span>
+                    <span>Oren</span>
+                    <span>Pyra</span>
+                    <span>Quinn</span>
+                    <span>Rin</span>
+                    <span>Sage</span>
+                    <span>Tara</span>
+
+                    <span>Uma</span>
+                    <span>Vivi</span>
+                    <span>Wren</span>
+                    <span>Xara</span>
+                    <span>Yori</span>
+                    <span>Zia</span>
+                    <span>Aero</span>
+                    <span>Briar</span>
+                    <span>Ciel</span>
+                    <span>Dusk</span>
+
+                    <span>Ember</span>
+                    <span>Frost</span>
+                    <span>Halo</span>
+                    <span>Ivory</span>
+                    <span>Jade</span>
+                    <span>Koda</span>
+                    <span>Lumen</span>
+                    <span>Rune</span>
+                    <span>Sol</span>
+                    <span>Vanta</span>
+
+                    <span>Wolf</span>
+                    <span>Yume</span>
+                    <span>Zephyr</span>
+                    <span>Arden</span>
+                    <span>Celeste</span>
+                    <span>Draven</span>
+                    <span>Elio</span>
+                    <span>Fiora</span>
+                    <span>Nyra</span>
+                    <span>Raven</span>
+
+                </div>
+
+            </section>
+
+
+            <!-- SPECIAL THANKS -->
+
+            <section class="credit-section special-thanks">
+
+                <div class="section-index">12</div>
+
+                <h2>SPECIAL THANKS</h2>
+
+                <p>
+                    To everyone who entered the VidLyra Universe
+                    and celebrated Halloween Fest 2026.
+                </p>
+
+                <p>
+                    Your support inspires every story we create.
+                </p>
+
+            </section>
+
+
+            <!-- STUDIO -->
+
+            <section class="studio-card">
+
+                <div class="studio-label">
+                    PRODUCED BY
+                </div>
 
                 <div class="studio-name">
-                    VIDLYRA
+                    VIDLYRA STUDIO
                 </div>
 
-                <div class="festival-name">
-                    HALLOWEEN FEST 2026
+                <div class="studio-tagline">
+                    where imagination knows no boundaries
                 </div>
 
-                <div class="intro-line"></div>
+            </section>
 
-                <div class="present-text">
-                    PRESENTS
-                </div>
 
-                <div class="story-title">
-                    BEYOND THE VEIL
-                </div>
+            <!-- COPYRIGHT -->
 
-                <button id="startCredits">
-                    ENTER THE FINAL CHAPTER
-                </button>
+            <section class="copyright-card">
 
-            </div>
-
-        </section>
-
-
-        <!-- =====================================
-             CREDITS VIEWPORT
-        ====================================== -->
-
-        <section id="creditsViewport">
-
-            <div id="creditsRoll">
-
-                <!-- OPENING -->
-
-                <div class="credit-opening">
-
-                    <div class="small-label">
-                        A VIDLYRA ORIGINAL
-                    </div>
-
-                    <h1>
-                        VIDLYRA
-                    </h1>
-
-                    <h2>
-                        HALLOWEEN FEST 2026
-                    </h2>
-
-                    <p>
-                        THE FINAL CHAPTER
-                    </p>
-
-                </div>
-
-
-                <!-- THE VISION -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">◆</div>
-
-                    <h3>
-                        THE VISION
-                    </h3>
-
-                    <div class="credit-block">
-
-                        <span>EXECUTIVE PRODUCER &amp; DIRECTOR</span>
-
-                        <strong>
-                            Alwin Dison R
-                        </strong>
-
-                    </div>
-
-                    <div class="credit-block">
-
-                        <span>CREATIVE AI ASSISTANT</span>
-
-                        <strong>
-                            Lyra
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <!-- THE CHARACTERS -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">◇</div>
-
-                    <h3>
-                        THE CHARACTERS
-                    </h3>
-
-                    <div class="credit-block">
-                        <span>LEAD CHARACTER ARTIST</span>
-                        <strong>Luna</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>CHARACTER DESIGN</span>
-                        <strong>Elara</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>CHARACTER DEVELOPMENT</span>
-                        <strong>Ren</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>ANIME CHARACTER DESIGN</span>
-                        <strong>Yuna</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>EXPRESSIVE DESIGN</span>
-                        <strong>Kira</strong>
-                    </div>
-
-                </div>
-
-
-                <!-- THE STORY -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">✦</div>
-
-                    <h3>
-                        THE STORY
-                    </h3>
-
-                    <div class="credit-block">
-                        <span>STORY DEVELOPMENT</span>
-                        <strong>Nova</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>NARRATIVE ARCHITECT</span>
-                        <strong>Orion</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>WORLD LORE</span>
-                        <strong>Riven</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>STORY CONTINUITY</span>
-                        <strong>Selene</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>MYTHOLOGY DEVELOPMENT</span>
-                        <strong>Kael</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>EPISODE STRUCTURE</span>
-                        <strong>Astra</strong>
-                    </div>
-
-                </div>
-
-
-                <!-- THE WORLD -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">♢</div>
-
-                    <h3>
-                        THE WORLD
-                    </h3>
-
-                    <div class="credit-block">
-                        <span>BACKGROUND ART &amp; ENVIRONMENT DESIGN</span>
-                        <strong>Aiden</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>ENVIRONMENT CONCEPT</span>
-                        <strong>Rowan</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>FANTASY WORLD DESIGN</span>
-                        <strong>Ezra</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>HAUNTED WORLD DESIGN</span>
-                        <strong>Mirae</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>LOCATION DESIGN</span>
-                        <strong>Jace</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>ATMOSPHERIC DESIGN</span>
-                        <strong>Vera</strong>
-                    </div>
-
-                </div>
-
-
-                <!-- ANIMATION -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">✧</div>
-
-                    <h3>
-                        MOTION &amp; ANIMATION
-                    </h3>
-
-                    <div class="credit-block">
-                        <span>ANIMATION SUPERVISOR</span>
-                        <strong>Aria</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>MOTION DESIGN</span>
-                        <strong>Leo</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>ANIMATION DIRECTION</span>
-                        <strong>Hana</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>CHARACTER MOTION</span>
-                        <strong>Sora</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>CINEMATIC MOTION</span>
-                        <strong>Ryo</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>TRANSITION DESIGN</span>
-                        <strong>Emi</strong>
-                    </div>
-
-                </div>
-
-
-                <!-- VFX -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">✦</div>
-
-                    <h3>
-                        THE SUPERNATURAL
-                    </h3>
-
-                    <div class="credit-block">
-                        <span>VISUAL EFFECTS (VFX)</span>
-                        <strong>Kai</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>MAGICAL EFFECTS</span>
-                        <strong>Rei</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>LIGHTING EFFECTS</span>
-                        <strong>Akira</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>FOG &amp; ATMOSPHERE</span>
-                        <strong>Nami</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>ENERGY EFFECTS</span>
-                        <strong>Shin</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>PORTAL EFFECTS</span>
-                        <strong>Yuki</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>LIGHTNING DESIGN</span>
-                        <strong>Rai</strong>
-                    </div>
-
-                </div>
-
-
-                <!-- AUDIO -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">♪</div>
-
-                    <h3>
-                        THE SOUND
-                    </h3>
-
-                    <div class="credit-block">
-                        <span>SOUND DESIGN &amp; AUDIO</span>
-                        <strong>Rex</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>MUSIC DIRECTION</span>
-                        <strong>Echo</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>AMBIENT SOUND</span>
-                        <strong>Vale</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>CINEMATIC AUDIO</span>
-                        <strong>Axel</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>HORROR SOUND DESIGN</span>
-                        <strong>Nyx</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>AUDIO MIXING</span>
-                        <strong>Juno</strong>
-                    </div>
-
-                </div>
-
-
-                <!-- UI -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">▣</div>
-
-                    <h3>
-                        THE EXPERIENCE
-                    </h3>
-
-                    <div class="credit-block">
-                        <span>UI / MOTION GRAPHICS</span>
-                        <strong>Mira</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>INTERACTION DESIGN</span>
-                        <strong>Novae</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>GAME EXPERIENCE</span>
-                        <strong>Atlas</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>WEB EXPERIENCE</span>
-                        <strong>Pixel</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>RESPONSIVE EXPERIENCE</span>
-                        <strong>Rio</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>INTERFACE ENGINEERING</span>
-                        <strong>Zen</strong>
-                    </div>
-
-                </div>
-
-
-                <!-- ENGINEERING -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">⌘</div>
-
-                    <h3>
-                        THE ENGINE
-                    </h3>
-
-                    <div class="credit-block">
-                        <span>GAME SYSTEMS</span>
-                        <strong>Axion</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>GAMEPLAY ENGINEERING</span>
-                        <strong>Zero</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>AI SYSTEMS</span>
-                        <strong>Vex</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>INTERACTION SYSTEMS</span>
-                        <strong>Neo</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>PERFORMANCE ENGINEERING</span>
-                        <strong>Flux</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>WEB ENGINEERING</span>
-                        <strong>Byte</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>TECHNICAL DIRECTION</span>
-                        <strong>Onyx</strong>
-                    </div>
-
-                </div>
-
-
-                <!-- QA -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">✓</div>
-
-                    <h3>
-                        THE FINAL TEST
-                    </h3>
-
-                    <div class="credit-block">
-                        <span>QUALITY ASSURANCE &amp; PRODUCTION SUPPORT</span>
-                        <strong>Zane</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>GAMEPLAY TESTING</span>
-                        <strong>Finn</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>DEVICE TESTING</span>
-                        <strong>Arlo</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>MOBILE QA</span>
-                        <strong>Skye</strong>
-                    </div>
-
-                    <div class="credit-block">
-                        <span>ACCESSIBILITY TESTING</span>
-                        <strong>Iris</strong>
-                    </div>
-
-                </div>
-
-
-                <!-- ADDITIONAL TEAM -->
-
-                <div class="credit-section">
-
-                    <div class="section-symbol">✦</div>
-
-                    <h3>
-                        VIDLYRA CREATIVE NETWORK
-                    </h3>
-
-                    <div class="team-grid">
-
-                        <span>Ash</span>
-                        <span>Blaze</span>
-                        <span>Cass</span>
-                        <span>Dane</span>
-                        <span>Eli</span>
-                        <span>Faye</span>
-                        <span>Grey</span>
-                        <span>Haru</span>
-                        <span>Indra</span>
-                        <span>Jett</span>
-                        <span>Kaiya</span>
-                        <span>Lio</span>
-                        <span>Mae</span>
-                        <span>Niko</span>
-                        <span>Oren</span>
-                        <span>Pyra</span>
-                        <span>Quinn</span>
-                        <span>Rin</span>
-                        <span>Sage</span>
-                        <span>Tara</span>
-                        <span>Uma</span>
-                        <span>Vivi</span>
-                        <span>Wren</span>
-                        <span>Xara</span>
-                        <span>Yori</span>
-                        <span>Zia</span>
-                        <span>Aero</span>
-                        <span>Briar</span>
-                        <span>Ciel</span>
-                        <span>Dusk</span>
-                        <span>Ember</span>
-                        <span>Frost</span>
-                        <span>Halo</span>
-                        <span>Ivory</span>
-                        <span>Jade</span>
-                        <span>Koda</span>
-                        <span>Lumen</span>
-                        <span>Rune</span>
-                        <span>Sol</span>
-                        <span>Vanta</span>
-                        <span>Wolf</span>
-                        <span>Yume</span>
-                        <span>Zephyr</span>
-                        <span>Arden</span>
-                        <span>Celeste</span>
-                        <span>Draven</span>
-                        <span>Elio</span>
-                        <span>Fiora</span>
-                        <span>Nyra</span>
-                        <span>Raven</span>
-
-                    </div>
-
-                </div>
-
-
-                <!-- SPECIAL THANKS -->
-
-                <div class="credit-section special-thanks">
-
-                    <div class="section-symbol">♡</div>
-
-                    <h3>
-                        SPECIAL THANKS
-                    </h3>
-
-                    <p>
-                        To everyone who entered the Vidlyra Universe
-                        and celebrated Halloween Fest 2026.
-                    </p>
-
-                    <p>
-                        Your support inspires every story we create.
-                    </p>
-
-                </div>
-
-
-                <!-- PRODUCED BY -->
-
-                <div class="credit-section final-studio">
-
-                    <div class="small-label">
-                        PRODUCED BY
-                    </div>
-
-                    <h1>
-                        VIDLYRA STUDIO
-                    </h1>
-
-                    <div class="tagline">
-                        where imagination knows no boundaries
-                    </div>
-
-                </div>
-
-
-                <!-- COPYRIGHT -->
-
-                <div class="copyright">
-
+                <p>
                     © 2026 VIDLYRA.
                     ALL RIGHTS RESERVED.
-
-                    <br><br>
-
-                    <i>
-                        "Every ending reveals another mystery."
-                    </i>
-
-                </div>
-
-
-                <!-- NEXT HALLOWEEN -->
-
-                <div class="next-event">
-
-                    <div class="pumpkin-symbol">
-                        🎃
-                    </div>
-
-                    <h2>
-                        SEE YOU NEXT HALLOWEEN
-                    </h2>
-
-                    <h1>
-                        HALLOWEEN FEST 2027
-                    </h1>
-
-                </div>
-
-
-                <!-- END -->
-
-                <div class="credits-end-space"></div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =====================================
-             POST CREDIT
-        ====================================== -->
-
-        <section id="postCredit">
-
-            <div class="post-credit-content">
-
-                <div class="post-label">
-                    POST-CREDIT SCENE
-                </div>
-
-                <div class="lantern">
-                    🎃
-                </div>
-
-                <p class="scene-line line-one">
-                    A forgotten pumpkin lantern
-                    glows in the distance.
                 </p>
 
-                <p class="scene-line line-two">
-                    The wind suddenly stops.
+                <p class="quote">
+                    “Every ending reveals another mystery.”
                 </p>
 
-                <p class="scene-line line-three">
-                    A shadow moves behind the trees.
-                </p>
+            </section>
 
-                <p class="scene-line line-four">
-                    A pair of eyes opens.
-                </p>
 
-                <h2 class="mystery">
-                    "THIS WAS ONLY THE BEGINNING..."
+            <!-- NEXT EVENT -->
+
+            <section class="next-halloween">
+
+                <div class="tiny-pumpkin">🎃</div>
+
+                <div class="next-label">
+                    SEE YOU NEXT HALLOWEEN...
+                </div>
+
+                <h2>
+                    HALLOWEEN FEST 2027
                 </h2>
 
-                <div class="coming-soon">
-                    COMING SOON
-                </div>
+            </section>
 
+
+            <div class="roll-end"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         POST CREDIT
+    =========================================== -->
+
+    <section id="postCredit" class="scene">
+
+        <div class="post-credit-inner">
+
+            <div class="post-label">
+                POST-CREDIT SCENE
             </div>
 
-        </section>
+            <div class="lantern">
+                🎃
+            </div>
+
+            <p id="sceneLine1">
+                A forgotten pumpkin lantern glows in the distance.
+            </p>
+
+            <p id="sceneLine2">
+                The wind suddenly stops.
+            </p>
+
+            <p id="sceneLine3">
+                Something moves beyond the trees.
+            </p>
+
+            <p id="sceneLine4">
+                A shadow smiles.
+            </p>
+
+            <h2 id="mysteryLine">
+                “THIS WAS ONLY THE BEGINNING...”
+            </h2>
+
+            <div id="comingSoon">
+                COMING SOON
+            </div>
+
+        </div>
+
+    </section>
 
 
-        <!-- =====================================
-             FINAL LOGO
-        ====================================== -->
+    <!-- ==========================================
+         FINAL
+    =========================================== -->
 
-        <section id="finalScreen">
+    <section id="finalScreen" class="scene">
+
+        <div class="final-inner">
 
             <div class="final-logo">
                 VIDLYRA
             </div>
 
-            <div class="final-fest">
+            <div class="final-rule"></div>
+
+            <div class="final-event">
                 HALLOWEEN FEST 2027
             </div>
-
-            <div class="final-line"></div>
 
             <div class="final-message">
                 THE STORY CONTINUES
             </div>
 
-        </section>
+        </div>
+
+    </section>
 
 
-        <!-- =====================================
-             AUDIO
-        ====================================== -->
+    <!-- AUDIO -->
 
-        <audio
-            id="creditsMusic"
-            preload="auto"
-            src="assets/credits.mp3">
-        </audio>
+    <audio
+        id="creditsMusic"
+        preload="auto"
+        src="assets/credits.mp3">
+    </audio>
 
-        <button
-            id="soundToggle"
-            aria-label="Toggle credits music">
-            🔊
-        </button>
 
-    </div>
+    <!-- SOUND CONTROL -->
 
-    <script src="js/end-credits.js"></script>
+    <button
+        id="soundButton"
+        type="button"
+        aria-label="Toggle music">
+        SOUND ON
+    </button>
+
+
+    <!-- SKIP -->
+
+    <button
+        id="skipButton"
+        type="button">
+        SKIP
+    </button>
+
+</main>
+
+
+<script src="js/end-credits.js"></script>
 
 </body>
 </html>
