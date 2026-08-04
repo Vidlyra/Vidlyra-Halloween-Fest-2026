@@ -1,50 +1,10 @@
 /* =========================================================
    VIDLYRA HALLOWEEN FEST 2026
-   CINEMATIC END CREDITS
-
-   MUSIC:
-   assets/credits.mp3
-
-   TOTAL EXPERIENCE:
-   03:00 / 180 seconds
-
-   SECTIONS:
-   00:00–00:30  A Silent Halloween Night
-   00:30–01:00  Memories of the Festival
-   01:00–01:40  Hearts Shine Together
-   01:40–02:20  Under the Harvest Moon
-   02:20–02:45  The Festival Sleeps
-   02:45–03:00  Until Next Halloween
+   OFFICIAL CINEMATIC END CREDITS
+   MASTER CLOCK = assets/credits.mp3
 ========================================================= */
 
-
-/* =========================================================
-   CONFIGURATION
-========================================================= */
-
-const CONFIG = {
-
-    totalDuration: 180000,
-
-    openingDuration: 30000,
-
-    rollStart: 28000,
-
-    musicFadeIn: 3500,
-
-    musicFadeOut: 5000,
-
-    scrollSpeed: 48,
-
-    particleCount: 45,
-
-    finalFadeDuration: 3500,
-
-    redirectAfterFinish: false,
-
-    redirectURL: "index.html"
-
-};
+"use strict";
 
 
 /* =========================================================
@@ -54,14 +14,17 @@ const CONFIG = {
 const cinema =
     document.getElementById("creditsCinema");
 
-const opening =
-    document.getElementById("opening");
+const startScreen =
+    document.getElementById("startScreen");
+
+const enterButton =
+    document.getElementById("enterButton");
 
 const viewport =
-    document.getElementById("creditsViewport");
+    document.getElementById("creditViewport");
 
-const creditsRoll =
-    document.getElementById("creditsRoll");
+const creditRoll =
+    document.getElementById("creditRoll");
 
 const music =
     document.getElementById("creditsMusic");
@@ -72,68 +35,85 @@ const soundButton =
 const particles =
     document.getElementById("particles");
 
+const timelineProgress =
+    document.getElementById("timelineProgress");
+
+const currentTimeDisplay =
+    document.getElementById("currentTime");
+
+
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
+const CONFIG = {
+
+    /*
+       Your music structure ends at approximately 3:00.
+       The actual audio position remains the master clock.
+    */
+
+    duration: 180,
+
+    /*
+       These values determine the cinematic credit-roll
+       speed across the complete 3-minute experience.
+    */
+
+    rollStart: 0,
+
+    rollEnd: 180,
+
+    /*
+       Extra space before the first real credit.
+    */
+
+    openingOffset: 0
+};
+
 
 /* =========================================================
    STATE
 ========================================================= */
 
 let started = false;
-
 let finished = false;
-
-let musicStarted = false;
-
-let musicMuted = false;
 
 let animationFrame = null;
 
-let rollStartTime = 0;
+let lastAudioTime = 0;
 
-let currentScroll = 0;
-
-let totalScrollDistance = 0;
+let rollDistance = 0;
 
 
 /* =========================================================
-   INITIAL STATE
+   AUDIO SETTINGS
 ========================================================= */
 
-if (opening) {
+music.volume = 0.85;
 
-    opening.classList.add("active");
+music.preload = "auto";
 
-}
-
-if (viewport) {
-
-    viewport.classList.remove("active");
-
-}
-
-if (music) {
-
-    music.volume = 0;
-
-    music.loop = false;
-
-}
+music.loop = false;
 
 
 /* =========================================================
-   PARTICLE SYSTEM
+   PARTICLES
 ========================================================= */
 
 function createParticles() {
 
     if (!particles) return;
 
-    particles.innerHTML = "";
+    const count =
+        window.innerWidth < 700
+            ? 28
+            : 55;
 
-    for (
-        let i = 0;
-        i < CONFIG.particleCount;
-        i++
-    ) {
+    const fragment =
+        document.createDocumentFragment();
+
+    for (let i = 0; i < count; i++) {
 
         const particle =
             document.createElement("span");
@@ -141,320 +121,445 @@ function createParticles() {
         particle.className =
             "particle";
 
-        const size =
-            Math.random() * 2.5 + 1;
-
-        const left =
-            Math.random() * 100;
-
-        const delay =
-            Math.random() * 18;
-
-        const duration =
-            Math.random() * 12 + 10;
-
-        particle.style.width =
-            `${size}px`;
-
-        particle.style.height =
-            `${size}px`;
-
         particle.style.left =
-            `${left}%`;
-
-        particle.style.bottom =
-            `${Math.random() * 15}%`;
-
-        particle.style.animationDelay =
-            `${delay}s`;
+            Math.random() * 100 + "%";
 
         particle.style.animationDuration =
-            `${duration}s`;
+            (8 + Math.random() * 16) + "s";
 
-        particles.appendChild(
-            particle
+        particle.style.animationDelay =
+            (-Math.random() * 18) + "s";
+
+        particle.style.opacity =
+            (0.2 + Math.random() * 0.7).toFixed(2);
+
+        particle.style.transform =
+            `scale(${0.5 + Math.random() * 1.5})`;
+
+        fragment.appendChild(particle);
+    }
+
+    particles.appendChild(fragment);
+}
+
+
+/* =========================================================
+   FORMAT TIME
+========================================================= */
+
+function formatTime(seconds) {
+
+    seconds =
+        Math.max(
+            0,
+            Math.floor(seconds || 0)
         );
 
-    }
+    const minutes =
+        Math.floor(seconds / 60);
 
+    const secs =
+        seconds % 60;
+
+    return (
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(secs).padStart(2, "0")
+    );
 }
 
 
 /* =========================================================
-   MUSIC FADE IN
+   CALCULATE ROLL DISTANCE
 ========================================================= */
 
-function fadeMusicIn() {
+function calculateRollDistance() {
 
-    if (!music || musicMuted) return;
-
-    music.volume = 0;
-
-    const start =
-        performance.now();
-
-    function fade(now) {
-
-        const elapsed =
-            now - start;
-
-        const progress =
-            Math.min(
-                elapsed /
-                CONFIG.musicFadeIn,
-                1
-            );
-
-        music.volume =
-            progress * 0.82;
-
-        if (progress < 1) {
-
-            requestAnimationFrame(fade);
-
-        }
-
-    }
-
-    requestAnimationFrame(fade);
-
-}
-
-
-/* =========================================================
-   MUSIC FADE OUT
-========================================================= */
-
-function fadeMusicOut() {
-
-    if (!music) return;
-
-    const initialVolume =
-        music.volume;
-
-    const start =
-        performance.now();
-
-    function fade(now) {
-
-        const elapsed =
-            now - start;
-
-        const progress =
-            Math.min(
-                elapsed /
-                CONFIG.musicFadeOut,
-                1
-            );
-
-        music.volume =
-            initialVolume *
-            (1 - progress);
-
-        if (progress < 1) {
-
-            requestAnimationFrame(fade);
-
-        } else {
-
-            music.pause();
-
-        }
-
-    }
-
-    requestAnimationFrame(fade);
-
-}
-
-
-/* =========================================================
-   START MUSIC
-========================================================= */
-
-function startMusic() {
-
-    if (
-        !music ||
-        musicStarted ||
-        musicMuted
-    ) {
-        return;
-    }
-
-    musicStarted = true;
-
-    music.currentTime = 0;
-
-    const playPromise =
-        music.play();
-
-    if (
-        playPromise &&
-        typeof playPromise.catch ===
-        "function"
-    ) {
-
-        playPromise
-            .then(() => {
-
-                fadeMusicIn();
-
-            })
-            .catch(() => {
-
-                musicStarted = false;
-
-            });
-
-    } else {
-
-        fadeMusicIn();
-
-    }
-
-}
-
-
-/* =========================================================
-   BEGIN CREDIT ROLL
-========================================================= */
-
-function beginCredits() {
-
-    if (!opening || !viewport) {
-        return;
-    }
-
-    opening.classList.remove("active");
-
-    setTimeout(() => {
-
-        viewport.classList.add("active");
-
-        calculateScroll();
-
-        rollStartTime =
-            performance.now();
-
-        requestAnimationFrame(
-            animateCredits
-        );
-
-    }, 1200);
-
-}
-
-
-/* =========================================================
-   CALCULATE SCROLL DISTANCE
-========================================================= */
-
-function calculateScroll() {
-
-    if (!creditsRoll) return;
+    if (!creditRoll) return;
 
     const viewportHeight =
         window.innerHeight;
 
     const rollHeight =
-        creditsRoll.scrollHeight;
+        creditRoll.scrollHeight;
 
-    totalScrollDistance =
+    /*
+       Start with the first credit below the screen
+       and finish after the complete credit sequence.
+    */
+
+    rollDistance =
         rollHeight +
-        viewportHeight * 1.15;
+        viewportHeight;
 
+    creditRoll.style.transform =
+        "translate3d(0, 0, 0)";
 }
 
 
 /* =========================================================
-   CINEMATIC CREDIT SCROLL
+   START EXPERIENCE
 ========================================================= */
 
-function animateCredits(timestamp) {
+async function startCredits() {
 
-    if (finished) return;
+    if (started) return;
 
-    if (!rollStartTime) {
+    started = true;
 
-        rollStartTime =
-            timestamp;
-
-    }
-
-    const elapsed =
-        timestamp -
-        rollStartTime;
+    enterButton.disabled = true;
 
     /*
-       Keep the credits cinematic rather
-       than moving at a harsh constant speed.
+       Reset everything before playback.
     */
 
-    const progress =
-        Math.min(
-            elapsed /
-            (
-                CONFIG.totalDuration -
-                CONFIG.rollStart
-            ),
-            1
+    music.currentTime = 0;
+
+    finished = false;
+
+    cinema.classList.remove("finished");
+
+    creditRoll.style.transform =
+        "translate3d(0, 0, 0)";
+
+    /*
+       Show the credit viewport immediately.
+    */
+
+    viewport.classList.add("active");
+
+    /*
+       Fade away the start screen.
+    */
+
+    startScreen.classList.add("hidden");
+
+    /*
+       Browser autoplay policy allows audio because
+       this function is triggered directly by the click.
+    */
+
+    try {
+
+        await music.play();
+
+        soundButton.textContent =
+            "SOUND ON";
+
+    } catch (error) {
+
+        console.warn(
+            "Audio could not start:",
+            error
         );
 
-    /*
-       Smooth cinematic acceleration/
-       deceleration curve.
-    */
-
-    const eased =
-        progress < 0.5
-
-            ? 2 * progress * progress
-
-            : 1 -
-              Math.pow(
-                  -2 * progress + 2,
-                  2
-              ) / 2;
-
-
-    currentScroll =
-        eased *
-        totalScrollDistance;
-
-
-    creditsRoll.style.transform =
-        `translate3d(
-            0,
-            ${-currentScroll}px,
-            0
-        )`;
-
+        soundButton.textContent =
+            "SOUND OFF";
+    }
 
     /*
-       Finish when the 3-minute
-       experience reaches its end.
+       Start the visual clock.
     */
 
-    if (progress >= 1) {
+    lastAudioTime =
+        music.currentTime;
+
+    animationFrame =
+        requestAnimationFrame(
+            animationLoop
+        );
+}
+
+
+/* =========================================================
+   ENTER BUTTON
+========================================================= */
+
+enterButton.addEventListener(
+    "click",
+    startCredits
+);
+
+
+/* =========================================================
+   MASTER ANIMATION LOOP
+========================================================= */
+
+function animationLoop() {
+
+    if (!started) return;
+
+    const current =
+        music.currentTime;
+
+    /*
+       Audio is the authority.
+       Never use setTimeout for the credit timing.
+    */
+
+    updateTimeline(current);
+
+    updateCreditRoll(current);
+
+    /*
+       Detect completion through audio itself.
+    */
+
+    if (
+        !music.paused &&
+        music.ended
+    ) {
 
         finishCredits();
 
         return;
-
     }
 
+    /*
+       Safety fallback for files that are slightly shorter
+       or longer than exactly 180 seconds.
+    */
+
+    if (
+        current >= CONFIG.duration &&
+        !music.paused
+    ) {
+
+        finishCredits();
+
+        return;
+    }
+
+    lastAudioTime =
+        current;
 
     animationFrame =
         requestAnimationFrame(
-            animateCredits
+            animationLoop
         );
-
 }
 
 
 /* =========================================================
-   FINISH CREDITS
+   UPDATE TIMELINE
+========================================================= */
+
+function updateTimeline(current) {
+
+    const duration =
+        music.duration &&
+        Number.isFinite(music.duration)
+            ? music.duration
+            : CONFIG.duration;
+
+    const progress =
+        Math.min(
+            1,
+            Math.max(
+                0,
+                current / duration
+            )
+        );
+
+    if (timelineProgress) {
+
+        timelineProgress.style.width =
+            `${progress * 100}%`;
+    }
+
+    if (currentTimeDisplay) {
+
+        currentTimeDisplay.textContent =
+            formatTime(current);
+    }
+}
+
+
+/* =========================================================
+   CREDIT ROLL
+========================================================= */
+
+function updateCreditRoll(current) {
+
+    if (!creditRoll) return;
+
+    const duration =
+        music.duration &&
+        Number.isFinite(music.duration)
+            ? music.duration
+            : CONFIG.duration;
+
+    /*
+       Normalize the actual audio time.
+    */
+
+    const progress =
+        Math.min(
+            1,
+            Math.max(
+                0,
+                current / duration
+            )
+        );
+
+    /*
+       Move the entire credit roll continuously.
+       At 0 seconds it begins below the viewport.
+       At the end it has completely passed the screen.
+    */
+
+    const viewportHeight =
+        window.innerHeight;
+
+    const totalDistance =
+        creditRoll.scrollHeight +
+        viewportHeight;
+
+    const y =
+        viewportHeight -
+        totalDistance * progress;
+
+    creditRoll.style.transform =
+        `translate3d(0, ${y}px, 0)`;
+}
+
+
+/* =========================================================
+   SOUND BUTTON
+========================================================= */
+
+soundButton.addEventListener(
+    "click",
+    async () => {
+
+        if (!started) return;
+
+        if (music.muted) {
+
+            music.muted = false;
+
+            soundButton.textContent =
+                "SOUND ON";
+
+            /*
+               If the music was paused by the browser,
+               resume it.
+            */
+
+            if (music.paused) {
+
+                try {
+                    await music.play();
+                } catch (error) {
+                    console.warn(error);
+                }
+            }
+
+        } else {
+
+            music.muted = true;
+
+            soundButton.textContent =
+                "SOUND OFF";
+        }
+    }
+);
+
+
+/* =========================================================
+   AUDIO PAUSE / RESUME
+========================================================= */
+
+music.addEventListener(
+    "play",
+    () => {
+
+        if (!started) return;
+
+        if (!animationFrame) {
+
+            animationFrame =
+                requestAnimationFrame(
+                    animationLoop
+                );
+        }
+    }
+);
+
+
+music.addEventListener(
+    "pause",
+    () => {
+
+        /*
+           Do not reset the credits.
+
+           Because the visual position is calculated from
+           music.currentTime, the credits naturally freeze
+           exactly where the music stops.
+        */
+
+        if (animationFrame) {
+
+            cancelAnimationFrame(
+                animationFrame
+            );
+
+            animationFrame = null;
+        }
+    }
+);
+
+
+/* =========================================================
+   AUDIO SEEK SUPPORT
+========================================================= */
+
+music.addEventListener(
+    "timeupdate",
+    () => {
+
+        if (!started) return;
+
+        updateTimeline(
+            music.currentTime
+        );
+
+        updateCreditRoll(
+            music.currentTime
+        );
+    }
+);
+
+
+/* =========================================================
+   AUDIO METADATA
+========================================================= */
+
+music.addEventListener(
+    "loadedmetadata",
+    () => {
+
+        /*
+           Use the real audio duration whenever available.
+        */
+
+        if (
+            Number.isFinite(music.duration) &&
+            music.duration > 0
+        ) {
+
+            CONFIG.duration =
+                music.duration;
+        }
+
+        calculateRollDistance();
+    }
+);
+
+
+/* =========================================================
+   FINISH
 ========================================================= */
 
 function finishCredits() {
@@ -469,368 +574,209 @@ function finishCredits() {
             animationFrame
         );
 
+        animationFrame = null;
     }
 
-    fadeMusicOut();
+    /*
+       Force the timeline to its final position.
+    */
+
+    updateTimeline(
+        music.duration || CONFIG.duration
+    );
+
+    updateCreditRoll(
+        music.duration || CONFIG.duration
+    );
 
     /*
-       Cinematic final fade.
+       Let the final card remain visible briefly,
+       then perform the cinematic fade.
     */
 
     setTimeout(() => {
 
-        cinema.classList.add(
-            "credits-finished"
-        );
+        cinema.classList.add("finished");
 
-    }, 250);
-
-
-    /*
-       Optional redirect.
-       Disabled by default because the
-       final black screen should remain.
-    */
-
-    if (CONFIG.redirectAfterFinish) {
-
-        setTimeout(() => {
-
-            window.location.href =
-                CONFIG.redirectURL;
-
-        }, CONFIG.finalFadeDuration);
-
-    }
-
+    }, 800);
 }
-
-
-/* =========================================================
-   SOUND CONTROL
-========================================================= */
-
-function updateSoundButton() {
-
-    if (!soundButton) return;
-
-    if (musicMuted) {
-
-        soundButton.textContent =
-            "SOUND OFF";
-
-    } else {
-
-        soundButton.textContent =
-            "SOUND ON";
-
-    }
-
-}
-
-
-function toggleSound() {
-
-    if (!music) return;
-
-    musicMuted =
-        !musicMuted;
-
-    if (musicMuted) {
-
-        music.volume = 0;
-
-        soundButton.textContent =
-            "SOUND OFF";
-
-    } else {
-
-        if (
-            !musicStarted
-        ) {
-
-            startMusic();
-
-        } else {
-
-            music.volume =
-                0.82;
-
-        }
-
-        soundButton.textContent =
-            "SOUND ON";
-
-    }
-
-}
-
-
-/* =========================================================
-   USER INTERACTION
-========================================================= */
-
-if (soundButton) {
-
-    soundButton.addEventListener(
-        "click",
-        toggleSound
-    );
-
-}
-
-
-/*
-   A click anywhere on the cinema
-   starts the music.
-
-   This also solves browser autoplay
-   restrictions on mobile/desktop.
-*/
-
-function userStartExperience() {
-
-    if (!started) {
-
-        started = true;
-
-        startMusic();
-
-    }
-
-}
-
-document.addEventListener(
-    "click",
-    userStartExperience,
-    {
-        once: true
-    }
-);
-
-document.addEventListener(
-    "touchstart",
-    userStartExperience,
-    {
-        once: true,
-        passive: true
-    }
-);
-
-
-/* =========================================================
-   KEYBOARD SUPPORT
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        /*
-           Space / Enter:
-           start music
-        */
-
-        if (
-            event.code === "Space" ||
-            event.code === "Enter"
-        ) {
-
-            if (!started) {
-
-                started = true;
-
-                startMusic();
-
-            }
-
-        }
-
-
-        /*
-           M:
-           mute / unmute
-        */
-
-        if (
-            event.key.toLowerCase() === "m"
-        ) {
-
-            toggleSound();
-
-        }
-
-    }
-);
 
 
 /* =========================================================
    RESIZE
 ========================================================= */
 
+let resizeTimer = null;
+
 window.addEventListener(
     "resize",
     () => {
 
-        calculateScroll();
+        clearTimeout(resizeTimer);
+
+        resizeTimer =
+            setTimeout(() => {
+
+                calculateRollDistance();
+
+                if (started) {
+
+                    updateCreditRoll(
+                        music.currentTime
+                    );
+                }
+
+            }, 150);
 
     }
 );
 
 
 /* =========================================================
-   AUDIO END
+   PREVENT ACCIDENTAL PAGE SCROLL
 ========================================================= */
 
-if (music) {
+document.addEventListener(
+    "wheel",
+    event => {
 
-    music.addEventListener(
-        "ended",
-        () => {
+        event.preventDefault();
 
-            /*
-               Do not immediately end the
-               visual credits if the MP3 is
-               slightly shorter than 3:00.
+    },
+    {
+        passive: false
+    }
+);
 
-               The visual timeline remains
-               the master clock.
-            */
 
-            musicStarted = false;
+/* =========================================================
+   KEYBOARD CONTROL
+========================================================= */
 
+document.addEventListener(
+    "keydown",
+    async event => {
+
+        /*
+           Space = pause/resume
+        */
+
+        if (
+            event.code === "Space" &&
+            started
+        ) {
+
+            event.preventDefault();
+
+            if (music.paused) {
+
+                try {
+                    await music.play();
+                } catch (error) {
+                    console.warn(error);
+                }
+
+            } else {
+
+                music.pause();
+            }
         }
-    );
 
-}
+        /*
+           M = mute
+        */
+
+        if (
+            event.key.toLowerCase() === "m" &&
+            started
+        ) {
+
+            music.muted =
+                !music.muted;
+
+            soundButton.textContent =
+                music.muted
+                    ? "SOUND OFF"
+                    : "SOUND ON";
+        }
+    }
+);
 
 
 /* =========================================================
    INITIALIZATION
 ========================================================= */
 
-function initializeCredits() {
+createParticles();
 
-    createParticles();
+calculateRollDistance();
 
-    calculateScroll();
+updateTimeline(0);
 
-    updateSoundButton();
-
-}
+updateCreditRoll(0);
 
 
 /* =========================================================
-   WAIT FOR PAGE
+   PAGE VISIBILITY
 ========================================================= */
 
-if (
-    document.readyState ===
-    "loading"
-) {
+document.addEventListener(
+    "visibilitychange",
+    () => {
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeCredits
-    );
+        if (!started) return;
 
-} else {
+        /*
+           We deliberately do not create another timer.
 
-    initializeCredits();
+           Audio remains the source of truth.
+        */
 
-}
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
 
+            updateTimeline(
+                music.currentTime
+            );
 
-/* =========================================================
-   AUTOMATIC TIMELINE
-========================================================= */
-
-/*
-   The credits are designed to begin automatically.
-
-   Audio playback may still require the first user
-   interaction because modern browsers can block
-   autoplay with sound.
-
-   The visual credit roll does NOT depend on audio.
-*/
-
-setTimeout(() => {
-
-    if (!started) {
-
-        started = true;
-
-    }
-
-    startMusic();
-
-}, 800);
-
-
-/*
-   Start the visual sequence after
-   the opening title has had time to breathe.
-*/
-
-setTimeout(() => {
-
-    beginCredits();
-
-}, CONFIG.rollStart);
-
-
-/* =========================================================
-   SAFETY FALLBACK
-========================================================= */
-
-/*
-   Guarantees that the page cannot remain
-   indefinitely on the credits if a browser
-   has unusual animation timing behavior.
-*/
-
-setTimeout(() => {
-
-    if (!finished) {
-
-        finishCredits();
-
-    }
-
-}, CONFIG.totalDuration + 4000);
-
-
-/* =========================================================
-   FINAL VISUAL FADE
-========================================================= */
-
-const finalStyle =
-    document.createElement("style");
-
-finalStyle.textContent = `
-
-    #creditsCinema.credits-finished {
-        animation:
-            finalCinemaFade
-            ${CONFIG.finalFadeDuration}ms
-            ease forwards;
-    }
-
-    @keyframes finalCinemaFade {
-
-        from {
-            opacity: 1;
+            updateCreditRoll(
+                music.currentTime
+            );
         }
-
-        to {
-            opacity: 0;
-        }
-
     }
-
-`;
-
-document.head.appendChild(
-    finalStyle
 );
+
+
+/* =========================================================
+   DEBUG HELPER
+   Remove this section later if desired.
+========================================================= */
+
+window.VidlyraCredits = {
+
+    getTime() {
+        return music.currentTime;
+    },
+
+    getDuration() {
+        return music.duration;
+    },
+
+    pause() {
+        music.pause();
+    },
+
+    play() {
+        return music.play();
+    },
+
+    mute() {
+        music.muted = true;
+    },
+
+    unmute() {
+        music.muted = false;
+    }
+};
