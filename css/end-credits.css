@@ -1,123 +1,189 @@
+/* =========================================================
+   VIDLYRA HALLOWEEN FEST 2026
+   CINEMATIC END CREDITS
+   PALETTE: ORANGE • BLACK • WHITE
+   DURATION: 3:00
+========================================================= */
+
 :root {
-    --bg: #030205;
-    --text: #f4edf8;
-    --muted: #9f96a7;
-    --purple: #b86cff;
-    --violet: #7428c8;
-    --gold: #e7b86a;
-    --line: rgba(255,255,255,.12);
+    --black: #030201;
+    --black-soft: #090604;
+
+    --orange: #ff7518;
+    --orange-light: #ff9b45;
+    --orange-dark: #a63d08;
+
+    --white: #fffaf2;
+    --white-soft: #e9e1d8;
+
+    --gray: #9c9187;
+    --gray-dark: #5e554e;
+
+    --line: rgba(255, 117, 24, 0.22);
 }
 
+
+/* =========================================================
+   RESET
+========================================================= */
+
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 html,
 body {
     width: 100%;
     height: 100%;
+}
+
+body {
     overflow: hidden;
-    background: var(--bg);
-    color: var(--text);
+
+    background: var(--black);
+
+    color: var(--white);
+
     font-family:
         "Segoe UI",
         Arial,
+        Helvetica,
         sans-serif;
 }
 
-button {
-    font: inherit;
-}
 
-#cinema {
+/* =========================================================
+   MAIN CINEMA
+========================================================= */
+
+#creditsCinema {
     position: fixed;
+
     inset: 0;
+
     overflow: hidden;
+
     background:
         radial-gradient(
-            circle at 50% 30%,
-            rgba(94,35,130,.16),
-            transparent 45%
+            ellipse at 50% 40%,
+            rgba(130, 45, 5, 0.10),
+            transparent 55%
         ),
-        #030205;
+        var(--black);
 }
 
-/* =========================================
+
+/* =========================================================
    ATMOSPHERE
-========================================= */
+========================================================= */
 
 .atmosphere {
     position: fixed;
+
     inset: 0;
-    pointer-events: none;
-    overflow: hidden;
+
     z-index: 1;
+
+    pointer-events: none;
+
+    overflow: hidden;
 }
 
-.sky-glow {
+
+.orange-glow {
     position: absolute;
-    width: 70vw;
-    height: 70vw;
+
+    width: 75vw;
+    height: 75vw;
+
     max-width: 900px;
     max-height: 900px;
+
     left: 50%;
-    top: 30%;
-    transform: translate(-50%, -50%);
+    top: 38%;
+
+    transform:
+        translate(-50%, -50%);
 
     background:
         radial-gradient(
             circle,
-            rgba(116,40,200,.17),
-            rgba(116,40,200,.04) 35%,
+            rgba(255, 100, 20, 0.12),
+            rgba(180, 55, 0, 0.045) 35%,
             transparent 70%
         );
 
-    filter: blur(18px);
-    animation: glowPulse 7s ease-in-out infinite;
+    filter: blur(20px);
+
+    animation:
+        orangeBreath 8s ease-in-out infinite;
 }
 
-@keyframes glowPulse {
+@keyframes orangeBreath {
+
     0%,
     100% {
-        opacity: .55;
-        transform: translate(-50%, -50%) scale(.95);
+        opacity: 0.45;
+
+        transform:
+            translate(-50%, -50%)
+            scale(0.94);
     }
 
     50% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.08);
+        opacity: 0.9;
+
+        transform:
+            translate(-50%, -50%)
+            scale(1.06);
     }
 }
 
+
+/* =========================================================
+   FOG
+========================================================= */
+
 .fog {
     position: absolute;
+
     width: 160%;
     height: 35%;
+
     left: -30%;
+
     border-radius: 50%;
+
     background:
         radial-gradient(
             ellipse,
-            rgba(130,90,160,.10),
-            transparent 65%
+            rgba(180, 150, 125, 0.055),
+            transparent 68%
         );
-    filter: blur(35px);
+
+    filter: blur(38px);
 }
 
-.fog-a {
-    bottom: 4%;
-    animation: fogMoveA 22s linear infinite alternate;
+.fog-one {
+    bottom: 3%;
+
+    animation:
+        fogOne 25s ease-in-out infinite alternate;
 }
 
-.fog-b {
-    bottom: 18%;
-    opacity: .55;
-    animation: fogMoveB 30s linear infinite alternate;
+.fog-two {
+    bottom: 17%;
+
+    opacity: 0.55;
+
+    animation:
+        fogTwo 32s ease-in-out infinite alternate;
 }
 
-@keyframes fogMoveA {
+@keyframes fogOne {
+
     from {
         transform: translateX(-8%);
     }
@@ -127,7 +193,8 @@ button {
     }
 }
 
-@keyframes fogMoveB {
+@keyframes fogTwo {
+
     from {
         transform: translateX(7%);
     }
@@ -137,24 +204,36 @@ button {
     }
 }
 
-.grain {
+
+/* =========================================================
+   FILM GRAIN
+========================================================= */
+
+.film-grain {
     position: absolute;
+
     inset: -50%;
-    opacity: .035;
-    background-image:
+
+    opacity: 0.035;
+
+    background:
         repeating-radial-gradient(
             circle at 0 0,
             transparent 0,
-            rgba(255,255,255,.5) 1px,
+            rgba(255, 255, 255, 0.45) 1px,
             transparent 2px
         );
+
     background-size: 7px 7px;
-    animation: grainMove .25s steps(2) infinite;
+
+    animation:
+        grainMove 0.25s steps(2) infinite;
 }
 
 @keyframes grainMove {
+
     0% {
-        transform: translate(0,0);
+        transform: translate(0, 0);
     }
 
     25% {
@@ -174,207 +253,250 @@ button {
     }
 }
 
+
+/* =========================================================
+   VIGNETTE
+========================================================= */
+
 .vignette {
     position: absolute;
+
     inset: 0;
+
     background:
         radial-gradient(
-            ellipse,
-            transparent 42%,
-            rgba(0,0,0,.5) 100%
+            ellipse at center,
+            transparent 38%,
+            rgba(0, 0, 0, 0.55) 100%
         );
 }
 
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
 #particles {
     position: absolute;
+
     inset: 0;
 }
 
-/* =========================================
-   PARTICLES
-========================================= */
-
 .particle {
     position: absolute;
+
     width: 2px;
     height: 2px;
+
     border-radius: 50%;
-    background: rgba(211,173,255,.7);
-    box-shadow: 0 0 8px rgba(185,108,255,.7);
-    animation: particleFloat linear infinite;
+
+    background:
+        rgba(255, 156, 75, 0.65);
+
+    box-shadow:
+        0 0 7px rgba(255, 100, 20, 0.55);
+
+    animation:
+        particleRise linear infinite;
 }
 
-@keyframes particleFloat {
+@keyframes particleRise {
+
     from {
-        transform: translateY(110vh);
+        transform:
+            translateY(110vh);
+
         opacity: 0;
     }
 
     15% {
-        opacity: .7;
+        opacity: 0.7;
     }
 
     85% {
-        opacity: .7;
+        opacity: 0.7;
     }
 
     to {
-        transform: translateY(-10vh);
+        transform:
+            translateY(-10vh);
+
         opacity: 0;
     }
 }
 
-/* =========================================
-   SCREENS
-========================================= */
 
-.scene {
+/* =========================================================
+   OPENING
+========================================================= */
+
+.credit-scene {
     position: absolute;
+
     inset: 0;
+
     z-index: 10;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
-    background: rgba(0,0,0,.82);
+    background:
+        rgba(0, 0, 0, 0.9);
 
     opacity: 0;
+
     visibility: hidden;
 
     transition:
-        opacity 1.8s ease,
-        visibility 1.8s ease;
+        opacity 1.6s ease,
+        visibility 1.6s ease;
 }
 
-.scene.active {
+.credit-scene.active {
     opacity: 1;
+
     visibility: visible;
 }
 
-/* =========================================
-   OPENING
-========================================= */
+.opening-content {
+    width: min(90%, 850px);
 
-.opening-inner {
-    width: min(90%, 800px);
     text-align: center;
 
-    transform: translateY(15px);
     opacity: 0;
 
+    transform:
+        translateY(18px);
+
     transition:
-        transform 1.5s ease,
-        opacity 1.5s ease;
+        opacity 1.8s ease,
+        transform 1.8s ease;
 }
 
-#opening.active .opening-inner {
-    transform: translateY(0);
+.credit-scene.active
+.opening-content {
     opacity: 1;
+
+    transform:
+        translateY(0);
 }
 
-.eyebrow,
-.micro,
-.studio-label,
-.post-label {
-    font-size: 11px;
-    letter-spacing: .42em;
-    color: var(--muted);
+
+/* =========================================================
+   OPENING TYPOGRAPHY
+========================================================= */
+
+.small-label {
+    font-size: 10px;
+
+    letter-spacing: 0.48em;
+
+    color:
+        var(--gray);
+
+    text-indent:
+        0.48em;
 }
 
-.vidlyra-mark {
-    margin-top: 24px;
+.vidlyra-title {
+    margin-top: 25px;
 
-    font-size: clamp(42px, 9vw, 100px);
+    font-size:
+        clamp(48px, 10vw, 115px);
+
     font-weight: 200;
-    letter-spacing: .28em;
-    text-indent: .28em;
 
-    background:
-        linear-gradient(
-            120deg,
-            #fff,
-            #c98aff,
-            #fff
-        );
+    letter-spacing:
+        0.27em;
 
-    background-size: 200% auto;
+    text-indent:
+        0.27em;
 
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color:
+        var(--white);
 
-    animation: logoShimmer 5s linear infinite;
+    text-shadow:
+        0 0 30px rgba(255, 117, 24, 0.12);
+
+    animation:
+        titleGlow 6s ease-in-out infinite;
 }
 
-@keyframes logoShimmer {
-    to {
-        background-position: 200% center;
+@keyframes titleGlow {
+
+    0%,
+    100% {
+        text-shadow:
+            0 0 15px
+            rgba(255, 117, 24, 0.08);
+    }
+
+    50% {
+        text-shadow:
+            0 0 35px
+            rgba(255, 117, 24, 0.28);
     }
 }
 
-.festival-mark {
-    margin-top: 8px;
+.title-line {
+    width: 110px;
 
-    font-size: clamp(12px, 2vw, 17px);
-    letter-spacing: .45em;
-    text-indent: .45em;
-    color: #b9afc2;
-}
-
-.opening-rule {
-    width: 100px;
     height: 1px;
-    margin: 34px auto;
+
+    margin:
+        25px auto;
 
     background:
         linear-gradient(
             90deg,
             transparent,
-            var(--purple),
+            var(--orange),
             transparent
         );
 }
 
+.opening-content h2 {
+    font-size:
+        clamp(12px, 2vw, 18px);
+
+    font-weight: 400;
+
+    letter-spacing:
+        0.42em;
+
+    text-indent:
+        0.42em;
+
+    color:
+        var(--white-soft);
+}
+
 .opening-subtitle {
-    font-size: 12px;
-    letter-spacing: .6em;
-    text-indent: .6em;
-    color: #ddd1e5;
+    margin-top: 18px;
+
+    font-size: 10px;
+
+    letter-spacing:
+        0.35em;
+
+    text-indent:
+        0.35em;
+
+    color:
+        var(--gray);
 }
 
-#beginButton {
-    margin-top: 45px;
 
-    border: 1px solid rgba(193,122,255,.45);
-    background: rgba(100,30,150,.12);
-    color: #eadcf4;
-
-    padding: 14px 24px;
-
-    letter-spacing: .18em;
-    font-size: 11px;
-
-    cursor: pointer;
-
-    transition:
-        background .3s ease,
-        border-color .3s ease,
-        transform .3s ease;
-}
-
-#beginButton:hover {
-    background: rgba(130,45,190,.25);
-    border-color: rgba(210,150,255,.8);
-    transform: translateY(-2px);
-}
-
-/* =========================================
-   CREDITS VIEWPORT
-========================================= */
+/* =========================================================
+   CREDIT VIEWPORT
+========================================================= */
 
 #creditsViewport {
     position: absolute;
+
     inset: 0;
 
     z-index: 20;
@@ -382,6 +504,7 @@ button {
     overflow: hidden;
 
     opacity: 0;
+
     visibility: hidden;
 
     transition:
@@ -391,554 +514,683 @@ button {
 
 #creditsViewport.active {
     opacity: 1;
+
     visibility: visible;
 }
 
+
+/* =========================================================
+   CREDIT ROLL
+========================================================= */
+
 #creditsRoll {
     position: absolute;
+
     left: 0;
-    width: 100%;
 
     top: 100%;
 
+    width: 100%;
+
     text-align: center;
 
-    will-change: transform;
+    will-change:
+        transform;
 }
 
-/* =========================================
-   INTRO CREDIT
-========================================= */
 
-.credit-introduction {
-    min-height: 90vh;
+/* =========================================================
+   CREDIT BLOCK
+========================================================= */
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.credit-block {
+    width:
+        min(820px, 88%);
 
-    padding: 80px 20px;
+    min-height:
+        100vh;
+
+    margin:
+        0 auto;
+
+    padding:
+        110px 20px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
 }
 
-.credit-introduction h1 {
-    margin-top: 24px;
 
-    font-size: clamp(30px, 5vw, 62px);
-    font-weight: 200;
-    letter-spacing: .18em;
-}
+/* =========================================================
+   CHAPTER
+========================================================= */
 
-.credit-introduction p {
-    margin-top: 18px;
+.chapter-number {
+    margin-bottom: 17px;
 
-    color: var(--muted);
-    letter-spacing: .4em;
-    font-size: 11px;
-}
-
-/* =========================================
-   CREDIT SECTIONS
-========================================= */
-
-.credit-section {
-    width: min(820px, 88%);
-    margin: 0 auto;
-    padding: 100px 20px;
-}
-
-.section-index {
-    color: rgba(190,120,255,.55);
     font-size: 10px;
-    letter-spacing: .4em;
-    margin-bottom: 18px;
+
+    letter-spacing:
+        0.5em;
+
+    text-indent:
+        0.5em;
+
+    color:
+        rgba(255, 117, 24, 0.7);
 }
 
-.credit-section h2 {
-    font-size: clamp(18px, 3vw, 30px);
+.chapter-title {
+    font-size:
+        clamp(18px, 3vw, 29px);
+
     font-weight: 300;
-    letter-spacing: .24em;
-    text-indent: .24em;
-    margin-bottom: 55px;
+
+    letter-spacing:
+        0.23em;
+
+    text-indent:
+        0.23em;
+
+    color:
+        var(--white);
+
+    margin-bottom:
+        60px;
 }
 
-.credit-entry {
-    display: flex;
-    flex-direction: column;
 
-    margin: 34px 0;
+/* =========================================================
+   CREDITS
+========================================================= */
+
+.credit-group {
+    margin:
+        30px 0;
 }
 
-.credit-entry span {
-    color: #918697;
+.credit-role {
     font-size: 10px;
-    letter-spacing: .25em;
-    text-transform: uppercase;
+
+    line-height: 1.7;
+
+    letter-spacing:
+        0.24em;
+
+    text-indent:
+        0.24em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        var(--gray);
 }
 
-.credit-entry strong {
+.credit-name {
     margin-top: 10px;
 
-    color: #f3ecf6;
-    font-size: clamp(18px, 2.3vw, 25px);
+    font-size:
+        clamp(18px, 2.5vw, 26px);
+
     font-weight: 400;
-    letter-spacing: .05em;
+
+    letter-spacing:
+        0.06em;
+
+    color:
+        var(--white-soft);
 }
 
-.credit-entry.featured strong {
-    font-size: clamp(23px, 3.4vw, 36px);
-    color: #fff;
+.credit-name.featured {
+    font-size:
+        clamp(24px, 4vw, 38px);
+
+    color:
+        var(--white);
+
+    text-shadow:
+        0 0 20px
+        rgba(255, 117, 24, 0.08);
 }
 
-.credit-entry.featured {
-    margin: 52px 0;
-}
 
-/* =========================================
+/* =========================================================
    TEAM
-========================================= */
+========================================================= */
 
-.network-section {
-    width: min(1000px, 92%);
+.team-block {
+    width:
+        min(1050px, 92%);
 }
 
-.section-note {
-    width: min(600px, 90%);
-    margin: -25px auto 55px;
+.team-introduction {
+    width:
+        min(620px, 90%);
 
-    color: #887d91;
+    margin:
+        -30px auto 55px;
+
     font-size: 13px;
-    line-height: 1.8;
+
+    line-height: 1.9;
+
+    color:
+        var(--gray);
 }
 
-.team-names {
-    display: grid;
+.team-grid {
+    width:
+        min(900px, 100%);
+
+    display:
+        grid;
+
     grid-template-columns:
-        repeat(5, minmax(0, 1fr));
+        repeat(5, 1fr);
 
-    gap: 18px 12px;
-
-    max-width: 850px;
-    margin: auto;
+    gap:
+        20px 12px;
 }
 
-.team-names span {
-    font-size: 14px;
-    color: #d8cedd;
-    letter-spacing: .08em;
+.team-grid span {
+    font-size: 13px;
+
+    letter-spacing:
+        0.08em;
+
+    color:
+        var(--white-soft);
 }
 
-/* =========================================
-   SPECIAL THANKS
-========================================= */
+
+/* =========================================================
+   QUIET SECTION
+========================================================= */
+
+.quiet-block {
+    min-height:
+        90vh;
+}
 
 .special-thanks {
-    width: min(720px, 90%);
+    width:
+        min(650px, 90%);
 }
 
 .special-thanks p {
-    max-width: 650px;
-    margin: 25px auto;
+    margin:
+        25px auto;
 
-    color: #aaa0ae;
+    max-width:
+        600px;
+
+    font-size: 14px;
+
     line-height: 2;
-    font-size: 15px;
+
+    color:
+        var(--gray);
 }
 
-/* =========================================
-   STUDIO
-========================================= */
-
-.studio-card {
-    min-height: 75vh;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    padding: 100px 20px;
+.studio-credit {
+    margin-top:
+        65px;
 }
 
 .studio-name {
-    margin-top: 22px;
+    margin-top:
+        17px;
 
-    font-size: clamp(40px, 8vw, 90px);
+    font-size:
+        clamp(32px, 6vw, 62px);
+
     font-weight: 200;
-    letter-spacing: .2em;
-    text-indent: .2em;
 
-    color: #f7eefb;
+    letter-spacing:
+        0.18em;
+
+    text-indent:
+        0.18em;
+
+    color:
+        var(--white);
 }
 
 .studio-tagline {
-    margin-top: 20px;
+    margin-top:
+        16px;
 
-    color: #8e8394;
-    font-size: 12px;
-    letter-spacing: .18em;
+    font-size:
+        11px;
+
+    letter-spacing:
+        0.18em;
+
+    color:
+        var(--gray-dark);
 }
 
-/* =========================================
-   COPYRIGHT
-========================================= */
 
-.copyright-card {
-    min-height: 55vh;
+/* =========================================================
+   FINAL SECTION
+========================================================= */
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    color: #716978;
-
-    font-size: 10px;
-    letter-spacing: .25em;
-    line-height: 2;
+.final-block {
+    min-height:
+        100vh;
 }
 
-.quote {
-    margin-top: 30px;
-
-    color: #aaa0ae;
-    font-size: 13px;
-    letter-spacing: .08em;
-}
-
-/* =========================================
-   NEXT EVENT
-========================================= */
-
-.next-halloween {
-    min-height: 70vh;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.tiny-pumpkin {
-    font-size: 30px;
-    filter:
-        drop-shadow(0 0 15px rgba(255,130,30,.45));
-}
-
-.next-label {
-    margin-top: 25px;
-
-    font-size: 11px;
-    color: #928898;
-    letter-spacing: .4em;
-}
-
-.next-halloween h2 {
-    margin-top: 25px;
-
-    font-size: clamp(25px, 5vw, 50px);
-    font-weight: 300;
-    letter-spacing: .2em;
-    text-indent: .2em;
-}
-
-.roll-end {
-    height: 70vh;
-}
-
-/* =========================================
-   POST CREDIT
-========================================= */
-
-#postCredit {
-    z-index: 40;
-}
-
-.post-credit-inner {
-    width: min(850px, 90%);
-    text-align: center;
-}
-
-.post-label {
-    opacity: .7;
-}
-
-.lantern {
-    margin: 45px auto;
-
-    font-size: clamp(55px, 10vw, 110px);
+.pumpkin {
+    font-size:
+        clamp(45px, 8vw, 80px);
 
     filter:
-        drop-shadow(0 0 15px rgba(255,140,35,.55))
-        drop-shadow(0 0 55px rgba(255,80,20,.25));
+        drop-shadow(
+            0 0 18px
+            rgba(255, 117, 24, 0.55)
+        );
 
     animation:
-        lanternPulse 3s ease-in-out infinite;
+        pumpkinGlow 3.5s ease-in-out infinite;
 }
 
-@keyframes lanternPulse {
+@keyframes pumpkinGlow {
+
     0%,
     100% {
-        opacity: .55;
-        transform: scale(.96);
+        transform:
+            scale(0.97);
+
+        filter:
+            drop-shadow(
+                0 0 12px
+                rgba(255, 117, 24, 0.35)
+            );
     }
 
     50% {
-        opacity: 1;
-        transform: scale(1.04);
+        transform:
+            scale(1.04);
+
+        filter:
+            drop-shadow(
+                0 0 28px
+                rgba(255, 117, 24, 0.7)
+            );
     }
-}
-
-.scene-line {
-    opacity: 0;
-
-    margin: 22px auto;
-
-    color: #b9aebd;
-
-    font-size: clamp(14px, 2vw, 19px);
-    line-height: 1.8;
-    letter-spacing: .06em;
-
-    transition: opacity 1.5s ease;
-}
-
-.scene-line.show {
-    opacity: 1;
-}
-
-#mysteryLine {
-    margin-top: 65px;
-
-    opacity: 0;
-
-    color: #eee6f2;
-
-    font-size: clamp(18px, 3vw, 30px);
-    font-weight: 300;
-    letter-spacing: .15em;
-
-    transition:
-        opacity 2s ease,
-        letter-spacing 2s ease;
-}
-
-#mysteryLine.show {
-    opacity: 1;
-    letter-spacing: .22em;
-}
-
-#comingSoon {
-    margin-top: 50px;
-
-    opacity: 0;
-
-    color: var(--purple);
-
-    font-size: 11px;
-    letter-spacing: .55em;
-    text-indent: .55em;
-
-    transition: opacity 2s ease;
-}
-
-#comingSoon.show {
-    opacity: 1;
-}
-
-/* =========================================
-   FINAL
-========================================= */
-
-#finalScreen {
-    z-index: 50;
-    background: #000;
-}
-
-.final-inner {
-    text-align: center;
-}
-
-.final-logo {
-    font-size: clamp(48px, 10vw, 120px);
-    font-weight: 200;
-    letter-spacing: .28em;
-    text-indent: .28em;
-}
-
-.final-rule {
-    width: 120px;
-    height: 1px;
-
-    margin: 25px auto;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            var(--purple),
-            transparent
-        );
-}
-
-.final-event {
-    color: #b8aabd;
-    font-size: 12px;
-    letter-spacing: .45em;
-    text-indent: .45em;
 }
 
 .final-message {
-    margin-top: 35px;
+    margin-top:
+        28px;
 
-    color: #706675;
+    font-size:
+        clamp(12px, 2vw, 17px);
 
-    font-size: 10px;
-    letter-spacing: .4em;
-    text-indent: .4em;
+    letter-spacing:
+        0.4em;
+
+    text-indent:
+        0.4em;
+
+    color:
+        var(--gray);
 }
 
-/* =========================================
-   CONTROLS
-========================================= */
+.final-block h2 {
+    margin-top:
+        20px;
 
-#soundButton,
-#skipButton {
-    position: fixed;
-    z-index: 100;
+    font-size:
+        clamp(28px, 6vw, 60px);
 
-    bottom: 22px;
+    font-weight:
+        300;
 
-    border: 1px solid rgba(255,255,255,.13);
+    letter-spacing:
+        0.18em;
 
-    background: rgba(5,4,7,.65);
-    backdrop-filter: blur(10px);
+    text-indent:
+        0.18em;
 
-    color: #b7adbb;
-
-    padding: 9px 13px;
-
-    font-size: 9px;
-    letter-spacing: .15em;
-
-    cursor: pointer;
-
-    transition:
-        background .3s ease,
-        color .3s ease;
+    color:
+        var(--white);
 }
+
+.final-quote {
+    margin-top:
+        35px;
+
+    font-size:
+        13px;
+
+    letter-spacing:
+        0.08em;
+
+    color:
+        var(--gray);
+}
+
+.copyright {
+    margin-top:
+        50px;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        0.3em;
+
+    color:
+        var(--gray-dark);
+}
+
+.final-logo {
+    margin-top:
+        70px;
+
+    font-size:
+        clamp(42px, 9vw, 100px);
+
+    font-weight:
+        200;
+
+    letter-spacing:
+        0.25em;
+
+    text-indent:
+        0.25em;
+
+    color:
+        var(--white);
+
+    text-shadow:
+        0 0 35px
+        rgba(255, 117, 24, 0.15);
+}
+
+
+/* =========================================================
+   END SPACE
+========================================================= */
+
+.credits-end {
+    height:
+        80vh;
+}
+
+
+/* =========================================================
+   SOUND BUTTON
+========================================================= */
 
 #soundButton {
-    right: 22px;
+    position:
+        fixed;
+
+    right:
+        20px;
+
+    bottom:
+        20px;
+
+    z-index:
+        100;
+
+    padding:
+        9px 14px;
+
+    border:
+        1px solid
+        rgba(255, 117, 24, 0.25);
+
+    background:
+        rgba(0, 0, 0, 0.65);
+
+    color:
+        var(--white-soft);
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        0.15em;
+
+    cursor:
+        pointer;
+
+    backdrop-filter:
+        blur(8px);
+
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease;
 }
 
-#skipButton {
-    left: 22px;
+#soundButton:hover {
+    background:
+        rgba(255, 90, 10, 0.12);
+
+    border-color:
+        rgba(255, 117, 24, 0.6);
+
+    color:
+        var(--white);
 }
 
-#soundButton:hover,
-#skipButton:hover {
-    background: rgba(120,50,170,.2);
-    color: #fff;
-}
 
-/* =========================================
+/* =========================================================
    MOBILE
-========================================= */
+========================================================= */
 
 @media (max-width: 700px) {
 
-    .eyebrow,
-    .micro,
-    .studio-label,
-    .post-label {
+    .small-label {
         font-size: 8px;
-        letter-spacing: .3em;
+
+        letter-spacing:
+            0.32em;
     }
 
-    .festival-mark {
-        letter-spacing: .25em;
-        text-indent: .25em;
+    .opening-content h2 {
+        letter-spacing:
+            0.24em;
+
+        text-indent:
+            0.24em;
     }
 
     .opening-subtitle {
-        letter-spacing: .35em;
-        text-indent: .35em;
+        letter-spacing:
+            0.22em;
+
+        text-indent:
+            0.22em;
     }
 
-    #beginButton {
-        padding: 13px 18px;
-        font-size: 9px;
+    .credit-block {
+        width:
+            92%;
+
+        padding:
+            80px 10px;
     }
 
-    .credit-section {
-        padding: 75px 10px;
+    .chapter-title {
+        margin-bottom:
+            42px;
+
+        letter-spacing:
+            0.15em;
+
+        text-indent:
+            0.15em;
     }
 
-    .credit-section h2 {
-        margin-bottom: 40px;
-        letter-spacing: .16em;
-        text-indent: .16em;
+    .credit-group {
+        margin:
+            25px 0;
     }
 
-    .credit-entry {
-        margin: 28px 0;
+    .credit-role {
+        font-size:
+            8px;
+
+        letter-spacing:
+            0.16em;
+
+        text-indent:
+            0.16em;
     }
 
-    .credit-entry span {
-        font-size: 8px;
-        line-height: 1.6;
-        letter-spacing: .18em;
+    .credit-name {
+        font-size:
+            17px;
     }
 
-    .credit-entry strong {
-        font-size: 17px;
+    .credit-name.featured {
+        font-size:
+            23px;
     }
 
-    .team-names {
+    .team-grid {
         grid-template-columns:
             repeat(2, 1fr);
 
-        gap: 17px 10px;
+        gap:
+            16px 8px;
     }
 
-    .team-names span {
-        font-size: 12px;
+    .team-grid span {
+        font-size:
+            12px;
+    }
+
+    .team-introduction {
+        font-size:
+            12px;
     }
 
     .special-thanks p {
-        font-size: 13px;
+        font-size:
+            12px;
     }
 
     .studio-name {
-        font-size: 45px;
-        letter-spacing: .14em;
-        text-indent: .14em;
+        font-size:
+            36px;
+
+        letter-spacing:
+            0.12em;
+
+        text-indent:
+            0.12em;
     }
 
-    #soundButton,
-    #skipButton {
-        bottom: 12px;
-        padding: 8px 10px;
-        font-size: 8px;
+    .final-block h2 {
+        font-size:
+            27px;
+
+        letter-spacing:
+            0.12em;
+
+        text-indent:
+            0.12em;
+    }
+
+    .final-quote {
+        font-size:
+            11px;
+    }
+
+    .final-logo {
+        margin-top:
+            50px;
+
+        font-size:
+            43px;
+
+        letter-spacing:
+            0.16em;
+
+        text-indent:
+            0.16em;
     }
 
     #soundButton {
-        right: 12px;
-    }
+        right:
+            12px;
 
-    #skipButton {
-        left: 12px;
+        bottom:
+            12px;
+
+        padding:
+            8px 11px;
+
+        font-size:
+            8px;
     }
 }
+
+
+/* =========================================================
+   VERY SMALL DEVICES
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .team-grid {
+        gap:
+            13px 5px;
+    }
+
+    .team-grid span {
+        font-size:
+            11px;
+    }
+
+    .final-message {
+        letter-spacing:
+            0.25em;
+
+        text-indent:
+            0.25em;
+    }
+
+    .final-block h2 {
+        font-size:
+            24px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
     *,
     *::before,
     *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
     }
 }
