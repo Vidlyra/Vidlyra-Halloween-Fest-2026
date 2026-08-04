@@ -1,25 +1,25 @@
 /* =========================================================
    VIDLYRA HALLOWEEN FEST 2026
-   CINEMATIC END CREDITS
-   PALETTE: ORANGE • BLACK • WHITE
-   DURATION: 3:00
+   OFFICIAL CINEMATIC END CREDITS
+   3:00 EXPERIENCE
+   PALETTE: BLACK • ORANGE • WHITE
 ========================================================= */
 
 :root {
-    --black: #030201;
-    --black-soft: #090604;
+    --black: #020201;
+    --black-soft: #080604;
 
     --orange: #ff7518;
-    --orange-light: #ff9b45;
-    --orange-dark: #a63d08;
+    --orange-bright: #ff9b3d;
+    --orange-dark: #8f3000;
 
     --white: #fffaf2;
-    --white-soft: #e9e1d8;
+    --white-soft: #e9e0d5;
 
-    --gray: #9c9187;
-    --gray-dark: #5e554e;
+    --gray: #9b9187;
+    --gray-dark: #5b524b;
 
-    --line: rgba(255, 117, 24, 0.22);
+    --orange-glow: rgba(255, 117, 24, 0.45);
 }
 
 
@@ -51,6 +51,9 @@ body {
         Arial,
         Helvetica,
         sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 
@@ -63,15 +66,20 @@ body {
 
     inset: 0;
 
+    width: 100%;
+    height: 100%;
+
     overflow: hidden;
 
     background:
         radial-gradient(
-            ellipse at 50% 40%,
-            rgba(130, 45, 5, 0.10),
-            transparent 55%
+            ellipse at 50% 45%,
+            rgba(105, 35, 4, 0.12),
+            transparent 58%
         ),
         var(--black);
+
+    isolation: isolate;
 }
 
 
@@ -92,7 +100,11 @@ body {
 }
 
 
-.orange-glow {
+/* =========================================================
+   ORANGE AMBIENT LIGHT
+========================================================= */
+
+.orangeGlow {
     position: absolute;
 
     width: 75vw;
@@ -102,7 +114,7 @@ body {
     max-height: 900px;
 
     left: 50%;
-    top: 38%;
+    top: 48%;
 
     transform:
         translate(-50%, -50%);
@@ -110,12 +122,12 @@ body {
     background:
         radial-gradient(
             circle,
-            rgba(255, 100, 20, 0.12),
+            rgba(255, 105, 20, 0.12),
             rgba(180, 55, 0, 0.045) 35%,
-            transparent 70%
+            transparent 72%
         );
 
-    filter: blur(20px);
+    filter: blur(28px);
 
     animation:
         orangeBreath 8s ease-in-out infinite;
@@ -125,7 +137,7 @@ body {
 
     0%,
     100% {
-        opacity: 0.45;
+        opacity: 0.4;
 
         transform:
             translate(-50%, -50%)
@@ -149,58 +161,119 @@ body {
 .fog {
     position: absolute;
 
+    left: -30%;
+
     width: 160%;
     height: 35%;
-
-    left: -30%;
 
     border-radius: 50%;
 
     background:
         radial-gradient(
             ellipse,
-            rgba(180, 150, 125, 0.055),
+            rgba(210, 195, 180, 0.055),
             transparent 68%
         );
 
-    filter: blur(38px);
+    filter: blur(42px);
 }
 
-.fog-one {
-    bottom: 3%;
+.fogOne {
+    bottom: 2%;
 
     animation:
-        fogOne 25s ease-in-out infinite alternate;
+        fogMoveOne 26s ease-in-out infinite alternate;
 }
 
-.fog-two {
-    bottom: 17%;
+.fogTwo {
+    bottom: 16%;
 
     opacity: 0.55;
 
     animation:
-        fogTwo 32s ease-in-out infinite alternate;
+        fogMoveTwo 34s ease-in-out infinite alternate;
 }
 
-@keyframes fogOne {
+@keyframes fogMoveOne {
 
     from {
-        transform: translateX(-8%);
+        transform:
+            translateX(-8%);
     }
 
     to {
-        transform: translateX(8%);
+        transform:
+            translateX(8%);
     }
 }
 
-@keyframes fogTwo {
+@keyframes fogMoveTwo {
 
     from {
-        transform: translateX(7%);
+        transform:
+            translateX(7%);
     }
 
     to {
-        transform: translateX(-7%);
+        transform:
+            translateX(-7%);
+    }
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+#particles {
+    position: absolute;
+
+    inset: 0;
+
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 155, 61, 0.7);
+
+    box-shadow:
+        0 0 8px
+        rgba(255, 100, 20, 0.5);
+
+    animation:
+        particleRise linear infinite;
+}
+
+@keyframes particleRise {
+
+    from {
+        transform:
+            translate3d(0, 110vh, 0);
+
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 0.7;
+    }
+
+    85% {
+        opacity: 0.7;
+    }
+
+    to {
+        transform:
+            translate3d(0, -10vh, 0);
+
+        opacity: 0;
     }
 }
 
@@ -209,7 +282,7 @@ body {
    FILM GRAIN
 ========================================================= */
 
-.film-grain {
+.grain {
     position: absolute;
 
     inset: -50%;
@@ -233,23 +306,28 @@ body {
 @keyframes grainMove {
 
     0% {
-        transform: translate(0, 0);
+        transform:
+            translate(0, 0);
     }
 
     25% {
-        transform: translate(2%, -1%);
+        transform:
+            translate(2%, -1%);
     }
 
     50% {
-        transform: translate(-1%, 2%);
+        transform:
+            translate(-1%, 2%);
     }
 
     75% {
-        transform: translate(1%, 1%);
+        transform:
+            translate(1%, 1%);
     }
 
     100% {
-        transform: translate(-2%, -1%);
+        transform:
+            translate(-2%, -1%);
     }
 }
 
@@ -266,146 +344,96 @@ body {
     background:
         radial-gradient(
             ellipse at center,
-            transparent 38%,
-            rgba(0, 0, 0, 0.55) 100%
+            transparent 36%,
+            rgba(0, 0, 0, 0.58) 100%
         );
 }
 
 
 /* =========================================================
-   PARTICLES
+   START SCREEN
 ========================================================= */
 
-#particles {
-    position: absolute;
-
-    inset: 0;
-}
-
-.particle {
-    position: absolute;
-
-    width: 2px;
-    height: 2px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(255, 156, 75, 0.65);
-
-    box-shadow:
-        0 0 7px rgba(255, 100, 20, 0.55);
-
-    animation:
-        particleRise linear infinite;
-}
-
-@keyframes particleRise {
-
-    from {
-        transform:
-            translateY(110vh);
-
-        opacity: 0;
-    }
-
-    15% {
-        opacity: 0.7;
-    }
-
-    85% {
-        opacity: 0.7;
-    }
-
-    to {
-        transform:
-            translateY(-10vh);
-
-        opacity: 0;
-    }
-}
-
-
-/* =========================================================
-   OPENING
-========================================================= */
-
-.credit-scene {
+#startScreen {
     position: absolute;
 
     inset: 0;
 
-    z-index: 10;
+    z-index: 50;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
-    background:
-        rgba(0, 0, 0, 0.9);
+    padding: 30px;
 
+    background:
+        rgba(0, 0, 0, 0.93);
+
+    transition:
+        opacity 1.5s ease,
+        visibility 1.5s ease;
+}
+
+#startScreen.hidden {
     opacity: 0;
 
     visibility: hidden;
 
-    transition:
-        opacity 1.6s ease,
-        visibility 1.6s ease;
+    pointer-events: none;
 }
 
-.credit-scene.active {
-    opacity: 1;
-
-    visibility: visible;
-}
-
-.opening-content {
-    width: min(90%, 850px);
+.startContent {
+    width:
+        min(900px, 92%);
 
     text-align: center;
 
-    opacity: 0;
-
-    transform:
-        translateY(18px);
-
-    transition:
-        opacity 1.8s ease,
-        transform 1.8s ease;
+    animation:
+        startAppear 2s ease both;
 }
 
-.credit-scene.active
-.opening-content {
-    opacity: 1;
+@keyframes startAppear {
 
-    transform:
-        translateY(0);
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
 }
 
 
 /* =========================================================
-   OPENING TYPOGRAPHY
+   START TYPOGRAPHY
 ========================================================= */
 
-.small-label {
+.startEyebrow {
     font-size: 10px;
 
-    letter-spacing: 0.48em;
-
-    color:
-        var(--gray);
+    letter-spacing:
+        0.48em;
 
     text-indent:
         0.48em;
+
+    color:
+        var(--gray);
 }
 
-.vidlyra-title {
-    margin-top: 25px;
+.startContent h1 {
+    margin-top: 24px;
 
     font-size:
-        clamp(48px, 10vw, 115px);
+        clamp(52px, 11vw, 125px);
 
     font-weight: 200;
 
@@ -419,35 +447,17 @@ body {
         var(--white);
 
     text-shadow:
-        0 0 30px rgba(255, 117, 24, 0.12);
-
-    animation:
-        titleGlow 6s ease-in-out infinite;
+        0 0 35px
+        rgba(255, 117, 24, 0.15);
 }
 
-@keyframes titleGlow {
-
-    0%,
-    100% {
-        text-shadow:
-            0 0 15px
-            rgba(255, 117, 24, 0.08);
-    }
-
-    50% {
-        text-shadow:
-            0 0 35px
-            rgba(255, 117, 24, 0.28);
-    }
-}
-
-.title-line {
-    width: 110px;
+.startLine {
+    width: 115px;
 
     height: 1px;
 
     margin:
-        25px auto;
+        24px auto;
 
     background:
         linear-gradient(
@@ -458,32 +468,32 @@ body {
         );
 }
 
-.opening-content h2 {
+.startContent h2 {
     font-size:
-        clamp(12px, 2vw, 18px);
+        clamp(12px, 2vw, 19px);
 
     font-weight: 400;
 
     letter-spacing:
-        0.42em;
+        0.4em;
 
     text-indent:
-        0.42em;
+        0.4em;
 
     color:
         var(--white-soft);
 }
 
-.opening-subtitle {
-    margin-top: 18px;
+.startContent p {
+    margin-top: 16px;
 
     font-size: 10px;
 
     letter-spacing:
-        0.35em;
+        0.3em;
 
     text-indent:
-        0.35em;
+        0.3em;
 
     color:
         var(--gray);
@@ -491,10 +501,71 @@ body {
 
 
 /* =========================================================
+   ENTER BUTTON
+========================================================= */
+
+#enterButton {
+    margin-top: 48px;
+
+    min-width: 145px;
+
+    padding:
+        13px 28px;
+
+    border:
+        1px solid
+        rgba(255, 117, 24, 0.5);
+
+    background:
+        rgba(255, 90, 10, 0.06);
+
+    color:
+        var(--white);
+
+    font-size: 10px;
+
+    letter-spacing:
+        0.28em;
+
+    text-indent:
+        0.28em;
+
+    cursor: pointer;
+
+    transition:
+        background 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        transform 0.35s ease;
+}
+
+#enterButton:hover {
+    background:
+        rgba(255, 117, 24, 0.15);
+
+    border-color:
+        var(--orange);
+
+    box-shadow:
+        0 0 30px
+        rgba(255, 117, 24, 0.18);
+
+    transform:
+        translateY(-2px);
+}
+
+#enterButton:active {
+    transform:
+        translateY(0)
+        scale(0.98);
+}
+
+
+/* =========================================================
    CREDIT VIEWPORT
 ========================================================= */
 
-#creditsViewport {
+#creditViewport {
     position: absolute;
 
     inset: 0;
@@ -508,11 +579,11 @@ body {
     visibility: hidden;
 
     transition:
-        opacity 1.5s ease,
-        visibility 1.5s ease;
+        opacity 1.2s ease,
+        visibility 1.2s ease;
 }
 
-#creditsViewport.active {
+#creditViewport.active {
     opacity: 1;
 
     visibility: visible;
@@ -523,7 +594,7 @@ body {
    CREDIT ROLL
 ========================================================= */
 
-#creditsRoll {
+#creditRoll {
     position: absolute;
 
     left: 0;
@@ -543,18 +614,18 @@ body {
    CREDIT BLOCK
 ========================================================= */
 
-.credit-block {
+.creditBlock {
     width:
-        min(820px, 88%);
+        min(820px, 90%);
 
     min-height:
-        100vh;
+        62vh;
 
     margin:
         0 auto;
 
     padding:
-        110px 20px;
+        100px 20px;
 
     display:
         flex;
@@ -571,63 +642,99 @@ body {
 
 
 /* =========================================================
-   CHAPTER
+   OPENING BLOCK
 ========================================================= */
 
-.chapter-number {
-    margin-bottom: 17px;
-
-    font-size: 10px;
-
-    letter-spacing:
-        0.5em;
-
-    text-indent:
-        0.5em;
-
-    color:
-        rgba(255, 117, 24, 0.7);
+.openingBlock {
+    min-height:
+        75vh;
 }
 
-.chapter-title {
+.vidlyraMark {
     font-size:
-        clamp(18px, 3vw, 29px);
+        clamp(48px, 9vw, 100px);
 
-    font-weight: 300;
+    font-weight: 200;
 
     letter-spacing:
-        0.23em;
+        0.25em;
 
     text-indent:
-        0.23em;
+        0.25em;
 
     color:
         var(--white);
 
-    margin-bottom:
-        60px;
+    text-shadow:
+        0 0 30px
+        rgba(255, 117, 24, 0.18);
+}
+
+.festivalTitle {
+    margin-top: 22px;
+
+    font-size:
+        clamp(12px, 2vw, 18px);
+
+    letter-spacing:
+        0.35em;
+
+    text-indent:
+        0.35em;
+
+    color:
+        var(--white-soft);
+}
+
+.thinLine {
+    width: 100px;
+
+    height: 1px;
+
+    margin:
+        28px auto;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--orange),
+            transparent
+        );
+}
+
+.creditLabel {
+    font-size: 9px;
+
+    letter-spacing:
+        0.3em;
+
+    text-indent:
+        0.3em;
+
+    color:
+        var(--gray);
 }
 
 
 /* =========================================================
-   CREDITS
+   CREDIT TYPOGRAPHY
 ========================================================= */
 
-.credit-group {
-    margin:
-        30px 0;
-}
+.creditRole {
+    margin-top: 34px;
 
-.credit-role {
+    max-width: 650px;
+
     font-size: 10px;
 
-    line-height: 1.7;
+    line-height: 1.8;
 
     letter-spacing:
-        0.24em;
+        0.22em;
 
     text-indent:
-        0.24em;
+        0.22em;
 
     text-transform:
         uppercase;
@@ -636,11 +743,15 @@ body {
         var(--gray);
 }
 
-.credit-name {
-    margin-top: 10px;
+.creditRole:first-child {
+    margin-top: 0;
+}
+
+.creditName {
+    margin-top: 9px;
 
     font-size:
-        clamp(18px, 2.5vw, 26px);
+        clamp(18px, 2.5vw, 28px);
 
     font-weight: 400;
 
@@ -651,16 +762,16 @@ body {
         var(--white-soft);
 }
 
-.credit-name.featured {
+.creditName.featured {
     font-size:
-        clamp(24px, 4vw, 38px);
+        clamp(25px, 4vw, 40px);
 
     color:
         var(--white);
 
     text-shadow:
-        0 0 20px
-        rgba(255, 117, 24, 0.08);
+        0 0 22px
+        rgba(255, 117, 24, 0.1);
 }
 
 
@@ -668,27 +779,20 @@ body {
    TEAM
 ========================================================= */
 
-.team-block {
+.teamBlock {
     width:
-        min(1050px, 92%);
+        min(1050px, 94%);
+
+    min-height:
+        90vh;
 }
 
-.team-introduction {
-    width:
-        min(620px, 90%);
-
-    margin:
-        -30px auto 55px;
-
-    font-size: 13px;
-
-    line-height: 1.9;
-
-    color:
-        var(--gray);
+.teamBlock .creditRole {
+    margin-bottom:
+        55px;
 }
 
-.team-grid {
+.teamGrid {
     width:
         min(900px, 100%);
 
@@ -699,14 +803,15 @@ body {
         repeat(5, 1fr);
 
     gap:
-        20px 12px;
+        22px 15px;
 }
 
-.team-grid span {
-    font-size: 13px;
+.teamGrid span {
+    font-size:
+        13px;
 
     letter-spacing:
-        0.08em;
+        0.07em;
 
     color:
         var(--white-soft);
@@ -714,47 +819,54 @@ body {
 
 
 /* =========================================================
-   QUIET SECTION
+   THANKS
 ========================================================= */
 
-.quiet-block {
+.thanksBlock {
     min-height:
-        90vh;
+        80vh;
 }
 
-.special-thanks {
+.thanksBlock p {
     width:
-        min(650px, 90%);
-}
+        min(620px, 90%);
 
-.special-thanks p {
     margin:
-        25px auto;
+        24px auto;
 
-    max-width:
-        600px;
+    font-size:
+        14px;
 
-    font-size: 14px;
-
-    line-height: 2;
+    line-height:
+        2;
 
     color:
         var(--gray);
 }
 
-.studio-credit {
+.producedLabel {
     margin-top:
-        65px;
+        60px;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        0.25em;
+
+    color:
+        var(--gray);
 }
 
-.studio-name {
+.studioName {
     margin-top:
         17px;
 
     font-size:
-        clamp(32px, 6vw, 62px);
+        clamp(34px, 6vw, 64px);
 
-    font-weight: 200;
+    font-weight:
+        200;
 
     letter-spacing:
         0.18em;
@@ -766,12 +878,12 @@ body {
         var(--white);
 }
 
-.studio-tagline {
+.studioTagline {
     margin-top:
-        16px;
+        15px;
 
     font-size:
-        11px;
+        10px;
 
     letter-spacing:
         0.18em;
@@ -782,55 +894,49 @@ body {
 
 
 /* =========================================================
-   FINAL SECTION
+   FINAL CARD
 ========================================================= */
 
-.final-block {
+.finalBlock {
     min-height:
-        100vh;
+        90vh;
+
+    padding-top:
+        120px;
+
+    padding-bottom:
+        120px;
 }
 
 .pumpkin {
     font-size:
-        clamp(45px, 8vw, 80px);
+        clamp(46px, 8vw, 82px);
 
     filter:
         drop-shadow(
-            0 0 18px
+            0 0 20px
             rgba(255, 117, 24, 0.55)
         );
 
     animation:
-        pumpkinGlow 3.5s ease-in-out infinite;
+        pumpkinPulse 3.5s ease-in-out infinite;
 }
 
-@keyframes pumpkinGlow {
+@keyframes pumpkinPulse {
 
     0%,
     100% {
         transform:
             scale(0.97);
-
-        filter:
-            drop-shadow(
-                0 0 12px
-                rgba(255, 117, 24, 0.35)
-            );
     }
 
     50% {
         transform:
             scale(1.04);
-
-        filter:
-            drop-shadow(
-                0 0 28px
-                rgba(255, 117, 24, 0.7)
-            );
     }
 }
 
-.final-message {
+.thankYou {
     margin-top:
         28px;
 
@@ -838,38 +944,91 @@ body {
         clamp(12px, 2vw, 17px);
 
     letter-spacing:
-        0.4em;
+        0.34em;
 
     text-indent:
-        0.4em;
+        0.34em;
 
     color:
         var(--gray);
 }
 
-.final-block h2 {
+.universe {
     margin-top:
-        20px;
+        12px;
 
     font-size:
-        clamp(28px, 6vw, 60px);
+        clamp(22px, 4vw, 42px);
 
     font-weight:
         300;
 
     letter-spacing:
-        0.18em;
+        0.16em;
 
     text-indent:
-        0.18em;
+        0.16em;
 
     color:
         var(--white);
 }
 
-.final-quote {
+.finalLine {
+    width:
+        90px;
+
+    height:
+        1px;
+
+    margin:
+        28px auto;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--orange),
+            transparent
+        );
+}
+
+.nextHalloween {
+    font-size:
+        11px;
+
+    letter-spacing:
+        0.35em;
+
+    text-indent:
+        0.35em;
+
+    color:
+        var(--gray);
+}
+
+.finalBlock h2 {
     margin-top:
-        35px;
+        17px;
+
+    font-size:
+        clamp(27px, 6vw, 60px);
+
+    font-weight:
+        300;
+
+    letter-spacing:
+        0.15em;
+
+    text-indent:
+        0.15em;
+
+    color:
+        var(--white);
+}
+
+.quote {
+    margin-top:
+        32px;
 
     font-size:
         13px;
@@ -881,42 +1040,42 @@ body {
         var(--gray);
 }
 
-.copyright {
+.finalLogo {
     margin-top:
-        50px;
+        65px;
 
     font-size:
-        9px;
-
-    letter-spacing:
-        0.3em;
-
-    color:
-        var(--gray-dark);
-}
-
-.final-logo {
-    margin-top:
-        70px;
-
-    font-size:
-        clamp(42px, 9vw, 100px);
+        clamp(42px, 8vw, 92px);
 
     font-weight:
         200;
 
     letter-spacing:
-        0.25em;
+        0.24em;
 
     text-indent:
-        0.25em;
+        0.24em;
 
     color:
         var(--white);
 
     text-shadow:
-        0 0 35px
-        rgba(255, 117, 24, 0.15);
+        0 0 32px
+        rgba(255, 117, 24, 0.16);
+}
+
+.copyright {
+    margin-top:
+        35px;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        0.28em;
+
+    color:
+        var(--gray-dark);
 }
 
 
@@ -924,9 +1083,9 @@ body {
    END SPACE
 ========================================================= */
 
-.credits-end {
+.endSpace {
     height:
-        80vh;
+        65vh;
 }
 
 
@@ -952,10 +1111,10 @@ body {
 
     border:
         1px solid
-        rgba(255, 117, 24, 0.25);
+        rgba(255, 117, 24, 0.28);
 
     background:
-        rgba(0, 0, 0, 0.65);
+        rgba(0, 0, 0, 0.68);
 
     color:
         var(--white-soft);
@@ -973,20 +1132,125 @@ body {
         blur(8px);
 
     transition:
-        background 0.3s ease,
-        border-color 0.3s ease,
-        color 0.3s ease;
+        0.3s ease;
 }
 
 #soundButton:hover {
-    background:
-        rgba(255, 90, 10, 0.12);
-
     border-color:
-        rgba(255, 117, 24, 0.6);
+        rgba(255, 117, 24, 0.7);
+
+    background:
+        rgba(255, 117, 24, 0.1);
 
     color:
         var(--white);
+}
+
+
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+#timeline {
+    position:
+        fixed;
+
+    left:
+        50%;
+
+    bottom:
+        20px;
+
+    transform:
+        translateX(-50%);
+
+    z-index:
+        90;
+
+    width:
+        min(430px, 55vw);
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    color:
+        var(--gray);
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        0.08em;
+
+    opacity:
+        0.65;
+
+    transition:
+        opacity 0.5s ease;
+}
+
+#timeline:hover {
+    opacity:
+        1;
+}
+
+.timelineTrack {
+    flex:
+        1;
+
+    height:
+        2px;
+
+    overflow:
+        hidden;
+
+    background:
+        rgba(255, 255, 255, 0.12);
+}
+
+#timelineProgress {
+    width:
+        0%;
+
+    height:
+        100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--orange-dark),
+            var(--orange),
+            var(--orange-bright)
+        );
+}
+
+
+/* =========================================================
+   FINISHED STATE
+========================================================= */
+
+#creditsCinema.finished {
+    animation:
+        cinemaFadeOut 3.5s ease forwards;
+}
+
+@keyframes cinemaFadeOut {
+
+    from {
+        opacity:
+            1;
+    }
+
+    to {
+        opacity:
+            0;
+    }
 }
 
 
@@ -996,22 +1260,26 @@ body {
 
 @media (max-width: 700px) {
 
-    .small-label {
-        font-size: 8px;
+    .startEyebrow {
+        font-size:
+            8px;
 
         letter-spacing:
             0.32em;
-    }
-
-    .opening-content h2 {
-        letter-spacing:
-            0.24em;
 
         text-indent:
-            0.24em;
+            0.32em;
     }
 
-    .opening-subtitle {
+    .startContent h1 {
+        letter-spacing:
+            0.18em;
+
+        text-indent:
+            0.18em;
+    }
+
+    .startContent h2 {
         letter-spacing:
             0.22em;
 
@@ -1019,52 +1287,55 @@ body {
             0.22em;
     }
 
-    .credit-block {
+    .startContent p {
+        letter-spacing:
+            0.2em;
+
+        text-indent:
+            0.2em;
+    }
+
+    #enterButton {
+        margin-top:
+            38px;
+
+        padding:
+            12px 23px;
+    }
+
+    .creditBlock {
         width:
             92%;
+
+        min-height:
+            65vh;
 
         padding:
             80px 10px;
     }
 
-    .chapter-title {
-        margin-bottom:
-            42px;
-
-        letter-spacing:
-            0.15em;
-
-        text-indent:
-            0.15em;
-    }
-
-    .credit-group {
-        margin:
-            25px 0;
-    }
-
-    .credit-role {
+    .creditRole {
         font-size:
             8px;
 
         letter-spacing:
-            0.16em;
+            0.15em;
 
         text-indent:
-            0.16em;
+            0.15em;
     }
 
-    .credit-name {
+    .creditName {
         font-size:
             17px;
     }
 
-    .credit-name.featured {
+    .creditName.featured {
         font-size:
-            23px;
+            24px;
     }
 
-    .team-grid {
+    .teamGrid {
         grid-template-columns:
             repeat(2, 1fr);
 
@@ -1072,60 +1343,55 @@ body {
             16px 8px;
     }
 
-    .team-grid span {
-        font-size:
-            12px;
-    }
-
-    .team-introduction {
-        font-size:
-            12px;
-    }
-
-    .special-thanks p {
-        font-size:
-            12px;
-    }
-
-    .studio-name {
-        font-size:
-            36px;
-
-        letter-spacing:
-            0.12em;
-
-        text-indent:
-            0.12em;
-    }
-
-    .final-block h2 {
-        font-size:
-            27px;
-
-        letter-spacing:
-            0.12em;
-
-        text-indent:
-            0.12em;
-    }
-
-    .final-quote {
+    .teamGrid span {
         font-size:
             11px;
     }
 
-    .final-logo {
+    .thanksBlock p {
+        font-size:
+            12px;
+    }
+
+    .studioName {
+        font-size:
+            34px;
+
+        letter-spacing:
+            0.1em;
+
+        text-indent:
+            0.1em;
+    }
+
+    .finalBlock h2 {
+        font-size:
+            27px;
+
+        letter-spacing:
+            0.1em;
+
+        text-indent:
+            0.1em;
+    }
+
+    .quote {
+        font-size:
+            11px;
+    }
+
+    .finalLogo {
         margin-top:
-            50px;
+            48px;
 
         font-size:
             43px;
 
         letter-spacing:
-            0.16em;
+            0.14em;
 
         text-indent:
-            0.16em;
+            0.14em;
     }
 
     #soundButton {
@@ -1136,42 +1402,118 @@ body {
             12px;
 
         padding:
-            8px 11px;
+            8px 10px;
 
         font-size:
             8px;
+    }
+
+    #timeline {
+        left:
+            12px;
+
+        right:
+            12px;
+
+        bottom:
+            52px;
+
+        width:
+            auto;
+
+        transform:
+            none;
     }
 }
 
 
 /* =========================================================
-   VERY SMALL DEVICES
+   SMALL PHONES
 ========================================================= */
 
 @media (max-width: 380px) {
 
-    .team-grid {
+    .teamGrid {
         gap:
             13px 5px;
     }
 
-    .team-grid span {
+    .teamGrid span {
         font-size:
-            11px;
+            10px;
     }
 
-    .final-message {
+    .finalBlock h2 {
+        font-size:
+            23px;
+    }
+
+    .nextHalloween {
         letter-spacing:
-            0.25em;
+            0.24em;
 
         text-indent:
-            0.25em;
+            0.24em;
+    }
+}
+
+
+/* =========================================================
+   LANDSCAPE MOBILE
+========================================================= */
+
+@media (
+    max-height: 500px
+) and (
+    orientation: landscape
+) {
+
+    .creditBlock {
+        min-height:
+            100vh;
+
+        padding:
+            50px 15px;
     }
 
-    .final-block h2 {
-        font-size:
-            24px;
+    .openingBlock {
+        min-height:
+            100vh;
     }
+
+    .teamBlock {
+        min-height:
+            130vh;
+    }
+
+    .finalBlock {
+        min-height:
+            120vh;
+    }
+
+    .startContent h1 {
+        font-size:
+            45px;
+    }
+
+    #enterButton {
+        margin-top:
+            20px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+button:focus-visible {
+    outline:
+        2px solid
+        var(--orange);
+
+    outline-offset:
+        4px;
 }
 
 
