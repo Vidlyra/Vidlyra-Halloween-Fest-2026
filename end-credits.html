@@ -11,57 +11,51 @@
 
 <body>
 
-<main id="creditsCinema">
+<div id="creditsCinema">
 
     <!-- =========================================
-         CINEMATIC ATMOSPHERE
+         ATMOSPHERE
     ========================================== -->
 
-    <div class="atmosphere" aria-hidden="true">
-
-        <div class="orange-glow"></div>
-
-        <div class="fog fog-one"></div>
-        <div class="fog fog-two"></div>
-
+    <div class="atmosphere">
+        <div class="orangeGlow"></div>
+        <div class="fog fogOne"></div>
+        <div class="fog fogTwo"></div>
         <div id="particles"></div>
-
-        <div class="film-grain"></div>
-
+        <div class="grain"></div>
         <div class="vignette"></div>
-
     </div>
 
 
     <!-- =========================================
-         OPENING TITLE
-         0:00 — 0:30
-         A SILENT HALLOWEEN NIGHT
+         START SCREEN
     ========================================== -->
 
-    <section
-        id="opening"
-        class="credit-scene active">
+    <section id="startScreen">
 
-        <div class="opening-content">
+        <div class="startContent">
 
-            <div class="small-label">
+            <div class="startEyebrow">
                 A VIDLYRA ORIGINAL
             </div>
 
-            <h1 class="vidlyra-title">
+            <h1>
                 VIDLYRA
             </h1>
 
-            <div class="title-line"></div>
+            <div class="startLine"></div>
 
             <h2>
                 HALLOWEEN FEST 2026
             </h2>
 
-            <p class="opening-subtitle">
+            <p>
                 OFFICIAL END CREDITS
             </p>
+
+            <button id="enterButton">
+                ENTER
+            </button>
 
         </div>
 
@@ -69,203 +63,168 @@
 
 
     <!-- =========================================
-         AUTOMATIC CREDIT ROLL
+         CINEMATIC CREDIT VIEW
     ========================================== -->
 
-    <section id="creditsViewport">
+    <section id="creditViewport">
 
-        <div id="creditsRoll">
+        <div id="creditRoll">
 
 
-            <!-- ---------------------------------
-                 0:00 — 0:30
-                 A SILENT HALLOWEEN NIGHT
-            ---------------------------------- -->
+            <!-- =================================
+                 OPENING
+                 00:00
+            ================================== -->
 
-            <section class="credit-block opening-credit">
+            <div class="creditBlock openingBlock">
 
-                <div class="chapter-number">
-                    I
+                <div class="vidlyraMark">
+                    VIDLYRA
                 </div>
 
-                <div class="chapter-title">
-                    A SILENT HALLOWEEN NIGHT
+                <div class="festivalTitle">
+                    HALLOWEEN FEST 2026
                 </div>
 
-                <div class="credit-spacer"></div>
+                <div class="thinLine"></div>
 
-                <div class="credit-role">
-                    Executive Producer &amp; Director
+                <div class="creditLabel">
+                    OFFICIAL END CREDITS
                 </div>
 
-                <div class="credit-name featured">
+            </div>
+
+
+            <!-- =================================
+                 00:15
+            ================================== -->
+
+            <div class="creditBlock">
+
+                <div class="creditRole">
+                    EXECUTIVE PRODUCER &amp; DIRECTOR
+                </div>
+
+                <div class="creditName featured">
                     Alwin Dison R
                 </div>
 
-                <div class="credit-role">
-                    Creative AI Assistant
+                <div class="creditRole">
+                    CREATIVE AI ASSISTANT
                 </div>
 
-                <div class="credit-name featured">
+                <div class="creditName featured">
                     Lyra
                 </div>
 
-            </section>
+            </div>
 
 
-            <!-- ---------------------------------
-                 0:30 — 1:00
-                 MEMORIES OF THE FESTIVAL
-            ---------------------------------- -->
+            <!-- =================================
+                 00:35
+            ================================== -->
 
-            <section class="credit-block">
+            <div class="creditBlock">
 
-                <div class="chapter-number">
-                    II
+                <div class="creditRole">
+                    LEAD CHARACTER ARTIST
                 </div>
 
-                <div class="chapter-title">
-                    MEMORIES OF THE FESTIVAL
+                <div class="creditName">
+                    Luna
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Lead Character Artist
-                    </div>
-
-                    <div class="credit-name">
-                        Luna
-                    </div>
-
+                <div class="creditRole">
+                    SOUND DESIGN &amp; AUDIO
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Story Development
-                    </div>
-
-                    <div class="credit-name">
-                        Nova
-                    </div>
-
+                <div class="creditName">
+                    Rex
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Background Art &amp; Environment Design
-                    </div>
-
-                    <div class="credit-name">
-                        Aiden
-                    </div>
-
+                <div class="creditRole">
+                    STORY DEVELOPMENT
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Animation Supervisor
-                    </div>
-
-                    <div class="credit-name">
-                        Aria
-                    </div>
-
+                <div class="creditName">
+                    Nova
                 </div>
 
-            </section>
+            </div>
 
 
-            <!-- ---------------------------------
-                 1:00 — 1:40
-                 HEARTS SHINE TOGETHER
-            ---------------------------------- -->
+            <!-- =================================
+                 01:00
+            ================================== -->
 
-            <section class="credit-block">
+            <div class="creditBlock">
 
-                <div class="chapter-number">
-                    III
+                <div class="creditRole">
+                    BACKGROUND ART &amp;
+                    ENVIRONMENT DESIGN
                 </div>
 
-                <div class="chapter-title">
-                    HEARTS SHINE TOGETHER
+                <div class="creditName">
+                    Aiden
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Sound Design &amp; Audio
-                    </div>
-
-                    <div class="credit-name">
-                        Rex
-                    </div>
-
+                <div class="creditRole">
+                    ANIMATION SUPERVISOR
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Visual Effects (VFX)
-                    </div>
-
-                    <div class="credit-name">
-                        Kai
-                    </div>
-
+                <div class="creditName">
+                    Aria
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        UI / Motion Graphics
-                    </div>
-
-                    <div class="credit-name">
-                        Mira
-                    </div>
-
+                <div class="creditRole">
+                    VISUAL EFFECTS (VFX)
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Quality Assurance &amp; Production Support
-                    </div>
-
-                    <div class="credit-name">
-                        Zane
-                    </div>
-
+                <div class="creditName">
+                    Kai
                 </div>
 
-            </section>
+            </div>
 
 
-            <!-- ---------------------------------
-                 CREATIVE TEAM
-                 1:00 — 2:20
-            ---------------------------------- -->
+            <!-- =================================
+                 01:25
+            ================================== -->
 
-            <section class="credit-block team-block">
+            <div class="creditBlock">
 
-                <div class="chapter-number">
-                    IV
+                <div class="creditRole">
+                    UI / MOTION GRAPHICS
                 </div>
 
-                <div class="chapter-title">
-                    CREATIVE TEAM
+                <div class="creditName">
+                    Mira
                 </div>
 
-                <p class="team-introduction">
-                    With appreciation to the creative voices
-                    behind the VidLyra experience.
-                </p>
+                <div class="creditRole">
+                    QUALITY ASSURANCE &
+                    PRODUCTION SUPPORT
+                </div>
 
-                <div class="team-grid">
+                <div class="creditName">
+                    Zane
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 ADDITIONAL TEAM
+                 01:40–02:20
+            ================================== -->
+
+            <div class="creditBlock teamBlock">
+
+                <div class="creditRole">
+                    ADDITIONAL CREATIVE TEAM
+                </div>
+
+                <div class="teamGrid">
 
                     <span>Ash</span>
                     <span>Blaze</span>
@@ -329,166 +288,91 @@
 
                 </div>
 
-            </section>
+            </div>
 
 
-            <!-- ---------------------------------
-                 1:40 — 2:20
-                 UNDER THE HARVEST MOON
-            ---------------------------------- -->
+            <!-- =================================
+                 02:20
+            ================================== -->
 
-            <section class="credit-block">
+            <div class="creditBlock thanksBlock">
 
-                <div class="chapter-number">
-                    V
+                <div class="creditRole">
+                    SPECIAL THANKS
                 </div>
 
-                <div class="chapter-title">
-                    UNDER THE HARVEST MOON
+                <p>
+                    To everyone who entered the
+                    VidLyra Universe and celebrated
+                    Halloween Fest 2026.
+                </p>
+
+                <p>
+                    Your support inspires every
+                    story we create.
+                </p>
+
+                <div class="producedLabel">
+                    PRODUCED BY
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Creative Direction
-                    </div>
-
-                    <div class="credit-name">
-                        VidLyra Studio
-                    </div>
-
+                <div class="studioName">
+                    VIDLYRA STUDIO
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Visual Design
-                    </div>
-
-                    <div class="credit-name">
-                        VidLyra Creative Team
-                    </div>
-
+                <div class="studioTagline">
+                    where imagination knows no boundaries
                 </div>
 
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Interactive Experience
-                    </div>
-
-                    <div class="credit-name">
-                        VidLyra Production
-                    </div>
-
-                </div>
-
-                <div class="credit-group">
-
-                    <div class="credit-role">
-                        Halloween World
-                    </div>
-
-                    <div class="credit-name">
-                        VidLyra Universe
-                    </div>
-
-                </div>
-
-            </section>
+            </div>
 
 
-            <!-- ---------------------------------
-                 2:20 — 2:45
-                 THE FESTIVAL SLEEPS
-            ---------------------------------- -->
+            <!-- =================================
+                 02:45
+                 FINAL
+            ================================== -->
 
-            <section class="credit-block quiet-block">
-
-                <div class="chapter-number">
-                    VI
-                </div>
-
-                <div class="chapter-title">
-                    THE FESTIVAL SLEEPS
-                </div>
-
-                <div class="special-thanks">
-
-                    <div class="credit-role">
-                        SPECIAL THANKS
-                    </div>
-
-                    <p>
-                        To everyone who entered the
-                        VidLyra Universe and celebrated
-                        Halloween Fest 2026.
-                    </p>
-
-                    <p>
-                        Your support inspires every
-                        story we create.
-                    </p>
-
-                </div>
-
-                <div class="studio-credit">
-
-                    <div class="credit-role">
-                        PRODUCED BY
-                    </div>
-
-                    <div class="studio-name">
-                        VIDLYRA STUDIO
-                    </div>
-
-                    <div class="studio-tagline">
-                        where imagination knows no boundaries
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- ---------------------------------
-                 2:45 — 3:00
-                 UNTIL NEXT HALLOWEEN
-            ---------------------------------- -->
-
-            <section class="credit-block final-block">
+            <div class="creditBlock finalBlock">
 
                 <div class="pumpkin">
                     🎃
                 </div>
 
-                <div class="final-message">
-                    UNTIL NEXT HALLOWEEN
+                <div class="thankYou">
+                    THANK YOU FOR ENTERING
+                </div>
+
+                <div class="universe">
+                    THE VIDLYRA UNIVERSE
+                </div>
+
+                <div class="finalLine"></div>
+
+                <div class="nextHalloween">
+                    SEE YOU NEXT HALLOWEEN
                 </div>
 
                 <h2>
                     HALLOWEEN FEST 2027
                 </h2>
 
-                <p class="final-quote">
+                <p class="quote">
                     “Every ending reveals another mystery.”
                 </p>
+
+                <div class="finalLogo">
+                    VIDLYRA
+                </div>
 
                 <div class="copyright">
                     © 2026 VIDLYRA.
                     ALL RIGHTS RESERVED.
                 </div>
 
-                <div class="final-logo">
-                    VIDLYRA
-                </div>
-
-            </section>
+            </div>
 
 
-            <!-- Bottom breathing room -->
-
-            <div class="credits-end"></div>
+            <div class="endSpace"></div>
 
         </div>
 
@@ -507,20 +391,41 @@
 
 
     <!-- =========================================
-         MINIMAL SOUND CONTROL
+         SOUND
     ========================================== -->
 
     <button
         id="soundButton"
-        type="button"
-        aria-label="Toggle credits music">
+        type="button">
 
         SOUND ON
 
     </button>
 
 
-</main>
+    <!-- =========================================
+         TIMELINE
+    ========================================== -->
+
+    <div id="timeline">
+
+        <span id="currentTime">
+            00:00
+        </span>
+
+        <div class="timelineTrack">
+
+            <div id="timelineProgress"></div>
+
+        </div>
+
+        <span>
+            03:00
+        </span>
+
+    </div>
+
+</div>
 
 
 <script src="js/end-credits.js"></script>
