@@ -1,196 +1,363 @@
 /* =========================================================
    VIDLYRA HALLOWEEN FEST 2026
-   OFFICIAL END CREDITS
-   end-credits.css
+   ANIME CINEMATIC END CREDITS
 ========================================================= */
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 html,
 body {
     width: 100%;
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
     background: #000;
     color: #fff;
-    font-family: Georgia, "Times New Roman", serif;
+    font-family:
+        "Trebuchet MS",
+        Arial,
+        sans-serif;
 }
 
 body {
-    position: relative;
+    overflow-x: hidden;
 }
 
 /* =========================================================
-   BACKGROUND
+   WORLD
 ========================================================= */
 
-.background {
+#creditsWorld {
     position: fixed;
     inset: 0;
-    z-index: 1;
-
+    overflow: hidden;
     background:
         radial-gradient(
-            circle at center,
-            rgba(70, 20, 5, 0.35),
-            rgba(0, 0, 0, 0.96) 68%
+            circle at 50% 30%,
+            rgba(75, 0, 110, .35),
+            transparent 45%
         ),
-        #000;
+        linear-gradient(
+            180deg,
+            #08000f 0%,
+            #020006 60%,
+            #000 100%
+        );
+    z-index: 0;
 }
 
-.fog {
-    position: fixed;
-    inset: -20%;
-    z-index: 2;
-    pointer-events: none;
+.sky {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(140, 40, 210, .12),
+            transparent 35%
+        );
+}
+
+.moon-glow {
+    position: absolute;
+
+    width: 260px;
+    height: 260px;
+
+    left: 50%;
+    top: 15%;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
 
     background:
         radial-gradient(
-            ellipse at 25% 60%,
-            rgba(255, 255, 255, 0.035),
-            transparent 45%
-        ),
-        radial-gradient(
-            ellipse at 75% 40%,
-            rgba(255, 255, 255, 0.025),
-            transparent 45%
+            circle,
+            rgba(220, 190, 255, .2),
+            rgba(130, 50, 190, .08) 35%,
+            transparent 70%
         );
 
-    filter: blur(40px);
+    filter: blur(3px);
+}
+
+.stars {
+    position: absolute;
+    inset: 0;
+}
+
+.star {
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+
+    background: #fff;
+
+    border-radius: 50%;
+
+    animation:
+        starTwinkle 2s ease-in-out infinite alternate;
+}
+
+@keyframes starTwinkle {
+
+    from {
+        opacity: .15;
+        transform: scale(.7);
+    }
+
+    to {
+        opacity: .9;
+        transform: scale(1.4);
+    }
+
+}
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.floating-particles {
+    position: absolute;
+    inset: 0;
+}
+
+.particle {
+    position: absolute;
+
+    width: 3px;
+    height: 3px;
+
+    border-radius: 50%;
+
+    background: rgba(210, 150, 255, .7);
+
+    box-shadow:
+        0 0 10px rgba(190, 80, 255, .8);
+
+    animation:
+        particleFloat linear infinite;
+}
+
+@keyframes particleFloat {
+
+    from {
+        transform:
+            translateY(110vh)
+            translateX(0);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .8;
+    }
+
+    85% {
+        opacity: .6;
+    }
+
+    to {
+        transform:
+            translateY(-20vh)
+            translateX(80px);
+        opacity: 0;
+    }
+
+}
+
+/* =========================================================
+   FOG
+========================================================= */
+
+.fog {
+    position: absolute;
+    left: -10%;
+    width: 120%;
+    height: 30%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(160, 100, 190, .15),
+            transparent 70%
+        );
+
+    filter: blur(35px);
+}
+
+.fog-one {
+    bottom: 15%;
 
     animation:
         fogMove 18s ease-in-out infinite alternate;
 }
 
-@keyframes fogMove {
+.fog-two {
+    bottom: 3%;
 
-    0% {
-        transform: translateX(-4%);
-    }
-
-    100% {
-        transform: translateX(4%);
-    }
-}
-
-/* =========================================================
-   CREDITS STAGE
-========================================================= */
-
-.credits-stage {
-    position: fixed;
-    inset: 0;
-    z-index: 5;
-
-    overflow: hidden;
-}
-
-/* =========================================================
-   MAIN CREDIT ROLL
-========================================================= */
-
-.credits {
-    position: absolute;
-
-    width: min(900px, 90vw);
-
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    text-align: center;
-
-    padding-top: 100vh;
-    padding-bottom: 100vh;
+    opacity: .7;
 
     animation:
-        creditsRoll 105s linear forwards;
+        fogMove 24s ease-in-out infinite alternate-reverse;
 }
 
-@keyframes creditsRoll {
+@keyframes fogMove {
 
     from {
-        transform:
-            translate(-50%, 0);
+        transform: translateX(-5%);
     }
 
     to {
-        transform:
-            translate(-50%, -210%);
+        transform: translateX(5%);
     }
+
 }
 
 /* =========================================================
-   TITLE
+   CASTLE
 ========================================================= */
 
-.title {
-    margin-bottom: 90px;
+.castle-silhouette {
+    position: absolute;
+
+    left: 50%;
+    bottom: 12%;
+
+    width: 650px;
+    height: 240px;
+
+    transform: translateX(-50%);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0 5%,
+            #030006 5% 15%,
+            transparent 15% 18%,
+            #030006 18% 38%,
+            transparent 38% 42%,
+            #030006 42% 62%,
+            transparent 62% 66%,
+            #030006 66% 86%,
+            transparent 86% 90%,
+            #030006 90%
+        );
+
+    clip-path: polygon(
+        0 100%,
+        0 55%,
+        10% 55%,
+        10% 25%,
+        17% 25%,
+        20% 55%,
+        35% 55%,
+        35% 12%,
+        42% 12%,
+        45% 55%,
+        55% 55%,
+        58% 20%,
+        65% 20%,
+        68% 55%,
+        83% 55%,
+        83% 28%,
+        90% 28%,
+        92% 55%,
+        100% 55%,
+        100% 100%
+    );
+
+    opacity: .9;
 }
 
-.pumpkin {
-    display: block;
+.ground {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-    font-size: 58px;
+    height: 22%;
 
-    margin-bottom: 25px;
-
-    animation:
-        pumpkinGlow 2.5s ease-in-out infinite;
+    background:
+        linear-gradient(
+            180deg,
+            transparent,
+            #000 55%
+        );
 }
 
-@keyframes pumpkinGlow {
+/* =========================================================
+   INTRO
+========================================================= */
 
-    0%,
-    100% {
-        filter:
-            drop-shadow(
-                0 0 5px
-                rgba(255, 100, 0, 0.2)
-            );
-    }
+#introScreen {
+    position: fixed;
+    inset: 0;
 
-    50% {
-        filter:
-            drop-shadow(
-                0 0 25px
-                rgba(255, 100, 0, 0.9)
-            );
-    }
+    z-index: 100;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    background: #000;
+
+    transition:
+        opacity 1.5s ease,
+        visibility 1.5s ease;
 }
 
-.festival-title {
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
+#introScreen.hide {
+    opacity: 0;
+    visibility: hidden;
+}
 
-    font-size:
-        clamp(30px, 6vw, 64px);
+.intro-logo {
+    font-size: clamp(48px, 10vw, 120px);
 
-    letter-spacing: 7px;
+    font-weight: 900;
 
-    font-weight: bold;
-
-    color: #fff;
+    letter-spacing: 14px;
 
     text-shadow:
-        0 0 8px
-        rgba(255, 80, 0, 0.5),
-
-        0 0 30px
-        rgba(255, 50, 0, 0.25);
+        0 0 15px #fff,
+        0 0 35px rgba(170, 0, 255, .9),
+        0 0 70px rgba(100, 0, 255, .7);
 }
 
-.festival-subtitle {
-    margin-top: 18px;
+.intro-event {
+    margin-top: 20px;
 
-    font-size:
-        clamp(18px, 3vw, 28px);
+    color: #c995ff;
+
+    font-size: clamp(12px, 2vw, 20px);
+
+    letter-spacing: 8px;
+}
+
+.intro-line {
+    width: 180px;
+    height: 1px;
+
+    margin: 35px 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #b84cff,
+            transparent
+        );
+}
+
+.intro-text {
+    font-size: 12px;
 
     letter-spacing: 6px;
 
@@ -198,62 +365,153 @@ body {
 }
 
 /* =========================================================
+   CREDITS
+========================================================= */
+
+#credits {
+    position: relative;
+
+    z-index: 5;
+
+    opacity: 0;
+
+    transition: opacity 2s ease;
+}
+
+#credits.visible {
+    opacity: 1;
+}
+
+.credit-opening {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    padding: 30px;
+}
+
+.small-title {
+    font-size: 11px;
+
+    letter-spacing: 5px;
+
+    color: #aaa;
+}
+
+.credit-opening h1 {
+    margin-top: 25px;
+
+    font-size: clamp(50px, 10vw, 130px);
+
+    letter-spacing: 10px;
+
+    text-shadow:
+        0 0 15px #fff,
+        0 0 40px rgba(160, 0, 255, .8);
+}
+
+.credit-opening h2 {
+    margin-top: 15px;
+
+    font-size: clamp(18px, 3vw, 38px);
+
+    letter-spacing: 6px;
+
+    color: #c98cff;
+}
+
+.credit-opening p {
+    margin-top: 30px;
+
+    font-size: 14px;
+
+    letter-spacing: 8px;
+
+    color: #888;
+}
+
+/* =========================================================
    CREDIT SECTIONS
 ========================================================= */
 
 .credit-section {
-    margin-bottom: 75px;
+    width: min(700px, 88%);
+
+    margin: 0 auto;
+
+    padding:
+        120px 0;
 }
 
-.credit-heading {
-    color: #888;
+.section-title {
+    margin-bottom: 55px;
 
-    text-transform: uppercase;
+    text-align: center;
+
+    font-size: clamp(15px, 2vw, 23px);
+
+    letter-spacing: 6px;
+
+    color: #c98cff;
+
+    text-shadow:
+        0 0 15px rgba(180, 50, 255, .7);
+}
+
+.credit-card {
+    margin: 55px 0;
+
+    text-align: center;
+
+    opacity: .25;
+
+    transform: scale(.95);
+
+    transition:
+        opacity .8s ease,
+        transform .8s ease;
+}
+
+.credit-card.active {
+    opacity: 1;
+
+    transform: scale(1);
+}
+
+.credit-card .role {
+    display: block;
+
+    margin-bottom: 12px;
+
+    font-size: 12px;
 
     letter-spacing: 4px;
 
-    font-size: 15px;
+    text-transform: uppercase;
 
-    margin-bottom: 18px;
+    color: #888;
 }
 
-.credit-name {
-    font-size:
-        clamp(22px, 4vw, 36px);
+.credit-card strong {
+    display: block;
 
-    font-weight: bold;
+    font-size: clamp(25px, 5vw, 48px);
 
-    color: #fff;
+    font-weight: 700;
 
     letter-spacing: 2px;
 
-    text-shadow:
-        0 0 8px
-        rgba(255, 255, 255, 0.05);
-}
-
-.credit-name.highlight {
-    color: #ff7518;
+    color: #fff;
 
     text-shadow:
-        0 0 10px
-        rgba(255, 80, 0, 0.45);
-}
-
-/* =========================================================
-   DIVIDER
-========================================================= */
-
-.divider {
-    width: 90px;
-
-    height: 1px;
-
-    background:
-        rgba(255, 117, 24, 0.6);
-
-    margin:
-        80px auto;
+        0 0 12px rgba(255,255,255,.35),
+        0 0 25px rgba(150,0,255,.45);
 }
 
 /* =========================================================
@@ -261,359 +519,349 @@ body {
 ========================================================= */
 
 .special-thanks {
-    max-width: 700px;
+    min-height: 80vh;
 
-    margin:
-        0 auto 80px;
-}
+    width: min(750px, 88%);
 
-.special-thanks p {
-    margin-top: 25px;
-
-    color: #bbb;
-
-    font-size:
-        clamp(16px, 2.5vw, 22px);
-
-    line-height: 1.8;
-}
-
-/* =========================================================
-   VIDLYRA STUDIO
-========================================================= */
-
-.studio {
-    margin-bottom: 70px;
-}
-
-.studio-name {
-    font-size:
-        clamp(28px, 5vw, 48px);
-
-    color: #ff7518;
-
-    font-weight: bold;
-
-    letter-spacing: 5px;
-
-    text-shadow:
-        0 0 12px
-        rgba(255, 80, 0, 0.5);
-}
-
-.copyright {
-    color: #777;
-
-    font-size: 15px;
-
-    letter-spacing: 2px;
-
-    margin-top: 25px;
-}
-
-.tagline {
-    margin-top: 30px;
-
-    color: #aaa;
-
-    font-style: italic;
-
-    font-size:
-        clamp(17px, 3vw, 24px);
-}
-
-/* =========================================================
-   HALLOWEEN 2027
-========================================================= */
-
-.next-event {
-    margin-top: 100px;
-
-    margin-bottom: 120px;
-}
-
-.see-you {
-    color: #aaa;
-
-    font-size:
-        clamp(17px, 3vw, 25px);
-
-    font-style: italic;
-
-    margin-bottom: 25px;
-}
-
-.next-year {
-    color: #ff7518;
-
-    font-size:
-        clamp(30px, 6vw, 58px);
-
-    letter-spacing: 5px;
-
-    font-weight: bold;
-
-    text-shadow:
-        0 0 15px
-        rgba(255, 80, 0, 0.5);
-}
-
-/* =========================================================
-   POST CREDIT SCENE
-========================================================= */
-
-.post-credit {
-    min-height: 100vh;
+    margin: auto;
 
     display: flex;
-
     flex-direction: column;
 
     justify-content: center;
 
     align-items: center;
 
-    padding:
-        40px 20px;
+    text-align: center;
 }
 
-.post-credit-title {
-    color: #555;
+.special-thanks p {
+    margin-top: 25px;
 
-    font-size: 14px;
+    font-size: clamp(15px, 2.5vw, 23px);
 
-    letter-spacing: 5px;
+    line-height: 1.8;
 
-    text-transform: uppercase;
-
-    margin-bottom: 80px;
+    color: #bbb;
 }
 
 /* =========================================================
-   PUMPKIN LANTERN
+   PRODUCED
 ========================================================= */
 
-.lantern {
-    width: 90px;
+.produced {
+    min-height: 80vh;
 
-    height: 100px;
+    display: flex;
+    flex-direction: column;
 
-    position: relative;
-
-    margin-bottom: 65px;
-
-    animation:
-        lanternFloat 3s ease-in-out infinite;
-}
-
-.lantern-body {
-    position: absolute;
-
-    width: 70px;
-
-    height: 65px;
-
-    left: 10px;
-
-    top: 25px;
-
-    border-radius:
-        35% 35% 42% 42%;
-
-    background: #161616;
-
-    border: 3px solid #333;
-
-    box-shadow:
-        0 0 20px
-        rgba(255, 100, 0, 0.25);
-}
-
-.lantern-glow {
-    position: absolute;
-
-    width: 28px;
-
-    height: 28px;
-
-    left: 31px;
-
-    top: 44px;
-
-    border-radius: 50%;
-
-    background: #ff7518;
-
-    box-shadow:
-        0 0 15px #ff7518,
-
-        0 0 40px
-        rgba(255, 100, 0, 0.8),
-
-        0 0 80px
-        rgba(255, 60, 0, 0.5);
-
-    animation:
-        lanternFlicker 0.8s
-        infinite alternate;
-}
-
-.lantern-handle {
-    position: absolute;
-
-    width: 50px;
-
-    height: 35px;
-
-    left: 20px;
-
-    top: 5px;
-
-    border:
-        3px solid #333;
-
-    border-bottom: none;
-
-    border-radius:
-        50px 50px 0 0;
-}
-
-@keyframes lanternFlicker {
-
-    from {
-        opacity: 0.7;
-
-        transform:
-            scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            scale(1.08);
-    }
-}
-
-@keyframes lanternFloat {
-
-    0%,
-    100% {
-        transform:
-            translateY(0);
-    }
-
-    50% {
-        transform:
-            translateY(-8px);
-    }
-}
-
-/* =========================================================
-   POST CREDIT TEXT
-========================================================= */
-
-.post-credit-text {
-    max-width: 700px;
+    justify-content: center;
+    align-items: center;
 
     text-align: center;
 }
 
-.post-credit-text p {
-    color: #999;
+.produced h2 {
+    margin-top: 25px;
 
-    font-size:
-        clamp(18px, 3vw, 27px);
+    font-size: clamp(35px, 7vw, 75px);
 
-    line-height: 1.8;
-
-    margin-bottom: 28px;
-}
-
-.post-credit-text .mystery {
-    color: #fff;
-
-    font-weight: bold;
-
-    font-size:
-        clamp(23px, 4vw, 36px);
+    letter-spacing: 7px;
 
     text-shadow:
-        0 0 15px
-        rgba(255, 255, 255, 0.15);
+        0 0 25px rgba(170,0,255,.7);
 }
 
-.coming-soon {
-    margin-top: 70px;
+.divider {
+    width: 180px;
+    height: 1px;
 
-    color: #ff7518;
+    margin: 35px;
 
-    font-size:
-        clamp(22px, 4vw, 38px);
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #a83cff,
+            transparent
+        );
+}
 
-    letter-spacing: 8px;
+.produced p {
+    color: #888;
 
-    font-weight: bold;
+    font-size: 12px;
 
-    text-shadow:
-        0 0 20px
-        rgba(255, 70, 0, 0.6);
+    letter-spacing: 3px;
+}
+
+.produced .quote {
+    margin-top: 25px;
+
+    color: #c98cff;
+
+    font-style: italic;
+
+    letter-spacing: 2px;
 }
 
 /* =========================================================
-   SKIP BUTTON
+   NEXT EVENT
+========================================================= */
+
+.next-event {
+    min-height: 80vh;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+}
+
+.pumpkin-symbol {
+    font-size: 80px;
+
+    filter:
+        drop-shadow(
+            0 0 25px
+            rgba(255,100,0,.8)
+        );
+
+    animation:
+        pumpkinPulse 2s ease-in-out infinite;
+}
+
+@keyframes pumpkinPulse {
+
+    50% {
+        transform: scale(1.08);
+    }
+
+}
+
+.next-event h2 {
+    margin-top: 30px;
+
+    font-size: clamp(20px, 4vw, 45px);
+
+    letter-spacing: 5px;
+}
+
+.next-event h3 {
+    margin-top: 20px;
+
+    color: #c98cff;
+
+    letter-spacing: 6px;
+}
+
+/* =========================================================
+   POST CREDIT
+========================================================= */
+
+#postCredit {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    background: #000;
+
+    opacity: 0;
+
+    transition: opacity 2s ease;
+}
+
+#postCredit.show {
+    opacity: 1;
+}
+
+.post-credit-label {
+    font-size: 11px;
+
+    letter-spacing: 6px;
+
+    color: #666;
+}
+
+.pumpkin-lantern {
+    margin: 50px 0;
+
+    font-size: 90px;
+
+    filter:
+        drop-shadow(
+            0 0 30px
+            rgba(255,100,0,.9)
+        );
+
+    animation:
+        lanternPulse 3s ease-in-out infinite;
+}
+
+@keyframes lanternPulse {
+
+    0%,
+    100% {
+        filter:
+            drop-shadow(
+                0 0 15px
+                rgba(255,100,0,.5)
+            );
+    }
+
+    50% {
+        filter:
+            drop-shadow(
+                0 0 50px
+                rgba(255,100,0,1)
+            );
+    }
+
+}
+
+#postCredit p {
+    margin-top: 18px;
+
+    color: #aaa;
+
+    font-size: 16px;
+}
+
+.mystery-line {
+    margin-top: 50px;
+
+    font-size: clamp(22px, 5vw, 45px);
+
+    color: #fff;
+
+    text-shadow:
+        0 0 20px rgba(160,0,255,.8);
+}
+
+.coming-soon {
+    margin-top: 50px;
+
+    color: #c98cff;
+
+    letter-spacing: 8px;
+
+    font-size: 14px;
+}
+
+/* =========================================================
+   FINAL SCREEN
+========================================================= */
+
+#finalScreen {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    background: #000;
+}
+
+.final-logo {
+    font-size: clamp(50px, 12vw, 140px);
+
+    font-weight: 900;
+
+    letter-spacing: 12px;
+
+    text-shadow:
+        0 0 20px #fff,
+        0 0 50px rgba(150,0,255,.8);
+}
+
+.final-text {
+    margin-top: 25px;
+
+    color: #888;
+
+    font-size: 11px;
+
+    letter-spacing: 5px;
+}
+
+#homeButton {
+    margin-top: 45px;
+
+    padding: 14px 28px;
+
+    border: 1px solid #a83cff;
+
+    border-radius: 30px;
+
+    background: rgba(100,0,150,.15);
+
+    color: #fff;
+
+    cursor: pointer;
+
+    letter-spacing: 2px;
+
+    transition:
+        background .3s ease,
+        box-shadow .3s ease,
+        transform .3s ease;
+}
+
+#homeButton:hover {
+    background: rgba(150,0,255,.35);
+
+    box-shadow:
+        0 0 25px rgba(160,0,255,.7);
+
+    transform: scale(1.05);
+}
+
+/* =========================================================
+   SKIP
 ========================================================= */
 
 #skipButton {
     position: fixed;
 
-    right: 22px;
+    right: 20px;
+    bottom: 20px;
 
-    bottom: 22px;
+    z-index: 200;
 
-    z-index: 50;
+    padding: 9px 18px;
 
-    border:
-        1px solid
-        rgba(255, 117, 24, 0.5);
+    border: 1px solid rgba(255,255,255,.25);
 
-    background:
-        rgba(0, 0, 0, 0.75);
+    border-radius: 20px;
+
+    background: rgba(0,0,0,.55);
 
     color: #aaa;
 
-    padding:
-        11px 18px;
-
-    border-radius: 30px;
-
-    font-size: 13px;
-
-    letter-spacing: 1px;
-
     cursor: pointer;
 
-    backdrop-filter:
-        blur(8px);
+    font-size: 11px;
 
-    transition:
-        all 0.25s ease;
+    letter-spacing: 2px;
 }
 
 #skipButton:hover {
     color: #fff;
 
-    border-color:
-        #ff7518;
-
-    box-shadow:
-        0 0 15px
-        rgba(255, 117, 24, 0.25);
-}
-
-#skipButton:active {
-    transform:
-        scale(0.95);
+    border-color: #a83cff;
 }
 
 /* =========================================================
@@ -622,106 +870,31 @@ body {
 
 @media (max-width: 600px) {
 
-    .credits {
-        width: 88vw;
-
-        animation-duration:
-            95s;
-    }
-
     .credit-section {
-        margin-bottom: 60px;
+        padding: 80px 0;
     }
 
-    .divider {
-        margin:
-            60px auto;
+    .credit-card {
+        margin: 45px 0;
     }
 
-    .festival-title {
-        letter-spacing: 4px;
+    .credit-card strong {
+        font-size: 30px;
     }
 
-    .festival-subtitle {
-        letter-spacing: 3px;
+    .credit-card .role {
+        font-size: 10px;
+        letter-spacing: 2px;
     }
 
-    .credit-heading {
-        font-size: 12px;
-
-        letter-spacing: 3px;
+    .castle-silhouette {
+        width: 100%;
+        height: 160px;
     }
 
-    .credit-name {
-        letter-spacing: 1px;
+    .moon-glow {
+        width: 180px;
+        height: 180px;
     }
 
-    .studio-name {
-        letter-spacing: 3px;
-    }
-
-    .next-year {
-        letter-spacing: 3px;
-    }
-
-    .coming-soon {
-        letter-spacing: 5px;
-    }
-
-    #skipButton {
-        right: 12px;
-
-        bottom: 12px;
-
-        padding:
-            10px 15px;
-    }
-}
-
-/* =========================================================
-   VERY SMALL PHONES
-========================================================= */
-
-@media (max-width: 380px) {
-
-    .pumpkin {
-        font-size: 45px;
-    }
-
-    .festival-title {
-        font-size: 27px;
-
-        letter-spacing: 3px;
-    }
-
-    .festival-subtitle {
-        font-size: 17px;
-    }
-
-    .credit-section {
-        margin-bottom: 50px;
-    }
-
-    .post-credit-title {
-        margin-bottom: 55px;
-    }
-
-    .lantern {
-        margin-bottom: 45px;
-    }
-}
-
-/* =========================================================
-   REDUCED MOTION
-========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .fog,
-    .pumpkin,
-    .lantern,
-    .lantern-glow,
-    .credits {
-        animation: none !important;
-    }
 }
