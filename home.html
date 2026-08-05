@@ -1,370 +1,738 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Vidlyra Halloween Fest 2026</title>
+    <meta
+        name="theme-color"
+        content="#030201"
+    >
 
-<link
-rel="stylesheet"
-href="css/world.css">
+    <meta
+        name="description"
+        content="VIDLYRA HALLOWEEN FEST 2026 — Beyond the Veil"
+    >
+
+    <title>
+        VIDLYRA — HALLOWEEN FEST 2026
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/home.css"
+    >
 
 </head>
 
 <body>
 
-<!-- =================================
-     WORLD
-================================= -->
+<div id="homePage">
 
-<div class="world">
 
-    <div class="sky"></div>
+    <!-- =====================================================
+         CINEMATIC BACKGROUND
+    ====================================================== -->
 
-    <div class="clouds"></div>
+    <div
+        id="world"
+        aria-hidden="true"
+    >
 
-    <div class="lightning"></div>
+        <div class="sky"></div>
 
-    <div id="rain"></div>
+        <div class="orangeAtmosphere"></div>
 
-    <div id="particles"></div>
+        <div class="distantLight"></div>
 
-    <div id="bats"></div>
+        <div class="cloudLayer cloudBack"></div>
 
-    <div class="fog fog-back"></div>
+        <div class="cloudLayer cloudFront"></div>
 
-    <div class="emblem">
+        <div
+            id="lightning"
+            class="lightning"
+        ></div>
 
-        <div class="emblem-ring"></div>
+        <div
+            id="rain"
+            class="rain"
+        ></div>
 
-        <div class="emblem-core"></div>
+        <div
+            id="particles"
+            class="particles"
+        ></div>
+
+        <div
+            id="bats"
+            class="bats"
+        ></div>
+
+
+        <!-- Forest -->
+
+        <div class="forest forestBack"></div>
+
+        <div class="forest forestFront"></div>
+
+
+        <!-- Castle -->
+
+        <div class="castle">
+
+            <div class="castleTower left"></div>
+
+            <div class="castleBody"></div>
+
+            <div class="castleTower right"></div>
+
+            <div class="castleGate"></div>
+
+            <div class="castleWindow window1"></div>
+
+            <div class="castleWindow window2"></div>
+
+            <div class="castleWindow window3"></div>
+
+        </div>
+
+
+        <!-- Ground -->
+
+        <div class="ground"></div>
+
+
+        <!-- Fog -->
+
+        <div class="fog fogBack"></div>
+
+        <div class="fog fogCenter"></div>
+
+        <div class="fog fogFront"></div>
+
+
+        <!-- Hidden eyes -->
+
+        <div class="hiddenEyes eyesLeft"></div>
+
+        <div class="hiddenEyes eyesRight"></div>
+
+
+        <!-- Pumpkins -->
+
+        <div class="pumpkin pumpkinLeft"></div>
+
+        <div class="pumpkin pumpkinRight"></div>
+
+
+        <!-- Vignette -->
+
+        <div class="vignette"></div>
+
+        <div class="filmGrain"></div>
 
     </div>
 
-    <div class="castle">
-
-        <div class="tower left"></div>
-
-        <div class="tower center"></div>
-
-        <div class="tower right"></div>
-
-    </div>
-
-    <div class="forest"></div>
-
-    <div class="eyes eye-left"></div>
-
-    <div class="eyes eye-right"></div>
-
-    <div class="pumpkin pumpkin1"></div>
-
-    <div class="pumpkin pumpkin2"></div>
-
-    <div class="pumpkin pumpkin3"></div>
-
-    <div class="fog fog-front"></div>
-
-</div>
 
 
-<!-- =================================
-     HERO
-================================= -->
+    <!-- =====================================================
+         TOP NAVIGATION
+    ====================================================== -->
 
-<section class="hero">
+    <header class="topNavigation">
 
-    <div class="hero-box">
+        <a
+            href="#"
+            class="brand"
+            id="brandHome"
+            aria-label="VidLyra Home"
+        >
 
-        <h1>
-            VIDLYRA
-        </h1>
+            <span class="brandSymbol">
+                V
+            </span>
 
-        <h2>
-            HALLOWEEN FEST 2026
-        </h2>
+            <span class="brandInformation">
 
-        <p>
-            Beyond the Veil
-        </p>
+                <strong>
+                    VIDLYRA
+                </strong>
 
-        <div class="buttons">
+                <small>
+                    HALLOWEEN FEST 2026
+                </small>
 
-            <button id="enterButton">
-                🎃 ENTER THE HAUNTED REALM
+            </span>
+
+        </a>
+
+
+        <div class="navStatus">
+
+            <span class="statusIndicator"></span>
+
+            <span>
+                THE VEIL IS OPEN
+            </span>
+
+        </div>
+
+
+        <button
+            id="menuButton"
+            class="menuButton"
+            type="button"
+            aria-label="Open navigation"
+            aria-expanded="false"
+        >
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </button>
+
+
+        <nav
+            id="mainNavigation"
+            class="mainNavigation"
+        >
+
+            <button
+                type="button"
+                data-target="story"
+            >
+                STORY
             </button>
 
-            <button id="aboutButton">
-                📜 EVENT STORY
+            <button
+                type="button"
+                data-target="map"
+            >
+                FESTIVAL MAP
+            </button>
+
+            <button
+                type="button"
+                data-target="rewards"
+            >
+                REWARDS
+            </button>
+
+            <button
+                type="button"
+                data-target="credits"
+            >
+                CREDITS
+            </button>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <main>
+
+        <section
+            class="hero"
+            id="hero"
+        >
+
+            <div class="heroContent">
+
+
+                <div class="eventLabel">
+
+                    <span class="labelLine"></span>
+
+                    <span>
+                        A VIDLYRA ORIGINAL EVENT
+                    </span>
+
+                    <span class="labelLine"></span>
+
+                </div>
+
+
+                <div class="titleReveal">
+
+                    <div class="titleSmall">
+                        WELCOME TO
+                    </div>
+
+                    <h1>
+
+                        <span>
+                            VIDLYRA
+                        </span>
+
+                        <strong>
+                            HALLOWEEN
+                        </strong>
+
+                        <em>
+                            FEST 2026
+                        </em>
+
+                    </h1>
+
+                </div>
+
+
+                <div class="heroDivider">
+
+                    <span></span>
+
+                    <i>✦</i>
+
+                    <span></span>
+
+                </div>
+
+
+                <p class="heroTagline">
+                    BEYOND THE VEIL
+                </p>
+
+
+                <p class="heroDescription">
+
+                    Seven days.
+                    Seven destinations.
+                    One mystery waiting beyond the darkness.
+
+                </p>
+
+
+                <!-- =================================================
+                     PRIMARY ACTION
+                ================================================== -->
+
+                <div class="heroActions">
+
+                    <button
+                        id="enterFestival"
+                        class="enterButton"
+                        type="button"
+                    >
+
+                        <span class="enterIcon">
+                            🎃
+                        </span>
+
+                        <span class="enterText">
+                            ENTER THE REALM
+                        </span>
+
+                        <span class="enterArrow">
+                            →
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        id="storyButton"
+                        class="storyButton"
+                        type="button"
+                    >
+
+                        DISCOVER THE STORY
+
+                        <span>
+                            ↗
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <div class="heroInstruction">
+
+                    <span class="instructionKey">
+                        ENTER
+                    </span>
+
+                    <span>
+                        TO BEGIN YOUR JOURNEY
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 HERO SIDE INFORMATION
+            ================================================== -->
+
+            <aside class="heroSideInfo">
+
+                <div class="sideItem">
+
+                    <span class="sideNumber">
+                        07
+                    </span>
+
+                    <span class="sideLabel">
+                        DAYS
+                    </span>
+
+                </div>
+
+
+                <div class="sideItem">
+
+                    <span class="sideNumber">
+                        13
+                    </span>
+
+                    <span class="sideLabel">
+                        QUESTS
+                    </span>
+
+                </div>
+
+
+                <div class="sideItem">
+
+                    <span class="sideNumber">
+                        ∞
+                    </span>
+
+                    <span class="sideLabel">
+                        MYSTERIES
+                    </span>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             FESTIVAL HUD
+        ====================================================== -->
+
+        <section
+            class="festivalHUD"
+            aria-label="Festival status"
+        >
+
+            <div class="hudItem">
+
+                <span class="hudIcon">
+                    ◆
+                </span>
+
+                <div>
+
+                    <small>
+                        CURRENT QUEST
+                    </small>
+
+                    <strong id="questCounter">
+                        0 / 13
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="hudSeparator"></div>
+
+
+            <div class="hudItem">
+
+                <span class="hudIcon">
+                    ✦
+                </span>
+
+                <div>
+
+                    <small>
+                        SECRETS FOUND
+                    </small>
+
+                    <strong id="secretCounter">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="hudSeparator"></div>
+
+
+            <div class="hudItem">
+
+                <span class="hudIcon">
+                    ◈
+                </span>
+
+                <div>
+
+                    <small>
+                        FESTIVAL
+                    </small>
+
+                    <strong>
+                        2026
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         STORY PANEL
+    ====================================================== -->
+
+    <section
+        id="storyPanel"
+        class="sidePanel"
+        aria-hidden="true"
+    >
+
+        <button
+            id="closeStory"
+            class="closePanel"
+            type="button"
+            aria-label="Close story"
+        >
+            ×
+        </button>
+
+
+        <div class="panelInner">
+
+            <span class="panelEyebrow">
+                THE LEGEND
+            </span>
+
+            <h2>
+                BEYOND<br>
+                THE VEIL
+            </h2>
+
+            <div class="panelLine"></div>
+
+            <p>
+                Every Halloween, when the final light
+                disappears, another world awakens.
+            </p>
+
+            <p>
+                In 2026, the VidLyra Veil begins to
+                weaken. An ancient path opens through
+                the forgotten forest.
+            </p>
+
+            <p>
+                Seven locations wait beyond the veil.
+                Seven chapters of a mystery that has
+                remained hidden for generations.
+            </p>
+
+            <p>
+                Your journey begins here.
+            </p>
+
+
+            <button
+                id="storyEnter"
+                class="panelAction"
+                type="button"
+            >
+                BEGIN THE JOURNEY →
             </button>
 
         </div>
 
-    </div>
-
-</section>
+    </section>
 
 
-<!-- =================================
-     STORY POPUP
-================================= -->
 
-<div
-id="storyPopup"
-style="
-display:none;
-position:fixed;
-inset:0;
-z-index:9999;
-align-items:center;
-justify-content:center;
-background:rgba(0,0,0,.85);
-padding:20px;
-">
+    <!-- =====================================================
+         MOBILE NAVIGATION
+    ====================================================== -->
 
     <div
-    style="
-    width:min(650px,95%);
-    padding:30px;
-    background:#100814;
-    border:1px solid #ff7200;
-    border-radius:20px;
-    text-align:center;
-    color:white;
-    box-shadow:0 0 40px rgba(255,80,0,.4);
-    ">
-
-        <h2>
-            🎃 THE STORY
-        </h2>
-
-        <p style="margin-top:20px;line-height:1.8;color:#d4c6db;">
-
-            Once every Halloween, the gates of the Vidlyra
-            Universe open.
-
-            <br><br>
-
-            Seven mysterious days await those brave enough
-            to cross the veil.
-
-            <br><br>
-
-            Explore haunted places, survive supernatural
-            encounters, discover hidden secrets and uncover
-            what waits beyond the final gate.
-
-        </p>
+        id="mobileMenu"
+        class="mobileMenu"
+        aria-hidden="true"
+    >
 
         <button
-        id="closeStory"
-        style="
-        margin-top:25px;
-        padding:12px 25px;
-        border:1px solid #ff7200;
-        border-radius:30px;
-        background:#ff7200;
-        color:white;
-        cursor:pointer;
-        ">
+            type="button"
+            data-target="story"
+        >
+            STORY
+        </button>
 
-            CLOSE
+        <button
+            type="button"
+            data-target="map"
+        >
+            FESTIVAL MAP
+        </button>
 
+        <button
+            type="button"
+            data-target="rewards"
+        >
+            REWARDS
+        </button>
+
+        <button
+            type="button"
+            data-target="credits"
+        >
+            CREDITS
         </button>
 
     </div>
 
-</div>
 
 
-<!-- =================================
-     HUD
-================================= -->
+    <!-- =====================================================
+         BOTTOM BAR
+    ====================================================== -->
 
-<div class="hud">
+    <footer class="bottomBar">
 
-    <div class="hud-left">
+        <div class="copyright">
 
-        <span>
-            🎃 Quest: 0 / 13
-        </span>
+            © 2026 VIDLYRA STUDIO
+
+        </div>
+
+
+        <div class="bottomCenter">
+
+            <span></span>
+
+            BEYOND THE VEIL
+
+            <span></span>
+
+        </div>
+
+
+        <div class="soundStatus">
+
+            <button
+                id="soundButton"
+                type="button"
+                aria-label="Toggle ambient sound"
+            >
+
+                <span class="soundIcon">
+                    ♪
+                </span>
+
+                <span id="soundText">
+                    SOUND OFF
+                </span>
+
+            </button>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         CINEMATIC TRANSITION
+    ====================================================== -->
+
+    <div
+        id="transition"
+        class="transition"
+        aria-hidden="true"
+    >
+
+        <div class="transitionGlow"></div>
+
+        <div class="transitionRing"></div>
+
+        <div class="transitionTitle">
+            ENTERING THE VEIL
+        </div>
+
+        <div class="transitionSub">
+            PREPARING YOUR JOURNEY...
+        </div>
 
     </div>
 
-    <div class="hud-right">
 
-        <span>
-            ⭐ Secrets Found: 0
-        </span>
 
-    </div>
+    <!-- =====================================================
+         AUDIO
+    ====================================================== -->
+
+    <audio
+        id="ambient"
+        loop
+        preload="auto"
+    >
+
+        <source
+            src="assets/ambience.mp3.mp3"
+            type="audio/mpeg"
+        >
+
+    </audio>
+
+
+    <audio
+        id="thunder"
+        preload="auto"
+    >
+
+        <source
+            src="assets/thunder.mp3"
+            type="audio/mpeg"
+        >
+
+    </audio>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        src="js/home.js"
+    ></script>
 
 </div>
-
-
-<!-- =================================
-     FOOTER
-================================= -->
-
-<footer>
-
-    <p>
-        © 2026 Vidlyra Halloween Fest
-    </p>
-
-</footer>
-
-
-<!-- =================================
-     AUDIO
-================================= -->
-
-<audio
-id="ambient"
-loop
-preload="auto">
-
-    <source
-    src="assets/ambience.mp3.mp3"
-    type="audio/mpeg">
-
-</audio>
-
-<audio
-id="thunder"
-preload="auto">
-
-    <source
-    src="assets/thunder.mp3"
-    type="audio/mpeg">
-
-</audio>
-
-
-<!-- =================================
-     SCRIPT
-================================= -->
-
-<script>
-
-"use strict";
-
-const enterButton =
-document.getElementById("enterButton");
-
-const aboutButton =
-document.getElementById("aboutButton");
-
-const storyPopup =
-document.getElementById("storyPopup");
-
-const closeStory =
-document.getElementById("closeStory");
-
-const ambient =
-document.getElementById("ambient");
-
-const thunder =
-document.getElementById("thunder");
-
-
-/* ================================
-   ENTER
-================================ */
-
-enterButton.addEventListener("click", function () {
-
-    try {
-        ambient.volume = 0.35;
-        ambient.play().catch(function(){});
-    } catch(e) {}
-
-    enterButton.disabled = true;
-
-    document.body.style.transition =
-        "opacity .8s ease";
-
-    document.body.style.opacity = "0";
-
-    setTimeout(function () {
-
-        window.location.href = "map.html";
-
-    }, 800);
-
-});
-
-
-/* ================================
-   STORY
-================================ */
-
-aboutButton.addEventListener("click", function () {
-
-    storyPopup.style.display = "flex";
-
-});
-
-
-closeStory.addEventListener("click", function () {
-
-    storyPopup.style.display = "none";
-
-});
-
-
-storyPopup.addEventListener("click", function (e) {
-
-    if (e.target === storyPopup) {
-        storyPopup.style.display = "none";
-    }
-
-});
-
-
-/* ================================
-   THUNDER
-================================ */
-
-function thunderFlash() {
-
-    const lightning =
-        document.querySelector(".lightning");
-
-    if (!lightning) return;
-
-    lightning.style.opacity = "1";
-
-    try {
-        thunder.currentTime = 0;
-        thunder.volume = 0.45;
-        thunder.play().catch(function(){});
-    } catch(e) {}
-
-    setTimeout(function () {
-
-        lightning.style.opacity = "0";
-
-    }, 120);
-
-}
-
-
-setInterval(function () {
-
-    if (Math.random() < 0.35) {
-        thunderFlash();
-    }
-
-}, 7000);
-
-</script>
 
 </body>
-
 </html>
