@@ -2,35 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
 
-    <meta name="theme-color" content="#090313">
+    <meta
+        name="theme-color"
+        content="#090607"
+    >
 
     <title>
-        VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — THE HAUNTED MANSION
+        VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
     </title>
 
-    <link rel="stylesheet" href="css/day6-epic-game.css">
+    <link
+        rel="stylesheet"
+        href="css/day6-epic-game.css"
+    >
 </head>
 
 <body>
 
+<!-- =====================================================
+     GAME ROOT
+===================================================== -->
+
 <div id="game">
 
-    <!-- =====================================================
+    <!-- =================================================
          LOADING SCREEN
-    ====================================================== -->
+    ================================================== -->
 
-    <section id="loadingScreen">
+    <section
+        id="loadingScreen"
+        class="screen active"
+    >
+
+        <div class="loadingAtmosphere"></div>
 
         <div class="loadingContent">
 
-            <div class="loadingLogo">
+            <div class="loadingBrand">
                 VIDLYRA
             </div>
 
-            <div class="loadingEvent">
+            <div class="loadingFestival">
                 HALLOWEEN FEST 2026
             </div>
 
@@ -38,20 +55,23 @@
                 DAY 6
             </div>
 
-            <div class="loadingSubtitle">
-                THE HAUNTED MANSION
-            </div>
+            <h1>
+                HAUNTED MANSION
+            </h1>
+
+            <p id="loadingMessage">
+                Entering the forgotten mansion...
+            </p>
 
             <div class="loadingBar">
                 <div id="loadingFill"></div>
             </div>
 
-            <div id="loadingPercent">
+            <div
+                id="loadingPercent"
+                class="loadingPercent"
+            >
                 0%
-            </div>
-
-            <div id="loadingMessage">
-                Entering the haunted mansion...
             </div>
 
         </div>
@@ -59,111 +79,136 @@
     </section>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          GAME WORLD
-    ====================================================== -->
+    ================================================== -->
 
-    <main id="gameWorld">
+    <main
+        id="gameWorld"
+        aria-label="Vidlyra Haunted Mansion Game"
+    >
 
-        <!-- Background -->
-        <div id="backgroundLayer"></div>
+        <!-- BACKGROUND -->
+        <div
+            id="backgroundLayer"
+            class="worldLayer"
+        ></div>
 
-        <!-- Mansion atmosphere -->
-        <div id="mistLayer"></div>
-        <div id="dustLayer"></div>
-        <div id="darkEnergyLayer"></div>
-        <div id="particleLayer"></div>
+        <div
+            id="mansionLayer"
+            class="worldLayer"
+        ></div>
 
-        <!-- Decorative runes -->
-        <div id="runeLayer">
+        <div
+            id="groundLayer"
+            class="worldLayer"
+        ></div>
 
-            <div class="rune rune1">✦</div>
-            <div class="rune rune2">◇</div>
-            <div class="rune rune3">✧</div>
-            <div class="rune rune4">◈</div>
-            <div class="rune rune5">✦</div>
 
-        </div>
+        <!-- ATMOSPHERE -->
+        <div
+            id="fogLayer"
+            class="worldLayer"
+        ></div>
+
+        <div
+            id="mistLayer"
+            class="worldLayer"
+        ></div>
+
+        <div
+            id="dustLayer"
+            class="worldLayer"
+        ></div>
+
+        <div
+            id="particleLayer"
+            class="worldLayer"
+        ></div>
+
+        <div
+            id="lightningLayer"
+            class="worldLayer"
+        ></div>
 
 
         <!-- =================================================
-             CRYSTALS
+             GAME OBJECTS
         ================================================== -->
 
         <div id="crystalLayer">
 
-            <div class="crystal" data-crystal="1">
-                <div class="crystalGlow"></div>
-                <span>◆</span>
-            </div>
+            <button
+                class="crystal"
+                data-crystal="1"
+                aria-label="Ancient Crystal 1"
+            ></button>
 
-            <div class="crystal" data-crystal="2">
-                <div class="crystalGlow"></div>
-                <span>◆</span>
-            </div>
+            <button
+                class="crystal"
+                data-crystal="2"
+                aria-label="Ancient Crystal 2"
+            ></button>
 
-            <div class="crystal" data-crystal="3">
-                <div class="crystalGlow"></div>
-                <span>◆</span>
-            </div>
+            <button
+                class="crystal"
+                data-crystal="3"
+                aria-label="Ancient Crystal 3"
+            ></button>
 
-            <div class="crystal" data-crystal="4">
-                <div class="crystalGlow"></div>
-                <span>◆</span>
-            </div>
+            <button
+                class="crystal"
+                data-crystal="4"
+                aria-label="Ancient Crystal 4"
+            ></button>
 
-            <div class="crystal" data-crystal="5">
-                <div class="crystalGlow"></div>
-                <span>◆</span>
-            </div>
+            <button
+                class="crystal"
+                data-crystal="5"
+                aria-label="Ancient Crystal 5"
+            ></button>
 
-            <div class="crystal" data-crystal="6">
-                <div class="crystalGlow"></div>
-                <span>◆</span>
-            </div>
+            <button
+                class="crystal"
+                data-crystal="6"
+                aria-label="Ancient Crystal 6"
+            ></button>
 
         </div>
 
 
         <!-- =================================================
-             GUARDIANS
+             ENEMIES
         ================================================== -->
 
         <div id="enemyLayer">
 
-            <div class="guardian enemy">
-                <div class="enemyBody"></div>
-                <div class="enemyHealth">
-                    <div class="enemyHealthFill"></div>
-                </div>
+            <div
+                class="enemy"
+                data-enemy="1"
+            >
+                <div class="enemyGlow"></div>
             </div>
 
-            <div class="guardian enemy">
-                <div class="enemyBody"></div>
-                <div class="enemyHealth">
-                    <div class="enemyHealthFill"></div>
-                </div>
+            <div
+                class="enemy"
+                data-enemy="2"
+            >
+                <div class="enemyGlow"></div>
             </div>
 
-            <div class="guardian enemy">
-                <div class="enemyBody"></div>
-                <div class="enemyHealth">
-                    <div class="enemyHealthFill"></div>
-                </div>
+            <div
+                class="enemy"
+                data-enemy="3"
+            >
+                <div class="enemyGlow"></div>
             </div>
 
-            <div class="guardian enemy">
-                <div class="enemyBody"></div>
-                <div class="enemyHealth">
-                    <div class="enemyHealthFill"></div>
-                </div>
-            </div>
-
-            <div class="guardian enemy">
-                <div class="enemyBody"></div>
-                <div class="enemyHealth">
-                    <div class="enemyHealthFill"></div>
-                </div>
+            <div
+                class="enemy"
+                data-enemy="4"
+            >
+                <div class="enemyGlow"></div>
             </div>
 
         </div>
@@ -173,56 +218,36 @@
              BOSS
         ================================================== -->
 
-        <div id="boss">
+        <section
+            id="boss"
+            aria-label="Haunted Mansion Guardian"
+        >
 
             <div class="bossAura"></div>
 
-            <div class="bossSprite">
+            <div class="bossBody">
 
-                <div class="bossEyes"></div>
+                <div class="bossHead">
 
-            </div>
+                    <div class="bossEyes"></div>
 
-            <div class="bossNameTag">
-                THE HAUNTED GUARDIAN
-            </div>
+                </div>
 
-        </div>
-
-
-        <!-- =================================================
-             DAY 7 PORTAL
-        ================================================== -->
-
-        <div id="day7Portal">
-
-            <div class="portalRing"></div>
-
-            <div class="portalCore"></div>
-
-            <div class="portalParticles">
-
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <div class="bossCloak"></div>
 
             </div>
 
-            <div class="portalText">
-                PATH TO DAY 7
-            </div>
-
-        </div>
+        </section>
 
 
         <!-- =================================================
              PLAYER
         ================================================== -->
 
-        <div id="playerContainer">
+        <section
+            id="playerContainer"
+            aria-label="Player"
+        >
 
             <div id="player">
 
@@ -234,47 +259,64 @@
 
             <div id="dashTrail"></div>
 
-            <div id="hurtEffect"></div>
-
-        </div>
+        </section>
 
 
         <!-- =================================================
-             VIGNETTE
+             DAY 7 PORTAL
         ================================================== -->
 
-        <div id="vignette"></div>
+        <section
+            id="day7Portal"
+            aria-label="Portal to Day 7"
+        >
+
+            <div class="portalOuter"></div>
+
+            <div class="portalInner"></div>
+
+            <div class="portalLabel">
+                PATH TO DAY 7
+            </div>
+
+        </section>
+
+
+        <!-- WORLD VIGNETTE -->
+
+        <div
+            id="vignette"
+            aria-hidden="true"
+        ></div>
 
     </main>
 
 
-    <!-- =====================================================
-         LIGHTNING / SCREEN EFFECT
-    ====================================================== -->
-
-    <div id="lightningLayer"></div>
-
-    <div id="screenFlash"></div>
-
-
-    <!-- =====================================================
+    <!-- =================================================
          HUD
-    ====================================================== -->
+    ================================================== -->
 
     <header id="hud">
 
-        <!-- LEFT -->
-        <div class="hudPanel hudLeft">
+        <!-- LEFT HUD -->
+
+        <section class="hudPanel hudLeft">
 
             <div class="hudHeading">
                 VITALITY
             </div>
 
             <div class="statBar">
-                <div id="healthFill"></div>
+                <div
+                    id="healthFill"
+                    class="statFill health"
+                ></div>
             </div>
 
-            <div id="healthText">
+            <div
+                id="healthText"
+                class="statText"
+            >
                 100 / 100
             </div>
 
@@ -284,148 +326,193 @@
             </div>
 
             <div class="statBar">
-                <div id="spiritFill"></div>
+                <div
+                    id="spiritFill"
+                    class="statFill spirit"
+                ></div>
             </div>
 
-            <div id="spiritText">
+            <div
+                id="spiritText"
+                class="statText"
+            >
                 100 / 100
             </div>
 
-        </div>
+        </section>
 
 
-        <!-- CENTER -->
-        <div class="hudCenter">
+        <!-- CENTER HUD -->
 
-            <div class="dayTitle">
+        <section class="hudCenter">
+
+            <div class="dayBadge">
                 DAY 6
             </div>
 
-            <div class="locationTitle">
-                THE HAUNTED MANSION
+            <div class="locationName">
+                HAUNTED MANSION
             </div>
 
-        </div>
+        </section>
 
 
-        <!-- RIGHT -->
-        <div class="hudPanel hudRight">
+        <!-- RIGHT HUD -->
+
+        <section class="hudPanel hudRight">
 
             <div class="hudHeading">
-                CRYSTALS
+                ANCIENT CRYSTALS
             </div>
 
-            <div id="crystalCounter">
+            <div
+                id="crystalCounter"
+                class="statText large"
+            >
                 0 / 6
             </div>
+
 
             <div class="hudHeading scoreHeading">
                 SCORE
             </div>
 
-            <div id="scoreCounter">
+            <div
+                id="scoreCounter"
+                class="statText large"
+            >
                 000000
             </div>
 
-            <button id="pauseButton" class="hudButton">
-                ⏸
+            <button
+                id="pauseButton"
+                class="hudButton"
+                type="button"
+            >
+                II
             </button>
 
-        </div>
+        </section>
 
     </header>
 
 
-    <!-- =====================================================
-         OBJECTIVE PANEL
-    ====================================================== -->
+    <!-- =================================================
+         MISSION PANEL
+    ================================================== -->
 
-    <section id="missionPopup">
+    <aside
+        id="missionPopup"
+        class="panel"
+    >
 
-        <div class="missionTitle">
+        <div class="panelTitle">
             DAY 6 OBJECTIVES
         </div>
 
-        <div class="mission" id="mission1">
-            ◆ Collect all 6 Ancient Crystals
+        <div
+            id="mission1"
+            class="mission"
+        >
+            <span class="missionIcon">◆</span>
+            <span>Collect all 6 Ancient Crystals</span>
         </div>
 
-        <div class="mission" id="mission2">
-            ◆ Defeat the Haunted Guardians
+        <div
+            id="mission2"
+            class="mission"
+        >
+            <span class="missionIcon">◆</span>
+            <span>Defeat the Mansion Guardians</span>
         </div>
 
-        <div class="mission" id="mission3">
-            ◆ Defeat the Mansion Guardian
+        <div
+            id="mission3"
+            class="mission"
+        >
+            <span class="missionIcon">◆</span>
+            <span>Defeat the Haunted Guardian</span>
         </div>
 
-    </section>
+    </aside>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          BOSS HUD
-    ====================================================== -->
+    ================================================== -->
 
-    <section id="bossHUD">
+    <section
+        id="bossHUD"
+        aria-label="Boss health"
+    >
 
-        <div id="bossTitle">
+        <div class="bossTitle">
             THE HAUNTED GUARDIAN
         </div>
 
-        <div id="bossHealthBar">
+        <div class="bossHealthOuter">
 
-            <div id="bossHealthFill"></div>
+            <div
+                id="bossHealthFill"
+                class="bossHealthInner"
+            ></div>
 
-        </div>
-
-        <div id="bossPhase">
-            PHASE I
         </div>
 
     </section>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          INTERACTION
-    ====================================================== -->
+    ================================================== -->
 
-    <div id="interactionPrompt">
+    <div
+        id="interactionPrompt"
+        class="interactionPrompt"
+    >
         PRESS E
     </div>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          NOTIFICATIONS
-    ====================================================== -->
+    ================================================== -->
 
-    <div id="notificationContainer"></div>
+    <div
+        id="notificationContainer"
+        aria-live="polite"
+    ></div>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          PAUSE MENU
-    ====================================================== -->
+    ================================================== -->
 
-    <section id="pauseMenu" class="overlay">
+    <section
+        id="pauseMenu"
+        class="overlay"
+    >
 
-        <div class="overlayBox">
+        <div class="overlayCard">
+
+            <div class="overlaySmall">
+                VIDLYRA HALLOWEEN FEST 2026
+            </div>
 
             <h1>
                 PAUSED
             </h1>
 
             <p>
-                The mansion waits in silence...
+                The mansion waits in silence.
             </p>
 
-            <button id="resumeButton" class="gameButton">
+            <button
+                id="resumeButton"
+                class="gameButton"
+                type="button"
+            >
                 RESUME
-            </button>
-
-            <button id="restartButton" class="gameButton">
-                RESTART
-            </button>
-
-            <button id="exitButton" class="gameButton dangerButton">
-                EXIT
             </button>
 
         </div>
@@ -433,16 +520,19 @@
     </section>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          VICTORY SCREEN
-    ====================================================== -->
+    ================================================== -->
 
-    <section id="victoryScreen" class="overlay">
+    <section
+        id="victoryScreen"
+        class="overlay"
+    >
 
-        <div class="overlayBox victoryBox">
+        <div class="overlayCard victoryCard">
 
-            <div class="victorySymbol">
-                ✦
+            <div class="overlaySmall">
+                HAUNTED MANSION
             </div>
 
             <h1>
@@ -450,21 +540,18 @@
             </h1>
 
             <p>
-                The Haunted Mansion has fallen silent.
+                The darkness has been defeated.
             </p>
 
             <p>
-                A mysterious path has appeared beyond the darkness...
+                The path to Day 7 is now open.
             </p>
 
-            <div class="victoryScore">
-                SCORE:
-                <span id="finalScore">
-                    000000
-                </span>
-            </div>
-
-            <button id="continueButton" class="gameButton">
+            <button
+                id="continueButton"
+                class="gameButton"
+                type="button"
+            >
                 CONTINUE TO DAY 7
             </button>
 
@@ -473,32 +560,35 @@
     </section>
 
 
-    <!-- =====================================================
-         GAME OVER
-    ====================================================== -->
+    <!-- =================================================
+         GAME OVER SCREEN
+    ================================================== -->
 
-    <section id="gameOverScreen" class="overlay">
+    <section
+        id="gameOverScreen"
+        class="overlay"
+    >
 
-        <div class="overlayBox">
+        <div class="overlayCard">
 
-            <div class="gameOverSymbol">
-                ☠
+            <div class="overlaySmall">
+                HAUNTED MANSION
             </div>
 
             <h1>
-                YOU HAVE FALLEN
+                THE MANSION CLAIMED YOU
             </h1>
 
             <p>
-                The mansion has claimed another soul.
+                Your journey ends here...
             </p>
 
-            <button id="retryButton" class="gameButton">
-                TRY AGAIN
-            </button>
-
-            <button id="quitButton" class="gameButton dangerButton">
-                EXIT
+            <button
+                id="retryButton"
+                class="gameButton"
+                type="button"
+            >
+                ENTER AGAIN
             </button>
 
         </div>
@@ -506,43 +596,55 @@
     </section>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          MOBILE CONTROLS
-    ====================================================== -->
+    ================================================== -->
 
-    <section id="mobileControls">
+    <section
+        id="mobileControls"
+        aria-label="Mobile controls"
+    >
 
-        <div id="joystickBase">
+        <div
+            id="joystickBase"
+            class="joystick"
+        >
 
-            <div id="joystickStick"></div>
+            <div
+                id="joystickStick"
+                class="joystickStick"
+            ></div>
 
         </div>
 
 
-        <div id="mobileButtons">
+        <div class="mobileButtons">
 
             <button
                 id="skillButton"
-                class="mobileButton">
+                class="mobileButton skill"
+                type="button"
+                aria-label="Skill"
+            >
                 ✦
             </button>
 
             <button
                 id="dashButton"
-                class="mobileButton">
+                class="mobileButton dash"
+                type="button"
+                aria-label="Dash"
+            >
                 ⚡
             </button>
 
             <button
                 id="attackButton"
-                class="mobileButton attackButton">
+                class="mobileButton attack"
+                type="button"
+                aria-label="Attack"
+            >
                 ⚔
-            </button>
-
-            <button
-                id="interactButton"
-                class="mobileButton">
-                E
             </button>
 
         </div>
@@ -550,106 +652,100 @@
     </section>
 
 
-    <!-- =====================================================
+    <!-- =================================================
          AUDIO
-    ====================================================== -->
+    ================================================== -->
 
     <audio
         id="bgMusic"
         loop
-        preload="auto">
-
+        preload="auto"
+    >
         <source
             src="assets/images/day6/day6-main-theme.mp3"
-            type="audio/mpeg">
-
+            type="audio/mpeg"
+        >
     </audio>
-
 
     <audio
         id="victorySound"
-        preload="auto">
-
+        preload="auto"
+    >
         <source
             src="assets/images/day6/day6-victory-theme.mp3"
-            type="audio/mpeg">
-
+            type="audio/mpeg"
+        >
     </audio>
-
 
     <audio
         id="gameOverSound"
-        preload="auto">
-
+        preload="auto"
+    >
         <source
             src="assets/images/day6/loss.mp3"
-            type="audio/mpeg">
-
+            type="audio/mpeg"
+        >
     </audio>
-
 
     <audio
         id="swordSlash"
-        preload="auto">
-
+        preload="auto"
+    >
         <source
             src="assets/images/day6/slash.mp3"
-            type="audio/mpeg">
-
+            type="audio/mpeg"
+        >
     </audio>
-
 
     <audio
         id="heroDash"
-        preload="auto">
-
+        preload="auto"
+    >
         <source
             src="assets/images/day6/slice.mp3"
-            type="audio/mpeg">
-
+            type="audio/mpeg"
+        >
     </audio>
-
 
     <audio
         id="bossRoar"
-        preload="auto">
-
+        preload="auto"
+    >
         <source
             src="assets/images/day6/boss-battle-theme.mp3"
-            type="audio/mpeg">
-
+            type="audio/mpeg"
+        >
     </audio>
-
 
     <audio
         id="crystalSound"
-        preload="auto">
-
+        preload="auto"
+    >
         <source
             src="assets/images/day6/slice.mp3"
-            type="audio/mpeg">
-
+            type="audio/mpeg"
+        >
     </audio>
-
 
     <audio
         id="portalSound"
-        preload="auto">
-
+        preload="auto"
+    >
         <source
             src="assets/images/day6/sanctuary-theme.mp3"
-            type="audio/mpeg">
-
+            type="audio/mpeg"
+        >
     </audio>
 
 
-    <!-- =====================================================
-         JAVASCRIPT
-    ====================================================== -->
-
-    <script src="js/day6-epic-game.js"></script>
-
 </div>
+
+
+<!-- =====================================================
+     GAME JAVASCRIPT
+===================================================== -->
+
+<script src="js/day6-epic-game.js"></script>
 
 </body>
 </html>
