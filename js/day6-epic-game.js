@@ -1,11 +1,10 @@
+"use strict";
+
 /* =========================================================
    VIDLYRA HALLOWEEN FEST 2026
    DAY 6 — THE HAUNTED MANSION
-   EPIC GAME ENGINE
-   Responsive keyboard + touch controls
+   SMOOTH GAME ENGINE
 ========================================================= */
-
-"use strict";
 
 
 /* =========================================================
@@ -13,16 +12,22 @@
 ========================================================= */
 
 const CONFIG = {
+
     totalCrystals: 6,
     totalEnemies: 4,
 
-    playerSpeed: 0.55,
-    dashSpeed: 2.0,
+    /*
+       KEEPING THE EXISTING SPEED FEEL.
+       Do not change these unless you specifically
+       want to change gameplay speed.
+    */
+    playerSpeed: 0.055,
+    dashDistance: 9,
 
     maxHealth: 100,
     maxSpirit: 100,
 
-    enemyHealth: 3,
+    enemyHealth: 2,
     bossHealth: 25,
 
     crystalScore: 500,
@@ -35,173 +40,307 @@ const CONFIG = {
 
 
 /* =========================================================
-   DOM HELPERS
+   DOM
 ========================================================= */
 
-const $ = id => document.getElementById(id);
+const $ = id =>
+    document.getElementById(id);
 
-const loadingScreen = $("loadingScreen");
-const loadingFill = $("loadingFill");
-const loadingPercent = $("loadingPercent");
-const loadingMessage = $("loadingMessage");
+const loadingScreen =
+    $("loadingScreen");
 
-const gameWorld = $("gameWorld");
-const playerContainer = $("playerContainer");
-const player = $("player");
+const loadingFill =
+    $("loadingFill");
 
-const crystalLayer = $("crystalLayer");
-const enemyLayer = $("enemyLayer");
+const loadingPercent =
+    $("loadingPercent");
 
-const boss = $("boss");
-const bossHUD = $("bossHUD");
-const bossHealthFill = $("bossHealthFill");
+const loadingMessage =
+    $("loadingMessage");
 
-const day7Portal = $("day7Portal");
+const gameWorld =
+    $("gameWorld");
 
-const healthFill = $("healthFill");
-const spiritFill = $("spiritFill");
+const playerContainer =
+    $("playerContainer");
 
-const healthText = $("healthText");
-const spiritText = $("spiritText");
+const player =
+    $("player");
 
-const crystalCounter = $("crystalCounter");
-const scoreCounter = $("scoreCounter");
+const crystalLayer =
+    $("crystalLayer");
 
-const mission1 = $("mission1");
-const mission2 = $("mission2");
-const mission3 = $("mission3");
+const enemyLayer =
+    $("enemyLayer");
 
-const notificationContainer = $("notificationContainer");
-const interactionPrompt = $("interactionPrompt");
+const boss =
+    $("boss");
 
-const pauseButton = $("pauseButton");
-const pauseMenu = $("pauseMenu");
-const resumeButton = $("resumeButton");
+const bossHUD =
+    $("bossHUD");
 
-const victoryScreen = $("victoryScreen");
-const gameOverScreen = $("gameOverScreen");
+const bossHealthFill =
+    $("bossHealthFill");
 
-const retryButton = $("retryButton");
-const continueButton = $("continueButton");
+const day7Portal =
+    $("day7Portal");
 
-const slashEffect = $("slashEffect");
-const dashTrail = $("dashTrail");
-const lightningLayer = $("lightningLayer");
+const healthFill =
+    $("healthFill");
+
+const spiritFill =
+    $("spiritFill");
+
+const healthText =
+    $("healthText");
+
+const spiritText =
+    $("spiritText");
+
+const crystalCounter =
+    $("crystalCounter");
+
+const scoreCounter =
+    $("scoreCounter");
+
+const mission1 =
+    $("mission1");
+
+const mission2 =
+    $("mission2");
+
+const mission3 =
+    $("mission3");
+
+const notificationContainer =
+    $("notificationContainer");
+
+const interactionPrompt =
+    $("interactionPrompt");
+
+const pauseButton =
+    $("pauseButton");
+
+const pauseMenu =
+    $("pauseMenu");
+
+const resumeButton =
+    $("resumeButton");
+
+const victoryScreen =
+    $("victoryScreen");
+
+const gameOverScreen =
+    $("gameOverScreen");
+
+const retryButton =
+    $("retryButton");
+
+const continueButton =
+    $("continueButton");
+
+const finalScore =
+    $("finalScore");
+
+const slashEffect =
+    $("slashEffect");
+
+const dashTrail =
+    $("dashTrail");
+
+const lightningLayer =
+    $("lightningLayer");
+
+const joystick =
+    $("joystick");
+
+const joystickStick =
+    $("joystickStick");
+
+const attackButton =
+    $("attackButton");
+
+const dashButton =
+    $("dashButton");
+
+const skillButton =
+    $("skillButton");
 
 
 /* =========================================================
    AUDIO
-   All audio paths point to assets/images/day6
 ========================================================= */
 
 const audio = {
+
     main:
-        new Audio("../assets/images/day6/day6-main-theme.mp3"),
-
-    victory:
-        new Audio("../assets/images/day6/day6-victory-theme.mp3"),
-
-    loss:
-        new Audio("../assets/images/day6/loss.mp3"),
-
-    boss:
-        new Audio("../assets/images/day6/boss-battle-theme.mp3"),
+        $("audioMain"),
 
     guardian:
-        new Audio("../assets/images/day6/guardian-battle-theme.mp3"),
+        $("audioGuardian"),
+
+    boss:
+        $("audioBoss"),
+
+    victory:
+        $("audioVictory"),
+
+    loss:
+        $("audioLoss"),
 
     slash:
-        new Audio("../assets/images/day6/slash.mp3"),
+        $("audioSlash"),
 
     dash:
-        new Audio("../assets/images/day6/dash.mp3"),
-
-    slice:
-        new Audio("../assets/images/day6/slice.mp3"),
-
-    collect:
-        new Audio("../../assets/collect.mp3"),
-
-    crystal:
-        new Audio("../../assets/crystal.mp3"),
+        $("audioDash"),
 
     hurt:
-        new Audio("../assets/images/day6/hurt.mp3"),
+        $("audioHurt"),
 
-    footsteps:
-        new Audio("../assets/images/day6/foot step.mp3"),
+    footstep:
+        $("audioFootstep"),
 
-    portal:
-        new Audio("../../assets/portal.mp3"),
+    collect:
+        $("audioCollect"),
 
-    gate:
-        new Audio("../../assets/gate-open.mp3"),
+    crystal:
+        $("audioCrystal"),
 
     magic:
-        new Audio("../../assets/magic.mp3"),
+        $("audioMagic"),
 
     spell:
-        new Audio("../../assets/spell-cast.mp3"),
+        $("audioSpell"),
+
+    portal:
+        $("audioPortal"),
+
+    gate:
+        $("audioGate"),
 
     roar:
-        new Audio("../../assets/boss-roar.mp3")
+        $("audioRoar")
 };
 
 
-/* =========================================================
-   AUDIO SETUP
-========================================================= */
+audio.main.volume = .42;
+audio.guardian.volume = .25;
+audio.boss.volume = .48;
+
+audio.victory.volume = .65;
+audio.loss.volume = .6;
+
+audio.slash.volume = .6;
+audio.dash.volume = .55;
+audio.hurt.volume = .6;
+audio.collect.volume = .65;
+audio.crystal.volume = .45;
+audio.magic.volume = .45;
+audio.spell.volume = .55;
+audio.portal.volume = .55;
+audio.gate.volume = .5;
+audio.roar.volume = .65;
 
 audio.main.loop = true;
-audio.main.volume = 0.42;
-
-audio.victory.volume = 0.7;
-audio.loss.volume = 0.65;
-
-audio.boss.loop = true;
-audio.boss.volume = 0.48;
-
 audio.guardian.loop = true;
-audio.guardian.volume = 0.28;
-
-Object.values(audio).forEach(sound => {
-    sound.preload = "auto";
-});
+audio.boss.loop = true;
 
 
-function playSound(sound, volume = null) {
+/* =========================================================
+   AUDIO FUNCTIONS
+========================================================= */
 
-    if (!sound) return;
+function playAudio(sound, volume = null) {
+
+    if (!sound) {
+        return;
+    }
 
     try {
-
-        sound.currentTime = 0;
 
         if (volume !== null) {
             sound.volume = volume;
         }
 
-        const promise = sound.play();
+        sound.currentTime = 0;
 
-        if (promise && promise.catch) {
+        const promise =
+            sound.play();
+
+        if (promise) {
             promise.catch(() => {});
         }
 
-    } catch (error) {
-        /* Browser may block audio before user interaction. */
+    } catch (error) {}
+}
+
+
+function stopAudio(sound) {
+
+    if (!sound) {
+        return;
+    }
+
+    try {
+
+        sound.pause();
+        sound.currentTime = 0;
+
+    } catch (error) {}
+}
+
+
+function startMusic() {
+
+    if (
+        state.paused ||
+        state.gameOver ||
+        state.victory
+    ) {
+        return;
+    }
+
+    if (
+        state.bossActive
+    ) {
+
+        stopAudio(audio.main);
+        stopAudio(audio.guardian);
+
+        if (audio.boss.paused) {
+            playAudio(audio.boss);
+        }
+
+        return;
+    }
+
+    if (
+        state.enemiesDefeated > 0
+    ) {
+
+        stopAudio(audio.main);
+
+        if (audio.guardian.paused) {
+            playAudio(audio.guardian);
+        }
+
+        return;
+    }
+
+    if (audio.main.paused) {
+        playAudio(audio.main);
     }
 }
 
 
-function stopSound(sound) {
-
-    if (!sound) return;
-
-    try {
-        sound.pause();
-        sound.currentTime = 0;
-    } catch (error) {}
-}
+document.addEventListener(
+    "pointerdown",
+    startMusic,
+    {
+        once: false,
+        passive: true
+    }
+);
 
 
 /* =========================================================
@@ -215,40 +354,64 @@ const state = {
     gameOver: false,
     victory: false,
 
-    health: CONFIG.maxHealth,
-    spirit: CONFIG.maxSpirit,
+    health:
+        CONFIG.maxHealth,
+
+    spirit:
+        CONFIG.maxSpirit,
 
     crystals: 0,
+
     enemiesDefeated: 0,
 
     score: 0,
 
     bossActive: false,
-    bossHealth: CONFIG.bossHealth,
 
-    attackCooldown: false,
-    dashCooldown: false,
-    hurtCooldown: false,
+    bossHealth:
+        CONFIG.bossHealth,
 
-    lastTime: 0,
+    attacking: false,
+
+    dashing: false,
+
+    hurt: false,
+
+    player: {
+
+        x: 50,
+        y: 68
+
+    },
 
     keys: {
+
         up: false,
         down: false,
         left: false,
-        right: false
+        right: false,
+        interact: false
+
     },
 
     joystick: {
-        active: false,
+
         x: 0,
-        y: 0
+        y: 0,
+        active: false
+
     },
 
-    player: {
-        x: 50,
-        y: 72
-    }
+    lastFrame: 0,
+
+    spiritTimer: 0,
+
+    enemyTimer: 0,
+
+    lightningTimer: 0,
+
+    footstepTimer: 0
+
 };
 
 
@@ -256,538 +419,252 @@ const state = {
    LOADING
 ========================================================= */
 
-const loadingMessages = [
+const loadingTexts = [
+
     "Opening the mansion gates...",
+
     "Awakening the ancient spirits...",
+
     "Lighting the cursed halls...",
-    "Summoning the guardians...",
-    "Preparing the Haunted Mansion...",
-    "The domain is waiting..."
+
+    "Summoning the mansion soldiers...",
+
+    "Preparing the Ancient Guardian...",
+
+    "The Haunted Mansion is waiting..."
+
 ];
 
 let loadingProgress = 0;
-let loadingMessageIndex = 0;
+let loadingIndex = 0;
 
-function runLoading() {
+function loadingSequence() {
 
-    const interval = setInterval(() => {
+    const timer =
+        setInterval(() => {
 
-        loadingProgress += Math.random() * 8 + 3;
+            loadingProgress +=
+                Math.random() * 8 + 5;
 
-        if (loadingProgress >= 100) {
+            if (
+                loadingProgress >= 100
+            ) {
 
-            loadingProgress = 100;
+                loadingProgress = 100;
 
-            clearInterval(interval);
+                clearInterval(timer);
 
-            loadingFill.style.width = "100%";
-            loadingPercent.textContent = "100%";
+                loadingFill.style.width =
+                    "100%";
 
-            loadingMessage.textContent =
-                "ENTER THE HAUNTED MANSION";
+                loadingPercent.textContent =
+                    "100%";
 
-            setTimeout(startGame, 700);
+                loadingMessage.textContent =
+                    "ENTER THE HAUNTED MANSION";
 
-            return;
-        }
-
-        loadingFill.style.width =
-            `${loadingProgress}%`;
-
-        loadingPercent.textContent =
-            `${Math.floor(loadingProgress)}%`;
-
-        if (
-            loadingProgress >
-            (loadingMessageIndex + 1) * 16
-        ) {
-
-            loadingMessageIndex =
-                Math.min(
-                    loadingMessageIndex + 1,
-                    loadingMessages.length - 1
+                setTimeout(
+                    startGame,
+                    400
                 );
 
-            loadingMessage.textContent =
-                loadingMessages[loadingMessageIndex];
-        }
+                return;
+            }
 
-    }, 120);
+            loadingFill.style.width =
+                `${loadingProgress}%`;
+
+            loadingPercent.textContent =
+                `${Math.floor(loadingProgress)}%`;
+
+            if (
+                loadingProgress >
+                (loadingIndex + 1) * 16
+            ) {
+
+                loadingIndex =
+                    Math.min(
+                        loadingIndex + 1,
+                        loadingTexts.length - 1
+                    );
+
+                loadingMessage.textContent =
+                    loadingTexts[loadingIndex];
+            }
+
+        }, 80);
 }
 
 
 /* =========================================================
-   START GAME
+   START
 ========================================================= */
 
 function startGame() {
 
-    if (state.started) return;
-
-    state.started = true;
-
-    loadingScreen.classList.add("hidden");
-
-    setupWorld();
-
-    updateHUD();
-
-    requestAnimationFrame(gameLoop);
-
-    /*
-       Browsers normally require a user gesture before
-       allowing audio. The game also retries when the
-       first keyboard/touch/click interaction happens.
-    */
-
-    tryStartMusic();
-}
-
-
-function tryStartMusic() {
-
-    if (state.paused || state.gameOver || state.victory) {
+    if (state.started) {
         return;
     }
 
-    if (!audio.main.paused) return;
+    state.started = true;
 
-    playSound(audio.main, 0.42);
-}
-
-
-/* =========================================================
-   WORLD SETUP
-========================================================= */
-
-function setupWorld() {
+    loadingScreen.classList.add(
+        "hidden"
+    );
 
     createCrystals();
+
     createEnemies();
 
-    if (boss) {
-        boss.classList.remove("active");
-    }
-
-    if (bossHUD) {
-        bossHUD.classList.remove("active");
-    }
-
-    if (day7Portal) {
-        day7Portal.classList.remove("active");
-    }
-
     updatePlayerPosition();
+
+    updateHUD();
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+    startMusic();
 }
 
 
 /* =========================================================
-   CRYSTALS
+   CREATE CRYSTALS
 ========================================================= */
 
 function createCrystals() {
 
-    if (!crystalLayer) return;
+    if (!crystalLayer) {
+        return;
+    }
 
     crystalLayer.innerHTML = "";
 
     const positions = [
-        [13, 62],
-        [28, 38],
-        [43, 66],
-        [61, 43],
-        [76, 64],
-        [88, 34]
+
+        [12, 66],
+
+        [27, 45],
+
+        [43, 70],
+
+        [60, 48],
+
+        [77, 67],
+
+        [89, 40]
+
     ];
 
-    positions.forEach((position, index) => {
+    positions.forEach(
+        (position, index) => {
 
-        const crystal = document.createElement("div");
+            const crystal =
+                document.createElement(
+                    "div"
+                );
 
-        crystal.className = "crystal";
+            crystal.className =
+                "crystal";
 
-        crystal.dataset.index = index;
+            crystal.dataset.index =
+                index;
 
-        crystal.style.left = `${position[0]}%`;
-        crystal.style.top = `${position[1]}%`;
+            crystal.style.left =
+                `${position[0]}%`;
 
-        crystal.addEventListener(
-            "click",
-            () => collectCrystal(crystal)
-        );
+            crystal.style.top =
+                `${position[1]}%`;
 
-        crystalLayer.appendChild(crystal);
-    });
-}
+            crystalLayer.appendChild(
+                crystal
+            );
 
-
-function collectCrystal(crystal) {
-
-    if (!crystal) return;
-
-    if (
-        crystal.classList.contains("collected")
-    ) {
-        return;
-    }
-
-    crystal.classList.add("collected");
-
-    state.crystals++;
-
-    state.score += CONFIG.crystalScore;
-
-    state.spirit =
-        Math.min(
-            CONFIG.maxSpirit,
-            state.spirit + 12
-        );
-
-    playSound(audio.collect, 0.6);
-    playSound(audio.crystal, 0.4);
-
-    showNotification(
-        `ANCIENT CRYSTAL ${state.crystals}/${CONFIG.totalCrystals}`
+        }
     );
-
-    updateHUD();
-
-    if (state.crystals >= CONFIG.totalCrystals) {
-
-        completeMission(mission1);
-
-        showNotification(
-            "ALL ANCIENT CRYSTALS COLLECTED"
-        );
-
-        playSound(audio.magic, 0.45);
-
-        checkBossUnlock();
-    }
 }
 
 
 /* =========================================================
-   ENEMIES
+   CREATE MANSION SOLDIERS
 ========================================================= */
 
 function createEnemies() {
 
-    if (!enemyLayer) return;
+    if (!enemyLayer) {
+        return;
+    }
 
     enemyLayer.innerHTML = "";
 
     const positions = [
-        [22, 67],
-        [36, 46],
-        [67, 68],
-        [81, 47]
+
+        [21, 65],
+
+        [37, 48],
+
+        [66, 68],
+
+        [81, 48]
+
     ];
 
-    positions.forEach((position, index) => {
+    positions.forEach(
+        (position, index) => {
 
-        const enemy = document.createElement("div");
-
-        enemy.className = "enemy";
-
-        enemy.dataset.index = index;
-        enemy.dataset.health = CONFIG.enemyHealth;
-
-        enemy.style.left = `${position[0]}%`;
-        enemy.style.top = `${position[1]}%`;
-
-        enemyLayer.appendChild(enemy);
-    });
-}
-
-
-function damageNearbyEnemy() {
-
-    const enemies =
-        document.querySelectorAll(
-            ".enemy:not(.defeated)"
-        );
-
-    let hit = false;
-
-    enemies.forEach(enemy => {
-
-        const rect =
-            enemy.getBoundingClientRect();
-
-        const playerRect =
-            playerContainer.getBoundingClientRect();
-
-        const distance =
-            Math.hypot(
-                rect.left - playerRect.left,
-                rect.top - playerRect.top
-            );
-
-        if (distance < 145) {
-
-            let hp =
-                Number(enemy.dataset.health || 1);
-
-            hp--;
-
-            enemy.dataset.health = hp;
-
-            hit = true;
-
-            enemy.style.transform =
-                "scale(1.15)";
-
-            setTimeout(() => {
-
-                if (!enemy.classList.contains("defeated")) {
-                    enemy.style.transform = "";
-                }
-
-            }, 120);
-
-            if (hp <= 0) {
-
-                enemy.classList.add("defeated");
-
-                state.enemiesDefeated++;
-
-                state.score += CONFIG.enemyScore;
-
-                playSound(audio.slice, 0.45);
-
-                showNotification(
-                    "ANCIENT GUARDIAN DEFEATED"
+            const enemy =
+                document.createElement(
+                    "div"
                 );
 
-                updateHUD();
+            enemy.className =
+                "enemy";
 
-                if (
-                    state.enemiesDefeated >=
-                    CONFIG.totalEnemies
-                ) {
+            enemy.dataset.index =
+                index;
 
-                    completeMission(mission2);
+            enemy.dataset.health =
+                CONFIG.enemyHealth;
 
-                    showNotification(
-                        "THE GUARDIANS HAVE FALLEN"
-                    );
+            enemy.style.left =
+                `${position[0]}%`;
 
-                    checkBossUnlock();
-                }
-            }
+            enemy.style.top =
+                `${position[1]}%`;
+
+            enemyLayer.appendChild(
+                enemy
+            );
+
         }
-    });
-
-    return hit;
+    );
 }
 
 
 /* =========================================================
-   BOSS
-========================================================= */
-
-function checkBossUnlock() {
-
-    if (
-        state.crystals >= CONFIG.totalCrystals &&
-        state.enemiesDefeated >= CONFIG.totalEnemies &&
-        !state.bossActive
-    ) {
-
-        activateBoss();
-    }
-}
-
-
-function activateBoss() {
-
-    state.bossActive = true;
-    state.bossHealth = CONFIG.bossHealth;
-
-    if (boss) {
-        boss.classList.add("active");
-    }
-
-    if (bossHUD) {
-        bossHUD.classList.add("active");
-    }
-
-    if (bossHealthFill) {
-        bossHealthFill.style.width = "100%";
-    }
-
-    stopSound(audio.main);
-    stopSound(audio.guardian);
-
-    playSound(audio.boss, 0.48);
-    playSound(audio.roar, 0.7);
-
-    showNotification(
-        "THE HAUNTED MANSION GUARDIAN AWAKENS"
-    );
-
-    shakeScreen();
-
-    setTimeout(() => {
-
-        showNotification(
-            "DEFEAT THE ANCIENT GUARDIAN"
-        );
-
-    }, 1200);
-}
-
-
-function damageBoss() {
-
-    if (!state.bossActive) {
-        return;
-    }
-
-    state.bossHealth -= 1;
-
-    if (state.bossHealth < 0) {
-        state.bossHealth = 0;
-    }
-
-    if (bossHealthFill) {
-
-        bossHealthFill.style.width =
-            `${(
-                state.bossHealth /
-                CONFIG.bossHealth
-            ) * 100}%`;
-    }
-
-    playSound(audio.slash, 0.5);
-
-    if (boss) {
-
-        boss.style.transform =
-            "translateX(-50%) scale(.98)";
-
-        setTimeout(() => {
-
-            if (boss) {
-                boss.style.transform = "";
-            }
-
-        }, 100);
-    }
-
-    if (state.bossHealth <= 0) {
-
-        defeatBoss();
-    }
-}
-
-
-function defeatBoss() {
-
-    state.bossActive = false;
-
-    state.score += CONFIG.bossScore;
-
-    completeMission(mission3);
-
-    stopSound(audio.boss);
-
-    playSound(audio.victory, 0.7);
-
-    if (boss) {
-
-        boss.style.opacity = "0";
-        boss.style.transform =
-            "translateX(-50%) scale(1.25)";
-
-        setTimeout(() => {
-
-            boss.classList.remove("active");
-
-        }, 700);
-    }
-
-    showNotification(
-        "THE ANCIENT GUARDIAN HAS FALLEN"
-    );
-
-    setTimeout(() => {
-
-        openPortal();
-
-    }, 1200);
-}
-
-
-/* =========================================================
-   PORTAL
-========================================================= */
-
-function openPortal() {
-
-    if (!day7Portal) return;
-
-    day7Portal.classList.add("active");
-
-    playSound(audio.portal, 0.65);
-    playSound(audio.gate, 0.45);
-
-    showNotification(
-        "THE PATH TO DAY 7 IS OPEN"
-    );
-
-    setTimeout(() => {
-
-        showNotification(
-            "ENTER THE PORTAL"
-        );
-
-    }, 1300);
-}
-
-
-/* =========================================================
-   PLAYER MOVEMENT
+   PLAYER POSITION
 ========================================================= */
 
 function updatePlayerPosition() {
 
-    if (!playerContainer) return;
-
-    const rect =
-        gameWorld.getBoundingClientRect();
-
-    const playerWidth =
-        playerContainer.offsetWidth;
-
-    const playerHeight =
-        playerContainer.offsetHeight;
-
-    const minX =
-        (playerWidth / rect.width) * 50;
-
-    const maxX =
-        100 -
-        (playerWidth / rect.width) * 50;
-
-    const minY = 28;
-    const maxY = 82;
+    if (!playerContainer) {
+        return;
+    }
 
     state.player.x =
         Math.max(
-            minX,
+            5,
             Math.min(
-                maxX,
+                95,
                 state.player.x
             )
         );
 
     state.player.y =
         Math.max(
-            minY,
+            28,
             Math.min(
-                maxY,
+                84,
                 state.player.y
             )
         );
@@ -799,6 +676,10 @@ function updatePlayerPosition() {
         `${100 - state.player.y}%`;
 }
 
+
+/* =========================================================
+   MOVEMENT
+========================================================= */
 
 function movePlayer(delta) {
 
@@ -813,10 +694,21 @@ function movePlayer(delta) {
     let x = 0;
     let y = 0;
 
-    if (state.keys.left) x -= 1;
-    if (state.keys.right) x += 1;
-    if (state.keys.up) y -= 1;
-    if (state.keys.down) y += 1;
+    if (state.keys.left) {
+        x -= 1;
+    }
+
+    if (state.keys.right) {
+        x += 1;
+    }
+
+    if (state.keys.up) {
+        y -= 1;
+    }
+
+    if (state.keys.down) {
+        y += 1;
+    }
 
     x += state.joystick.x;
     y += state.joystick.y;
@@ -830,38 +722,62 @@ function movePlayer(delta) {
         y /= length;
     }
 
-    if (
-        Math.abs(x) > 0.01 ||
-        Math.abs(y) > 0.01
-    ) {
+    const moving =
+        Math.abs(x) > .01 ||
+        Math.abs(y) > .01;
+
+    if (moving) {
 
         state.player.x +=
-            x * CONFIG.playerSpeed * delta;
+            x *
+            CONFIG.playerSpeed *
+            delta;
 
         state.player.y +=
-            y * CONFIG.playerSpeed * delta;
+            y *
+            CONFIG.playerSpeed *
+            delta;
 
         updatePlayerPosition();
 
         if (
-            !state.attackCooldown &&
-            !state.dashCooldown
+            !state.attacking &&
+            !state.dashing &&
+            !state.hurt
         ) {
 
-            setPlayerAnimation("walk");
+            setPlayerAnimation(
+                "walk"
+            );
+
+            state.footstepTimer +=
+                delta;
+
+            if (
+                state.footstepTimer > 350
+            ) {
+
+                state.footstepTimer = 0;
+
+                playAudio(
+                    audio.footstep,
+                    .12
+                );
+            }
 
         }
 
-    } else {
+    } else if (
+        !state.attacking &&
+        !state.dashing &&
+        !state.hurt
+    ) {
 
-        if (
-            !state.attackCooldown &&
-            !state.dashCooldown &&
-            !state.hurtCooldown
-        ) {
+        setPlayerAnimation(
+            "idle"
+        );
 
-            setPlayerAnimation("idle");
-        }
+        state.footstepTimer = 0;
     }
 }
 
@@ -870,9 +786,13 @@ function movePlayer(delta) {
    PLAYER ANIMATION
 ========================================================= */
 
-function setPlayerAnimation(animation) {
+function setPlayerAnimation(
+    animation
+) {
 
-    if (!player) return;
+    if (!player) {
+        return;
+    }
 
     player.classList.remove(
         "idle",
@@ -882,7 +802,143 @@ function setPlayerAnimation(animation) {
         "hurt"
     );
 
-    player.classList.add(animation);
+    player.classList.add(
+        animation
+    );
+}
+
+
+/* =========================================================
+   CRYSTAL COLLECTION
+========================================================= */
+
+function checkCrystalCollection() {
+
+    if (
+        state.paused ||
+        state.gameOver ||
+        state.victory
+    ) {
+        return;
+    }
+
+    const crystals =
+        document.querySelectorAll(
+            ".crystal:not(.collected)"
+        );
+
+    const playerRect =
+        playerContainer.getBoundingClientRect();
+
+    const playerX =
+        playerRect.left +
+        playerRect.width / 2;
+
+    const playerY =
+        playerRect.top +
+        playerRect.height / 2;
+
+    crystals.forEach(
+        crystal => {
+
+            const rect =
+                crystal.getBoundingClientRect();
+
+            const crystalX =
+                rect.left +
+                rect.width / 2;
+
+            const crystalY =
+                rect.top +
+                rect.height / 2;
+
+            const distance =
+                Math.hypot(
+                    crystalX - playerX,
+                    crystalY - playerY
+                );
+
+            if (
+                distance <= 75
+            ) {
+
+                collectCrystal(
+                    crystal
+                );
+            }
+
+        }
+    );
+}
+
+
+function collectCrystal(
+    crystal
+) {
+
+    if (!crystal) {
+        return;
+    }
+
+    if (
+        crystal.classList.contains(
+            "collected"
+        )
+    ) {
+        return;
+    }
+
+    crystal.classList.add(
+        "collected"
+    );
+
+    state.crystals++;
+
+    state.score +=
+        CONFIG.crystalScore;
+
+    state.spirit =
+        Math.min(
+            CONFIG.maxSpirit,
+            state.spirit + 12
+        );
+
+    playAudio(
+        audio.collect,
+        .65
+    );
+
+    playAudio(
+        audio.crystal,
+        .45
+    );
+
+    showNotification(
+        `ANCIENT CRYSTAL ${state.crystals}/${CONFIG.totalCrystals}`
+    );
+
+    updateHUD();
+
+    if (
+        state.crystals >=
+        CONFIG.totalCrystals
+    ) {
+
+        completeMission(
+            mission1
+        );
+
+        showNotification(
+            "ALL 6 ANCIENT CRYSTALS COLLECTED"
+        );
+
+        playAudio(
+            audio.magic,
+            .45
+        );
+
+        checkBossUnlock();
+    }
 }
 
 
@@ -896,127 +952,708 @@ function attack() {
         state.paused ||
         state.gameOver ||
         state.victory ||
-        state.attackCooldown
+        state.attacking ||
+        state.dashing
     ) {
         return;
     }
 
-    state.attackCooldown = true;
+    state.attacking = true;
 
-    setPlayerAnimation("attack");
+    setPlayerAnimation(
+        "attack"
+    );
 
     if (slashEffect) {
-        slashEffect.classList.remove("active");
+
+        slashEffect.classList.remove(
+            "active"
+        );
 
         void slashEffect.offsetWidth;
 
-        slashEffect.classList.add("active");
+        slashEffect.classList.add(
+            "active"
+        );
     }
 
-    playSound(audio.slash, 0.6);
+    playAudio(
+        audio.slash,
+        .6
+    );
 
-    const enemyHit =
-        damageNearbyEnemy();
+    setTimeout(
+        () => {
+
+            damageNearbyEnemies();
+
+            if (
+                state.bossActive
+            ) {
+
+                damageBossIfClose();
+            }
+
+        },
+        80
+    );
+
+    setTimeout(
+        () => {
+
+            state.attacking = false;
+
+            if (!state.hurt) {
+
+                setPlayerAnimation(
+                    "idle"
+                );
+            }
+
+        },
+        220
+    );
+}
+
+
+/* =========================================================
+   ENEMY DAMAGE
+========================================================= */
+
+function damageNearbyEnemies() {
+
+    const enemies =
+        document.querySelectorAll(
+            ".enemy:not(.defeated)"
+        );
+
+    const playerRect =
+        playerContainer.getBoundingClientRect();
+
+    const playerX =
+        playerRect.left +
+        playerRect.width / 2;
+
+    const playerY =
+        playerRect.top +
+        playerRect.height / 2;
+
+    enemies.forEach(
+        enemy => {
+
+            const rect =
+                enemy.getBoundingClientRect();
+
+            const enemyX =
+                rect.left +
+                rect.width / 2;
+
+            const enemyY =
+                rect.top +
+                rect.height / 2;
+
+            const distance =
+                Math.hypot(
+                    enemyX - playerX,
+                    enemyY - playerY
+                );
+
+            if (
+                distance <= 145
+            ) {
+
+                let health =
+                    Number(
+                        enemy.dataset.health
+                    );
+
+                health--;
+
+                enemy.dataset.health =
+                    health;
+
+                enemy.animate(
+                    [
+                        {
+                            transform:
+                                "translate(-50%,-50%) scale(1)"
+                        },
+                        {
+                            transform:
+                                "translate(-50%,-50%) scale(1.12)"
+                        },
+                        {
+                            transform:
+                                "translate(-50%,-50%) scale(1)"
+                        }
+                    ],
+                    {
+                        duration: 140
+                    }
+                );
+
+                if (
+                    health <= 0
+                ) {
+
+                    enemy.classList.add(
+                        "defeated"
+                    );
+
+                    state.enemiesDefeated++;
+
+                    state.score +=
+                        CONFIG.enemyScore;
+
+                    playAudio(
+                        audio.slash,
+                        .35
+                    );
+
+                    showNotification(
+                        "MANSION SOLDIER DEFEATED"
+                    );
+
+                    updateHUD();
+
+                    if (
+                        state.enemiesDefeated >=
+                        CONFIG.totalEnemies
+                    ) {
+
+                        completeMission(
+                            mission2
+                        );
+
+                        showNotification(
+                            "THE MANSION SOLDIERS HAVE FALLEN"
+                        );
+
+                        checkBossUnlock();
+                    }
+                }
+            }
+        }
+    );
+}
+
+
+/* =========================================================
+   BOSS UNLOCK
+========================================================= */
+
+function checkBossUnlock() {
 
     if (
-        state.bossActive &&
-        boss
+        state.crystals >=
+            CONFIG.totalCrystals &&
+        state.enemiesDefeated >=
+            CONFIG.totalEnemies &&
+        !state.bossActive
+    ) {
+
+        activateBoss();
+    }
+}
+
+
+/* =========================================================
+   BOSS
+========================================================= */
+
+function activateBoss() {
+
+    state.bossActive = true;
+
+    state.bossHealth =
+        CONFIG.bossHealth;
+
+    if (boss) {
+        boss.classList.add(
+            "active"
+        );
+    }
+
+    if (bossHUD) {
+        bossHUD.classList.add(
+            "active"
+        );
+    }
+
+    bossHealthFill.style.width =
+        "100%";
+
+    stopAudio(
+        audio.main
+    );
+
+    stopAudio(
+        audio.guardian
+    );
+
+    playAudio(
+        audio.boss,
+        .48
+    );
+
+    playAudio(
+        audio.roar,
+        .65
+    );
+
+    showNotification(
+        "THE ANCIENT GUARDIAN AWAKENS"
+    );
+
+    shakeScreen(
+        450
+    );
+}
+
+
+function damageBossIfClose() {
+
+    if (
+        !state.bossActive
+    ) {
+        return;
+    }
+
+    const bossRect =
+        boss.getBoundingClientRect();
+
+    const playerRect =
+        playerContainer.getBoundingClientRect();
+
+    const bossX =
+        bossRect.left +
+        bossRect.width / 2;
+
+    const bossY =
+        bossRect.top +
+        bossRect.height / 2;
+
+    const playerX =
+        playerRect.left +
+        playerRect.width / 2;
+
+    const playerY =
+        playerRect.top +
+        playerRect.height / 2;
+
+    const distance =
+        Math.hypot(
+            bossX - playerX,
+            bossY - playerY
+        );
+
+    if (
+        distance <= 240
+    ) {
+
+        damageBoss();
+    }
+}
+
+
+function damageBoss() {
+
+    state.bossHealth--;
+
+    if (
+        state.bossHealth < 0
+    ) {
+        state.bossHealth = 0;
+    }
+
+    const percent =
+        (
+            state.bossHealth /
+            CONFIG.bossHealth
+        ) * 100;
+
+    bossHealthFill.style.width =
+        `${percent}%`;
+
+    if (boss) {
+
+        boss.animate(
+            [
+                {
+                    transform:
+                        "translate(-50%,-50%) scale(1)"
+                },
+                {
+                    transform:
+                        "translate(-48%,-50%) scale(.97)"
+                },
+                {
+                    transform:
+                        "translate(-52%,-50%) scale(.97)"
+                },
+                {
+                    transform:
+                        "translate(-50%,-50%) scale(1)"
+                }
+            ],
+            {
+                duration: 160
+            }
+        );
+    }
+
+    if (
+        state.bossHealth <= 0
+    ) {
+
+        defeatBoss();
+    }
+}
+
+
+function defeatBoss() {
+
+    state.bossActive = false;
+
+    state.score +=
+        CONFIG.bossScore;
+
+    completeMission(
+        mission3
+    );
+
+    stopAudio(
+        audio.boss
+    );
+
+    playAudio(
+        audio.victory,
+        .65
+    );
+
+    showNotification(
+        "THE ANCIENT GUARDIAN HAS FALLEN"
+    );
+
+    if (boss) {
+
+        boss.animate(
+            [
+                {
+                    opacity: 1,
+                    transform:
+                        "translate(-50%,-50%) scale(1)"
+                },
+                {
+                    opacity: .7,
+                    transform:
+                        "translate(-50%,-50%) scale(1.15)"
+                },
+                {
+                    opacity: 0,
+                    transform:
+                        "translate(-50%,-50%) scale(1.35)"
+                }
+            ],
+            {
+                duration: 900,
+                fill: "forwards"
+            }
+        );
+
+        setTimeout(
+            () => {
+
+                boss.classList.remove(
+                    "active"
+                );
+
+            },
+            900
+        );
+    }
+
+    if (bossHUD) {
+
+        bossHUD.classList.remove(
+            "active"
+        );
+    }
+
+    setTimeout(
+        openPortal,
+        1000
+    );
+}
+
+
+/* =========================================================
+   PORTAL
+========================================================= */
+
+function openPortal() {
+
+    if (!day7Portal) {
+        return;
+    }
+
+    day7Portal.classList.add(
+        "active"
+    );
+
+    playAudio(
+        audio.portal,
+        .55
+    );
+
+    playAudio(
+        audio.gate,
+        .45
+    );
+
+    showNotification(
+        "THE PATH TO DAY 7 IS OPEN"
+    );
+}
+
+
+function checkPortal() {
+
+    if (
+        !day7Portal ||
+        !day7Portal.classList.contains(
+            "active"
+        )
+    ) {
+        return;
+    }
+
+    const portalRect =
+        day7Portal.getBoundingClientRect();
+
+    const playerRect =
+        playerContainer.getBoundingClientRect();
+
+    const portalX =
+        portalRect.left +
+        portalRect.width / 2;
+
+    const portalY =
+        portalRect.top +
+        portalRect.height / 2;
+
+    const playerX =
+        playerRect.left +
+        playerRect.width / 2;
+
+    const playerY =
+        playerRect.top +
+        playerRect.height / 2;
+
+    const distance =
+        Math.hypot(
+            portalX - playerX,
+            portalY - playerY
+        );
+
+    if (
+        distance <= 130
+    ) {
+
+        interactionPrompt.classList.add(
+            "active"
+        );
+
+        if (
+            state.keys.interact
+        ) {
+
+            state.keys.interact = false;
+
+            winGame();
+        }
+
+    } else {
+
+        interactionPrompt.classList.remove(
+            "active"
+        );
+    }
+}
+
+
+/* =========================================================
+   PLAYER DAMAGE
+========================================================= */
+
+function damagePlayer(
+    amount
+) {
+
+    if (
+        state.hurt ||
+        state.gameOver ||
+        state.victory
+    ) {
+        return;
+    }
+
+    state.hurt = true;
+
+    state.health -= amount;
+
+    state.health =
+        Math.max(
+            0,
+            state.health
+        );
+
+    setPlayerAnimation(
+        "hurt"
+    );
+
+    playAudio(
+        audio.hurt,
+        .6
+    );
+
+    shakeScreen(
+        220
+    );
+
+    updateHUD();
+
+    setTimeout(
+        () => {
+
+            state.hurt = false;
+
+            if (
+                !state.gameOver
+            ) {
+
+                setPlayerAnimation(
+                    "idle"
+                );
+            }
+
+        },
+        400
+    );
+
+    if (
+        state.health <= 0
+    ) {
+
+        loseGame();
+    }
+}
+
+
+/* =========================================================
+   ENEMY AI
+========================================================= */
+
+function updateEnemies(
+    delta
+) {
+
+    if (
+        state.paused ||
+        state.gameOver ||
+        state.victory
+    ) {
+        return;
+    }
+
+    state.enemyTimer += delta;
+
+    if (
+        state.enemyTimer < 900
+    ) {
+        return;
+    }
+
+    state.enemyTimer = 0;
+
+    const enemies =
+        document.querySelectorAll(
+            ".enemy:not(.defeated)"
+        );
+
+    const playerRect =
+        playerContainer.getBoundingClientRect();
+
+    const playerX =
+        playerRect.left +
+        playerRect.width / 2;
+
+    const playerY =
+        playerRect.top +
+        playerRect.height / 2;
+
+    enemies.forEach(
+        enemy => {
+
+            const rect =
+                enemy.getBoundingClientRect();
+
+            const enemyX =
+                rect.left +
+                rect.width / 2;
+
+            const enemyY =
+                rect.top +
+                rect.height / 2;
+
+            const distance =
+                Math.hypot(
+                    enemyX - playerX,
+                    enemyY - playerY
+                );
+
+            if (
+                distance < 115
+            ) {
+
+                damagePlayer(
+                    7
+                );
+            }
+        }
+    );
+
+
+    if (
+        state.bossActive
     ) {
 
         const bossRect =
             boss.getBoundingClientRect();
 
-        const playerRect =
-            playerContainer.getBoundingClientRect();
+        const bossX =
+            bossRect.left +
+            bossRect.width / 2;
+
+        const bossY =
+            bossRect.top +
+            bossRect.height / 2;
 
         const distance =
             Math.hypot(
-                bossRect.left - playerRect.left,
-                bossRect.top - playerRect.top
+                bossX - playerX,
+                bossY - playerY
             );
 
-        if (distance < 260) {
+        if (
+            distance < 190
+        ) {
 
-            damageBoss();
+            damagePlayer(
+                10
+            );
         }
     }
-
-    setTimeout(() => {
-
-        state.attackCooldown = false;
-
-        if (!state.hurtCooldown) {
-            setPlayerAnimation("idle");
-        }
-
-    }, 360);
-}
-
-
-/* =========================================================
-   DASH
-========================================================= */
-
-function dash() {
-
-    if (
-        state.paused ||
-        state.gameOver ||
-        state.victory ||
-        state.dashCooldown
-    ) {
-        return;
-    }
-
-    state.dashCooldown = true;
-
-    setPlayerAnimation("dash");
-
-    if (dashTrail) {
-
-        dashTrail.classList.remove("active");
-
-        void dashTrail.offsetWidth;
-
-        dashTrail.classList.add("active");
-    }
-
-    playSound(audio.dash, 0.6);
-
-    let direction = 1;
-
-    if (state.keys.left) {
-        direction = -1;
-    }
-
-    if (
-        state.joystick.x < -0.15
-    ) {
-        direction = -1;
-    }
-
-    if (
-        state.joystick.x > 0.15
-    ) {
-        direction = 1;
-    }
-
-    state.player.x +=
-        direction *
-        CONFIG.dashSpeed *
-        4;
-
-    updatePlayerPosition();
-
-    setTimeout(() => {
-
-        state.dashCooldown = false;
-
-        if (!state.hurtCooldown) {
-            setPlayerAnimation("idle");
-        }
-
-    }, 500);
 }
 
 
@@ -1034,7 +1671,9 @@ function skill() {
         return;
     }
 
-    if (state.spirit < 25) {
+    if (
+        state.spirit < 25
+    ) {
 
         showNotification(
             "NOT ENOUGH SPIRIT"
@@ -1045,188 +1684,114 @@ function skill() {
 
     state.spirit -= 25;
 
-    playSound(audio.spell, 0.65);
-    playSound(audio.magic, 0.5);
+    playAudio(
+        audio.spell,
+        .55
+    );
+
+    playAudio(
+        audio.magic,
+        .45
+    );
 
     showNotification(
         "SPIRIT BURST"
     );
 
-    state.score += 250;
-
-    damageNearbyEnemy();
-
-    if (state.bossActive) {
-        damageBoss();
-        damageBoss();
-    }
-
-    updateHUD();
-}
-
-
-/* =========================================================
-   PLAYER DAMAGE
-========================================================= */
-
-function damagePlayer(amount = 10) {
+    damageNearbyEnemies();
 
     if (
-        state.hurtCooldown ||
-        state.gameOver ||
-        state.victory
+        state.bossActive
     ) {
-        return;
+
+        damageBoss();
+        damageBoss();
     }
-
-    state.hurtCooldown = true;
-
-    state.health -= amount;
-
-    if (state.health < 0) {
-        state.health = 0;
-    }
-
-    setPlayerAnimation("hurt");
-
-    playSound(audio.hurt, 0.65);
-
-    shakeScreen();
 
     updateHUD();
-
-    setTimeout(() => {
-
-        state.hurtCooldown = false;
-
-        if (!state.gameOver) {
-            setPlayerAnimation("idle");
-        }
-
-    }, 500);
-
-    if (state.health <= 0) {
-
-        loseGame();
-    }
 }
 
 
 /* =========================================================
-   ENEMY AI
+   DASH
 ========================================================= */
 
-let enemyAttackTimer = 0;
-
-function updateEnemies(delta) {
+function dash() {
 
     if (
         state.paused ||
         state.gameOver ||
-        state.victory
+        state.victory ||
+        state.dashing
     ) {
         return;
     }
 
-    enemyAttackTimer += delta;
+    state.dashing = true;
 
-    if (enemyAttackTimer < 1000) {
-        return;
-    }
+    setPlayerAnimation(
+        "dash"
+    );
 
-    enemyAttackTimer = 0;
+    if (dashTrail) {
 
-    const enemies =
-        document.querySelectorAll(
-            ".enemy:not(.defeated)"
+        dashTrail.classList.remove(
+            "active"
         );
 
-    const playerRect =
-        playerContainer.getBoundingClientRect();
+        void dashTrail.offsetWidth;
 
-    enemies.forEach(enemy => {
-
-        const enemyRect =
-            enemy.getBoundingClientRect();
-
-        const distance =
-            Math.hypot(
-                enemyRect.left - playerRect.left,
-                enemyRect.top - playerRect.top
-            );
-
-        if (distance < 115) {
-
-            damagePlayer(7);
-        }
-    });
-
-    if (state.bossActive) {
-
-        const bossRect =
-            boss.getBoundingClientRect();
-
-        const distance =
-            Math.hypot(
-                bossRect.left - playerRect.left,
-                bossRect.top - playerRect.top
-            );
-
-        if (distance < 220) {
-
-            damagePlayer(12);
-        }
+        dashTrail.classList.add(
+            "active"
+        );
     }
-}
 
+    playAudio(
+        audio.dash,
+        .55
+    );
 
-/* =========================================================
-   PORTAL INTERACTION
-========================================================= */
-
-function checkPortal() {
+    let direction = 1;
 
     if (
-        !state.bossActive &&
-        state.enemiesDefeated >= CONFIG.totalEnemies &&
-        state.crystals >= CONFIG.totalCrystals &&
-        day7Portal &&
-        day7Portal.classList.contains("active")
+        state.keys.left ||
+        state.joystick.x < -.15
     ) {
 
-        const portalRect =
-            day7Portal.getBoundingClientRect();
+        direction = -1;
+    }
 
-        const playerRect =
-            playerContainer.getBoundingClientRect();
+    if (
+        state.keys.right ||
+        state.joystick.x > .15
+    ) {
 
-        const distance =
-            Math.hypot(
-                portalRect.left - playerRect.left,
-                portalRect.top - playerRect.top
-            );
+        direction = 1;
+    }
 
-        if (distance < 180) {
+    state.player.x +=
+        direction *
+        CONFIG.dashDistance;
 
-            interactionPrompt.classList.add("active");
+    updatePlayerPosition();
+
+    setTimeout(
+        () => {
+
+            state.dashing = false;
 
             if (
-                state.keys.interact
+                !state.hurt
             ) {
 
-                state.keys.interact = false;
-
-                winGame();
+                setPlayerAnimation(
+                    "idle"
+                );
             }
 
-        } else {
-
-            interactionPrompt.classList.remove("active");
-        }
-    } else {
-
-        interactionPrompt.classList.remove("active");
-    }
+        },
+        300
+    );
 }
 
 
@@ -1237,64 +1802,61 @@ function checkPortal() {
 function updateHUD() {
 
     const healthPercent =
-        (state.health / CONFIG.maxHealth) * 100;
+        (
+            state.health /
+            CONFIG.maxHealth
+        ) * 100;
 
     const spiritPercent =
-        (state.spirit / CONFIG.maxSpirit) * 100;
+        (
+            state.spirit /
+            CONFIG.maxSpirit
+        ) * 100;
 
-    if (healthFill) {
+    healthFill.style.width =
+        `${healthPercent}%`;
 
-        healthFill.style.width =
-            `${healthPercent}%`;
-    }
+    spiritFill.style.width =
+        `${spiritPercent}%`;
 
-    if (spiritFill) {
+    healthText.textContent =
+        `${Math.ceil(state.health)} / ${CONFIG.maxHealth}`;
 
-        spiritFill.style.width =
-            `${spiritPercent}%`;
-    }
+    spiritText.textContent =
+        `${Math.ceil(state.spirit)} / ${CONFIG.maxSpirit}`;
 
-    if (healthText) {
+    crystalCounter.textContent =
+        `${state.crystals} / ${CONFIG.totalCrystals}`;
 
-        healthText.textContent =
-            `${Math.ceil(state.health)} / ${CONFIG.maxHealth}`;
-    }
-
-    if (spiritText) {
-
-        spiritText.textContent =
-            `${Math.ceil(state.spirit)} / ${CONFIG.maxSpirit}`;
-    }
-
-    if (crystalCounter) {
-
-        crystalCounter.textContent =
-            `${state.crystals} / ${CONFIG.totalCrystals}`;
-    }
-
-    if (scoreCounter) {
-
-        scoreCounter.textContent =
-            String(state.score).padStart(6, "0");
-    }
+    scoreCounter.textContent =
+        String(state.score)
+            .padStart(6, "0");
 }
 
 
 /* =========================================================
-   MISSIONS
+   MISSION
 ========================================================= */
 
-function completeMission(element) {
+function completeMission(
+    element
+) {
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
-    element.classList.add("complete");
+    element.classList.add(
+        "complete"
+    );
 
-    const icon =
-        element.querySelector(".missionIcon");
+    const span =
+        element.querySelector(
+            "span"
+        );
 
-    if (icon) {
-        icon.textContent = "✓";
+    if (span) {
+        span.textContent = "✓";
     }
 }
 
@@ -1303,12 +1865,18 @@ function completeMission(element) {
    NOTIFICATIONS
 ========================================================= */
 
-function showNotification(message) {
+function showNotification(
+    message
+) {
 
-    if (!notificationContainer) return;
+    if (!notificationContainer) {
+        return;
+    }
 
     const notification =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     notification.className =
         "notification";
@@ -1320,11 +1888,14 @@ function showNotification(message) {
         notification
     );
 
-    setTimeout(() => {
+    setTimeout(
+        () => {
 
-        notification.remove();
+            notification.remove();
 
-    }, 3000);
+        },
+        2800
+    );
 }
 
 
@@ -1344,48 +1915,47 @@ function togglePause() {
     state.paused =
         !state.paused;
 
-    if (state.paused) {
+    if (
+        state.paused
+    ) {
 
-        pauseMenu.classList.add("active");
+        pauseMenu.classList.add(
+            "active"
+        );
 
-        stopSound(audio.main);
-        stopSound(audio.boss);
-        stopSound(audio.guardian);
+        stopAudio(
+            audio.main
+        );
+
+        stopAudio(
+            audio.guardian
+        );
+
+        stopAudio(
+            audio.boss
+        );
 
     } else {
 
-        pauseMenu.classList.remove("active");
+        pauseMenu.classList.remove(
+            "active"
+        );
 
-        tryStartMusic();
-
-        if (state.bossActive) {
-
-            playSound(
-                audio.boss,
-                0.48
-            );
-
-        }
+        startMusic();
     }
 }
 
 
-if (pauseButton) {
-
-    pauseButton.addEventListener(
-        "click",
-        togglePause
-    );
-}
+pauseButton.addEventListener(
+    "click",
+    togglePause
+);
 
 
-if (resumeButton) {
-
-    resumeButton.addEventListener(
-        "click",
-        togglePause
-    );
-}
+resumeButton.addEventListener(
+    "click",
+    togglePause
+);
 
 
 /* =========================================================
@@ -1403,43 +1973,41 @@ function winGame() {
 
     state.victory = true;
 
-    stopSound(audio.main);
-    stopSound(audio.boss);
-    stopSound(audio.guardian);
+    stopAudio(
+        audio.main
+    );
 
-    playSound(audio.victory, 0.7);
+    stopAudio(
+        audio.guardian
+    );
 
-    if (victoryScreen) {
+    stopAudio(
+        audio.boss
+    );
 
-        victoryScreen.classList.add(
-            "active"
-        );
-    }
+    playAudio(
+        audio.victory,
+        .65
+    );
 
-    const finalScore =
-        victoryScreen.querySelector(
-            ".finalScore"
-        );
+    finalScore.textContent =
+        `FINAL SCORE ${String(state.score).padStart(6,"0")}`;
 
-    if (finalScore) {
-
-        finalScore.textContent =
-            `FINAL SCORE ${String(state.score).padStart(6, "0")}`;
-    }
-}
-
-
-if (continueButton) {
-
-    continueButton.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                CONFIG.victoryPage;
-        }
+    victoryScreen.classList.add(
+        "active"
     );
 }
+
+
+continueButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            CONFIG.victoryPage;
+
+    }
+);
 
 
 /* =========================================================
@@ -1457,43 +2025,49 @@ function loseGame() {
 
     state.gameOver = true;
 
-    stopSound(audio.main);
-    stopSound(audio.boss);
-    stopSound(audio.guardian);
+    stopAudio(
+        audio.main
+    );
 
-    playSound(audio.loss, 0.65);
+    stopAudio(
+        audio.guardian
+    );
 
-    if (gameOverScreen) {
+    stopAudio(
+        audio.boss
+    );
 
-        gameOverScreen.classList.add(
-            "active"
-        );
-    }
-}
+    playAudio(
+        audio.loss,
+        .6
+    );
 
-
-if (retryButton) {
-
-    retryButton.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                CONFIG.retryPage;
-        }
+    gameOverScreen.classList.add(
+        "active"
     );
 }
 
 
+retryButton.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            CONFIG.retryPage;
+
+    }
+);
+
+
 /* =========================================================
-   KEYBOARD CONTROLS
+   KEYBOARD
 ========================================================= */
 
 document.addEventListener(
     "keydown",
     event => {
 
-        tryStartMusic();
+        startMusic();
 
         const key =
             event.key.toLowerCase();
@@ -1511,46 +2085,75 @@ document.addEventListener(
             event.preventDefault();
         }
 
-        if (key === "w" || key === "arrowup") {
+        if (
+            key === "w" ||
+            key === "arrowup"
+        ) {
+
             state.keys.up = true;
         }
 
-        if (key === "s" || key === "arrowdown") {
+        if (
+            key === "s" ||
+            key === "arrowdown"
+        ) {
+
             state.keys.down = true;
         }
 
-        if (key === "a" || key === "arrowleft") {
+        if (
+            key === "a" ||
+            key === "arrowleft"
+        ) {
+
             state.keys.left = true;
         }
 
-        if (key === "d" || key === "arrowright") {
+        if (
+            key === "d" ||
+            key === "arrowright"
+        ) {
+
             state.keys.right = true;
         }
 
-        if (key === "e") {
+        if (
+            key === "e"
+        ) {
 
             state.keys.interact = true;
         }
 
-        if (key === " " || key === "j") {
+        if (
+            key === " " ||
+            key === "j"
+        ) {
 
             attack();
         }
 
-        if (key === "shift") {
+        if (
+            key === "shift"
+        ) {
 
             dash();
         }
 
-        if (key === "k" || key === "q") {
+        if (
+            key === "q" ||
+            key === "k"
+        ) {
 
             skill();
         }
 
-        if (key === "escape") {
+        if (
+            key === "escape"
+        ) {
 
             togglePause();
         }
+
     }
 );
 
@@ -1562,50 +2165,68 @@ document.addEventListener(
         const key =
             event.key.toLowerCase();
 
-        if (key === "w" || key === "arrowup") {
+        if (
+            key === "w" ||
+            key === "arrowup"
+        ) {
+
             state.keys.up = false;
         }
 
-        if (key === "s" || key === "arrowdown") {
+        if (
+            key === "s" ||
+            key === "arrowdown"
+        ) {
+
             state.keys.down = false;
         }
 
-        if (key === "a" || key === "arrowleft") {
+        if (
+            key === "a" ||
+            key === "arrowleft"
+        ) {
+
             state.keys.left = false;
         }
 
-        if (key === "d" || key === "arrowright") {
+        if (
+            key === "d" ||
+            key === "arrowright"
+        ) {
+
             state.keys.right = false;
         }
+
     }
 );
 
 
 /* =========================================================
-   MOBILE JOYSTICK
+   JOYSTICK
 ========================================================= */
 
-const joystick =
-    document.querySelector(".joystick");
+if (
+    joystick &&
+    joystickStick
+) {
 
-const joystickStick =
-    document.querySelector(".joystickStick");
+    let pointerId = null;
 
-
-if (joystick && joystickStick) {
-
-    let joystickPointer = null;
-
-    function updateJoystick(clientX, clientY) {
+    function updateJoystick(
+        clientX,
+        clientY
+    ) {
 
         const rect =
             joystick.getBoundingClientRect();
 
         const centerX =
-            rect.left + rect.width / 2;
+            rect.left +
+            rect.width / 2;
 
         const centerY =
-            rect.top + rect.height / 2;
+            rect.top +
+            rect.height / 2;
 
         let dx =
             clientX - centerX;
@@ -1613,37 +2234,43 @@ if (joystick && joystickStick) {
         let dy =
             clientY - centerY;
 
-        const maxDistance =
+        const max =
             rect.width * .32;
 
         const distance =
-            Math.hypot(dx, dy);
+            Math.hypot(
+                dx,
+                dy
+            );
 
-        if (distance > maxDistance) {
+        if (
+            distance > max
+        ) {
 
             dx =
-                (dx / distance) *
-                maxDistance;
+                dx / distance * max;
 
             dy =
-                (dy / distance) *
-                maxDistance;
+                dy / distance * max;
         }
 
         state.joystick.x =
-            dx / maxDistance;
+            dx / max;
 
         state.joystick.y =
-            dy / maxDistance;
+            dy / max;
 
         joystickStick.style.transform =
-            `translate(${dx}px, ${dy}px)`;
+            `translate(${dx}px,${dy}px)`;
     }
 
 
     function resetJoystick() {
 
-        state.joystick.active = false;
+        state.joystick.active =
+            false;
+
+        pointerId = null;
 
         state.joystick.x = 0;
         state.joystick.y = 0;
@@ -1659,12 +2286,13 @@ if (joystick && joystickStick) {
 
             event.preventDefault();
 
-            tryStartMusic();
+            startMusic();
 
-            joystickPointer =
+            pointerId =
                 event.pointerId;
 
-            state.joystick.active = true;
+            state.joystick.active =
+                true;
 
             joystick.setPointerCapture(
                 event.pointerId
@@ -1684,7 +2312,7 @@ if (joystick && joystickStick) {
 
             if (
                 !state.joystick.active ||
-                event.pointerId !== joystickPointer
+                event.pointerId !== pointerId
             ) {
                 return;
             }
@@ -1711,70 +2339,46 @@ if (joystick && joystickStick) {
 
 
 /* =========================================================
-   MOBILE BUTTONS
+   MOBILE ACTION BUTTONS
 ========================================================= */
 
-const attackButton =
-    document.querySelector(".attackButton");
-
-const dashButton =
-    document.querySelector(".dashButton");
-
-const skillButton =
-    document.querySelector(".skillButton");
-
-
-function bindMobileButton(
-    element,
+function bindButton(
+    button,
     callback
 ) {
 
-    if (!element) return;
+    if (!button) {
+        return;
+    }
 
-    element.addEventListener(
+    button.addEventListener(
         "pointerdown",
         event => {
 
             event.preventDefault();
 
-            tryStartMusic();
+            startMusic();
 
             callback();
+
         }
     );
 }
 
 
-bindMobileButton(
+bindButton(
     attackButton,
     attack
 );
 
-bindMobileButton(
+bindButton(
     dashButton,
     dash
 );
 
-bindMobileButton(
+bindButton(
     skillButton,
     skill
-);
-
-
-/* =========================================================
-   WORLD CLICK
-========================================================= */
-
-document.addEventListener(
-    "pointerdown",
-    () => {
-
-        tryStartMusic();
-
-    },
-    {
-        passive: true
-    }
 );
 
 
@@ -1782,77 +2386,30 @@ document.addEventListener(
    LIGHTNING
 ========================================================= */
 
-let lightningTimer = 0;
+function updateLightning(
+    delta
+) {
 
-function randomLightning(delta) {
+    state.lightningTimer +=
+        delta;
 
-    lightningTimer += delta;
-
-    if (lightningTimer < 5000) {
+    if (
+        state.lightningTimer <
+        5200
+    ) {
         return;
     }
 
-    lightningTimer = 0;
+    state.lightningTimer = 0;
 
-    if (!lightningLayer) return;
-
-    lightningLayer.classList.remove("flash");
+    lightningLayer.classList.remove(
+        "flash"
+    );
 
     void lightningLayer.offsetWidth;
 
-    lightningLayer.classList.add("flash");
-
-    setTimeout(() => {
-
-        if (
-            Math.random() > .4
-        ) {
-
-            playSound(
-                audio.magic,
-                .15
-            );
-        }
-
-    }, 180);
-}
-
-
-/* =========================================================
-   SCREEN SHAKE
-========================================================= */
-
-let shakeTimer = 0;
-
-function shakeScreen(duration = 250) {
-
-    if (!gameWorld) return;
-
-    gameWorld.animate(
-        [
-            {
-                transform: "translate(0,0)"
-            },
-            {
-                transform: "translate(-3px,2px)"
-            },
-            {
-                transform: "translate(3px,-2px)"
-            },
-            {
-                transform: "translate(-2px,-1px)"
-            },
-            {
-                transform: "translate(2px,1px)"
-            },
-            {
-                transform: "translate(0,0)"
-            }
-        ],
-        {
-            duration,
-            easing: "ease-out"
-        }
+    lightningLayer.classList.add(
+        "flash"
     );
 }
 
@@ -1861,9 +2418,9 @@ function shakeScreen(duration = 250) {
    SPIRIT REGENERATION
 ========================================================= */
 
-let spiritTimer = 0;
-
-function regenerateSpirit(delta) {
+function regenerateSpirit(
+    delta
+) {
 
     if (
         state.paused ||
@@ -1873,11 +2430,14 @@ function regenerateSpirit(delta) {
         return;
     }
 
-    spiritTimer += delta;
+    state.spiritTimer +=
+        delta;
 
-    if (spiritTimer >= 1000) {
+    if (
+        state.spiritTimer >= 1000
+    ) {
 
-        spiritTimer = 0;
+        state.spiritTimer = 0;
 
         state.spirit =
             Math.min(
@@ -1891,25 +2451,82 @@ function regenerateSpirit(delta) {
 
 
 /* =========================================================
+   SCREEN SHAKE
+========================================================= */
+
+function shakeScreen(
+    duration = 220
+) {
+
+    if (!gameWorld) {
+        return;
+    }
+
+    gameWorld.animate(
+        [
+            {
+                transform:
+                    "translate3d(0,0,0)"
+            },
+
+            {
+                transform:
+                    "translate3d(-3px,2px,0)"
+            },
+
+            {
+                transform:
+                    "translate3d(3px,-2px,0)"
+            },
+
+            {
+                transform:
+                    "translate3d(-2px,-1px,0)"
+            },
+
+            {
+                transform:
+                    "translate3d(2px,1px,0)"
+            },
+
+            {
+                transform:
+                    "translate3d(0,0,0)"
+            }
+        ],
+        {
+            duration,
+            easing: "ease-out"
+        }
+    );
+}
+
+
+/* =========================================================
    GAME LOOP
 ========================================================= */
 
-function gameLoop(timestamp) {
+function gameLoop(
+    timestamp
+) {
 
-    if (!state.started) {
+    if (
+        !state.started
+    ) {
         return;
     }
 
     const delta =
-        state.lastTime
+        state.lastFrame
             ? Math.min(
                 timestamp -
-                state.lastTime,
+                state.lastFrame,
                 40
             )
             : 16;
 
-    state.lastTime = timestamp;
+    state.lastFrame =
+        timestamp;
 
     if (
         !state.paused &&
@@ -1917,37 +2534,35 @@ function gameLoop(timestamp) {
         !state.victory
     ) {
 
-        movePlayer(delta);
+        movePlayer(
+            delta
+        );
 
-        updateEnemies(delta);
+        checkCrystalCollection();
+
+        updateEnemies(
+            delta
+        );
 
         checkPortal();
 
-        regenerateSpirit(delta);
+        regenerateSpirit(
+            delta
+        );
 
-        randomLightning(delta);
+        updateLightning(
+            delta
+        );
     }
 
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(
+        gameLoop
+    );
 }
 
 
 /* =========================================================
-   RESPONSIVE RESIZE
-========================================================= */
-
-window.addEventListener(
-    "resize",
-    () => {
-
-        updatePlayerPosition();
-
-    }
-);
-
-
-/* =========================================================
-   PAGE VISIBILITY
+   VISIBILITY
 ========================================================= */
 
 document.addEventListener(
@@ -1957,9 +2572,9 @@ document.addEventListener(
         if (
             document.hidden &&
             state.started &&
+            !state.paused &&
             !state.gameOver &&
-            !state.victory &&
-            !state.paused
+            !state.victory
         ) {
 
             togglePause();
@@ -1969,7 +2584,17 @@ document.addEventListener(
 
 
 /* =========================================================
+   RESIZE
+========================================================= */
+
+window.addEventListener(
+    "resize",
+    updatePlayerPosition
+);
+
+
+/* =========================================================
    INITIALIZE
 ========================================================= */
 
-runLoading();
+loadingSequence();
