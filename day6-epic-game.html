@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
+<head>
 <meta charset="UTF-8">
 
 <meta
@@ -11,11 +11,12 @@
 
 <meta
     name="theme-color"
-    content="#080509"
+    content="#08050d"
 >
 
 <title>
-VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
+VIDLYRA HALLOWEEN FEST 2026 —
+DAY 6 — THE HAUNTED MANSION
 </title>
 
 <link
@@ -30,12 +31,12 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
 <div id="game">
 
     <!-- =====================================================
-         LOADING SCREEN
+         LOADING
     ====================================================== -->
 
     <section id="loadingScreen">
 
-        <div class="loadingBrand">
+        <div class="loadingLogo">
             VIDLYRA
         </div>
 
@@ -47,14 +48,12 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
             DAY 6
         </div>
 
-        <div class="loadingChapter">
+        <div class="loadingTitle">
             THE HAUNTED MANSION
         </div>
 
         <div class="loadingBar">
-
             <div id="loadingFill"></div>
-
         </div>
 
         <div id="loadingPercent">
@@ -74,143 +73,43 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
 
     <main id="gameWorld">
 
-        <!-- BACKGROUND -->
+        <!-- Background -->
+        <div id="backgroundLayer"></div>
 
-        <div
-            id="bgImageLayer"
-            aria-hidden="true"
-        ></div>
+        <!-- Mansion atmosphere -->
+        <div id="darkEnergyLayer"></div>
+        <div id="runeLayer"></div>
+        <div id="dustLayer"></div>
+        <div id="fogBack"></div>
+        <div id="fogFront"></div>
 
-
-        <!-- ATMOSPHERE -->
-
-        <div
-            id="mistLayer"
-            aria-hidden="true"
-        ></div>
-
-        <div
-            id="dustLayer"
-            aria-hidden="true"
-        ></div>
-
-        <div
-            id="fogLayer"
-            aria-hidden="true"
-        ></div>
-
-        <div
-            id="darkEnergyLayer"
-            aria-hidden="true"
-        ></div>
-
-        <div
-            id="runeLayer"
-            aria-hidden="true"
-        ></div>
-
-
-        <!-- ENVIRONMENT -->
-
-        <div
-            id="ground"
-            aria-hidden="true"
-        ></div>
-
-        <div
-            id="mansionGate"
-            aria-hidden="true"
-        ></div>
+        <!-- Ground -->
+        <div id="groundLayer"></div>
 
 
         <!-- =================================================
              CRYSTALS
         ================================================== -->
 
-        <div id="crystalLayer">
-
-            <button
-                class="crystal"
-                data-crystal="0"
-                aria-label="Ancient Crystal 1"
-            ></button>
-
-            <button
-                class="crystal"
-                data-crystal="1"
-                aria-label="Ancient Crystal 2"
-            ></button>
-
-            <button
-                class="crystal"
-                data-crystal="2"
-                aria-label="Ancient Crystal 3"
-            ></button>
-
-            <button
-                class="crystal"
-                data-crystal="3"
-                aria-label="Ancient Crystal 4"
-            ></button>
-
-            <button
-                class="crystal"
-                data-crystal="4"
-                aria-label="Ancient Crystal 5"
-            ></button>
-
-            <button
-                class="crystal"
-                data-crystal="5"
-                aria-label="Ancient Crystal 6"
-            ></button>
-
-        </div>
+        <div id="crystalLayer"></div>
 
 
         <!-- =================================================
-             GUARDIANS
+             ENEMIES
         ================================================== -->
 
-        <div id="enemyLayer">
-
-            <div
-                class="enemy guardian"
-                data-enemy="0"
-            ></div>
-
-            <div
-                class="enemy guardian"
-                data-enemy="1"
-            ></div>
-
-            <div
-                class="enemy guardian"
-                data-enemy="2"
-            ></div>
-
-            <div
-                class="enemy guardian"
-                data-enemy="3"
-            ></div>
-
-        </div>
+        <div id="enemyLayer"></div>
 
 
         <!-- =================================================
              BOSS
         ================================================== -->
 
-        <div
-            id="boss"
-            aria-label="Haunted Mansion Guardian"
-        >
+        <div id="boss">
 
             <div class="bossAura"></div>
 
-            <div class="bossEnergy"></div>
-
-            <div class="bossCharacter"></div>
+            <div class="bossSprite"></div>
 
             <div class="bossEyes"></div>
 
@@ -218,23 +117,17 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
 
 
         <!-- =================================================
-             DAY 7 PORTAL
+             PORTAL
         ================================================== -->
 
         <div id="day7Portal">
 
             <div class="portalGlow"></div>
 
-            <div class="portalRing"></div>
-
             <div class="portalCore"></div>
 
-            <div class="portalLabel">
+            <div class="portalText">
                 PATH TO DAY 7
-            </div>
-
-            <div class="portalHint">
-                PRESS E
             </div>
 
         </div>
@@ -246,47 +139,20 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
 
         <div id="playerContainer">
 
-            <div
-                id="player"
-                class="idle"
-            ></div>
+            <div id="player"></div>
 
-            <div
-                id="slashEffect"
-                aria-hidden="true"
-            ></div>
+            <div id="slashEffect"></div>
 
-            <div
-                id="dashTrail"
-                aria-hidden="true"
-            ></div>
-
-            <div
-                id="playerShadow"
-                aria-hidden="true"
-            ></div>
+            <div id="dashTrail"></div>
 
         </div>
 
 
-        <!-- =================================================
-             LIGHTNING
-        ================================================== -->
+        <!-- World vignette -->
+        <div id="worldVignette"></div>
 
-        <div
-            id="lightningLayer"
-            aria-hidden="true"
-        ></div>
-
-
-        <!-- =================================================
-             VIGNETTE
-        ================================================== -->
-
-        <div
-            id="vignette"
-            aria-hidden="true"
-        ></div>
+        <!-- Lightning -->
+        <div id="lightningLayer"></div>
 
     </main>
 
@@ -297,47 +163,35 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
 
     <section id="hud">
 
-        <!-- LEFT HUD -->
+        <div class="hudLeft hudPanel">
 
-        <div class="hudPanel hudLeft">
-
-            <div class="hudHeader">
+            <div class="hudHeading">
                 VITALITY
             </div>
 
-            <div class="hudBar">
-
-                <div
-                    id="healthFill"
-                    class="healthFill"
-                ></div>
-
+            <div class="statusBar">
+                <div id="healthFill"></div>
             </div>
 
             <div
+                class="hudNumber"
                 id="healthText"
-                class="hudValue"
             >
                 100 / 100
             </div>
 
 
-            <div class="hudHeader spiritHeader">
+            <div class="hudHeading spiritHeading">
                 SPIRIT
             </div>
 
-            <div class="hudBar">
-
-                <div
-                    id="spiritFill"
-                    class="spiritFill"
-                ></div>
-
+            <div class="statusBar spiritBar">
+                <div id="spiritFill"></div>
             </div>
 
             <div
+                class="hudNumber"
                 id="spiritText"
-                class="hudValue"
             >
                 100 / 100
             </div>
@@ -345,53 +199,33 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
         </div>
 
 
-        <!-- CENTER HUD -->
+        <div class="hudRight hudPanel">
 
-        <div class="hudCenter">
-
-            <div class="dayBadge">
-                DAY 6
-            </div>
-
-            <div class="locationName">
-                HAUNTED MANSION
-            </div>
-
-        </div>
-
-
-        <!-- RIGHT HUD -->
-
-        <div class="hudPanel hudRight">
-
-            <div class="hudHeader">
+            <div class="hudHeading">
                 ANCIENT CRYSTALS
             </div>
 
             <div
+                class="hudBigNumber"
                 id="crystalCounter"
-                class="hudValue largeValue"
             >
                 0 / 6
             </div>
 
-
-            <div class="hudHeader scoreHeader">
+            <div class="hudHeading scoreHeading">
                 SCORE
             </div>
 
             <div
+                class="hudBigNumber"
                 id="scoreCounter"
-                class="hudValue largeValue"
             >
                 000000
             </div>
 
-
             <button
                 id="pauseButton"
-                class="gameButton"
-                type="button"
+                class="hudButton"
             >
                 II
             </button>
@@ -405,40 +239,34 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
          MISSION PANEL
     ====================================================== -->
 
-    <section id="missionPopup">
+    <section id="missionPanel">
 
-        <div class="missionTitle">
+        <div class="missionHeader">
             DAY 6 OBJECTIVES
         </div>
 
         <div
+            class="mission"
             id="mission1"
-            class="mission"
         >
-            <span class="missionIcon">◆</span>
-            <span>
-                Collect all 6 Ancient Crystals
-            </span>
+            <span>◇</span>
+            Collect all 6 Ancient Crystals
         </div>
 
         <div
+            class="mission"
             id="mission2"
-            class="mission"
         >
-            <span class="missionIcon">◆</span>
-            <span>
-                Defeat the Haunted Guardians
-            </span>
+            <span>◇</span>
+            Defeat the Mansion Soldiers
         </div>
 
         <div
-            id="mission3"
             class="mission"
+            id="mission3"
         >
-            <span class="missionIcon">◆</span>
-            <span>
-                Defeat the Mansion Guardian
-            </span>
+            <span>◇</span>
+            Defeat the Ancient Guardian
         </div>
 
     </section>
@@ -450,51 +278,30 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
 
     <section id="bossHUD">
 
-        <div class="bossHUDTitle">
-            THE MANSION GUARDIAN
+        <div class="bossLabel">
+            THE ANCIENT GUARDIAN
         </div>
 
-        <div id="bossHealthBar">
-
-            <div
-                id="bossHealthInner"
-                class="bossHealthInner"
-            ></div>
-
-        </div>
-
-        <div class="bossStatus">
-            ANCIENT ENTITY
+        <div class="bossHealthOuter">
+            <div id="bossHealthFill"></div>
         </div>
 
     </section>
 
 
     <!-- =====================================================
-         INTERACTION
+         NOTIFICATIONS
     ====================================================== -->
 
-    <div
-        id="interactionPrompt"
-        aria-live="polite"
-    >
-        PRESS E
+    <div id="notificationContainer"></div>
+
+    <div id="interactionPrompt">
+        PRESS E TO ENTER
     </div>
 
 
     <!-- =====================================================
-         NOTIFICATIONS
-    ====================================================== -->
-
-    <div
-        id="notificationContainer"
-        aria-live="polite"
-        aria-atomic="true"
-    ></div>
-
-
-    <!-- =====================================================
-         PAUSE SCREEN
+         PAUSE
     ====================================================== -->
 
     <section
@@ -502,24 +309,19 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
         class="overlay"
     >
 
-        <div class="overlayBox">
+        <div class="overlayCard">
 
-            <div class="overlayEyebrow">
-                VIDLYRA HALLOWEEN FEST 2026
+            <div class="overlaySmall">
+                VIDLYRA HALLOWEEN FEST
             </div>
 
             <h1>
                 PAUSED
             </h1>
 
-            <p>
-                The mansion waits in silence.
-            </p>
-
             <button
                 id="resumeButton"
-                class="gameButton largeButton"
-                type="button"
+                class="primaryButton"
             >
                 RESUME
             </button>
@@ -530,7 +332,7 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
 
 
     <!-- =====================================================
-         VICTORY SCREEN
+         VICTORY
     ====================================================== -->
 
     <section
@@ -538,37 +340,31 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
         class="overlay"
     >
 
-        <div class="overlayBox victoryBox">
+        <div class="overlayCard victoryCard">
 
-            <div class="overlayEyebrow">
-                QUEST COMPLETE
+            <div class="overlaySmall">
+                DAY 6
             </div>
 
             <h1>
-                DAY 6 COMPLETE
+                MANSION CLEARED
             </h1>
 
-            <div class="victoryLine"></div>
-
             <p>
-                The Haunted Mansion has fallen silent.
-            </p>
-
-            <p>
-                The path to Day 7 has opened.
+                The ancient guardian has fallen.
+                The path to the final chapter is open.
             </p>
 
             <div
-                id="finalScore"
                 class="finalScore"
+                id="finalScore"
             >
-                SCORE 000000
+                FINAL SCORE 000000
             </div>
 
             <button
                 id="continueButton"
-                class="gameButton largeButton"
-                type="button"
+                class="primaryButton"
             >
                 CONTINUE TO DAY 7
             </button>
@@ -587,32 +383,26 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
         class="overlay"
     >
 
-        <div class="overlayBox gameOverBox">
+        <div class="overlayCard">
 
-            <div class="overlayEyebrow">
-                HAUNTED MANSION
+            <div class="overlaySmall">
+                THE MANSION CLAIMED YOU
             </div>
 
             <h1>
                 YOU HAVE FALLEN
             </h1>
 
-            <div class="victoryLine"></div>
-
             <p>
-                The darkness has overcome you.
-            </p>
-
-            <p>
-                The mansion remains waiting.
+                The darkness remains.
+                Enter the mansion again.
             </p>
 
             <button
                 id="retryButton"
-                class="gameButton largeButton"
-                type="button"
+                class="primaryButton"
             >
-                ENTER AGAIN
+                RESTART DAY 6
             </button>
 
         </div>
@@ -629,46 +419,35 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
         <div
             id="joystick"
             class="joystick"
-            aria-label="Movement joystick"
         >
 
-            <div class="joystickOuter">
-
-                <div
-                    id="joystickStick"
-                    class="joystickStick"
-                ></div>
-
-            </div>
+            <div
+                id="joystickStick"
+                class="joystickStick"
+            ></div>
 
         </div>
 
 
-        <div class="mobileButtons">
+        <div class="mobileActions">
 
             <button
                 id="skillButton"
-                class="mobileButton skillButton"
-                type="button"
-                aria-label="Spirit skill"
+                class="actionButton skillButton"
             >
                 ✦
             </button>
 
             <button
                 id="dashButton"
-                class="mobileButton dashButton"
-                type="button"
-                aria-label="Dash"
+                class="actionButton dashButton"
             >
                 ⚡
             </button>
 
             <button
                 id="attackButton"
-                class="mobileButton attackButton"
-                type="button"
-                aria-label="Attack"
+                class="actionButton attackButton"
             >
                 ⚔
             </button>
@@ -677,208 +456,116 @@ VIDLYRA HALLOWEEN FEST 2026 — DAY 6 — HAUNTED MANSION
 
     </section>
 
-
-    <!-- =====================================================
-         AUDIO
-    ====================================================== -->
-
-    <!-- DAY 6 MAIN -->
-
-    <audio
-        id="bgMusic"
-        loop
-        preload="auto"
-        src="assets/images/day6/day6-main-theme.mp3"
-    ></audio>
-
-
-    <!-- DAY 6 BOSS -->
-
-    <audio
-        id="bossBattleMusic"
-        loop
-        preload="auto"
-        src="assets/images/day6/boss-battle-theme.mp3"
-    ></audio>
-
-
-    <audio
-        id="guardianBattleMusic"
-        loop
-        preload="auto"
-        src="assets/images/day6/guardian-battle-theme.mp3"
-    ></audio>
-
-
-    <!-- DAY 6 VICTORY -->
-
-    <audio
-        id="victorySound"
-        preload="auto"
-        src="assets/images/day6/day6-victory-theme.mp3"
-    ></audio>
-
-
-    <!-- DAY 6 LOSS -->
-
-    <audio
-        id="gameOverSound"
-        preload="auto"
-        src="assets/images/day6/loss.mp3"
-    ></audio>
-
-
-    <!-- DAY 6 COMBAT -->
-
-    <audio
-        id="swordSlash"
-        preload="auto"
-        src="assets/images/day6/slash.mp3"
-    ></audio>
-
-
-    <audio
-        id="heroDash"
-        preload="auto"
-        src="assets/images/day6/slice.mp3"
-    ></audio>
-
-
-    <audio
-        id="footstepSound"
-        preload="auto"
-        src="assets/images/day6/foot step.mp3"
-    ></audio>
-
-
-    <audio
-        id="hurtSound"
-        preload="auto"
-        src="assets/images/day6/hurt.mp3"
-    ></audio>
-
-
-    <!-- DAY 6 ATMOSPHERE -->
-
-    <audio
-        id="sanctuaryMusic"
-        loop
-        preload="auto"
-        src="assets/images/day6/sanctuary-theme.mp3"
-    ></audio>
-
-
-    <!-- GENERAL FEST AUDIO -->
-
-    <audio
-        id="ambienceSound"
-        loop
-        preload="auto"
-        src="assets/ambience.mp3"
-    ></audio>
-
-
-    <audio
-        id="windSound"
-        loop
-        preload="auto"
-        src="assets/wind.mp3"
-    ></audio>
-
-
-    <audio
-        id="thunderSound"
-        preload="auto"
-        src="assets/thunder.mp3"
-    ></audio>
-
-
-    <audio
-        id="lightningSound"
-        preload="auto"
-        src="assets/lightning.mp3"
-    ></audio>
-
-
-    <!-- GAMEPLAY SFX -->
-
-    <audio
-        id="collectSound"
-        preload="auto"
-        src="assets/collect.mp3"
-    ></audio>
-
-
-    <audio
-        id="crystalSound"
-        preload="auto"
-        src="assets/crystal.mp3"
-    ></audio>
-
-
-    <audio
-        id="dashSound"
-        preload="auto"
-        src="assets/dash.mp3"
-    ></audio>
-
-
-    <audio
-        id="magicSound"
-        preload="auto"
-        src="assets/magic.mp3"
-    ></audio>
-
-
-    <audio
-        id="spellSound"
-        preload="auto"
-        src="assets/spell-cast.mp3"
-    ></audio>
-
-
-    <audio
-        id="playerHitSound"
-        preload="auto"
-        src="assets/player hit.mp3"
-    ></audio>
-
-
-    <audio
-        id="bossRoarSound"
-        preload="auto"
-        src="assets/boss-roar.mp3"
-    ></audio>
-
-
-    <audio
-        id="gateOpenSound"
-        preload="auto"
-        src="assets/gate-open.mp3"
-    ></audio>
-
-
-    <audio
-        id="portalSound"
-        preload="auto"
-        src="assets/portal.mp3"
-    ></audio>
-
-
-    <audio
-        id="missionCompleteSound"
-        preload="auto"
-        src="assets/mission-complete.mp3"
-    ></audio>
-
-
-    <!-- =====================================================
-         JAVASCRIPT
-    ====================================================== -->
-
-    <script src="js/day6-epic-game.js"></script>
-
 </div>
+
+
+<!-- =========================================================
+     AUDIO
+========================================================= -->
+
+<audio
+    id="audioMain"
+    src="assets/images/day6/day6-main-theme.mp3"
+    loop
+    preload="auto"
+></audio>
+
+<audio
+    id="audioGuardian"
+    src="assets/images/day6/guardian-battle-theme.mp3"
+    loop
+    preload="auto"
+></audio>
+
+<audio
+    id="audioBoss"
+    src="assets/images/day6/boss-battle-theme.mp3"
+    loop
+    preload="auto"
+></audio>
+
+<audio
+    id="audioVictory"
+    src="assets/images/day6/day6-victory-theme.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioLoss"
+    src="assets/images/day6/loss.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioSlash"
+    src="assets/images/day6/slash.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioDash"
+    src="assets/images/day6/dash.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioHurt"
+    src="assets/images/day6/hurt.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioFootstep"
+    src="assets/images/day6/foot step.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioCollect"
+    src="assets/collect.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioCrystal"
+    src="assets/crystal.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioMagic"
+    src="assets/magic.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioSpell"
+    src="assets/spell-cast.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioPortal"
+    src="assets/portal.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioGate"
+    src="assets/gate-open.mp3"
+    preload="auto"
+></audio>
+
+<audio
+    id="audioRoar"
+    src="assets/boss-roar.mp3"
+    preload="auto"
+></audio>
+
+
+<script
+    src="js/day6-epic-game.js"
+></script>
 
 </body>
 </html>
