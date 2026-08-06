@@ -1,6 +1,6 @@
 /* =========================================================
    VIDLYRA HALLOWEEN FEST 2026
-   DAY 6 — HAUNTED MANSION
+   DAY 6 — THE HAUNTED MANSION
    EPIC GAME CSS
 ========================================================= */
 
@@ -8,6 +8,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -15,16 +16,21 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #050505;
+    background: #050308;
     font-family:
         "Segoe UI",
         Arial,
         sans-serif;
-    color: white;
 }
 
 body {
+    color: #fff;
     user-select: none;
+    touch-action: none;
+}
+
+button {
+    font: inherit;
 }
 
 
@@ -33,109 +39,117 @@ body {
 ========================================================= */
 
 #game {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    min-height: 520px;
+    position: fixed;
+    inset: 0;
     overflow: hidden;
-    background: #050505;
+    background: #050308;
 }
 
 
 /* =========================================================
-   BACKGROUND
+   LOADING
 ========================================================= */
 
-#backgroundLayer {
-    position: absolute;
+#loadingScreen {
+    position: fixed;
     inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(80, 20, 95, .25),
+            transparent 40%
+        ),
+        #050308;
+
+    transition:
+        opacity .7s ease,
+        visibility .7s ease;
+}
+
+#loadingScreen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loadingLogo {
+    font-size: clamp(32px, 7vw, 74px);
+    font-weight: 900;
+    letter-spacing: .28em;
+    color: #fff;
+    text-shadow:
+        0 0 12px rgba(255, 255, 255, .45),
+        0 0 35px rgba(255, 100, 0, .35);
+}
+
+.loadingEvent {
+    margin-top: 8px;
+    font-size: clamp(9px, 1.4vw, 14px);
+    letter-spacing: .32em;
+    color: #ff8a22;
+}
+
+.loadingDay {
+    margin-top: 30px;
+    font-size: 13px;
+    letter-spacing: .4em;
+    color: rgba(255,255,255,.55);
+}
+
+.loadingTitle {
+    margin-top: 10px;
+    font-size: clamp(20px, 3vw, 36px);
+    font-weight: 700;
+    letter-spacing: .08em;
+}
+
+.loadingBar {
+    width: min(420px, 72vw);
+    height: 4px;
+    margin-top: 42px;
+
+    background: rgba(255,255,255,.1);
+    overflow: hidden;
+}
+
+#loadingFill {
+    width: 0%;
+    height: 100%;
 
     background:
         linear-gradient(
-            rgba(0, 0, 0, .18),
-            rgba(0, 0, 0, .5)
-        ),
-        url("../assets/images/day6/background.png");
+            90deg,
+            #ff4b00,
+            #ff9d42,
+            #fff
+        );
 
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    box-shadow:
+        0 0 16px rgba(255,100,20,.8);
 
-    z-index: 1;
-
-    transform: scale(1.04);
+    transition: width .12s linear;
 }
 
-#mistLayer {
-    position: absolute;
-    inset: -10%;
-
-    background-image:
-        url("../assets/images/day6/fog 1.png"),
-        url("../assets/images/day6/fog 2.png"),
-        url("../assets/images/day6/mist-layer.png");
-
-    background-size:
-        cover,
-        cover,
-        cover;
-
-    background-position:
-        center,
-        center,
-        center;
-
-    mix-blend-mode: screen;
-
-    opacity: .34;
-
-    animation:
-        mistMove 18s ease-in-out infinite alternate;
-
-    z-index: 20;
-
-    pointer-events: none;
+#loadingPercent {
+    margin-top: 13px;
+    font-size: 12px;
+    letter-spacing: .2em;
+    color: #ff9a4a;
 }
 
-#dustLayer {
-    position: absolute;
-    inset: 0;
-
-    background:
-        url("../assets/images/day6/dust-particles.png");
-
-    background-size: 600px;
-
-    opacity: .18;
-
-    z-index: 21;
-
-    pointer-events: none;
-}
-
-#vignette {
-    position: absolute;
-    inset: 0;
-
-    background:
-        url("../assets/images/day6/vignette-overlay.png")
-        center / cover no-repeat;
-
-    z-index: 90;
-
-    pointer-events: none;
-}
-
-@keyframes mistMove {
-
-    0% {
-        transform: translateX(-2%) scale(1.05);
-    }
-
-    100% {
-        transform: translateX(3%) scale(1.1);
-    }
-
+#loadingMessage {
+    margin-top: 16px;
+    color: rgba(255,255,255,.5);
+    font-size: 11px;
+    letter-spacing: .12em;
 }
 
 
@@ -146,108 +160,173 @@ body {
 #gameWorld {
     position: absolute;
     inset: 0;
-
     overflow: hidden;
-
-    z-index: 5;
+    background: #09050d;
 }
 
-#mansionGlow {
+#backgroundLayer {
     position: absolute;
-
-    width: 55vw;
-    height: 55vw;
-
-    max-width: 800px;
-    max-height: 800px;
-
-    left: 50%;
-    top: 40%;
-
-    transform: translate(-50%, -50%);
+    inset: 0;
 
     background:
-        radial-gradient(
-            circle,
-            rgba(255, 100, 0, .12),
-            transparent 65%
-        );
-
-    pointer-events: none;
-}
-
-
-/* =========================================================
-   GATE
-========================================================= */
-
-#mansionGate {
-    position: absolute;
-
-    left: 50%;
-    bottom: 5%;
-
-    transform: translateX(-50%);
-
-    width: min(38vw, 520px);
-
-    max-height: 65vh;
-
-    object-fit: contain;
-
-    z-index: 8;
+        url("../assets/images/day6/background.png")
+        center / cover no-repeat;
 
     filter:
-        drop-shadow(0 0 15px rgba(0,0,0,.8))
-        drop-shadow(0 0 35px rgba(255,90,0,.15));
+        saturate(.85)
+        contrast(1.05);
 
-    pointer-events: none;
+    transform: scale(1.03);
 }
 
-
-/* =========================================================
-   MAGIC RUNES
-========================================================= */
-
-#magicRunes {
+#groundLayer {
     position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-    left: 50%;
-    bottom: 12%;
+    height: 42%;
 
-    transform: translateX(-50%);
+    background:
+        linear-gradient(
+            to top,
+            rgba(5,3,8,.96),
+            rgba(10,5,14,.72),
+            transparent
+        );
 
-    width: min(34vw, 480px);
+    z-index: 3;
+}
 
-    opacity: .45;
+#darkEnergyLayer {
+    position: absolute;
+    inset: 0;
+
+    z-index: 2;
+
+    background:
+        url("../assets/images/day6/dark-energy.png")
+        center / cover no-repeat;
+
+    opacity: .16;
 
     mix-blend-mode: screen;
 
     animation:
-        runePulse 2.8s ease-in-out infinite;
+        energyMove 10s ease-in-out infinite alternate;
+}
 
-    z-index: 9;
+@keyframes energyMove {
+
+    from {
+        transform: scale(1);
+        opacity: .10;
+    }
+
+    to {
+        transform: scale(1.08);
+        opacity: .22;
+    }
+}
+
+#runeLayer {
+    position: absolute;
+    inset: 0;
+
+    z-index: 4;
+
+    background:
+        url("../assets/images/day6/magic-runes.png")
+        center / cover no-repeat;
+
+    opacity: .10;
+
+    mix-blend-mode: screen;
+}
+
+#dustLayer {
+    position: absolute;
+    inset: 0;
+
+    z-index: 6;
+
+    background:
+        url("../assets/images/day6/dust-particles.png")
+        center / cover repeat;
+
+    opacity: .18;
+
+    pointer-events: none;
+
+    animation:
+        dustMove 18s linear infinite;
+}
+
+@keyframes dustMove {
+
+    from {
+        transform: translate3d(0,0,0);
+    }
+
+    to {
+        transform: translate3d(-3%,2%,0);
+    }
+}
+
+#fogBack,
+#fogFront {
+    position: absolute;
+    inset: -5%;
 
     pointer-events: none;
 }
 
-@keyframes runePulse {
+#fogBack {
+    z-index: 7;
 
-    0%,
-    100% {
-        opacity: .2;
-        transform:
-            translateX(-50%)
-            scale(.98);
+    background:
+        url("../assets/images/day6/fog 1.png")
+        center / cover no-repeat;
+
+    opacity: .22;
+
+    animation:
+        fogBackMove 24s ease-in-out infinite alternate;
+}
+
+#fogFront {
+    z-index: 8;
+
+    background:
+        url("../assets/images/day6/fog 2.png")
+        center / cover no-repeat;
+
+    opacity: .18;
+
+    animation:
+        fogFrontMove 18s ease-in-out infinite alternate;
+}
+
+@keyframes fogBackMove {
+
+    from {
+        transform: translateX(-2%);
     }
 
-    50% {
-        opacity: .55;
-        transform:
-            translateX(-50%)
-            scale(1.03);
+    to {
+        transform: translateX(2%);
+    }
+}
+
+@keyframes fogFrontMove {
+
+    from {
+        transform: translateX(2%);
     }
 
+    to {
+        transform: translateX(-2%);
+    }
 }
 
 
@@ -258,106 +337,155 @@ body {
 #crystalLayer {
     position: absolute;
     inset: 0;
-
-    z-index: 35;
-
-    pointer-events: none;
+    z-index: 25;
 }
 
 .crystal {
     position: absolute;
 
-    width: 54px;
-    height: 70px;
+    width: clamp(42px, 5vw, 72px);
+    height: clamp(55px, 7vw, 92px);
 
-    border: 0;
+    transform:
+        translate(-50%, -50%);
 
     background:
         url("../assets/images/day6/crystal-glow.png")
         center / contain no-repeat;
 
+    filter:
+        drop-shadow(
+            0 0 8px rgba(255,160,255,.9)
+        )
+        drop-shadow(
+            0 0 22px rgba(170,50,255,.65)
+        );
+
     cursor: pointer;
 
-    pointer-events: auto;
-
-    filter:
-        drop-shadow(0 0 8px rgba(255,120,255,.7))
-        drop-shadow(0 0 22px rgba(160,0,255,.5));
+    transition:
+        opacity .35s ease,
+        transform .35s ease,
+        filter .35s ease;
 
     animation:
-        crystalFloat 2s ease-in-out infinite;
+        crystalFloat 2.4s ease-in-out infinite;
 
-    transition:
-        transform .2s ease,
-        opacity .3s ease;
+    will-change:
+        transform,
+        opacity;
 }
 
 .crystal:hover {
-    transform: scale(1.18);
+    filter:
+        drop-shadow(
+            0 0 14px rgba(255,220,255,1)
+        )
+        drop-shadow(
+            0 0 32px rgba(180,50,255,.9)
+        );
 }
 
 .crystal.collected {
-    pointer-events: none;
     opacity: 0;
-    transform: scale(1.8);
+    pointer-events: none;
+
+    animation:
+        crystalCollect .45s ease forwards;
 }
 
 @keyframes crystalFloat {
 
     0%,
     100% {
-        transform: translateY(0);
+        margin-top: 0;
+        transform:
+            translate(-50%, -50%)
+            rotate(-2deg);
     }
 
     50% {
-        transform: translateY(-9px);
+        margin-top: -8px;
+        transform:
+            translate(-50%, -50%)
+            rotate(2deg);
+    }
+}
+
+@keyframes crystalCollect {
+
+    0% {
+        opacity: 1;
+        transform:
+            translate(-50%, -50%)
+            scale(1);
     }
 
+    60% {
+        opacity: .9;
+        transform:
+            translate(-50%, -50%)
+            scale(1.7);
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            scale(2.2);
+    }
 }
 
 
 /* =========================================================
-   ENEMY LAYER
+   ENEMIES — MANSION SOLDIER
 ========================================================= */
 
 #enemyLayer {
     position: absolute;
     inset: 0;
-
-    z-index: 45;
-
-    pointer-events: none;
+    z-index: 30;
 }
 
-
-/* =========================================================
-   MANSION SOLDIER
-========================================================= */
-
-.mansion-soldier {
+.enemy {
     position: absolute;
 
-    width: 115px;
-    height: auto;
+    width: clamp(62px, 7vw, 108px);
+    height: clamp(88px, 12vw, 150px);
 
-    left: 70%;
-    bottom: 20%;
+    transform:
+        translate(-50%, -50%);
 
-    object-fit: contain;
-
-    transform-origin:
-        center bottom;
+    background:
+        url("../assets/images/day6/mansion soldier.png")
+        center / contain no-repeat;
 
     filter:
-        drop-shadow(0 0 8px rgba(0,0,0,.9))
-        drop-shadow(0 0 18px rgba(255,70,0,.25));
+        drop-shadow(
+            0 0 8px rgba(255,80,20,.28)
+        )
+        drop-shadow(
+            0 0 16px rgba(0,0,0,.9)
+        );
 
     transition:
-        left .05s linear,
-        bottom .05s linear,
-        opacity .2s ease;
+        transform .12s ease,
+        opacity .3s ease;
 
-    z-index: 46;
+    pointer-events: none;
+
+    will-change:
+        transform,
+        opacity;
+}
+
+.enemy.defeated {
+    opacity: 0;
+
+    transform:
+        translate(-50%, -50%)
+        scale(.55)
+        translateY(18px);
 }
 
 
@@ -365,46 +493,220 @@ body {
    BOSS
 ========================================================= */
 
-#bossLayer {
-    position: absolute;
-    inset: 0;
-
-    z-index: 50;
-
-    pointer-events: none;
-}
-
 #boss {
     position: absolute;
 
-    width: min(230px, 20vw);
-
     left: 50%;
-    bottom: 22%;
+    top: 28%;
+
+    width: clamp(150px, 22vw, 300px);
+    height: clamp(190px, 30vw, 390px);
 
     transform:
-        translateX(-50%)
-        scale(.85);
+        translate(-50%, -50%);
 
-    opacity: 0;
+    z-index: 60;
 
-    object-fit: contain;
+    display: none;
 
-    filter:
-        drop-shadow(0 0 15px rgba(150,0,255,.8))
-        drop-shadow(0 0 45px rgba(120,0,255,.4));
+    pointer-events: none;
 
-    transition:
-        opacity .5s ease,
-        transform .5s ease;
+    will-change:
+        transform,
+        opacity;
 }
 
 #boss.active {
-    opacity: 1;
+    display: block;
+    animation:
+        bossAppear .8s ease forwards;
+}
+
+@keyframes bossAppear {
+
+    from {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            scale(.7);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+}
+
+.bossAura {
+    position: absolute;
+    inset: -20%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(150,30,255,.45),
+            transparent 68%
+        );
+
+    animation:
+        bossAura 2s ease-in-out infinite alternate;
+}
+
+@keyframes bossAura {
+
+    from {
+        transform: scale(.9);
+        opacity: .55;
+    }
+
+    to {
+        transform: scale(1.15);
+        opacity: .9;
+    }
+}
+
+.bossSprite {
+    position: absolute;
+    inset: 0;
+
+    background:
+        url("../assets/images/day6/boss.png")
+        center / contain no-repeat;
+
+    filter:
+        drop-shadow(
+            0 0 15px rgba(170,40,255,.8)
+        )
+        drop-shadow(
+            0 0 35px rgba(100,0,160,.7)
+        );
+}
+
+.bossEyes {
+    display: none;
+}
+
+
+/* =========================================================
+   PORTAL
+========================================================= */
+
+#day7Portal {
+    position: absolute;
+
+    right: 8%;
+    top: 42%;
+
+    width: clamp(110px, 13vw, 180px);
+    height: clamp(160px, 20vw, 250px);
 
     transform:
-        translateX(-50%)
-        scale(1);
+        translateY(-50%);
+
+    z-index: 20;
+
+    display: none;
+
+    cursor: pointer;
+}
+
+#day7Portal.active {
+    display: block;
+
+    animation:
+        portalAppear .8s ease forwards;
+}
+
+@keyframes portalAppear {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(-50%)
+            scale(.7);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(-50%)
+            scale(1);
+    }
+}
+
+.portalGlow {
+    position: absolute;
+    inset: -30%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(255,105,20,.45),
+            transparent 65%
+        );
+
+    animation:
+        portalPulse 1.6s ease-in-out infinite alternate;
+}
+
+.portalCore {
+    position: absolute;
+    inset: 8%;
+
+    border:
+        2px solid rgba(255,160,70,.85);
+
+    border-radius:
+        50% 50% 42% 42%;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(255,130,30,.25),
+            rgba(50,5,5,.5) 65%,
+            transparent 70%
+        );
+
+    box-shadow:
+        0 0 15px rgba(255,80,0,.8),
+        0 0 45px rgba(255,50,0,.5),
+        inset 0 0 35px rgba(255,100,20,.4);
+}
+
+.portalText {
+    position: absolute;
+
+    left: 50%;
+    bottom: -38px;
+
+    transform:
+        translateX(-50%);
+
+    white-space: nowrap;
+
+    font-size: 10px;
+    letter-spacing: .18em;
+
+    color: #ffb16a;
+}
+
+@keyframes portalPulse {
+
+    from {
+        transform: scale(.9);
+        opacity: .5;
+    }
+
+    to {
+        transform: scale(1.12);
+        opacity: 1;
+    }
 }
 
 
@@ -412,80 +714,178 @@ body {
    PLAYER
 ========================================================= */
 
-#playerLayer {
+#playerContainer {
     position: absolute;
-    inset: 0;
 
-    z-index: 60;
+    left: 50%;
+    bottom: 28%;
+
+    width: clamp(70px, 8vw, 115px);
+    height: clamp(95px, 12vw, 155px);
+
+    transform:
+        translate(-50%, 50%);
+
+    z-index: 50;
 
     pointer-events: none;
+
+    will-change:
+        left,
+        bottom,
+        transform;
 }
 
 #player {
-    position: absolute;
+    width: 100%;
+    height: 100%;
 
-    width: 100px;
-    height: auto;
-
-    left: 50%;
-    bottom: 12%;
-
-    transform:
-        translateX(-50%);
-
-    object-fit: contain;
+    background:
+        url("../assets/images/day6/player-idle.png")
+        center / contain no-repeat;
 
     filter:
-        drop-shadow(0 0 8px rgba(0,0,0,.9));
+        drop-shadow(
+            0 5px 8px rgba(0,0,0,.8)
+        );
+}
 
-    transition:
-        filter .15s ease;
+#player.walk {
+    background-image:
+        url("../assets/images/day6/player-walk.png");
+
+    animation:
+        playerStep .32s steps(2) infinite;
+}
+
+#player.attack {
+    background-image:
+        url("../assets/images/day6/player-attack.png");
+
+    animation:
+        attackAnim .22s ease-out;
+}
+
+#player.dash {
+    background-image:
+        url("../assets/images/day6/player-dash.png");
+
+    animation:
+        dashAnim .3s ease-out;
 }
 
 #player.hurt {
-    filter:
-        brightness(2)
-        drop-shadow(0 0 20px rgba(255,0,0,.9));
+    background-image:
+        url("../assets/images/day6/player-hurt.png");
+
+    animation:
+        hurtAnim .4s ease-out;
 }
 
-#attackEffect,
-#dashEffect,
-#hurtEffect {
+@keyframes playerStep {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes attackAnim {
+
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes dashAnim {
+
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    45% {
+        opacity: .5;
+        transform: translateX(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes hurtAnim {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-6px);
+    }
+
+    75% {
+        transform: translateX(6px);
+    }
+}
+
+
+/* =========================================================
+   EFFECTS
+========================================================= */
+
+#slashEffect,
+#dashTrail {
     position: absolute;
 
-    width: 130px;
-
-    left: 50%;
-    bottom: 15%;
-
-    transform:
-        translateX(-50%);
+    pointer-events: none;
 
     opacity: 0;
-
-    pointer-events: none;
 }
 
-#attackEffect.active {
-    animation: attackFlash .28s ease-out;
+#slashEffect {
+    left: 5%;
+    top: 30%;
+
+    width: 130%;
+    height: 45%;
+
+    border-top:
+        3px solid rgba(255,210,180,.9);
+
+    border-radius: 50%;
+
+    transform:
+        rotate(-20deg);
 }
 
-#dashEffect.active {
-    animation: dashFlash .35s ease-out;
+#slashEffect.active {
+    animation:
+        slashFlash .22s ease-out;
 }
 
-#hurtEffect.active {
-    animation: hurtFlash .35s ease-out;
-}
-
-@keyframes attackFlash {
+@keyframes slashFlash {
 
     0% {
         opacity: 0;
         transform:
-            translateX(-50%)
-            scale(.7)
-            rotate(-15deg);
+            translateX(-10px)
+            rotate(-25deg)
+            scale(.7);
     }
 
     40% {
@@ -495,20 +895,41 @@ body {
     100% {
         opacity: 0;
         transform:
-            translateX(-50%)
-            scale(1.25)
-            rotate(10deg);
+            translateX(25px)
+            rotate(-15deg)
+            scale(1.2);
     }
+}
 
+#dashTrail {
+    left: -50%;
+    top: 30%;
+
+    width: 180%;
+    height: 50%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,120,40,.5),
+            transparent
+        );
+
+    filter:
+        blur(5px);
+}
+
+#dashTrail.active {
+    animation:
+        dashFlash .3s ease-out;
 }
 
 @keyframes dashFlash {
 
     0% {
         opacity: 0;
-        transform:
-            translateX(-50%)
-            scale(.7);
+        transform: translateX(25px);
     }
 
     40% {
@@ -517,27 +938,75 @@ body {
 
     100% {
         opacity: 0;
-        transform:
-            translateX(-50%)
-            scale(1.4);
+        transform: translateX(-35px);
     }
-
 }
 
-@keyframes hurtFlash {
+
+/* =========================================================
+   VIGNETTE
+========================================================= */
+
+#worldVignette {
+    position: absolute;
+    inset: 0;
+
+    z-index: 90;
+
+    pointer-events: none;
+
+    background:
+        url("../assets/images/day6/vignette-overlay.png")
+        center / cover no-repeat;
+
+    opacity: .72;
+}
+
+
+/* =========================================================
+   LIGHTNING
+========================================================= */
+
+#lightningLayer {
+    position: absolute;
+    inset: 0;
+
+    z-index: 91;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    background:
+        rgba(255,220,240,.7);
+}
+
+#lightningLayer.flash {
+    animation:
+        lightningFlash .42s ease-out;
+}
+
+@keyframes lightningFlash {
 
     0% {
         opacity: 0;
     }
 
-    30% {
-        opacity: .9;
+    8% {
+        opacity: .7;
+    }
+
+    14% {
+        opacity: 0;
+    }
+
+    22% {
+        opacity: .45;
     }
 
     100% {
         opacity: 0;
     }
-
 }
 
 
@@ -548,257 +1017,152 @@ body {
 #hud {
     position: absolute;
 
-    left: 0;
-    right: 0;
-    top: 0;
+    top: 20px;
+    left: 20px;
+    right: 20px;
 
-    padding:
-        18px 22px;
+    z-index: 200;
 
-    display: grid;
-
-    grid-template-columns:
-        1fr
-        1.3fr
-        1fr;
-
-    gap: 15px;
-
-    z-index: 100;
+    display: flex;
+    justify-content: space-between;
 
     pointer-events: none;
 }
 
 .hudPanel {
-    padding: 12px 15px;
+    min-width: 190px;
+    padding: 13px 16px;
 
     background:
         linear-gradient(
             135deg,
-            rgba(0,0,0,.75),
-            rgba(25,8,3,.65)
+            rgba(12,7,17,.88),
+            rgba(20,8,10,.68)
         );
 
     border:
-        1px solid
-        rgba(255,130,50,.35);
-
-    border-radius: 5px;
+        1px solid rgba(255,130,60,.22);
 
     box-shadow:
-        0 10px 30px rgba(0,0,0,.25);
+        0 8px 30px rgba(0,0,0,.3);
 
     backdrop-filter:
         blur(8px);
-}
 
-.hudTitle {
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: 4px;
-}
-
-.hudDay {
-    margin-top: 4px;
-
-    font-size: 10px;
-    letter-spacing: 2px;
-
-    opacity: .65;
-}
-
-.hudLocation {
-    margin-top: 7px;
-
-    color: #ff8a38;
-
-    font-size: 11px;
-    font-weight: 800;
-
-    letter-spacing: 2px;
-}
-
-.hudStats {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 8px;
-}
-
-.statHeader {
-    display: flex;
-    justify-content: space-between;
-
-    font-size: 10px;
-    letter-spacing: 1px;
-
-    margin-bottom: 3px;
-}
-
-.bar {
-    width: 100%;
-    height: 7px;
-
-    background: rgba(255,255,255,.1);
-
-    overflow: hidden;
-}
-
-#healthFill,
-#spiritFill {
-    width: 100%;
-    height: 100%;
-
-    transition: width .2s ease;
-}
-
-#healthFill {
-    background: #ff5b36;
-}
-
-#spiritFill {
-    background: #b46cff;
+    pointer-events: auto;
 }
 
 .hudRight {
     text-align: right;
 }
 
-.counterLabel {
-    margin-top: 2px;
-
+.hudHeading {
     font-size: 9px;
-
-    letter-spacing: 2px;
-
-    opacity: .6;
+    letter-spacing: .2em;
+    color: rgba(255,255,255,.5);
 }
 
-.counterValue {
-    margin: 2px 0 8px;
+.statusBar {
+    width: 190px;
+    max-width: 20vw;
 
-    font-size: 19px;
-    font-weight: 900;
+    height: 5px;
 
-    letter-spacing: 2px;
-}
-
-
-/* =========================================================
-   SPEED CONTROL
-========================================================= */
-
-#speedControl {
-    position: absolute;
-
-    right: 22px;
-    bottom: 22px;
-
-    width: 170px;
-
-    padding: 11px 14px;
+    margin-top: 7px;
 
     background:
-        rgba(0,0,0,.75);
+        rgba(255,255,255,.09);
 
-    border:
-        1px solid
-        rgba(255,130,50,.35);
-
-    border-radius: 5px;
-
-    z-index: 110;
+    overflow: hidden;
 }
 
-.speedTitle {
-    font-size: 9px;
-
-    letter-spacing: 2px;
-
-    opacity: .6;
-}
-
-.speedValue {
-    margin: 4px 0 6px;
-
-    color: #ff8a38;
-
-    font-size: 18px;
-    font-weight: 900;
-}
-
-#speedSlider {
-    width: 100%;
-
-    accent-color: #ff7135;
-
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   BOSS HUD
-========================================================= */
-
-#bossHUD {
-    position: absolute;
-
-    left: 50%;
-    top: 112px;
-
-    width: min(500px, 60vw);
-
-    transform: translateX(-50%);
-
-    text-align: center;
-
-    opacity: 0;
-
-    transition: opacity .4s ease;
-
-    z-index: 105;
-
-    pointer-events: none;
-}
-
-#bossHUD.active {
-    opacity: 1;
-}
-
-.bossTitle {
-    margin-bottom: 7px;
-
-    font-size: 13px;
-    font-weight: 900;
-
-    letter-spacing: 4px;
-
-    color: #ff7540;
-}
-
-.bossBar {
-    width: 100%;
-    height: 10px;
-
-    background: rgba(0,0,0,.7);
-
-    border:
-        1px solid
-        rgba(255,100,50,.4);
-}
-
-#bossHealthFill {
+#healthFill {
     width: 100%;
     height: 100%;
 
     background:
         linear-gradient(
             90deg,
-            #7b0909,
-            #ff512f
+            #8d1208,
+            #ff4a1c
         );
 
-    transition: width .2s ease;
+    transition:
+        width .25s ease;
+}
+
+.spiritBar {
+    margin-top: 7px;
+}
+
+#spiritFill {
+    width: 100%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #5620a0,
+            #c05cff
+        );
+
+    transition:
+        width .25s ease;
+}
+
+.hudNumber {
+    margin-top: 5px;
+
+    font-size: 10px;
+    color: rgba(255,255,255,.75);
+}
+
+.spiritHeading {
+    margin-top: 11px;
+}
+
+.hudBigNumber {
+    margin-top: 4px;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    letter-spacing: .08em;
+
+    color: #fff;
+}
+
+.scoreHeading {
+    margin-top: 10px;
+}
+
+.hudButton {
+    width: 36px;
+    height: 28px;
+
+    margin-top: 10px;
+
+    border:
+        1px solid rgba(255,130,60,.35);
+
+    background:
+        rgba(255,90,20,.08);
+
+    color: #ff9a5a;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+.hudButton:hover {
+    background:
+        rgba(255,90,20,.2);
+
+    transform:
+        translateY(-1px);
 }
 
 
@@ -809,123 +1173,234 @@ body {
 #missionPanel {
     position: absolute;
 
-    left: 22px;
-    bottom: 22px;
-
-    width: 255px;
-
-    padding: 13px;
-
-    background:
-        rgba(0,0,0,.7);
-
-    border-left:
-        2px solid #ff7135;
-
-    z-index: 105;
-}
-
-.missionTitle {
-    margin-bottom: 8px;
-
-    color: #ff8a38;
-
-    font-size: 11px;
-    font-weight: 900;
-
-    letter-spacing: 2px;
-}
-
-.mission {
-    margin: 6px 0;
-
-    font-size: 11px;
-
-    opacity: .7;
-
-    transition:
-        color .2s ease,
-        opacity .2s ease;
-}
-
-.mission.complete {
-    color: #ff9d65;
-
-    opacity: 1;
-
-    text-decoration: line-through;
-}
-
-
-/* =========================================================
-   NOTIFICATION
-========================================================= */
-
-#notification {
-    position: absolute;
-
-    left: 50%;
-    top: 22%;
-
-    transform:
-        translate(-50%, -10px);
-
-    padding: 12px 24px;
-
-    background:
-        rgba(0,0,0,.8);
-
-    border:
-        1px solid
-        rgba(255,130,50,.5);
-
-    color: white;
-
-    font-size: 12px;
-    font-weight: 800;
-
-    letter-spacing: 2px;
-
-    opacity: 0;
+    left: 20px;
+    bottom: 20px;
 
     z-index: 200;
 
-    pointer-events: none;
+    width: min(300px, 32vw);
 
-    transition:
-        opacity .3s ease,
-        transform .3s ease;
+    padding: 14px 16px;
+
+    background:
+        rgba(7,4,10,.72);
+
+    border-left:
+        2px solid rgba(255,100,30,.65);
+
+    backdrop-filter:
+        blur(7px);
 }
 
-#notification.show {
-    opacity: 1;
+.missionHeader {
+    margin-bottom: 10px;
 
-    transform:
-        translate(-50%, 0);
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: .18em;
+
+    color: #ff9a56;
+}
+
+.mission {
+    margin-top: 7px;
+
+    font-size: 11px;
+
+    color:
+        rgba(255,255,255,.68);
+
+    transition:
+        color .3s ease,
+        opacity .3s ease;
+}
+
+.mission span {
+    margin-right: 7px;
+    color: #ff8b40;
+}
+
+.mission.complete {
+    color: #fff;
+
+    text-decoration:
+        line-through;
+
+    opacity: .55;
+}
+
+.mission.complete span {
+    color: #72ffad;
 }
 
 
 /* =========================================================
-   INTERACTION
+   BOSS HUD
 ========================================================= */
 
-#interaction {
+#bossHUD {
+    position: absolute;
+
+    top: 24px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 210;
+
+    width: min(520px, 55vw);
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition:
+        opacity .4s ease;
+}
+
+#bossHUD.active {
+    opacity: 1;
+}
+
+.bossLabel {
+    text-align: center;
+
+    margin-bottom: 7px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: .22em;
+
+    color: #ff9b70;
+
+    text-shadow:
+        0 0 12px rgba(255,70,20,.7);
+}
+
+.bossHealthOuter {
+    height: 7px;
+
+    background:
+        rgba(0,0,0,.65);
+
+    border:
+        1px solid rgba(255,100,60,.35);
+}
+
+#bossHealthFill {
+    width: 100%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #7b0000,
+            #ff3917
+        );
+
+    transition:
+        width .2s ease;
+}
+
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+#notificationContainer {
+    position: absolute;
+
+    top: 115px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 400;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 7px;
+
+    pointer-events: none;
+}
+
+.notification {
+    padding: 8px 16px;
+
+    background:
+        rgba(8,4,10,.86);
+
+    border:
+        1px solid rgba(255,120,50,.3);
+
+    color: #fff;
+
+    font-size: 10px;
+    letter-spacing: .12em;
+
+    animation:
+        notificationIn 2.8s ease forwards;
+}
+
+@keyframes notificationIn {
+
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    12% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    78% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+}
+
+#interactionPrompt {
     position: absolute;
 
     left: 50%;
-    bottom: 13px;
+    bottom: 16%;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
-    color: rgba(255,255,255,.55);
+    z-index: 300;
 
-    font-size: 9px;
+    padding: 8px 14px;
 
-    letter-spacing: 2px;
+    border:
+        1px solid rgba(255,130,60,.4);
 
-    z-index: 105;
+    background:
+        rgba(10,4,8,.8);
 
-    pointer-events: none;
+    color: #ffae75;
+
+    font-size: 10px;
+    letter-spacing: .15em;
+
+    opacity: 0;
+
+    transition:
+        opacity .2s ease;
+}
+
+#interactionPrompt.active {
+    opacity: 1;
 }
 
 
@@ -934,101 +1409,124 @@ body {
 ========================================================= */
 
 .overlay {
-    position: absolute;
-
+    position: fixed;
     inset: 0;
 
-    display: flex;
+    z-index: 800;
 
+    display: flex;
     align-items: center;
     justify-content: center;
 
     background:
-        rgba(0,0,0,.82);
+        rgba(3,2,5,.78);
 
     backdrop-filter:
-        blur(8px);
+        blur(10px);
 
-    z-index: 500;
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity .35s ease,
+        visibility .35s ease;
 }
 
-.hidden {
-    display: none !important;
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
 }
 
-.overlayBox {
-    width: min(600px, 90vw);
+.overlayCard {
+    width: min(520px, 88vw);
 
-    padding: 45px 30px;
+    padding: 42px 34px;
 
     text-align: center;
 
     background:
         linear-gradient(
             145deg,
-            rgba(22,8,3,.95),
-            rgba(0,0,0,.95)
+            rgba(19,8,16,.97),
+            rgba(8,4,9,.97)
         );
 
     border:
-        1px solid
-        rgba(255,120,50,.45);
+        1px solid rgba(255,120,50,.3);
 
     box-shadow:
-        0 25px 80px rgba(0,0,0,.8);
+        0 30px 80px rgba(0,0,0,.7);
 }
 
 .overlaySmall {
-    color: #ff8a38;
+    font-size: 9px;
+    letter-spacing: .28em;
 
-    font-size: 10px;
-
-    letter-spacing: 4px;
+    color: #ff8c48;
 }
 
-.overlayBox h1 {
-    margin: 15px 0;
+.overlayCard h1 {
+    margin-top: 12px;
 
-    font-size:
-        clamp(30px, 5vw, 60px);
+    font-size: clamp(30px, 5vw, 52px);
 
-    line-height: 1;
-
-    letter-spacing: 3px;
+    letter-spacing: .05em;
 }
 
-.overlayBox p {
-    margin-bottom: 25px;
+.overlayCard p {
+    margin: 18px auto 25px;
 
-    color: rgba(255,255,255,.7);
+    max-width: 410px;
 
     line-height: 1.7;
+
+    font-size: 13px;
+
+    color:
+        rgba(255,255,255,.62);
 }
 
-.overlayBox button {
-    padding: 13px 25px;
+.finalScore {
+    margin-bottom: 25px;
 
-    border: 1px solid #ff7135;
+    font-size: 13px;
+    letter-spacing: .16em;
 
-    background: #ff7135;
+    color: #ffad72;
+}
 
-    color: #080808;
+.primaryButton {
+    padding: 13px 24px;
 
-    font-weight: 900;
+    border:
+        1px solid rgba(255,130,60,.5);
 
-    letter-spacing: 2px;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(130,30,10,.8),
+            rgba(255,80,20,.65)
+        );
+
+    color: #fff;
+
+    font-weight: 700;
+
+    letter-spacing: .08em;
 
     cursor: pointer;
 
     transition:
         transform .2s ease,
-        background .2s ease;
+        box-shadow .2s ease;
 }
 
-.overlayBox button:hover {
-    transform: translateY(-2px);
+.primaryButton:hover {
+    transform:
+        translateY(-2px);
 
-    background: white;
+    box-shadow:
+        0 10px 25px rgba(255,60,10,.25);
 }
 
 
@@ -1037,221 +1535,307 @@ body {
 ========================================================= */
 
 #mobileControls {
+    position: fixed;
+    inset: auto 0 0 0;
+
+    z-index: 500;
+
     display: none;
-
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 18px;
-
-    padding: 0 18px;
-
-    justify-content:
-        space-between;
-
-    align-items:
-        flex-end;
-
-    z-index: 300;
 
     pointer-events: none;
 }
 
-#mobileMove,
-#mobileActions {
-    pointer-events: auto;
-}
+.joystick {
+    position: absolute;
 
-.moveButton,
-.actionButton {
-    border: 1px solid rgba(255,130,50,.45);
+    left: 22px;
+    bottom: 24px;
 
-    background:
-        rgba(0,0,0,.75);
-
-    color: white;
-
-    touch-action: none;
-
-    cursor: pointer;
-}
-
-.moveButton {
-    width: 45px;
-    height: 45px;
-
-    margin: 2px;
+    width: 110px;
+    height: 110px;
 
     border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.05);
+
+    border:
+        1px solid rgba(255,255,255,.14);
+
+    box-shadow:
+        inset 0 0 25px rgba(0,0,0,.4);
+
+    pointer-events: auto;
+
+    touch-action: none;
+}
+
+.joystickStick {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 48px;
+    height: 48px;
+
+    margin:
+        -24px 0 0 -24px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,100,40,.2);
+
+    border:
+        1px solid rgba(255,150,90,.45);
+
+    box-shadow:
+        0 0 20px rgba(255,80,20,.2);
+}
+
+.mobileActions {
+    position: absolute;
+
+    right: 20px;
+    bottom: 25px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    pointer-events: auto;
 }
 
 .actionButton {
     width: 58px;
     height: 58px;
 
-    margin-left: 7px;
-
     border-radius: 50%;
 
-    font-size: 20px;
+    background:
+        rgba(15,7,12,.8);
+
+    border:
+        1px solid rgba(255,130,70,.35);
+
+    color: #fff;
+
+    font-size: 21px;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.35);
+
+    touch-action: none;
+
+    transition:
+        transform .1s ease,
+        background .1s ease;
 }
 
-.moveButton:active,
 .actionButton:active {
-    background: #ff7135;
-    color: black;
+    transform:
+        scale(.9);
+
+    background:
+        rgba(180,50,15,.45);
+}
+
+.attackButton {
+    width: 70px;
+    height: 70px;
+
+    border-color:
+        rgba(255,100,50,.55);
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   TABLET
 ========================================================= */
 
 @media (max-width: 900px) {
 
-    #hud {
-        grid-template-columns: 1fr 1fr;
-
-        padding: 10px;
+    #missionPanel {
+        width: 260px;
     }
 
-    .hudRight {
-        display: none;
+    .hudPanel {
+        min-width: 160px;
+    }
+
+    .statusBar {
+        width: 160px;
+    }
+
+    #bossHUD {
+        width: 48vw;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    #hud {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+    }
+
+    .hudPanel {
+        min-width: 0;
+        width: 145px;
+
+        padding: 9px 10px;
+    }
+
+    .statusBar {
+        width: 125px;
+        max-width: none;
+    }
+
+    .hudHeading {
+        font-size: 7px;
+    }
+
+    .hudNumber {
+        font-size: 8px;
+    }
+
+    .hudBigNumber {
+        font-size: 13px;
     }
 
     #missionPanel {
         left: 10px;
-        bottom: 95px;
+        bottom: 10px;
 
         width: 220px;
+
+        padding: 9px 11px;
     }
 
-    #speedControl {
-        right: 10px;
-        bottom: 95px;
-    }
-
-    #mobileControls {
-        display: flex;
-    }
-
-    #interaction {
-        display: none;
-    }
-
-    #bossHUD {
-        top: 105px;
-        width: 70vw;
-    }
-
-}
-
-
-@media (max-width: 600px) {
-
-    #game {
-        min-height: 480px;
-    }
-
-    #hud {
-        display: block;
-
-        padding: 8px;
-    }
-
-    .hudPanel {
-        padding: 8px 10px;
-    }
-
-    .hudStats {
-        margin-top: 5px;
-
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .hudTitle {
-        font-size: 15px;
-        letter-spacing: 2px;
-    }
-
-    .hudDay,
-    .hudLocation {
+    .missionHeader {
         font-size: 8px;
     }
 
-    #mansionGate {
-        width: 65vw;
-    }
-
-    #magicRunes {
-        width: 60vw;
-    }
-
-    .crystal {
-        width: 40px;
-        height: 55px;
-    }
-
-    .mansion-soldier {
-        width: 80px;
-    }
-
-    #player {
-        width: 75px;
-    }
-
-    #boss {
-        width: 150px;
-    }
-
-    #missionPanel {
-        display: none;
-    }
-
-    #speedControl {
-        width: 125px;
-
-        right: 10px;
-        bottom: 110px;
-
-        padding: 8px;
-    }
-
-    .speedValue {
-        font-size: 14px;
+    .mission {
+        font-size: 9px;
+        margin-top: 5px;
     }
 
     #bossHUD {
-        top: 115px;
-        width: 85vw;
+        top: 82px;
+        width: 70vw;
     }
 
-    .bossTitle {
-        font-size: 9px;
-        letter-spacing: 2px;
+    #notificationContainer {
+        top: 145px;
+        width: 90%;
     }
 
-}
-
-
-@media (max-height: 600px) {
-
-    #hud {
-        padding: 7px;
-    }
-
-    #missionPanel {
-        display: none;
-    }
-
-    #speedControl {
-        bottom: 10px;
+    .notification {
+        font-size: 8px;
+        text-align: center;
     }
 
     #mobileControls {
-        bottom: 10px;
+        display: block;
     }
 
+    #interactionPrompt {
+        bottom: 19%;
+    }
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .loadingLogo {
+        letter-spacing: .18em;
+    }
+
+    .loadingEvent {
+        letter-spacing: .18em;
+    }
+
+    .loadingTitle {
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    .hudPanel {
+        width: 125px;
+    }
+
+    .statusBar {
+        width: 105px;
+    }
+
+    #missionPanel {
+        width: 195px;
+    }
+
+    #missionPanel {
+        bottom: 145px;
+    }
+
+    .joystick {
+        width: 95px;
+        height: 95px;
+    }
+
+    .joystickStick {
+        width: 42px;
+        height: 42px;
+
+        margin:
+            -21px 0 0 -21px;
+    }
+
+    .mobileActions {
+        right: 12px;
+        bottom: 20px;
+        gap: 7px;
+    }
+
+    .actionButton {
+        width: 49px;
+        height: 49px;
+        font-size: 18px;
+    }
+
+    .attackButton {
+        width: 60px;
+        height: 60px;
+    }
+
+    .overlayCard {
+        padding: 30px 20px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
 }
