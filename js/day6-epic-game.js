@@ -264,6 +264,8 @@ function init() {
 
     setupButtons();
 
+    setupVisibilityHandling();
+
     startAudio();
 
     showNotification(
@@ -392,6 +394,45 @@ function setupKeyboard() {
         }
     );
 
+    /* FIX: if the window/tab loses focus while a movement key is
+       held (alt-tab, switching apps on mobile, etc.) the keyup
+       event never fires and the player would walk forever in one
+       direction. Clear all movement keys on blur. */
+    window.addEventListener(
+        "blur",
+        () => {
+
+            state.keys.up = false;
+            state.keys.down = false;
+            state.keys.left = false;
+            state.keys.right = false;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   VISIBILITY HANDLING
+========================================================= */
+
+function setupVisibilityHandling() {
+
+    /* FIX: prevents a huge delta-time spike (and the player/enemies
+       "teleporting") the moment the tab regains visibility after
+       being backgrounded for a while. */
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            if (!document.hidden) {
+                state.lastTime = 0;
+            }
+
+        }
+    );
+
 }
 
 
@@ -425,6 +466,16 @@ function setupCrystals() {
 
     crystals.forEach(
         crystal => {
+
+            /* FIX: precompute each crystal's world-space position
+               ONCE from its inline style, instead of calling
+               getBoundingClientRect() on every crystal, every
+               single movement frame (major jank source). Crystals
+               live inside #crystalLayer, which — like #playerLayer —
+               is inset:0 over #gameWorld, so the percentages line
+               up directly with state.player.x / state.player.y. */
+            crystal._px = parseFloat(crystal.style.left) || 0;
+            crystal._py = parseFloat(crystal.style.bottom) || 0;
 
             crystal.addEventListener(
                 "click",
@@ -480,7 +531,11 @@ function collectCrystal(crystal) {
             "ALL 6 CRYSTALS COLLECTED"
         );
 
-        activateBoss();
+        if (!state.soldier.active) {
+
+            activateBoss();
+
+        }
 
     }
 
@@ -522,8 +577,13 @@ function updatePlayer(delta) {
         dx === 0 &&
         dy === 0
     ) {
-        player.src =
-            "assets/images/day6/player-idle.png";
+
+        if (!state.player.attacking) {
+
+            player.src =
+                "assets/images/day6/player-idle.png";
+
+        }
 
         return;
     }
@@ -562,8 +622,12 @@ function updatePlayer(delta) {
             65
         );
 
-    player.src =
-        "assets/images/day6/player-walk.png";
+    if (!state.player.attacking) {
+
+        player.src =
+            "assets/images/day6/player-walk.png";
+
+    }
 
     if (
         Math.random() < 0.03
@@ -598,40 +662,17 @@ function checkCrystalDistance() {
                 return;
             }
 
-            const rect =
-                crystal.getBoundingClientRect();
-
-            const worldRect =
-                document
-                    .getElementById(
-                        "gameWorld"
-                    )
-                    .getBoundingClientRect();
-
-            const crystalX =
-                (
-                    rect.left -
-                    worldRect.left +
-                    rect.width / 2
-                ) /
-                worldRect.width *
-                100;
-
-            const crystalY =
-                (
-                    worldRect.bottom -
-                    rect.bottom
-                ) /
-                worldRect.height *
-                100;
-
+            /* FIX: uses the precomputed _px/_py instead of
+               getBoundingClientRect(), avoiding a forced
+               synchronous layout reflow on every crystal every
+               frame the player moves. */
             const distance =
                 Math.hypot(
                     state.player.x -
-                    crystalX,
+                    crystal._px,
 
                     state.player.y -
-                    crystalY
+                    crystal._py
                 );
 
             if (distance < 6) {
@@ -654,17 +695,6 @@ function checkCrystalDistance() {
 
 function updatePlayerVisual() {
 
-    const world =
-        document.getElementById(
-            "gameWorld"
-        );
-
-    const worldRect =
-        world.getBoundingClientRect();
-
-    const playerWidth =
-        player.offsetWidth;
-
     player.style.left =
         `${state.player.x}%`;
 
@@ -673,6 +703,29 @@ function updatePlayerVisual() {
 
     player.style.transform =
         `translateX(-50%) scaleX(${state.player.facing})`;
+
+}
+
+
+/* =========================================================
+   EFFECT POSITIONING
+========================================================= */
+
+function positionEffectOnPlayer(effect) {
+
+    /* FIX: attack/dash/hurt effects used to sit at a fixed
+       left:50%, bottom:15%, so they only ever flashed at the
+       center of the screen instead of on the player. Now they're
+       moved to the player's current position right before the
+       animation plays. This only touches left/bottom (not
+       transform), so it doesn't fight with the CSS keyframe
+       animation that drives the transform/opacity. */
+
+    effect.style.left =
+        `${state.player.x}%`;
+
+    effect.style.bottom =
+        `${state.player.y + 6}%`;
 
 }
 
@@ -826,6 +879,8 @@ function attack() {
     player.src =
         "assets/images/day6/player-attack.png";
 
+    positionEffectOnPlayer(attackEffect);
+
     attackEffect.classList.remove(
         "active"
     );
@@ -937,6 +992,10 @@ function damageSoldier(amount) {
 
         }
 
+    } else {
+
+        updateHUD();
+
     }
 
 }
@@ -1039,6 +1098,20 @@ function updateBoss(delta) {
             state.speedMultiplier *
             delta;
 
+        enemy.x =
+            clamp(
+                enemy.x,
+                5,
+                95
+            );
+
+        enemy.y =
+            clamp(
+                enemy.y,
+                8,
+                65
+            );
+
     }
 
 
@@ -1060,14 +1133,34 @@ function updateBoss(delta) {
     }
 
 
+    updateBossVisual();
+
+}
+
+
+/* =========================================================
+   BOSS VISUAL
+========================================================= */
+
+function updateBossVisual() {
+
+    if (!boss) {
+        return;
+    }
+
     boss.style.left =
-        `${enemy.x}%`;
+        `${state.boss.x}%`;
 
     boss.style.bottom =
-        `${enemy.y}%`;
+        `${state.boss.y}%`;
+
+    const facing =
+        state.player.x < state.boss.x
+            ? -1
+            : 1;
 
     boss.style.transform =
-        `translateX(-50%) scale(${state.player.x < enemy.x ? -1 : 1},1)`;
+        `translateX(-50%) scale(${facing},1)`;
 
 }
 
@@ -1217,6 +1310,8 @@ function damagePlayer(amount) {
         "hurt"
     );
 
+    positionEffectOnPlayer(hurtEffect);
+
     hurtEffect.classList.remove(
         "active"
     );
@@ -1227,8 +1322,12 @@ function damagePlayer(amount) {
         "active"
     );
 
-    player.src =
-        "assets/images/day6/player-hurt.png";
+    if (!state.player.attacking) {
+
+        player.src =
+            "assets/images/day6/player-hurt.png";
+
+    }
 
     playSound(
         hurtSound,
@@ -1245,7 +1344,8 @@ function damagePlayer(amount) {
             );
 
             if (
-                !state.gameOver
+                !state.gameOver &&
+                !state.player.attacking
             ) {
 
                 player.src =
@@ -1306,6 +1406,8 @@ function dash() {
     player.src =
         "assets/images/day6/player-dash.png";
 
+    positionEffectOnPlayer(dashEffect);
+
     dashEffect.classList.remove(
         "active"
     );
@@ -1323,14 +1425,20 @@ function dash() {
 
     updateHUD();
 
+    updatePlayerVisual();
+
     setTimeout(
         () => {
 
             state.player.dashing =
                 false;
 
-            player.src =
-                "assets/images/day6/player-idle.png";
+            if (!state.player.attacking) {
+
+                player.src =
+                    "assets/images/day6/player-idle.png";
+
+            }
 
         },
         350
@@ -1428,6 +1536,8 @@ function togglePause() {
         bossMusic.pause();
 
     } else {
+
+        state.lastTime = 0;
 
         if (
             state.boss.active
@@ -1567,7 +1677,12 @@ function setupMobileControls() {
         .getElementById("mobileAttack")
         .addEventListener(
             "pointerdown",
-            attack
+            event => {
+
+                event.preventDefault();
+                attack();
+
+            }
         );
 
 
@@ -1575,7 +1690,12 @@ function setupMobileControls() {
         .getElementById("mobileDash")
         .addEventListener(
             "pointerdown",
-            dash
+            event => {
+
+                event.preventDefault();
+                dash();
+
+            }
         );
 
 }
@@ -1723,6 +1843,10 @@ function gameLoop(timestamp) {
         state.lastTime =
             timestamp;
 
+        requestAnimationFrame(gameLoop);
+
+        return;
+
     }
 
     let delta =
@@ -1734,9 +1858,13 @@ function gameLoop(timestamp) {
     state.lastTime =
         timestamp;
 
+    /* FIX: cap delta a bit tighter and guard against a negative/zero
+       value (can happen right after a visibility-change reset) so
+       enemies/effects never jump. */
     delta =
-        Math.min(
+        clamp(
             delta,
+            0,
             0.05
         );
 
