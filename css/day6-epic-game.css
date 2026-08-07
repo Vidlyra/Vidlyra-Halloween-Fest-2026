@@ -21,10 +21,17 @@ body {
         Arial,
         sans-serif;
     color: white;
+    /* FIX: prevents mobile scroll/pinch-zoom from fighting with
+       on-screen movement controls */
+    overscroll-behavior: none;
+    touch-action: none;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 }
 
 
@@ -39,6 +46,7 @@ body {
     min-height: 520px;
     overflow: hidden;
     background: #050505;
+    touch-action: none;
 }
 
 
@@ -95,6 +103,8 @@ body {
     z-index: 20;
 
     pointer-events: none;
+
+    will-change: transform;
 }
 
 #dustLayer {
@@ -229,6 +239,8 @@ body {
     z-index: 9;
 
     pointer-events: none;
+
+    will-change: transform, opacity;
 }
 
 @keyframes runePulse {
@@ -288,18 +300,28 @@ body {
         crystalFloat 2s ease-in-out infinite;
 
     transition:
-        transform .2s ease,
+        filter .2s ease,
         opacity .3s ease;
+
+    will-change: transform;
 }
 
 .crystal:hover {
-    transform: scale(1.18);
+    /* FIX: the float animation and :hover were both driving
+       `transform`, so the hover scale used to flicker/fight the
+       animation. Pausing the animation on hover lets the scale
+       transition play smoothly, then it resumes on mouse-out. */
+    animation-play-state: paused;
+    transform: translateY(-9px) scale(1.18);
+    transition: transform .2s ease;
 }
 
 .crystal.collected {
     pointer-events: none;
     opacity: 0;
+    animation-play-state: paused;
     transform: scale(1.8);
+    transition: transform .3s ease, opacity .3s ease;
 }
 
 @keyframes crystalFloat {
@@ -357,6 +379,8 @@ body {
         bottom .05s linear,
         opacity .2s ease;
 
+    will-change: left, bottom, transform;
+
     z-index: 46;
 }
 
@@ -396,7 +420,11 @@ body {
 
     transition:
         opacity .5s ease,
-        transform .5s ease;
+        left .08s linear,
+        bottom .08s linear,
+        transform .2s ease;
+
+    will-change: left, bottom, transform, opacity;
 }
 
 #boss.active {
@@ -440,6 +468,8 @@ body {
 
     transition:
         filter .15s ease;
+
+    will-change: left, bottom, transform;
 }
 
 #player.hurt {
@@ -455,6 +485,10 @@ body {
 
     width: 130px;
 
+    /* FIX: default anchor point only — actual left/bottom is set
+       dynamically in JS to match the player's current position so
+       the effect appears on the player instead of always at
+       screen-center. */
     left: 50%;
     bottom: 15%;
 
@@ -733,6 +767,8 @@ body {
     accent-color: #ff7135;
 
     cursor: pointer;
+
+    touch-action: pan-x;
 }
 
 
@@ -895,6 +931,9 @@ body {
     transition:
         opacity .3s ease,
         transform .3s ease;
+
+    text-align: center;
+    max-width: 88vw;
 }
 
 #notification.show {
@@ -950,6 +989,8 @@ body {
         blur(8px);
 
     z-index: 500;
+
+    pointer-events: auto;
 }
 
 .hidden {
@@ -958,6 +999,8 @@ body {
 
 .overlayBox {
     width: min(600px, 90vw);
+    max-height: 85vh;
+    overflow-y: auto;
 
     padding: 45px 30px;
 
@@ -1020,6 +1063,8 @@ body {
 
     cursor: pointer;
 
+    touch-action: manipulation;
+
     transition:
         transform .2s ease,
         background .2s ease;
@@ -1075,6 +1120,9 @@ body {
     touch-action: none;
 
     cursor: pointer;
+
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .moveButton {
@@ -1236,6 +1284,34 @@ body {
 }
 
 
+@media (max-width: 380px) {
+
+    .moveButton {
+        width: 38px;
+        height: 38px;
+    }
+
+    .actionButton {
+        width: 50px;
+        height: 50px;
+        font-size: 17px;
+    }
+
+    #player {
+        width: 62px;
+    }
+
+    .mansion-soldier {
+        width: 68px;
+    }
+
+    #boss {
+        width: 125px;
+    }
+
+}
+
+
 @media (max-height: 600px) {
 
     #hud {
@@ -1252,6 +1328,31 @@ body {
 
     #mobileControls {
         bottom: 10px;
+    }
+
+}
+
+
+/* Landscape phones tend to be short & wide - keep controls reachable */
+@media (max-height: 420px) and (orientation: landscape) {
+
+    #mobileControls {
+        bottom: 6px;
+    }
+
+    .moveButton {
+        width: 34px;
+        height: 34px;
+    }
+
+    .actionButton {
+        width: 44px;
+        height: 44px;
+        font-size: 15px;
+    }
+
+    #hud {
+        padding: 5px;
     }
 
 }
