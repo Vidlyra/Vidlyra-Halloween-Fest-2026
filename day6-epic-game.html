@@ -101,14 +101,62 @@
         </div>
 
         <!-- =================================================
+             VITALITY ORBS (health refill pickups)
+        ================================================== -->
+
+        <div id="healthOrbLayer">
+
+            <button
+                class="healthOrb"
+                data-orb="1"
+                style="left:35%;bottom:12%;"
+                aria-label="Vitality Orb 1">
+            </button>
+
+            <button
+                class="healthOrb"
+                data-orb="2"
+                style="left:8%;bottom:45%;"
+                aria-label="Vitality Orb 2">
+            </button>
+
+            <button
+                class="healthOrb"
+                data-orb="3"
+                style="left:92%;bottom:22%;"
+                aria-label="Vitality Orb 3">
+            </button>
+
+        </div>
+
+        <!-- =================================================
              ENEMY LAYER
         ================================================== -->
 
         <div id="enemyLayer">
 
             <img
-                id="mansionSoldier"
+                id="mansionSoldier1"
                 class="mansion-soldier"
+                data-soldier="1"
+                src="assets/images/day6/mansion soldier.png"
+                alt="Mansion Soldier"
+                draggable="false"
+            >
+
+            <img
+                id="mansionSoldier2"
+                class="mansion-soldier"
+                data-soldier="2"
+                src="assets/images/day6/mansion soldier.png"
+                alt="Mansion Soldier"
+                draggable="false"
+            >
+
+            <img
+                id="mansionSoldier3"
+                class="mansion-soldier"
+                data-soldier="3"
                 src="assets/images/day6/mansion soldier.png"
                 alt="Mansion Soldier"
                 draggable="false"
@@ -316,7 +364,7 @@
         <div
             id="missionSoldier"
             class="mission">
-            ◇ Defeat the Mansion Soldier
+            ◇ Defeat all Mansion Soldiers (0/3)
         </div>
 
         <div
