@@ -14,8 +14,8 @@
 const player =
     document.getElementById("player");
 
-const mansionSoldier =
-    document.getElementById("mansionSoldier");
+const mansionSoldierEls =
+    [...document.querySelectorAll(".mansion-soldier")];
 
 const boss =
     document.getElementById("boss");
@@ -31,6 +31,9 @@ const hurtEffect =
 
 const crystals =
     [...document.querySelectorAll(".crystal")];
+
+const healthOrbs =
+    [...document.querySelectorAll(".healthOrb")];
 
 const healthFill =
     document.getElementById("healthFill");
@@ -179,27 +182,42 @@ const state = {
 
     },
 
-    soldier: {
+    soldiers: [
 
-        active: true,
+        {
+            active: true,
+            x: 72,
+            y: 20,
+            health: 100,
+            maxHealth: 100,
+            speed: 8,
+            attackCooldown: 0,
+            attackDelay: 1.4
+        },
 
-        x: 72,
+        {
+            active: true,
+            x: 22,
+            y: 22,
+            health: 100,
+            maxHealth: 100,
+            speed: 8.5,
+            attackCooldown: 0,
+            attackDelay: 1.4
+        },
 
-        y: 20,
+        {
+            active: true,
+            x: 58,
+            y: 60,
+            health: 100,
+            maxHealth: 100,
+            speed: 7.5,
+            attackCooldown: 0,
+            attackDelay: 1.4
+        }
 
-        health: 100,
-
-        maxHealth: 100,
-
-        speed: 8,
-
-        attackCooldown: 0,
-
-        attackDelay: 1.4,
-
-        hitCooldown: 0
-
-    },
+    ],
 
     boss: {
 
@@ -241,6 +259,15 @@ const state = {
 
 
 /* =========================================================
+   HEALTH ORB CONFIG
+========================================================= */
+
+const HEALTH_ORB_HEAL_AMOUNT = 30;
+
+const HEALTH_ORB_RESPAWN_SECONDS = 18;
+
+
+/* =========================================================
    INITIALIZATION
 ========================================================= */
 
@@ -250,7 +277,7 @@ function init() {
 
     updatePlayerVisual();
 
-    updateSoldierVisual();
+    setupSoldiers();
 
     updateBossVisual();
 
@@ -259,6 +286,8 @@ function init() {
     setupSpeedControl();
 
     setupCrystals();
+
+    setupHealthOrbs();
 
     setupMobileControls();
 
@@ -459,6 +488,29 @@ function setupSpeedControl() {
 
 
 /* =========================================================
+   SOLDIERS SETUP
+========================================================= */
+
+function setupSoldiers() {
+
+    state.soldiers.forEach(
+        (soldier, index) => {
+
+            soldier.el =
+                mansionSoldierEls[index] ||
+                null;
+
+            updateSoldierVisual(soldier);
+
+        }
+    );
+
+    updateMissionSoldierText();
+
+}
+
+
+/* =========================================================
    CRYSTALS
 ========================================================= */
 
@@ -531,7 +583,7 @@ function collectCrystal(crystal) {
             "ALL 6 CRYSTALS COLLECTED"
         );
 
-        if (!state.soldier.active) {
+        if (allSoldiersDefeated()) {
 
             activateBoss();
 
@@ -642,6 +694,8 @@ function updatePlayer(delta) {
 
     checkCrystalDistance();
 
+    checkHealthOrbDistance();
+
 }
 
 
@@ -679,6 +733,168 @@ function checkCrystalDistance() {
 
                 collectCrystal(
                     crystal
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   HEALTH ORBS (vitality pickups)
+========================================================= */
+
+function setupHealthOrbs() {
+
+    healthOrbs.forEach(
+        orb => {
+
+            /* Same trick as crystals: read the world-space
+               position once from the inline style instead of
+               measuring the DOM every frame. */
+            orb._px = parseFloat(orb.style.left) || 0;
+            orb._py = parseFloat(orb.style.bottom) || 0;
+            orb._respawnTimer = 0;
+
+            orb.addEventListener(
+                "click",
+                () => {
+
+                    collectHealthOrb(orb);
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+function checkHealthOrbDistance() {
+
+    healthOrbs.forEach(
+        orb => {
+
+            if (
+                orb.classList.contains(
+                    "collected"
+                )
+            ) {
+                return;
+            }
+
+            const distance =
+                Math.hypot(
+                    state.player.x -
+                    orb._px,
+
+                    state.player.y -
+                    orb._py
+                );
+
+            if (distance < 6) {
+
+                collectHealthOrb(orb);
+
+            }
+
+        }
+    );
+
+}
+
+
+function collectHealthOrb(orb) {
+
+    if (
+        orb.classList.contains(
+            "collected"
+        )
+    ) {
+        return;
+    }
+
+    if (
+        state.health >= state.maxHealth
+    ) {
+
+        showNotification(
+            "VITALITY ALREADY FULL"
+        );
+
+        return;
+
+    }
+
+    state.health =
+        Math.min(
+            state.maxHealth,
+            state.health +
+            HEALTH_ORB_HEAL_AMOUNT
+        );
+
+    orb.classList.add(
+        "collected"
+    );
+
+    orb._respawnTimer =
+        HEALTH_ORB_RESPAWN_SECONDS;
+
+    playSound(
+        collectSound,
+        0.6
+    );
+
+    updateHUD();
+
+    showNotification(
+        `VITALITY RESTORED +${HEALTH_ORB_HEAL_AMOUNT}`
+    );
+
+}
+
+
+function updateHealthOrbs(delta) {
+
+    healthOrbs.forEach(
+        orb => {
+
+            if (
+                !orb.classList.contains(
+                    "collected"
+                )
+            ) {
+                return;
+            }
+
+            orb._respawnTimer -=
+                delta;
+
+            if (
+                orb._respawnTimer <= 0
+            ) {
+
+                orb.classList.remove(
+                    "collected"
+                );
+
+                orb.classList.add(
+                    "ready-pulse"
+                );
+
+                setTimeout(
+                    () => {
+
+                        orb.classList.remove(
+                            "ready-pulse"
+                        );
+
+                    },
+                    650
                 );
 
             }
@@ -731,93 +947,94 @@ function positionEffectOnPlayer(effect) {
 
 
 /* =========================================================
-   MANSION SOLDIER AI
+   MANSION SOLDIERS AI
 ========================================================= */
 
-function updateSoldier(delta) {
+function updateSoldiers(delta) {
 
-    const soldier =
-        state.soldier;
+    state.soldiers.forEach(
+        soldier => {
 
-    if (!soldier.active) {
-        return;
-    }
+            if (!soldier.active) {
+                return;
+            }
 
-    soldier.attackCooldown -= delta;
+            soldier.attackCooldown -= delta;
 
-    soldier.hitCooldown -= delta;
+            const dx =
+                state.player.x -
+                soldier.x;
 
-    const dx =
-        state.player.x -
-        soldier.x;
+            const dy =
+                state.player.y -
+                soldier.y;
 
-    const dy =
-        state.player.y -
-        soldier.y;
-
-    const distance =
-        Math.hypot(dx, dy);
+            const distance =
+                Math.hypot(dx, dy);
 
 
-    /* Follow player */
+            /* Follow player */
 
-    if (distance > 7) {
+            if (distance > 7) {
 
-        const directionX =
-            dx / Math.max(distance, 0.001);
+                const directionX =
+                    dx / Math.max(distance, 0.001);
 
-        const directionY =
-            dy / Math.max(distance, 0.001);
+                const directionY =
+                    dy / Math.max(distance, 0.001);
 
-        const movement =
-            soldier.speed *
-            state.speedMultiplier *
-            delta;
+                const movement =
+                    soldier.speed *
+                    state.speedMultiplier *
+                    delta;
 
-        soldier.x +=
-            directionX * movement;
+                soldier.x +=
+                    directionX * movement;
 
-        soldier.y +=
-            directionY * movement;
+                soldier.y +=
+                    directionY * movement;
 
-        soldier.x =
-            clamp(
-                soldier.x,
-                5,
-                95
-            );
+                soldier.x =
+                    clamp(
+                        soldier.x,
+                        5,
+                        95
+                    );
 
-        soldier.y =
-            clamp(
-                soldier.y,
-                8,
-                70
-            );
+                soldier.y =
+                    clamp(
+                        soldier.y,
+                        8,
+                        70
+                    );
 
-    }
-
-
-    /* Attack player */
-
-    if (
-        distance <= 7 &&
-        soldier.attackCooldown <= 0
-    ) {
-
-        damagePlayer(10);
-
-        soldier.attackCooldown =
-            soldier.attackDelay;
-
-        playSound(
-            soldierSound,
-            0.5
-        );
-
-    }
+            }
 
 
-    updateSoldierVisual();
+            /* Attack player */
+
+            if (
+                distance <= 7 &&
+                soldier.attackCooldown <= 0
+            ) {
+
+                damagePlayer(10);
+
+                soldier.attackCooldown =
+                    soldier.attackDelay;
+
+                playSound(
+                    soldierSound,
+                    0.5
+                );
+
+            }
+
+
+            updateSoldierVisual(soldier);
+
+        }
+    );
 
 }
 
@@ -826,35 +1043,67 @@ function updateSoldier(delta) {
    SOLDIER VISUAL
 ========================================================= */
 
-function updateSoldierVisual() {
+function updateSoldierVisual(soldier) {
 
-    if (!mansionSoldier) {
+    const el = soldier.el;
+
+    if (!el) {
         return;
     }
 
-    if (!state.soldier.active) {
+    if (!soldier.active) {
 
-        mansionSoldier.style.opacity =
+        el.style.opacity =
             "0";
 
         return;
 
     }
 
-    mansionSoldier.style.left =
-        `${state.soldier.x}%`;
+    el.style.left =
+        `${soldier.x}%`;
 
-    mansionSoldier.style.bottom =
-        `${state.soldier.y}%`;
+    el.style.bottom =
+        `${soldier.y}%`;
 
     const facing =
         state.player.x <
-        state.soldier.x
+        soldier.x
             ? -1
             : 1;
 
-    mansionSoldier.style.transform =
+    el.style.transform =
         `translateX(-50%) scaleX(${facing})`;
+
+}
+
+
+/* =========================================================
+   SOLDIER HELPERS
+========================================================= */
+
+function allSoldiersDefeated() {
+
+    return state.soldiers.every(
+        soldier => !soldier.active
+    );
+
+}
+
+
+function defeatedSoldierCount() {
+
+    return state.soldiers.filter(
+        soldier => !soldier.active
+    ).length;
+
+}
+
+
+function updateMissionSoldierText() {
+
+    missionSoldier.textContent =
+        `◇ Defeat all Mansion Soldiers (${defeatedSoldierCount()}/${state.soldiers.length})`;
 
 }
 
@@ -864,6 +1113,7 @@ function updateSoldierVisual() {
 ========================================================= */
 
 function attack() {
+
 
     if (
         state.paused ||
@@ -897,16 +1147,23 @@ function attack() {
     );
 
 
-    /* Hit soldier */
+    /* Hit soldiers — any soldier within range takes damage, so
+       players get rewarded for luring soldiers into a cluster. */
 
-    if (
-        state.soldier.active &&
-        distanceToSoldier() <= 10
-    ) {
+    state.soldiers.forEach(
+        soldier => {
 
-        damageSoldier(35);
+            if (
+                soldier.active &&
+                distanceToSoldier(soldier) <= 10
+            ) {
 
-    }
+                damageSoldier(soldier, 35);
+
+            }
+
+        }
+    );
 
 
     /* Hit boss */
@@ -947,45 +1204,64 @@ function attack() {
    SOLDIER DAMAGE
 ========================================================= */
 
-function damageSoldier(amount) {
+function damageSoldier(soldier, amount) {
 
     if (
-        !state.soldier.active
+        !soldier.active
     ) {
         return;
     }
 
-    state.soldier.health -=
+    soldier.health -=
         amount;
 
     state.score += 100;
 
     if (
-        state.soldier.health <= 0
+        soldier.health <= 0
     ) {
 
-        state.soldier.health = 0;
+        soldier.health = 0;
 
-        state.soldier.active =
+        soldier.active =
             false;
 
-        mansionSoldier.style.opacity =
-            "0";
+        if (soldier.el) {
 
-        missionSoldier.classList.add(
-            "complete"
-        );
+            soldier.el.style.opacity =
+                "0";
+
+        }
 
         state.score += 1000;
 
-        showNotification(
-            "MANSION SOLDIER DEFEATED"
-        );
+        updateMissionSoldierText();
+
+        if (
+            allSoldiersDefeated()
+        ) {
+
+            missionSoldier.classList.add(
+                "complete"
+            );
+
+            showNotification(
+                "ALL MANSION SOLDIERS DEFEATED"
+            );
+
+        } else {
+
+            showNotification(
+                `SOLDIER DEFEATED (${defeatedSoldierCount()}/${state.soldiers.length})`
+            );
+
+        }
 
         updateHUD();
 
         if (
-            state.crystals >= 6
+            state.crystals >= 6 &&
+            allSoldiersDefeated()
         ) {
 
             activateBoss();
@@ -1258,14 +1534,14 @@ function defeatBoss() {
    DISTANCE
 ========================================================= */
 
-function distanceToSoldier() {
+function distanceToSoldier(soldier) {
 
     return Math.hypot(
         state.player.x -
-        state.soldier.x,
+        soldier.x,
 
         state.player.y -
-        state.soldier.y
+        soldier.y
     );
 
 }
@@ -1877,9 +2153,11 @@ function gameLoop(timestamp) {
 
         updatePlayer(delta);
 
-        updateSoldier(delta);
+        updateSoldiers(delta);
 
         updateBoss(delta);
+
+        updateHealthOrbs(delta);
 
         regenerateSpirit(
             delta
