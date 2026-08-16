@@ -1,268 +1,220 @@
-"use strict";
-
-/* =========================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 1 VIDEO
-   DAY 1 → DAY 2 VIDEO
-========================================================= */
+import { supabase } from "./supabase.js";
 
 const video = document.getElementById("day1Video");
 const loading = document.getElementById("loading");
-const loadingText = document.getElementById("loadingText");
 const endOverlay = document.getElementById("endOverlay");
 const videoError = document.getElementById("videoError");
+const loadingText = document.getElementById("loadingText");
+
+let user = null;
+let completed = false;
 
 
-/* =========================================================
-   NEXT PAGE
-========================================================= */
+/* ================================
+   CHECK LOGIN
+================================ */
 
-const NEXT_VIDEO = "day2-video.html";
+async function checkUser() {
 
+    const {
+        data: {
+            user: currentUser
+        }
+    } = await supabase.auth.getUser();
 
-/* =========================================================
-   STATE
-========================================================= */
-
-let finished = false;
-let redirecting = false;
-
-
-/* =========================================================
-   VIDEO READY
-========================================================= */
-
-video.addEventListener("canplay", () => {
-
-    video.classList.add("ready");
-
-    if (loading) {
-        loading.classList.add("hidden");
+    if (!currentUser) {
+        window.location.href = "login.html";
+        return false;
     }
 
-    /*
-        Start automatically.
-        Muted first because browsers may block
-        autoplay with sound.
-    */
+    user = currentUser;
 
-    video.muted = true;
-
-    const playPromise = video.play();
-
-    if (playPromise) {
-
-        playPromise
-            .then(() => {
-
-                /*
-                    Keep video silent for autoplay.
-                    If you want sound after user interaction,
-                    the video can be unmuted by interaction.
-                */
-
-            })
-            .catch(() => {
-
-                /*
-                    If autoplay is blocked,
-                    show a simple interaction message.
-                */
-
-                if (loadingText) {
-
-                    loadingText.textContent =
-                        "CLICK TO ENTER DAY 1";
-
-                }
-
-            });
-
-    }
-
-});
-
-
-/* =========================================================
-   USER INTERACTION
-========================================================= */
-
-function startVideoWithInteraction() {
-
-    if (!video) return;
-
-    video.muted = false;
-
-    video.play()
-        .then(() => {
-
-            if (loading) {
-                loading.classList.add("hidden");
-            }
-
-        })
-        .catch(() => {
-
-            video.muted = true;
-
-            video.play().catch(() => {});
-
-        });
-
+    return true;
 }
 
 
-document.addEventListener(
-    "click",
-    startVideoWithInteraction,
-    {
-        once: true
-    }
-);
+/* ================================
+   CHECK EXISTING PROGRESS
+================================ */
 
+async function checkProgress() {
 
-document.addEventListener(
-    "touchstart",
-    startVideoWithInteraction,
-    {
-        once: true,
-        passive: true
-    }
-);
+    const {
+        data,
+        error
+    } = await supabase
+        .from("festival_progress")
+        .select("day1")
+        .eq("user_id", user.id)
+        .eq("festival", "halloween_2026")
+        .maybeSingle();
 
+    if (error) {
 
-/* =========================================================
-   VIDEO ENDED
-========================================================= */
+        console.error(error);
 
-video.addEventListener("ended", () => {
+        loadingText.textContent =
+            "COULD NOT LOAD FESTIVAL PROGRESS";
 
-    finishDay1();
-
-});
-
-
-/* =========================================================
-   FINISH DAY 1
-========================================================= */
-
-function finishDay1() {
-
-    if (finished) return;
-
-    finished = true;
-
-    /*
-        Save completion.
-    */
-
-    try {
-
-        localStorage.setItem(
-            "day1Complete",
-            "true"
-        );
-
-    } catch (error) {}
-
-
-    /*
-        Show cinematic ending.
-    */
-
-    if (endOverlay) {
-
-        endOverlay.classList.add("show");
-
+        return false;
     }
 
+    /*
+     * Already completed.
+     */
+
+    if (data?.day1 === true) {
+
+        loadingText.textContent =
+            "DAY 1 ALREADY COMPLETE";
+
+        setTimeout(() => {
+
+            window.location.href =
+                "map.html";
+
+        }, 900);
+
+        return false;
+    }
+
+    return true;
+}
+
+
+/* ================================
+   COMPLETE DAY 1
+================================ */
+
+async function completeDay1() {
+
+    if (completed) {
+        return;
+    }
+
+    completed = true;
+
+    loadingText.textContent =
+        "SAVING FESTIVAL PROGRESS...";
+
+
+    const {
+        error
+    } = await supabase
+        .from("festival_progress")
+        .update({
+            day1: true
+        })
+        .eq("user_id", user.id)
+        .eq("festival", "halloween_2026");
+
+
+    if (error) {
+
+        console.error(error);
+
+        loadingText.textContent =
+            "COULD NOT SAVE PROGRESS";
+
+        return;
+    }
+
 
     /*
-        Redirect to Day 2.
-    */
+     * Show ending screen.
+     */
+
+    endOverlay.classList.add("show");
+
+
+    /*
+     * Give the animation time to play.
+     */
 
     setTimeout(() => {
 
-        redirectToDay2();
+        window.location.href =
+            "map.html";
 
-    }, 2200);
-
+    }, 2500);
 }
 
 
-/* =========================================================
-   REDIRECT
-========================================================= */
-
-function redirectToDay2() {
-
-    if (redirecting) return;
-
-    redirecting = true;
-
-    window.location.href = NEXT_VIDEO;
-
-}
-
-
-/* =========================================================
-   VIDEO ERROR
-========================================================= */
-
-video.addEventListener("error", () => {
-
-    if (loading) {
-        loading.classList.add("hidden");
-    }
-
-    if (videoError) {
-        videoError.classList.add("show");
-    }
-
-});
-
-
-/* =========================================================
-   SOURCE CHECK
-========================================================= */
-
-window.addEventListener("load", () => {
-
-    if (!video) return;
-
-    /*
-        If the browser cannot find the source,
-        the error event will handle it.
-    */
-
-    video.load();
-
-});
-
-
-/* =========================================================
-   PREVENT CONTEXT MENU
-========================================================= */
-
-video.addEventListener("contextmenu", (event) => {
-
-    event.preventDefault();
-
-});
-
-
-/* =========================================================
-   PREVENT DOUBLE TOUCH ACTIONS
-========================================================= */
+/* ================================
+   VIDEO EVENTS
+================================ */
 
 video.addEventListener(
-    "touchstart",
-    (event) => {
+    "loadeddata",
+    () => {
 
-        event.preventDefault();
+        loading.classList.add("hidden");
 
-    },
-    {
-        passive: false
     }
 );
+
+
+video.addEventListener(
+    "ended",
+    () => {
+
+        completeDay1();
+
+    }
+);
+
+
+video.addEventListener(
+    "error",
+    () => {
+
+        loading.classList.add("hidden");
+
+        videoError.classList.add("show");
+
+    }
+);
+
+
+/* ================================
+   START
+================================ */
+
+async function startDay1() {
+
+    const loggedIn =
+        await checkUser();
+
+    if (!loggedIn) {
+        return;
+    }
+
+
+    const canPlay =
+        await checkProgress();
+
+    if (!canPlay) {
+        return;
+    }
+
+
+    /*
+     * Try to start video.
+     * Browser autoplay policies may block
+     * videos with sound.
+     */
+
+    try {
+
+        await video.play();
+
+    } catch (error) {
+
+        console.log(
+            "Autoplay blocked. User can press play."
+        );
+
+    }
+}
+
+startDay1();
