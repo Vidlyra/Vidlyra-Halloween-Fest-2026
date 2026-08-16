@@ -1,89 +1,78 @@
 /* ==========================================================
    VIDLYRA HALLOWEEN FEST 2026
-   DAY 3 - THE CURSED FOREST
+   DAY 3 — THE CURSED FOREST
 ========================================================== */
+
+import { supabase } from "./supabase.js";
 
 "use strict";
 
+
 const Game = {
 
-    /* ==========================================
-       GAME STATE
-    ========================================== */
+    /* ======================================================
+       STATE
+    ====================================================== */
 
     crystalsFound: 0,
-
     totalCrystals: 5,
 
-    playerX: 8,
+    user: null,
 
-    playerY: 10,
-
-    speed: 1,
+    festivalReady: false,
+    day3Completed: false,
 
     gameStarted: false,
+    canMove: false,
+
+    playerX: 50,
+    playerY: 18,
+
+    moveSpeed: 0.35,
 
     keys: {},
 
-    /* ==========================================
-       INITIALIZE
-    ========================================== */
+    dialogTimer: null,
 
-    init() {
+    gateOpened: false,
+    portalActivated: false,
 
-        this.cache();
 
-        this.bindEvents();
-
-        this.start();
-
-    },
-
-    /* ==========================================
-       CACHE ELEMENTS
-    ========================================== */
+    /* ======================================================
+       DOM CACHE
+    ====================================================== */
 
     cache() {
 
-        /* Intro */
-
-        this.intro =
+        this.introScreen =
             document.getElementById("introScreen");
-
-        /* Player */
 
         this.player =
             document.getElementById("player");
 
-        /* Collectibles */
-
         this.crystals =
             document.querySelectorAll(".crystal");
 
-        /* Objects */
-
-        this.gate =
-            document.querySelector(".gate");
-
-        this.portal =
-            document.querySelector(".portal");
-
-        this.dracula =
-            document.querySelector(".dracula");
-
-        /* UI */
-
-        this.progress =
+        this.progressFill =
             document.getElementById("progressFill");
 
-        this.counter =
+        this.crystalCounter =
             document.getElementById("crystalCounter");
 
         this.dialogBox =
             document.getElementById("dialogBox");
 
-        this.dialog =
+        this.dialogText =
             document.getElementById("dialogText");
+
+        this.gate =
+            document.getElementById("ancientGate");
+
+        this.portal =
+            document.getElementById("magicPortal");
+
+        this.dracula =
+            document.getElementById("dracula");
 
         this.missionComplete =
             document.getElementById("missionComplete");
@@ -91,18 +80,26 @@ const Game = {
         this.nextBtn =
             document.getElementById("nextBtn");
 
-        /* Effects */
-
         this.flash =
             document.getElementById("flash");
 
         this.lightning =
             document.getElementById("lightningFlash");
 
-        this.loading =
+        this.screenGlow =
+            document.getElementById("screenGlow");
+
+        this.shakeLayer =
+            document.getElementById("shakeLayer");
+
+        this.loadingOverlay =
             document.getElementById("loadingOverlay");
 
-        /* Audio */
+        this.loadingFill =
+            document.getElementById("loadingFill");
+
+
+        /* AUDIO */
 
         this.bgMusic =
             document.getElementById("bgMusic");
@@ -133,721 +130,1210 @@ const Game = {
 
     },
 
-    /* ==========================================
+
+    /* ======================================================
+       INITIALIZE
+    ====================================================== */
+
+    async init() {
+
+        this.cache();
+
+        this.bindEvents();
+
+        const allowed =
+            await this.checkFestivalAccess();
+
+        if (!allowed) {
+
+            return;
+
+        }
+
+        this.startIntro();
+
+    },
+
+
+    /* ======================================================
+       SUPABASE ACCESS
+    ====================================================== */
+
+    async checkFestivalAccess() {
+
+        const {
+            data: {
+                user
+            },
+            error
+        } = await supabase.auth.getUser();
+
+
+        if (error || !user) {
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+
+        this.user = user;
+
+
+        const {
+            data,
+            error: progressError
+        } = await supabase
+            .from("festival_progress")
+            .select(`
+                day1,
+                day2,
+                day3
+            `)
+            .eq(
+                "user_id",
+                user.id
+            )
+            .eq(
+                "festival",
+                "halloween_2026"
+            )
+            .maybeSingle();
+
+
+        if (progressError) {
+
+            console.error(
+                "Festival progress error:",
+                progressError
+            );
+
+            alert(
+                "Unable to load festival progress."
+            );
+
+            window.location.href =
+                "map.html";
+
+            return false;
+
+        }
+
+
+        if (!data) {
+
+            alert(
+                "Festival progress not found."
+            );
+
+            window.location.href =
+                "map.html";
+
+            return false;
+
+        }
+
+
+        /*
+         * DAY 2 REQUIRED
+         */
+
+        if (data.day2 !== true) {
+
+            alert(
+                "🔒 Complete Day 2 before entering Day 3."
+            );
+
+            window.location.href =
+                "map.html";
+
+            return false;
+
+        }
+
+
+        if (data.day3 === true) {
+
+            this.day3Completed = true;
+
+        }
+
+
+        this.festivalReady = true;
+
+        console.log(
+            "🌲 Day 3 access granted."
+        );
+
+        return true;
+
+    },
+
+
+    /* ======================================================
        EVENTS
-    ========================================== */
+    ====================================================== */
 
     bindEvents() {
 
-        /* Keyboard */
-
-        document.addEventListener(
-
+        window.addEventListener(
             "keydown",
-
             (event) => {
 
-                this.keys[event.key] = true;
+                this.keys[
+                    event.key.toLowerCase()
+                ] = true;
 
             }
-
         );
 
-        document.addEventListener(
 
+        window.addEventListener(
             "keyup",
-
             (event) => {
 
-                this.keys[event.key] = false;
+                this.keys[
+                    event.key.toLowerCase()
+                ] = false;
 
             }
-
         );
 
-        /* Crystal Click */
 
-        this.crystals.forEach((crystal) => {
+        /*
+         * CRYSTAL CLICK
+         */
 
-            crystal.addEventListener(
+        this.crystals.forEach(
+            (crystal) => {
 
-                "click",
+                crystal.addEventListener(
+                    "click",
+                    () => {
 
-                () => this.collectCrystal(crystal)
+                        this.collectCrystal(
+                            crystal
+                        );
 
-            );
+                    }
+                );
 
-        });
+            }
+        );
 
-        /* Continue */
+
+        /*
+         * CONTINUE BUTTON
+         */
 
         if (this.nextBtn) {
 
             this.nextBtn.addEventListener(
-
                 "click",
-
                 () => {
 
-                    window.location.href =
-                        "day4-video.html";
+                    this.goToMap();
 
                 }
-
             );
 
         }
 
+
+        /*
+         * MOBILE TOUCH
+         */
+
+        this.enableTouchControls();
+
     },
 
-    /* ==========================================
+
+    /* ======================================================
+       INTRO
+    ====================================================== */
+
+    startIntro() {
+
+        this.showMessage(
+            "Enter the Cursed Forest..."
+        );
+
+
+        setTimeout(
+            () => {
+
+                if (this.introScreen) {
+
+                    this.introScreen.classList.add(
+                        "hide"
+                    );
+
+                }
+
+
+                this.startGame();
+
+            },
+            4500
+        );
+
+    },
+
+
+    /* ======================================================
        START GAME
-    ========================================== */
+    ====================================================== */
 
-    start() {
-
-        console.log("DAY 3 STARTED");
+    startGame() {
 
         this.gameStarted = true;
 
+        this.canMove = true;
+
+
+        /*
+         * Music
+         */
+
         if (this.bgMusic) {
 
-            this.bgMusic.volume = 0.35;
+            this.bgMusic.volume = 0.30;
 
-            this.bgMusic.play().catch(() => {});
+            this.bgMusic
+                .play()
+                .catch(() => {});
 
         }
+
+
+        /*
+         * Rain
+         */
 
         if (this.rainSound) {
 
-            this.rainSound.volume = 0.25;
+            this.rainSound.volume = 0.15;
 
-            this.rainSound.play().catch(() => {});
+            this.rainSound
+                .play()
+                .catch(() => {});
 
         }
 
-        setTimeout(() => {
 
-            if (this.intro) {
+        this.showMessage(
+            "Collect all five Dark Crystals."
+        );
 
-                this.intro.classList.add("hide");
 
-            }
-
-        }, 5000);
+        this.gameLoop();
 
     },
-       /* ==========================================
+
+
+    /* ======================================================
+       GAME LOOP
+    ====================================================== */
+
+    gameLoop() {
+
+        if (this.gameStarted) {
+
+            this.updatePlayer();
+
+        }
+
+
+        requestAnimationFrame(
+            () => {
+
+                this.gameLoop();
+
+            }
+        );
+
+    },
+
+
+    /* ======================================================
        PLAYER MOVEMENT
-    ========================================== */
+    ====================================================== */
 
-    movePlayer() {
+    updatePlayer() {
 
-        const update = () => {
-
-            if (!this.gameStarted) {
-
-                requestAnimationFrame(update);
-
-                return;
-
-            }
-
-            /* LEFT */
-
-            if (this.keys["ArrowLeft"] || this.keys["a"] || this.keys["A"]) {
-
-                this.playerX -= this.speed;
-
-            }
-
-            /* RIGHT */
-
-            if (this.keys["ArrowRight"] || this.keys["d"] || this.keys["D"]) {
-
-                this.playerX += this.speed;
-
-            }
-
-            /* UP */
-
-            if (this.keys["ArrowUp"] || this.keys["w"] || this.keys["W"]) {
-
-                this.playerY += this.speed;
-
-            }
-
-            /* DOWN */
-
-            if (this.keys["ArrowDown"] || this.keys["s"] || this.keys["S"]) {
-
-                this.playerY -= this.speed;
-
-            }
-
-            /* LIMIT PLAYER */
-
-            this.playerX = Math.max(3, Math.min(95, this.playerX));
-
-            this.playerY = Math.max(6, Math.min(82, this.playerY));
-
-            if (this.player) {
-
-                this.player.style.left = this.playerX + "%";
-
-                this.player.style.bottom = this.playerY + "%";
-
-            }
-
-            requestAnimationFrame(update);
-
-        };
-
-        requestAnimationFrame(update);
-
-    },
-
-    /* ==========================================
-       SHOW MESSAGE
-    ========================================== */
-
-    showMessage(text) {
-
-        if (!this.dialogBox || !this.dialog) {
+        if (!this.canMove) {
 
             return;
 
         }
 
-        this.dialog.textContent = text;
 
-        this.dialogBox.classList.add("show");
+        /*
+         * LEFT
+         */
 
-        clearTimeout(this.dialogTimer);
+        if (
+            this.keys["arrowleft"] ||
+            this.keys["a"]
+        ) {
 
-        this.dialogTimer = setTimeout(() => {
+            this.playerX -=
+                this.moveSpeed;
 
-            this.dialogBox.classList.remove("show");
+        }
 
-        }, 2500);
+
+        /*
+         * RIGHT
+         */
+
+        if (
+            this.keys["arrowright"] ||
+            this.keys["d"]
+        ) {
+
+            this.playerX +=
+                this.moveSpeed;
+
+        }
+
+
+        /*
+         * UP
+         */
+
+        if (
+            this.keys["arrowup"] ||
+            this.keys["w"]
+        ) {
+
+            this.playerY +=
+                this.moveSpeed;
+
+        }
+
+
+        /*
+         * DOWN
+         */
+
+        if (
+            this.keys["arrowdown"] ||
+            this.keys["s"]
+        ) {
+
+            this.playerY -=
+                this.moveSpeed;
+
+        }
+
+
+        /*
+         * WORLD BOUNDS
+         */
+
+        this.playerX =
+            Math.max(
+                3,
+                Math.min(
+                    96,
+                    this.playerX
+                )
+            );
+
+
+        this.playerY =
+            Math.max(
+                5,
+                Math.min(
+                    82,
+                    this.playerY
+                )
+            );
+
+
+        /*
+         * PLAYER POSITION
+         */
+
+        if (this.player) {
+
+            this.player.style.left =
+                this.playerX + "%";
+
+            this.player.style.bottom =
+                this.playerY + "%";
+
+        }
 
     },
 
-    /* ==========================================
-       SCREEN SHAKE
-    ========================================== */
 
-    shakeScreen(duration = 800) {
-
-        document.body.classList.add("shake");
-
-        setTimeout(() => {
-
-            document.body.classList.remove("shake");
-
-        }, duration);
-
-    },
-
-    /* ==========================================
-       FLASH EFFECT
-    ========================================== */
-
-    flashScreen() {
-
-        if (!this.flash) return;
-
-        this.flash.classList.add("active");
-
-        setTimeout(() => {
-
-            this.flash.classList.remove("active");
-
-        }, 400);
-
-    },
-
-    /* ==========================================
-       PLAY SOUND
-    ========================================== */
-
-    playSound(audio) {
-
-        if (!audio) return;
-
-        audio.currentTime = 0;
-
-        audio.play().catch(() => {});
-
-    },
-       /* ==========================================
-       COLLECT CRYSTAL
-    ========================================== */
+    /* ======================================================
+       CRYSTAL COLLECTION
+    ====================================================== */
 
     collectCrystal(crystal) {
 
-        if (crystal.classList.contains("collected")) {
+        if (!crystal) {
 
             return;
 
         }
 
-        crystal.classList.add("collected");
 
-        crystal.style.pointerEvents = "none";
+        /*
+         * Already collected?
+         */
 
-        /* Play Sound */
+        if (
+            crystal.classList.contains(
+                "collected"
+            )
+        ) {
 
-        this.playSound(this.crystalSound);
+            return;
 
-        /* Increase Count */
+        }
+
+
+        crystal.classList.add(
+            "collected"
+        );
+
+
+        crystal.style.pointerEvents =
+            "none";
+
+
+        /*
+         * Collection sound
+         */
+
+        if (this.crystalSound) {
+
+            this.crystalSound.currentTime =
+                0;
+
+            this.crystalSound
+                .play()
+                .catch(() => {});
+
+        }
+
+
+        /*
+         * Crystal disappears
+         */
+
+        crystal.style.opacity =
+            "0";
+
+        crystal.style.transform =
+            "scale(0)";
+
 
         this.crystalsFound++;
 
-        /* Update Progress */
 
-        this.updateProgress();
+        /*
+         * Progress bar
+         */
 
-        /* Collection Animation */
+        const percentage =
+            (
+                this.crystalsFound /
+                this.totalCrystals
+            ) * 100;
 
-        crystal.style.transition =
 
-            "transform .4s ease, opacity .4s ease";
+        if (this.progressFill) {
 
-        crystal.style.transform =
-
-            "scale(1.8)";
-
-        crystal.style.opacity = "0";
-
-        /* Dialog */
-
-        this.showMessage(
-
-            "Dark Crystal Collected!"
-
-        );
-
-        /* Small Flash */
-
-        this.flashScreen();
-
-        /* Finished? */
-
-        if (
-
-            this.crystalsFound >=
-
-            this.totalCrystals
-
-        ) {
-
-            setTimeout(() => {
-
-                this.openGate();
-
-            }, 1500);
+            this.progressFill.style.width =
+                percentage + "%";
 
         }
 
-    },
 
-    /* ==========================================
-       UPDATE PROGRESS
-    ========================================== */
+        /*
+         * Counter
+         */
 
-    updateProgress() {
+        if (this.crystalCounter) {
 
-        const percent =
-
-            (this.crystalsFound /
-
-            this.totalCrystals) * 100;
-
-        if (this.progress) {
-
-            this.progress.style.width =
-
-                percent + "%";
-
-        }
-
-        if (this.counter) {
-
-            this.counter.innerHTML =
-
+            this.crystalCounter.innerHTML =
                 "💎 Dark Crystals : " +
-
                 this.crystalsFound +
-
                 " / " +
-
                 this.totalCrystals;
 
         }
 
-    },
 
-    /* ==========================================
-       RESET CRYSTALS
-    ========================================== */
+        /*
+         * Crystal messages
+         */
 
-    resetCrystals() {
+        if (
+            this.crystalsFound === 1
+        ) {
 
-        this.crystalsFound = 0;
-
-        this.updateProgress();
-
-        this.crystals.forEach((crystal) => {
-
-            crystal.classList.remove(
-
-                "collected"
-
+            this.showMessage(
+                "The forest whispers..."
             );
 
-            crystal.style.opacity = "1";
+        }
 
-            crystal.style.pointerEvents =
 
-                "auto";
+        if (
+            this.crystalsFound === 2
+        ) {
 
-            crystal.style.transform =
-
-                "scale(1)";
-
-        });
-
-    },
-
-    /* ==========================================
-       RANDOM THUNDER
-    ========================================== */
-
-    randomThunder() {
-
-        const delay =
-
-            Math.random() * 8000 + 6000;
-
-        setTimeout(() => {
-
-            this.flashScreen();
-
-            this.playSound(
-
-                this.thunderSound
-
+            this.showMessage(
+                "Something is watching you."
             );
 
-            this.randomThunder();
+        }
 
-        }, delay);
+
+        if (
+            this.crystalsFound === 3
+        ) {
+
+            this.showMessage(
+                "Three crystals awakened."
+            );
+
+        }
+
+
+        if (
+            this.crystalsFound === 4
+        ) {
+
+            this.showMessage(
+                "Only one crystal remains..."
+            );
+
+        }
+
+
+        /*
+         * ALL FIVE
+         */
+
+        if (
+            this.crystalsFound >=
+            this.totalCrystals
+        ) {
+
+            this.showMessage(
+                "The Ancient Gate is awakening..."
+            );
+
+
+            setTimeout(
+                () => {
+
+                    this.openAncientGate();
+
+                },
+                1800
+            );
+
+        }
 
     },
-       /* ==========================================
-       OPEN ANCIENT GATE
-    ========================================== */
 
-    openGate() {
 
-        this.showMessage(
+    /* ======================================================
+       ANCIENT GATE
+    ====================================================== */
 
-            "The Ancient Gate is opening..."
+    openAncientGate() {
 
-        );
+        if (this.gateOpened) {
+
+            return;
+
+        }
+
+
+        this.gateOpened = true;
+
+        this.canMove = false;
+
+
+        /*
+         * Gate sound
+         */
+
+        if (this.gateSound) {
+
+            this.gateSound.currentTime =
+                0;
+
+            this.gateSound
+                .play()
+                .catch(() => {});
+
+        }
+
+
+        /*
+         * Flash
+         */
 
         this.flashScreen();
 
-        this.shakeScreen(1200);
 
-        this.playSound(this.thunderSound);
+        /*
+         * Shake
+         */
 
-        setTimeout(() => {
+        this.shakeScreen();
 
-            this.playSound(this.gateSound);
 
-            if (this.gate) {
-
-                this.gate.classList.add("open");
-
-            }
-
-        }, 500);
-
-        setTimeout(() => {
-
-            this.activatePortal();
-
-        }, 2500);
-
-    },
-
-    /* ==========================================
-       PORTAL ACTIVATION
-    ========================================== */
-
-    activatePortal() {
-
-        this.showMessage(
-
-            "A mysterious portal has appeared..."
-
-        );
-
-        if (this.portal) {
-
-            this.portal.classList.add("active");
-
-        }
-
-        this.playSound(this.portalSound);
-
-        this.flashScreen();
-
-        setTimeout(() => {
-
-            this.showDracula();
-
-        }, 3000);
-
-    },
-
-    /* ==========================================
-       DRACULA APPEARS
-    ========================================== */
-
-    showDracula() {
-
-        this.showMessage(
-
-            "Dracula has awakened..."
-
-        );
-
-        if (this.dracula) {
-
-            this.dracula.classList.add("active");
-
-        }
-
-        this.playSound(this.draculaLaugh);
-
-        this.playSound(this.batSound);
-
-        this.flashScreen();
-
-        this.shakeScreen(1800);
-
-        setTimeout(() => {
-
-            this.spawnBats();
-
-        }, 500);
-
-        setTimeout(() => {
-
-            this.completeMission();
-
-        }, 4500);
-
-    },
-
-    /* ==========================================
-       BAT ATTACK
-    ========================================== */
-
-    spawnBats() {
-
-        const bats =
-
-        document.querySelectorAll(".bat");
-
-        bats.forEach((bat,index)=>{
-
-            bat.style.opacity="1";
-
-            bat.style.transition=
-
-            "transform 3s linear";
-
-            setTimeout(()=>{
-
-                bat.style.transform=
-
-                "translateX(900px) translateY(-120px)";
-
-            },index*200);
-
-        });
-
-    },
-
-    /* ==========================================
-       MISSION COMPLETE
-    ========================================== */
-
-    completeMission() {
-
-        this.showMessage(
-
-            "Mission Complete!"
-
-        );
-
-        this.playSound(
-
-            this.missionSound
-
-        );
-
-        setTimeout(()=>{
-
-            if(this.missionComplete){
-
-                this.missionComplete
-
-                .classList.add("show");
-
-            }
-
-        },1200);
-
-    },
-       /* ==========================================
-       CREATE MAGIC PARTICLES
-    ========================================== */
-
-    createParticles() {
-
-        const container =
-            document.getElementById("particleContainer");
-
-        if (!container) return;
-
-        for (let i = 0; i < 40; i++) {
-
-            const particle =
-                document.createElement("div");
-
-            particle.className = "particle";
-
-            particle.style.left =
-                Math.random() * 100 + "%";
-
-            particle.style.top =
-                Math.random() * 100 + "%";
-
-            particle.style.animationDelay =
-                Math.random() * 6 + "s";
-
-            particle.style.animationDuration =
-                (4 + Math.random() * 5) + "s";
-
-            container.appendChild(particle);
-
-        }
-
-    },
-
-    /* ==========================================
-       RANDOM LIGHTNING
-    ========================================== */
-
-    startLightning() {
-
-        const lightningLoop = () => {
-
-            const delay =
-                Math.random() * 9000 + 6000;
-
-            setTimeout(() => {
-
-                this.flashScreen();
-
-                this.playSound(this.thunderSound);
-
-                lightningLoop();
-
-            }, delay);
-
-        };
-
-        lightningLoop();
-
-    },
-
-    /* ==========================================
-       RESTART GAME
-    ========================================== */
-
-    restartGame() {
-
-        this.crystalsFound = 0;
-
-        this.playerX = 8;
-
-        this.playerY = 10;
-
-        if (this.player) {
-
-            this.player.style.left = "8%";
-            this.player.style.bottom = "10%";
-
-        }
-
-        this.resetCrystals();
-
-        if (this.portal) {
-
-            this.portal.classList.remove("active");
-
-        }
+        /*
+         * Gate animation
+         */
 
         if (this.gate) {
 
-            this.gate.classList.remove("open");
+            this.gate.classList.add(
+                "open"
+            );
 
         }
+
+
+        this.showMessage(
+            "THE ANCIENT GATE HAS OPENED."
+        );
+
+
+        /*
+         * Dracula appears
+         */
+
+        setTimeout(
+            () => {
+
+                this.showDracula();
+
+            },
+            2200
+        );
+
+    },
+
+
+    /* ======================================================
+       DRACULA
+    ====================================================== */
+
+    showDracula() {
 
         if (this.dracula) {
 
-            this.dracula.classList.remove("active");
+            this.dracula.classList.add(
+                "show"
+            );
 
         }
 
-        if (this.missionComplete) {
 
-            this.missionComplete.classList.remove("show");
+        if (this.draculaLaugh) {
+
+            this.draculaLaugh.currentTime =
+                0;
+
+            this.draculaLaugh
+                .play()
+                .catch(() => {});
 
         }
+
 
         this.showMessage(
-
-            "Collect all 5 Dark Crystals."
-
+            "A dark presence guards the path..."
         );
+
+
+        /*
+         * Portal
+         */
+
+        setTimeout(
+            () => {
+
+                this.activatePortal();
+
+            },
+            2500
+        );
+
+    },
+
+
+    /* ======================================================
+       PORTAL
+    ====================================================== */
+
+    activatePortal() {
+
+        if (this.portalActivated) {
+
+            return;
+
+        }
+
+
+        this.portalActivated = true;
+
+
+        if (this.portal) {
+
+            this.portal.classList.add(
+                "active"
+            );
+
+        }
+
+
+        if (this.portalSound) {
+
+            this.portalSound.currentTime =
+                0;
+
+            this.portalSound
+                .play()
+                .catch(() => {});
+
+        }
+
+
+        this.showMessage(
+            "The path to the next chapter is open."
+        );
+
+
+        /*
+         * Mission complete
+         */
+
+        setTimeout(
+            () => {
+
+                this.completeDay3();
+
+            },
+            2500
+        );
+
+    },
+
+
+    /* ======================================================
+       COMPLETE DAY 3
+    ====================================================== */
+
+    async completeDay3() {
+
+        if (this.day3Completed) {
+
+            this.showMissionComplete();
+
+            return;
+
+        }
+
+
+        this.canMove = false;
+
+
+        if (!this.user) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        /*
+         * SAVE TO SUPABASE
+         */
+
+        const {
+            error
+        } = await supabase
+            .from("festival_progress")
+            .update({
+                day3: true
+            })
+            .eq(
+                "user_id",
+                this.user.id
+            )
+            .eq(
+                "festival",
+                "halloween_2026"
+            );
+
+
+        if (error) {
+
+            console.error(
+                "DAY 3 SAVE ERROR:",
+                error
+            );
+
+
+            this.showMessage(
+                "⚠️ Could not save Day 3 progress."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * SUCCESS
+         */
+
+        this.day3Completed = true;
+
+
+        if (this.missionSound) {
+
+            this.missionSound.currentTime =
+                0;
+
+            this.missionSound
+                .play()
+                .catch(() => {});
+
+        }
+
+
+        this.showMessage(
+            "🌲 DAY 3 COMPLETE!"
+        );
+
+
+        /*
+         * Show completion panel
+         */
+
+        setTimeout(
+            () => {
+
+                this.showMissionComplete();
+
+            },
+            1200
+        );
+
+    },
+
+
+    /* ======================================================
+       MISSION COMPLETE SCREEN
+    ====================================================== */
+
+    showMissionComplete() {
+
+        if (!this.missionComplete) {
+
+            return;
+
+        }
+
+
+        this.missionComplete.classList.add(
+            "show"
+        );
+
+    },
+
+
+    /* ======================================================
+       DIALOG
+    ====================================================== */
+
+    showMessage(message) {
+
+        if (
+            !this.dialogBox ||
+            !this.dialogText
+        ) {
+
+            return;
+
+        }
+
+
+        this.dialogText.textContent =
+            message;
+
+
+        this.dialogBox.classList.add(
+            "show"
+        );
+
+
+        clearTimeout(
+            this.dialogTimer
+        );
+
+
+        this.dialogTimer =
+            setTimeout(
+                () => {
+
+                    this.dialogBox.classList.remove(
+                        "show"
+                    );
+
+                },
+                2800
+            );
+
+    },
+
+
+    /* ======================================================
+       FLASH
+    ====================================================== */
+
+    flashScreen() {
+
+        if (!this.flash) {
+
+            return;
+
+        }
+
+
+        this.flash.classList.add(
+            "active"
+        );
+
+
+        setTimeout(
+            () => {
+
+                this.flash.classList.remove(
+                    "active"
+                );
+
+            },
+            500
+        );
+
+    },
+
+
+    /* ======================================================
+       LIGHTNING
+    ====================================================== */
+
+    lightningFlash() {
+
+        if (!this.lightning) {
+
+            return;
+
+        }
+
+
+        this.lightning.classList.add(
+            "active"
+        );
+
+
+        if (this.thunderSound) {
+
+            this.thunderSound.currentTime =
+                0;
+
+            this.thunderSound
+                .play()
+                .catch(() => {});
+
+        }
+
+
+        setTimeout(
+            () => {
+
+                this.lightning.classList.remove(
+                    "active"
+                );
+
+            },
+            350
+        );
+
+    },
+
+
+    /* ======================================================
+       SCREEN SHAKE
+    ====================================================== */
+
+    shakeScreen() {
+
+        if (!this.shakeLayer) {
+
+            return;
+
+        }
+
+
+        this.shakeLayer.classList.add(
+            "active"
+        );
+
+
+        setTimeout(
+            () => {
+
+                this.shakeLayer.classList.remove(
+                    "active"
+                );
+
+            },
+            900
+        );
+
+    },
+
+
+    /* ======================================================
+       MOBILE TOUCH
+    ====================================================== */
+
+    enableTouchControls() {
+
+        let startX = 0;
+        let startY = 0;
+
+
+        window.addEventListener(
+            "touchstart",
+            (event) => {
+
+                if (
+                    !event.touches ||
+                    !event.touches[0]
+                ) {
+
+                    return;
+
+                }
+
+
+                startX =
+                    event.touches[0].clientX;
+
+                startY =
+                    event.touches[0].clientY;
+
+            },
+            {
+                passive: true
+            }
+        );
+
+
+        window.addEventListener(
+            "touchmove",
+            (event) => {
+
+                if (!this.canMove) {
+
+                    return;
+
+                }
+
+
+                if (
+                    !event.touches ||
+                    !event.touches[0]
+                ) {
+
+                    return;
+
+                }
+
+
+                const currentX =
+                    event.touches[0].clientX;
+
+                const currentY =
+                    event.touches[0].clientY;
+
+
+                const dx =
+                    currentX - startX;
+
+                const dy =
+                    currentY - startY;
+
+
+                this.playerX +=
+                    dx * 0.012;
+
+
+                this.playerY -=
+                    dy * 0.012;
+
+
+                startX =
+                    currentX;
+
+                startY =
+                    currentY;
+
+            },
+            {
+                passive: true
+            }
+        );
+
+    },
+
+
+    /* ======================================================
+       RETURN TO MAP
+    ====================================================== */
+
+    goToMap() {
+
+        window.location.href =
+            "map.html";
 
     }
 
 };
 
-/* ==========================================
-START GAME
-========================================== */
+
+/* ==========================================================
+   START
+========================================================== */
 
 document.addEventListener(
-
     "DOMContentLoaded",
-
     () => {
 
         Game.init();
 
-        Game.createParticles();
-
-        Game.startLightning();
-
     }
-
 );
