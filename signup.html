@@ -1,216 +1,793 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Join Vidlyra Halloween Fest 2026</title>
+<title>Join | Vidlyra Halloween Fest 2026</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-            background:
-                radial-gradient(circle at top, #351406, transparent 45%),
-                #050505;
+:root{
+    --orange:#ff6b22;
+    --orange2:#ff9a4d;
+    --bg:#030303;
+    --glass:rgba(18,18,18,.72);
+    --line:rgba(255,255,255,.1);
+}
 
-            color: white;
-            font-family: Arial, sans-serif;
-        }
+body{
+    min-height:100vh;
+    overflow:hidden;
+    font-family:Inter,Arial,sans-serif;
+    color:#fff;
+    background:#030303;
+}
 
-        .signup-card {
-            width: min(420px, 100%);
-            padding: 35px 28px;
+/* BACKGROUND */
 
-            background: rgba(12, 12, 12, .94);
-            border: 1px solid rgba(255, 113, 53, .35);
+.background{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(255,91,25,.16),
+            transparent 27%
+        ),
+        radial-gradient(
+            circle at 10% 100%,
+            rgba(255,60,10,.09),
+            transparent 30%
+        ),
+        #030303;
+}
 
-            box-shadow:
-                0 0 40px rgba(255, 80, 20, .12);
-        }
+.background::before{
+    content:"";
+    position:absolute;
+    inset:-20%;
+    background:
+        linear-gradient(
+            120deg,
+            transparent 40%,
+            rgba(255,100,30,.035),
+            transparent 60%
+        );
+    animation:moveGlow 9s linear infinite;
+}
 
-        .logo {
-            text-align: center;
-            color: #ff7135;
-            font-size: 12px;
-            font-weight: 900;
-            letter-spacing: 5px;
-        }
+@keyframes moveGlow{
+    from{transform:translateX(-20%)}
+    to{transform:translateX(20%)}
+}
 
-        h1 {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 30px;
-        }
+/* PARTICLES */
 
-        .subtitle {
-            margin-top: 10px;
-            text-align: center;
-            color: rgba(255,255,255,.55);
-            font-size: 12px;
-        }
+.particles{
+    position:absolute;
+    inset:0;
+}
 
-        form {
-            margin-top: 30px;
-        }
+.particle{
+    position:absolute;
+    width:2px;
+    height:2px;
+    border-radius:50%;
+    background:#ff7b35;
+    box-shadow:0 0 10px #ff6b22;
+    animation:float linear infinite;
+}
 
-        label {
-            display: block;
-            margin-bottom: 7px;
-            font-size: 11px;
-            color: rgba(255,255,255,.65);
-        }
+@keyframes float{
+    from{
+        transform:translateY(110vh);
+        opacity:0;
+    }
 
-        input {
-            width: 100%;
-            padding: 13px;
+    15%{opacity:.8}
 
-            margin-bottom: 18px;
+    85%{opacity:.8}
 
-            background: #0b0b0b;
-            color: white;
+    to{
+        transform:translateY(-10vh);
+        opacity:0;
+    }
+}
 
-            border: 1px solid rgba(255,255,255,.12);
-            outline: none;
-        }
+/* TOP BAR */
 
-        input:focus {
-            border-color: #ff7135;
-        }
+.topbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    padding:24px 34px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:20;
+}
 
-        button {
-            width: 100%;
-            padding: 14px;
+.logo{
+    font-size:17px;
+    font-weight:900;
+    letter-spacing:5px;
+}
 
-            border: none;
-            background: #ff7135;
-            color: #050505;
+.logo span{
+    color:var(--orange);
+}
 
-            font-weight: 900;
-            letter-spacing: 2px;
+.event{
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:3px;
+    color:rgba(255,255,255,.45);
+}
 
-            cursor: pointer;
-        }
+/* MAIN */
 
-        button:hover {
-            background: white;
-        }
+.page{
+    min-height:100vh;
+    position:relative;
+    z-index:5;
 
-        #message {
-            min-height: 20px;
-            margin-top: 18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-            text-align: center;
-            font-size: 12px;
-        }
+    padding:90px 20px 30px;
+}
 
-        .login-link {
-            margin-top: 22px;
-            text-align: center;
+.layout{
+    width:min(1050px,100%);
 
-            font-size: 12px;
-            color: rgba(255,255,255,.5);
-        }
+    display:grid;
+    grid-template-columns:1fr 430px;
 
-        .login-link a {
-            color: #ff7135;
-            text-decoration: none;
-        }
-    </style>
+    gap:70px;
+    align-items:center;
+}
+
+/* LEFT */
+
+.intro{
+    position:relative;
+}
+
+.eyebrow{
+    color:var(--orange);
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:5px;
+    margin-bottom:18px;
+}
+
+h1{
+    font-size:clamp(42px,6vw,76px);
+    line-height:.91;
+    letter-spacing:-3px;
+    font-weight:900;
+}
+
+h1 span{
+    color:var(--orange);
+    display:block;
+}
+
+.description{
+    margin-top:24px;
+    max-width:500px;
+
+    color:rgba(255,255,255,.52);
+    font-size:14px;
+    line-height:1.8;
+}
+
+.features{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:28px;
+}
+
+.feature{
+    padding:10px 13px;
+
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.025);
+
+    color:rgba(255,255,255,.62);
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:1px;
+}
+
+/* AVATAR ORB */
+
+.avatar-orb{
+    position:absolute;
+
+    width:210px;
+    height:210px;
+
+    right:-30px;
+    top:20px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,110,40,.18);
+
+    box-shadow:
+        0 0 70px rgba(255,70,20,.08),
+        inset 0 0 50px rgba(255,80,20,.05);
+
+    animation:orb 5s ease-in-out infinite;
+}
+
+.avatar-orb::before{
+    content:"👑";
+
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:70px;
+
+    filter:drop-shadow(0 0 25px rgba(255,100,30,.55));
+}
+
+@keyframes orb{
+    0%,100%{
+        transform:translateY(0) rotate(-2deg);
+    }
+
+    50%{
+        transform:translateY(-14px) rotate(2deg);
+    }
+}
+
+/* CARD */
+
+.card{
+    position:relative;
+
+    padding:32px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(30,30,30,.86),
+            rgba(7,7,7,.86)
+        );
+
+    border:1px solid rgba(255,255,255,.11);
+
+    backdrop-filter:blur(25px);
+
+    box-shadow:
+        0 30px 90px rgba(0,0,0,.6),
+        0 0 50px rgba(255,70,20,.06);
+}
+
+.card::before{
+    content:"";
+
+    position:absolute;
+    top:-1px;
+    left:15%;
+    width:70%;
+    height:1px;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        var(--orange),
+        transparent
+    );
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+
+    margin-bottom:25px;
+}
+
+.card-title{
+    font-size:22px;
+    font-weight:900;
+}
+
+.card-subtitle{
+    margin-top:6px;
+    font-size:10px;
+    color:rgba(255,255,255,.4);
+    letter-spacing:1px;
+}
+
+.status{
+    padding:6px 9px;
+
+    border:1px solid rgba(255,100,40,.25);
+
+    color:var(--orange2);
+
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+/* FORM */
+
+.field{
+    margin-bottom:17px;
+}
+
+label{
+    display:block;
+    margin-bottom:7px;
+
+    color:rgba(255,255,255,.5);
+
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:2px;
+}
+
+.input-wrap{
+    position:relative;
+}
+
+.input-wrap span{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+
+    opacity:.4;
+    font-size:14px;
+}
+
+input{
+    width:100%;
+    height:49px;
+
+    padding:0 14px 0 42px;
+
+    border:1px solid rgba(255,255,255,.09);
+
+    outline:none;
+
+    background:rgba(0,0,0,.4);
+
+    color:#fff;
+
+    font-family:inherit;
+    font-size:12px;
+
+    transition:.25s;
+}
+
+input:focus{
+    border-color:rgba(255,107,34,.65);
+
+    box-shadow:
+        0 0 0 3px rgba(255,107,34,.07);
+}
+
+input::placeholder{
+    color:rgba(255,255,255,.2);
+}
+
+/* BUTTON */
+
+.signup-btn{
+    width:100%;
+    height:52px;
+
+    margin-top:7px;
+
+    border:0;
+
+    background:linear-gradient(
+        110deg,
+        #ff5a16,
+        #ff8738
+    );
+
+    color:#080808;
+
+    font-family:inherit;
+    font-size:10px;
+    font-weight:900;
+
+    letter-spacing:3px;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.signup-btn:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 12px 35px rgba(255,80,20,.2);
+}
+
+.signup-btn:active{
+    transform:translateY(0);
+}
+
+/* MESSAGE */
+
+#message{
+    min-height:18px;
+
+    margin-top:14px;
+
+    text-align:center;
+
+    font-size:10px;
+    color:var(--orange2);
+}
+
+/* LOGIN */
+
+.login{
+    margin-top:22px;
+
+    text-align:center;
+
+    font-size:10px;
+    color:rgba(255,255,255,.35);
+}
+
+.login a{
+    color:#ff8738;
+    text-decoration:none;
+    font-weight:800;
+}
+
+/* FOOTER */
+
+.footer{
+    position:fixed;
+    bottom:18px;
+    left:0;
+    width:100%;
+
+    text-align:center;
+
+    color:rgba(255,255,255,.18);
+
+    font-size:8px;
+    letter-spacing:3px;
+
+    z-index:10;
+}
+
+/* MOBILE */
+
+@media(max-width:850px){
+
+    body{
+        overflow:auto;
+    }
+
+    .topbar{
+        padding:20px;
+    }
+
+    .event{
+        display:none;
+    }
+
+    .page{
+        padding-top:100px;
+        padding-bottom:60px;
+    }
+
+    .layout{
+        grid-template-columns:1fr;
+        gap:35px;
+        max-width:500px;
+    }
+
+    .intro{
+        text-align:center;
+    }
+
+    .description{
+        margin-left:auto;
+        margin-right:auto;
+    }
+
+    .features{
+        justify-content:center;
+    }
+
+    .avatar-orb{
+        display:none;
+    }
+
+    h1{
+        font-size:52px;
+    }
+
+    .card{
+        padding:25px 20px;
+    }
+}
+
+@media(max-width:480px){
+
+    h1{
+        font-size:43px;
+        letter-spacing:-2px;
+    }
+
+    .eyebrow{
+        font-size:9px;
+        letter-spacing:3px;
+    }
+
+    .description{
+        font-size:12px;
+    }
+}
+</style>
 </head>
 
 <body>
 
-    <main class="signup-card">
+<div class="background">
 
-        <div class="logo">
-            VIDLYRA
-        </div>
+    <div class="particles" id="particles"></div>
 
-        <h1>JOIN THE FEST</h1>
+</div>
 
-        <p class="subtitle">
-            Create your account for Halloween Fest 2026
-        </p>
+<header class="topbar">
 
-        <form id="signupForm">
+    <div class="logo">
+        VID<span>LYRA</span>
+    </div>
 
-            <label for="username">
-                USERNAME
-            </label>
+    <div class="event">
+        HALLOWEEN FEST 2026
+    </div>
 
-            <input
-                id="username"
-                type="text"
-                placeholder="Your Vidlyra name"
-                required
-            >
+</header>
 
-            <label for="email">
-                EMAIL
-            </label>
 
-            <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                required
-            >
+<main class="page">
 
-            <label for="password">
-                PASSWORD
-            </label>
+    <div class="layout">
 
-            <input
-                id="password"
-                type="password"
-                placeholder="Create a password"
-                minlength="6"
-                required
-            >
+        <!-- INTRO -->
 
-            <button type="submit">
-                CREATE ACCOUNT
-            </button>
+        <section class="intro">
 
-        </form>
+            <div class="eyebrow">
+                ENTER THE UNIVERSE
+            </div>
 
-        <div id="message"></div>
+            <h1>
+                YOUR
+                <span>STORY</span>
+                STARTS HERE.
+            </h1>
 
-        <div class="login-link">
-            Already have an account?
-            <a href="login.html">LOGIN</a>
-        </div>
+            <p class="description">
+                Create your Vidlyra account and enter Halloween Fest 2026.
+                Complete the festival, unlock exclusive rewards and claim
+                the legendary Halloween Guardian avatar.
+            </p>
 
-    </main>
+            <div class="features">
 
-    <script type="module">
+                <div class="feature">
+                    🎃 7 DAY FEST
+                </div>
 
-        // We will connect Supabase here in the next step.
+                <div class="feature">
+                    👑 LEGENDARY AVATAR
+                </div>
 
-        const form = document.getElementById("signupForm");
-        const message = document.getElementById("message");
+                <div class="feature">
+                    🔓 CREATOR PORTAL
+                </div>
 
-        form.addEventListener("submit", (event) => {
+                <div class="feature">
+                    🌌 VIDLYRA FEST
+                </div>
 
-            event.preventDefault();
+            </div>
 
-            message.textContent =
-                "Supabase connection coming in Step 3...";
+            <div class="avatar-orb"></div>
 
-        });
+        </section>
 
-    </script>
+
+        <!-- SIGNUP -->
+
+        <section class="card">
+
+            <div class="card-header">
+
+                <div>
+                    <div class="card-title">
+                        Create Account
+                    </div>
+
+                    <div class="card-subtitle">
+                        YOUR VIDLYRA ID STARTS HERE
+                    </div>
+                </div>
+
+                <div class="status">
+                    FEST 2026
+                </div>
+
+            </div>
+
+
+            <form id="signupForm">
+
+                <div class="field">
+
+                    <label for="username">
+                        VIDLYRA NAME
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <span>✦</span>
+
+                        <input
+                            id="username"
+                            type="text"
+                            placeholder="Choose your name"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="email">
+                        EMAIL ADDRESS
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <span>✉</span>
+
+                        <input
+                            id="email"
+                            type="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="password">
+                        PASSWORD
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <span>◆</span>
+
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Create your password"
+                            autocomplete="new-password"
+                            minlength="6"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="signup-btn"
+                    type="submit"
+                >
+                    CREATE MY VIDLYRA ID
+                </button>
+
+            </form>
+
+
+            <div id="message"></div>
+
+
+            <div class="login">
+                Already part of Vidlyra?
+                <a href="login.html">Sign in</a>
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<div class="footer">
+    VIDLYRA • HALLOWEEN FEST 2026 • ENTER THE UNKNOWN
+</div>
+
+
+<script>
+
+const particles =
+    document.getElementById("particles");
+
+for(let i = 0; i < 45; i++){
+
+    const p =
+        document.createElement("div");
+
+    p.className = "particle";
+
+    p.style.left =
+        Math.random() * 100 + "%";
+
+    p.style.animationDuration =
+        (5 + Math.random() * 8) + "s";
+
+    p.style.animationDelay =
+        (-Math.random() * 10) + "s";
+
+    p.style.opacity =
+        Math.random();
+
+    particles.appendChild(p);
+}
+
+
+document
+    .getElementById("signupForm")
+    .addEventListener("submit", function(e){
+
+        e.preventDefault();
+
+        document.getElementById("message").textContent =
+            "Supabase connection will be added next...";
+
+    });
+
+</script>
 
 </body>
 </html>
