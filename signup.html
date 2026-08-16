@@ -748,44 +748,96 @@ input::placeholder{
 </div>
 
 
-<script>
+<script type="module">
 
-const particles =
-    document.getElementById("particles");
+import { supabase } from "./js/supabase.js";
 
-for(let i = 0; i < 45; i++){
+const form =
+    document.getElementById("signupForm");
 
-    const p =
-        document.createElement("div");
+const message =
+    document.getElementById("message");
 
-    p.className = "particle";
+form.addEventListener("submit", async (event) => {
 
-    p.style.left =
-        Math.random() * 100 + "%";
+    event.preventDefault();
 
-    p.style.animationDuration =
-        (5 + Math.random() * 8) + "s";
+    const username =
+        document.getElementById("username").value.trim();
 
-    p.style.animationDelay =
-        (-Math.random() * 10) + "s";
+    const email =
+        document.getElementById("email").value.trim();
 
-    p.style.opacity =
-        Math.random();
+    const password =
+        document.getElementById("password").value;
 
-    particles.appendChild(p);
-}
+    message.textContent =
+        "Creating your Vidlyra ID...";
 
+    try {
 
-document
-    .getElementById("signupForm")
-    .addEventListener("submit", function(e){
+        const {
+            data,
+            error
+        } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    username: username
+                }
+            }
+        });
 
-        e.preventDefault();
+        if (error) {
+            throw error;
+        }
 
-        document.getElementById("message").textContent =
-            "Supabase connection will be added next...";
+        /*
+         * Supabase may require email confirmation.
+         */
 
-    });
+        if (!data.user) {
+            throw new Error(
+                "Account could not be created."
+            );
+        }
+
+        /*
+         * Create festival progress record.
+         */
+
+        const {
+            error: progressError
+        } = await supabase
+            .from("festival_progress")
+            .insert({
+                user_id: data.user.id,
+                festival: "halloween_2026"
+            });
+
+        if (progressError) {
+            console.error(
+                "Festival progress error:",
+                progressError
+            );
+        }
+
+        message.textContent =
+            "🎃 Account created! Check your email if confirmation is required.";
+
+        form.reset();
+
+    } catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+            "⚠️ " + error.message;
+
+    }
+
+});
 
 </script>
 
