@@ -1,714 +1,989 @@
 /* ==========================================================
    VIDLYRA HALLOWEEN FEST 2026
-   DAY 5
-   THE HAUNTED CEMETERY
+   DAY 5 — THE HAUNTED CEMETERY
+   EPIC GAME JS
 ========================================================== */
 
 "use strict";
 
 const Game = {
 
-    /* ==========================================
-       ELEMENTS
-    ========================================== */
+    /* ==========================
+       GAME SETTINGS
+    ========================== */
 
-    player:null,
+    totalLanterns: 7,
+    lanternsCollected: 0,
 
-    gate:null,
+    playerX: 12,
+    playerY: 15,
 
-    ghost1:null,
-    ghost2:null,
-    ghost3:null,
+    speed: 0.45,
 
-    ghostKing:null,
+    keys: {},
 
-    portal:null,
+    started: false,
+    missionActive: false,
+    bossActive: false,
+    completed: false,
 
-    lantern:null,
-
-    spiritFlame:null,
-
-    orb:null,
-
-    dialogue:null,
-
-    speaker:null,
-
-    mission:null,
-
-    beginButton:null,
-
-    lightning:null,
-
-    /* ==========================================
-       AUDIO
-    ========================================== */
-
-    bgm:null,
-
-    whisper:null,
-
-    appear:null,
-
-    kingSound:null,
-
-    spiritSound:null,
-
-    thunder:null,
-
-    portalSound:null,
-
-    battle:null,
-
-    /* ==========================================
-       FLAGS
-    ========================================== */
-
-    started:false,
-
-    bossAppeared:false,
-
-    /* ==========================================
+    /* ==========================
        INIT
-    ========================================== */
+    ========================== */
 
-    init(){
+    init() {
 
         this.cache();
 
-        this.audio();
+        this.bindEvents();
 
-        this.events();
+        this.createParticles();
 
-        this.startScene();
+        this.setInitialPositions();
 
-    },
+        this.showIntro();
 
-    /* ==========================================
-       CACHE
-    ========================================== */
+        this.startMovement();
 
-    cache(){
-
-        this.player=document.getElementById("player");
-
-        this.gate=document.getElementById("gate");
-
-        this.ghost1=document.getElementById("ghost1");
-
-        this.ghost2=document.getElementById("ghost2");
-
-        this.ghost3=document.getElementById("ghost3");
-
-        this.ghostKing=document.getElementById("ghostKing");
-
-        this.portal=document.getElementById("portal");
-
-        this.lantern=document.getElementById("lantern");
-
-        this.spiritFlame=document.getElementById("spiritFlame");
-
-        this.orb=document.getElementById("orb");
-
-        this.dialogue=document.getElementById("dialogueText");
-
-        this.speaker=document.getElementById("speaker");
-
-        this.mission=document.getElementById("missionPanel");
-
-        this.beginButton=document.getElementById("beginMission");
-
-        this.lightning=document.getElementById("lightning");
-
-        this.bgm=document.getElementById("bgm");
-
-        this.whisper=document.getElementById("ghostWhisper");
-
-        this.appear=document.getElementById("ghostAppear");
-
-        this.kingSound=document.getElementById("ghostKingSound");
-
-        this.spiritSound=document.getElementById("spiritLight");
-
-        this.portalSound=document.getElementById("portalSound");
-
-        this.battle=document.getElementById("battleMusic");
+        this.startAmbientEffects();
 
     },
 
-    /* ==========================================
-       AUDIO
-    ========================================== */
+    /* ==========================
+       CACHE ELEMENTS
+    ========================== */
 
-    audio(){
+    cache() {
 
-        if(this.bgm){
+        this.player =
+            document.getElementById("player");
 
-            this.bgm.volume=.35;
+        this.ghost1 =
+            document.getElementById("ghost1");
 
-            this.bgm.play().catch(()=>{});
+        this.ghost2 =
+            document.getElementById("ghost2");
 
-        }
+        this.ghost3 =
+            document.getElementById("ghost3");
+
+        this.ghostKing =
+            document.getElementById("ghostKing");
+
+        this.portal =
+            document.getElementById("portal");
+
+        this.lantern =
+            document.getElementById("lantern");
+
+        this.spiritFlame =
+            document.getElementById("spiritFlame");
+
+        this.orb =
+            document.getElementById("orb");
+
+        this.crow =
+            document.getElementById("crow");
+
+        this.dialogueBox =
+            document.getElementById("dialogueBox");
+
+        this.dialogueText =
+            document.getElementById("dialogueText");
+
+        this.speaker =
+            document.getElementById("speaker");
+
+        this.missionPanel =
+            document.getElementById("missionPanel");
+
+        this.beginMission =
+            document.getElementById("beginMission");
+
+        this.lightning =
+            document.getElementById("lightning");
+
+        this.particleContainer =
+            document.getElementById("particleContainer");
+
+        /* AUDIO */
+
+        this.bgm =
+            document.getElementById("bgm");
+
+        this.whisper =
+            document.getElementById("ghostWhisper");
+
+        this.appearSound =
+            document.getElementById("ghostAppear");
+
+        this.kingSound =
+            document.getElementById("ghostKingSound");
+
+        this.spiritLight =
+            document.getElementById("spiritLight");
+
+        this.collectSound =
+            document.getElementById("collectSound");
+
+        this.thunder =
+            document.getElementById("thunder");
+
+        this.portalSound =
+            document.getElementById("portalSound");
+
+        this.missionComplete =
+            document.getElementById("missionComplete");
+
+        this.battleMusic =
+            document.getElementById("battleMusic");
 
     },
 
-    play(sound){
-
-        if(!sound) return;
-
-        sound.currentTime=0;
-
-        sound.play().catch(()=>{});
-
-    },
-
-    /* ==========================================
+    /* ==========================
        EVENTS
-    ========================================== */
+    ========================== */
 
-    events(){
+    bindEvents() {
 
-        this.beginButton.addEventListener(
+        /* Keyboard */
 
-            "click",
+        document.addEventListener(
+            "keydown",
+            (event) => {
 
-            ()=>{
-
-                window.location.href=
-
-                "day5-epic-game.html";
+                this.keys[event.key] = true;
 
             }
-
         );
 
-    },
+        document.addEventListener(
+            "keyup",
+            (event) => {
 
-    /* ==========================================
-       START STORY
-    ========================================== */
-
-    startScene(){
-
-        if(this.started) return;
-
-        this.started=true;
-
-        this.player.classList.add(
-
-            "playerWalk"
-
-        );
-
-        this.dialogue.innerHTML=
-
-        "The Forgotten Cemetery awaits...";
-
-        this.speaker.innerHTML=
-
-        "Narrator";
-
-        setTimeout(()=>{
-
-            this.sceneTwo();
-
-        },5000);
-
-    },
-      /* ==========================================
-       SCENE 2
-       Cemetery Gate
-    ========================================== */
-
-    sceneTwo(){
-
-        this.dialogue.innerHTML=
-
-        "The cemetery gate slowly opens...";
-
-        this.speaker.innerHTML=
-
-        "Spirit";
-
-        this.play(this.whisper);
-
-        this.gate.animate([
-
-            {
-
-                transform:
-
-                "translateX(-50%) rotateY(0deg)"
-
-            },
-
-            {
-
-                transform:
-
-                "translateX(-50%) rotateY(-18deg)"
+                this.keys[event.key] = false;
 
             }
-
-        ],{
-
-            duration:2200,
-
-            fill:"forwards",
-
-            easing:"ease-out"
-
-        });
-
-        setTimeout(()=>{
-
-            this.sceneThree();
-
-        },3500);
-
-    },
-
-    /* ==========================================
-       SCENE 3
-       Spirit Flame
-    ========================================== */
-
-    sceneThree(){
-
-        this.dialogue.innerHTML=
-
-        "Follow the blue spirit...";
-
-        this.speaker.innerHTML=
-
-        "Spirit";
-
-        this.play(this.spiritSound);
-
-        this.spiritFlame.classList.add(
-
-            "fadeIn"
-
         );
 
-        this.lantern.classList.add(
+        /* Begin mission */
 
-            "fadeIn"
+        if (this.beginMission) {
 
-        );
+            this.beginMission.addEventListener(
+                "click",
+                () => {
 
-        this.orb.classList.add(
+                    this.startMission();
 
-            "fadeIn"
-
-        );
-
-        setTimeout(()=>{
-
-            this.sceneFour();
-
-        },4500);
-
-    },
-
-    /* ==========================================
-       SCENE 4
-       Ghosts
-    ========================================== */
-
-    sceneFour(){
-
-        this.dialogue.innerHTML=
-
-        "The restless souls have awakened...";
-
-        this.speaker.innerHTML=
-
-        "Narrator";
-
-        this.play(this.appear);
-
-        this.ghost1.classList.add(
-
-            "ghostShow"
-
-        );
-
-        setTimeout(()=>{
-
-            this.ghost2.classList.add(
-
-                "ghostShow"
-
+                }
             );
 
-        },600);
+        }
 
-        setTimeout(()=>{
+        /* Lantern */
 
-            this.ghost3.classList.add(
+        if (this.lantern) {
 
-                "ghostShow"
+            this.lantern.addEventListener(
+                "click",
+                () => {
 
+                    this.collectLantern();
+
+                }
             );
 
-        },1200);
+        }
 
-        setTimeout(()=>{
+        /* Portal */
 
-            this.flashLightning();
+        if (this.portal) {
 
-        },1600);
+            this.portal.addEventListener(
+                "click",
+                () => {
 
-        setTimeout(()=>{
+                    this.escapeThroughPortal();
 
-            this.sceneFive();
-
-        },4500);
-
-    },
-
-    /* ==========================================
-       LIGHTNING
-    ========================================== */
-
-    flashLightning(){
-
-        this.lightning.classList.add(
-
-            "active"
-
-        );
-
-        this.play(this.thunder);
-
-        document.body.classList.add(
-
-            "cameraShake"
-
-        );
-
-        setTimeout(()=>{
-
-            this.lightning.classList.remove(
-
-                "active"
-
+                }
             );
-
-            document.body.classList.remove(
-
-                "cameraShake"
-
-            );
-
-        },450);
-
-    },
-      /* ==========================================
-       SCENE 5
-       GHOST KING REVEAL
-    ========================================== */
-
-    sceneFive(){
-
-        if(this.bossAppeared) return;
-
-        this.bossAppeared = true;
-
-        this.dialogue.innerHTML =
-
-        "You have awakened me...";
-
-        this.speaker.innerHTML =
-
-        "Ghost King";
-
-        this.play(this.kingSound);
-
-        this.ghostKing.classList.add(
-
-            "kingAppear"
-
-        );
-
-        setTimeout(()=>{
-
-            this.startBossMusic();
-
-        },1200);
-
-        setTimeout(()=>{
-
-            this.sceneSix();
-
-        },4500);
-
-    },
-
-    /* ==========================================
-       START BOSS MUSIC
-    ========================================== */
-
-    startBossMusic(){
-
-        if(!this.battle) return;
-
-        this.bgm.pause();
-
-        this.battle.volume = .55;
-
-        this.battle.play().catch(()=>{});
-
-    },
-
-    /* ==========================================
-       SCENE 6
-       PORTAL OPENS
-    ========================================== */
-
-    sceneSix(){
-
-        this.dialogue.innerHTML =
-
-        "Restore the Seven Spirit Lanterns...";
-
-        this.speaker.innerHTML =
-
-        "Ancient Spirit";
-
-        this.portal.classList.add(
-
-            "portalOpen"
-
-        );
-
-        this.play(this.portalSound);
-
-        setTimeout(()=>{
-
-            this.sceneSeven();
-
-        },3500);
-
-    },
-
-    /* ==========================================
-       SCENE 7
-       FINAL MISSION
-    ========================================== */
-
-    sceneSeven(){
-
-        this.dialogue.innerHTML =
-
-        "Your journey begins now...";
-
-        this.speaker.innerHTML =
-
-        "Narrator";
-
-        this.mission.classList.add(
-
-            "show"
-
-        );
-
-    },
-      /* ==========================================
-       AMBIENT WORLD
-    ========================================== */
-
-    startAmbient(){
-
-        this.startParticles();
-
-        this.randomWhispers();
-
-        this.randomLightning();
-
-    },
-
-    /* ==========================================
-       PARTICLES
-    ========================================== */
-
-    startParticles(){
-
-        const container =
-
-        document.getElementById(
-
-            "particleContainer"
-
-        );
-
-        if(!container) return;
-
-        container.innerHTML = "";
-
-        for(let i=0;i<80;i++){
-
-            const p =
-
-            document.createElement("div");
-
-            p.className = "particle";
-
-            p.style.left =
-
-            Math.random()*100 + "%";
-
-            p.style.animationDelay =
-
-            Math.random()*8 + "s";
-
-            p.style.animationDuration =
-
-            (6+Math.random()*8) + "s";
-
-            p.style.opacity =
-
-            Math.random();
-
-            container.appendChild(p);
 
         }
 
     },
 
-    /* ==========================================
-       RANDOM GHOST WHISPERS
-    ========================================== */
+    /* ==========================
+       INITIAL POSITION
+    ========================== */
 
-    randomWhispers(){
+    setInitialPositions() {
 
-        setInterval(()=>{
+        if (!this.player) return;
 
-            if(Math.random()>0.55){
+        this.player.style.left =
+            this.playerX + "%";
 
-                this.play(
+        this.player.style.bottom =
+            this.playerY + "%";
 
-                    this.whisper
+    },
 
+    /* ==========================
+       INTRO
+    ========================== */
+
+    showIntro() {
+
+        this.setDialogue(
+            "Narrator",
+            "The Forgotten Cemetery awaits..."
+        );
+
+        setTimeout(() => {
+
+            this.setDialogue(
+                "Spirit",
+                "Seven Spirit Lanterns have been scattered across the cemetery."
+            );
+
+        }, 3500);
+
+        setTimeout(() => {
+
+            this.setDialogue(
+                "Narrator",
+                "Find them before the Ghost King awakens."
+            );
+
+        }, 7000);
+
+    },
+
+    /* ==========================
+       START MISSION
+    ========================== */
+
+    startMission() {
+
+        if (this.missionActive) return;
+
+        this.missionActive = true;
+        this.started = true;
+
+        if (this.missionPanel) {
+
+            this.missionPanel.classList.remove("show");
+
+        }
+
+        this.setDialogue(
+            "Ancient Spirit",
+            "Your mission begins..."
+        );
+
+        this.playSound(this.bgm, 0.35);
+
+        setTimeout(() => {
+
+            this.setDialogue(
+                "Narrator",
+                "Explore the cemetery and restore the Spirit Lanterns."
+            );
+
+        }, 2500);
+
+        this.revealWorld();
+
+    },
+
+    /* ==========================
+       REVEAL WORLD
+    ========================== */
+
+    revealWorld() {
+
+        if (this.ghost1)
+            this.ghost1.classList.add("ghostShow");
+
+        setTimeout(() => {
+
+            if (this.ghost2)
+                this.ghost2.classList.add("ghostShow");
+
+        }, 900);
+
+        setTimeout(() => {
+
+            if (this.ghost3)
+                this.ghost3.classList.add("ghostShow");
+
+        }, 1800);
+
+        if (this.spiritFlame) {
+
+            this.spiritFlame.classList.add("fadeIn");
+
+        }
+
+        if (this.lantern) {
+
+            this.lantern.classList.add("fadeIn");
+
+        }
+
+        if (this.orb) {
+
+            this.orb.classList.add("fadeIn");
+
+        }
+
+    },
+
+    /* ==========================
+       PLAYER MOVEMENT
+    ========================== */
+
+    startMovement() {
+
+        const loop = () => {
+
+            if (this.started && !this.completed) {
+
+                this.updatePlayer();
+
+            }
+
+            requestAnimationFrame(loop);
+
+        };
+
+        requestAnimationFrame(loop);
+
+    },
+
+    updatePlayer() {
+
+        let moving = false;
+
+        /* LEFT */
+
+        if (
+            this.keys["ArrowLeft"] ||
+            this.keys["a"] ||
+            this.keys["A"]
+        ) {
+
+            this.playerX -= this.speed;
+
+            moving = true;
+
+        }
+
+        /* RIGHT */
+
+        if (
+            this.keys["ArrowRight"] ||
+            this.keys["d"] ||
+            this.keys["D"]
+        ) {
+
+            this.playerX += this.speed;
+
+            moving = true;
+
+        }
+
+        /* UP */
+
+        if (
+            this.keys["ArrowUp"] ||
+            this.keys["w"] ||
+            this.keys["W"]
+        ) {
+
+            this.playerY += this.speed;
+
+            moving = true;
+
+        }
+
+        /* DOWN */
+
+        if (
+            this.keys["ArrowDown"] ||
+            this.keys["s"] ||
+            this.keys["S"]
+        ) {
+
+            this.playerY -= this.speed;
+
+            moving = true;
+
+        }
+
+        /* BOUNDARIES */
+
+        this.playerX =
+            Math.max(
+                3,
+                Math.min(96, this.playerX)
+            );
+
+        this.playerY =
+            Math.max(
+                8,
+                Math.min(85, this.playerY)
+            );
+
+        /* APPLY */
+
+        if (this.player) {
+
+            this.player.style.left =
+                this.playerX + "%";
+
+            this.player.style.bottom =
+                this.playerY + "%";
+
+            if (moving) {
+
+                this.player.classList.add(
+                    "playerMoving"
+                );
+
+            } else {
+
+                this.player.classList.remove(
+                    "playerMoving"
                 );
 
             }
 
-        },10000);
+        }
+
+        /* Lantern proximity */
+
+        if (this.missionActive) {
+
+            this.checkLanternDistance();
+
+        }
+
+        /* Portal proximity */
+
+        if (
+            this.lanternsCollected >=
+            this.totalLanterns
+        ) {
+
+            this.checkPortalDistance();
+
+        }
 
     },
 
-    /* ==========================================
-       RANDOM LIGHTNING
-    ========================================== */
+    /* ==========================
+       LANTERN DISTANCE
+    ========================== */
 
-    randomLightning(){
+    checkLanternDistance() {
 
-        setInterval(()=>{
+        if (!this.lantern) return;
 
-            this.flashLightning();
+        if (
+            this.lantern.classList.contains(
+                "collected"
+            )
+        ) return;
 
-        },8000);
+        const rect =
+            this.lantern.getBoundingClientRect();
 
-    },
+        const playerRect =
+            this.player.getBoundingClientRect();
 
-    /* ==========================================
-       CAMERA SHAKE
-    ========================================== */
-
-    shakeScreen(){
-
-        document.body.classList.add(
-
-            "cameraShake"
-
-        );
-
-        setTimeout(()=>{
-
-            document.body.classList.remove(
-
-                "cameraShake"
-
+        const distance =
+            Math.hypot(
+                rect.left - playerRect.left,
+                rect.top - playerRect.top
             );
 
-        },450);
+        if (distance < 100) {
+
+            this.setDialogue(
+                "Spirit",
+                "The Spirit Lantern is near..."
+            );
+
+        }
 
     },
 
-    /* ==========================================
-       DIALOGUE
-    ========================================== */
+    /* ==========================
+       COLLECT LANTERN
+    ========================== */
 
-    setDialogue(
+    collectLantern() {
 
-        speaker,
+        if (!this.missionActive) return;
 
-        text
+        if (
+            this.lanternsCollected >=
+            this.totalLanterns
+        ) return;
 
-    ){
+        this.lanternsCollected++;
 
-        this.speaker.textContent =
+        this.playSound(
+            this.collectSound,
+            0.7
+        );
 
-        speaker;
+        this.playSound(
+            this.spiritLight,
+            0.7
+        );
 
-        this.dialogue.textContent =
+        if (this.lantern) {
 
-        text;
+            this.lantern.classList.add(
+                "collected"
+            );
+
+            this.lantern.style.pointerEvents =
+                "none";
+
+            this.lantern.style.transform =
+                "scale(1.5)";
+
+            this.lantern.style.opacity =
+                "0.35";
+
+        }
+
+        this.setDialogue(
+            "Spirit",
+            "Spirit Lantern restored! " +
+            this.lanternsCollected +
+            " / " +
+            this.totalLanterns
+        );
+
+        this.flash();
+
+        if (
+            this.lanternsCollected >=
+            this.totalLanterns
+        ) {
+
+            setTimeout(() => {
+
+                this.activateBoss();
+
+            }, 1800);
+
+        }
 
     },
-      /* ==========================================
-       CLEANUP
-    ========================================== */
 
-    destroy(){
+    /* ==========================
+       BOSS
+    ========================== */
 
-        /* Stop all audio */
+    activateBoss() {
 
-        if(this.bgm){
+        this.bossActive = true;
+
+        this.setDialogue(
+            "Ghost King",
+            "You have awakened me..."
+        );
+
+        this.playSound(
+            this.kingSound,
+            0.9
+        );
+
+        if (this.bgm) {
 
             this.bgm.pause();
 
-            this.bgm.currentTime = 0;
+        }
+
+        if (this.battleMusic) {
+
+            this.battleMusic.volume = 0.55;
+
+            this.battleMusic.play()
+                .catch(() => {});
 
         }
 
-        if(this.battle){
+        this.flash();
 
-            this.battle.pause();
+        if (this.ghostKing) {
 
-            this.battle.currentTime = 0;
-
-        }
-
-        if(this.whisper){
-
-            this.whisper.pause();
+            this.ghostKing.classList.add(
+                "kingAppear"
+            );
 
         }
 
-        if(this.appear){
+        setTimeout(() => {
 
-            this.appear.pause();
+            this.openPortal();
+
+        }, 4500);
+
+    },
+
+    /* ==========================
+       OPEN PORTAL
+    ========================== */
+
+    openPortal() {
+
+        this.setDialogue(
+            "Ancient Spirit",
+            "The Ghost King's seal is broken. Escape through the portal!"
+        );
+
+        if (this.portal) {
+
+            this.portal.classList.add(
+                "portalOpen"
+            );
 
         }
 
-        if(this.kingSound){
+        this.playSound(
+            this.portalSound,
+            0.8
+        );
 
-            this.kingSound.pause();
+        this.flash();
+
+    },
+
+    /* ==========================
+       PORTAL DISTANCE
+    ========================== */
+
+    checkPortalDistance() {
+
+        if (!this.portal) return;
+
+        if (
+            !this.portal.classList.contains(
+                "portalOpen"
+            )
+        ) return;
+
+        const rect =
+            this.portal.getBoundingClientRect();
+
+        const playerRect =
+            this.player.getBoundingClientRect();
+
+        const distance =
+            Math.hypot(
+                rect.left - playerRect.left,
+                rect.top - playerRect.top
+            );
+
+        if (distance < 120) {
+
+            this.setDialogue(
+                "Portal",
+                "The portal is ready. Click it to escape."
+            );
 
         }
 
-        if(this.spiritSound){
+    },
 
-            this.spiritSound.pause();
+    /* ==========================
+       ESCAPE
+    ========================== */
+
+    escapeThroughPortal() {
+
+        if (!this.portal) return;
+
+        if (
+            !this.portal.classList.contains(
+                "portalOpen"
+            )
+        ) return;
+
+        if (this.completed) return;
+
+        this.completed = true;
+
+        this.started = false;
+
+        this.setDialogue(
+            "Narrator",
+            "Day 5 Complete. The journey continues..."
+        );
+
+        this.playSound(
+            this.missionComplete,
+            0.9
+        );
+
+        if (this.battleMusic) {
+
+            this.battleMusic.pause();
 
         }
 
-        if(this.portalSound){
+        this.portal.classList.add(
+            "portalVictory"
+        );
 
-            this.portalSound.pause();
+        setTimeout(() => {
+
+            this.showCompletion();
+
+        }, 2500);
+
+    },
+
+    /* ==========================
+       COMPLETION
+    ========================== */
+
+    showCompletion() {
+
+        this.setDialogue(
+            "VIDLYRA",
+            "DAY 5 COMPLETE — THE HAUNTED CEMETERY"
+        );
+
+        const next =
+            document.createElement("div");
+
+        next.id = "dayComplete";
+
+        next.innerHTML = `
+            <div class="day-complete-card">
+
+                <div class="complete-icon">✦</div>
+
+                <h1>DAY 5 COMPLETE</h1>
+
+                <h2>THE HAUNTED CEMETERY</h2>
+
+                <p>
+                    The Ghost King has been sealed.
+                    The path to Day 6 is open.
+                </p>
+
+                <button id="continueDay6">
+                    CONTINUE TO DAY 6 →
+                </button>
+
+            </div>
+        `;
+
+        document.body.appendChild(next);
+
+        const button =
+            document.getElementById(
+                "continueDay6"
+            );
+
+        if (button) {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    window.location.href =
+                        "day6-video.html";
+
+                }
+            );
+
+        }
+
+    },
+
+    /* ==========================
+       DIALOGUE
+    ========================== */
+
+    setDialogue(
+        speaker,
+        text
+    ) {
+
+        if (this.speaker) {
+
+            this.speaker.textContent =
+                speaker;
+
+        }
+
+        if (this.dialogueText) {
+
+            this.dialogueText.textContent =
+                text;
+
+        }
+
+        if (this.dialogueBox) {
+
+            this.dialogueBox.classList.add(
+                "show"
+            );
+
+        }
+
+    },
+
+    /* ==========================
+       FLASH
+    ========================== */
+
+    flash() {
+
+        if (!this.lightning) return;
+
+        this.lightning.classList.add(
+            "active"
+        );
+
+        setTimeout(() => {
+
+            this.lightning.classList.remove(
+                "active"
+            );
+
+        }, 400);
+
+    },
+
+    /* ==========================
+       AUDIO
+    ========================== */
+
+    playSound(
+        audio,
+        volume = 0.5
+    ) {
+
+        if (!audio) return;
+
+        audio.volume = volume;
+
+        audio.currentTime = 0;
+
+        audio.play().catch(() => {});
+
+    },
+
+    /* ==========================
+       PARTICLES
+    ========================== */
+
+    createParticles() {
+
+        if (!this.particleContainer)
+            return;
+
+        this.particleContainer.innerHTML =
+            "";
+
+        for (
+            let i = 0;
+            i < 80;
+            i++
+        ) {
+
+            const particle =
+                document.createElement(
+                    "div"
+                );
+
+            particle.className =
+                "particle";
+
+            particle.style.left =
+                Math.random() * 100 + "%";
+
+            particle.style.top =
+                Math.random() * 100 + "%";
+
+            particle.style.animationDelay =
+                Math.random() * 8 + "s";
+
+            particle.style.animationDuration =
+                5 + Math.random() * 8 + "s";
+
+            this.particleContainer.appendChild(
+                particle
+            );
+
+        }
+
+    },
+
+    /* ==========================
+       AMBIENT EFFECTS
+    ========================== */
+
+    startAmbientEffects() {
+
+        /* Random lightning */
+
+        setInterval(() => {
+
+            if (
+                this.missionActive &&
+                !this.completed &&
+                Math.random() > 0.45
+            ) {
+
+                this.flash();
+
+                this.playSound(
+                    this.thunder,
+                    0.35
+                );
+
+            }
+
+        }, 9000);
+
+        /* Ghost whispers */
+
+        setInterval(() => {
+
+            if (
+                this.missionActive &&
+                !this.completed &&
+                Math.random() > 0.55
+            ) {
+
+                this.playSound(
+                    this.whisper,
+                    0.25
+                );
+
+            }
+
+        }, 12000);
+
+        /* Crow movement */
+
+        if (this.crow) {
+
+            this.crow.classList.add(
+                "crowFly"
+            );
 
         }
 
@@ -716,119 +991,56 @@ const Game = {
 
 };
 
-/* ==========================================
-   START GAME
-========================================== */
+/* ==========================================================
+   START
+========================================================== */
 
 document.addEventListener(
-
     "DOMContentLoaded",
-
-    ()=>{
+    () => {
 
         Game.init();
 
-        Game.startAmbient();
-
     }
-
 );
 
-/* ==========================================
-   TAB VISIBILITY
-========================================== */
-
-document.addEventListener(
-
-    "visibilitychange",
-
-    ()=>{
-
-        if(document.hidden){
-
-            if(Game.bgm){
-
-                Game.bgm.pause();
-
-            }
-
-            if(Game.battle){
-
-                Game.battle.pause();
-
-            }
-
-        }
-
-        else{
-
-            if(Game.battle &&
-               !Game.battle.paused){
-
-                Game.battle.play().catch(()=>{});
-
-            }
-
-            else if(Game.bgm){
-
-                Game.bgm.play().catch(()=>{});
-
-            }
-
-        }
-
-    }
-
-);
-
-/* ==========================================
+/* ==========================================================
    ESC KEY
-========================================== */
+========================================================== */
 
 document.addEventListener(
-
     "keydown",
+    (event) => {
 
-    (event)=>{
+        if (event.key === "Escape") {
 
-        if(event.key==="Escape"){
-
-            const leave = confirm(
-
-                "Leave this scene and start the mission?"
-
+            Game.setDialogue(
+                "Narrator",
+                "The cemetery waits in silence..."
             );
 
-            if(leave){
+        }
 
-                window.location.href =
+    }
+);
 
-                "day5-epic-game.html";
+/* ==========================================================
+   VISIBILITY
+========================================================== */
 
-            }
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (document.hidden) {
+
+            if (Game.bgm)
+                Game.bgm.pause();
+
+            if (Game.battleMusic)
+                Game.battleMusic.pause();
 
         }
 
     }
-
 );
-
-/* ==========================================
-   BEFORE UNLOAD
-========================================== */
-
-window.addEventListener(
-
-    "beforeunload",
-
-    ()=>{
-
-        Game.destroy();
-
-    }
-
-);
-
-/* ==========================================
-   END OF FILE
-========================================== */
