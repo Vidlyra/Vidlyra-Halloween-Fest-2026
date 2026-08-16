@@ -1,467 +1,2087 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Vidlyra Halloween Fest 2026 — Rewards</title>
+<title>Halloween Fest 2026 | Vidlyra</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
+    box-sizing:border-box;
 }
 
-html,body{
-    width:100%;
-    min-height:100%;
+:root{
+    --orange:#ff6b22;
+    --orange2:#ff9a4d;
+    --bg:#030303;
+    --panel:rgba(13,13,13,.78);
+    --line:rgba(255,255,255,.09);
+    --muted:rgba(255,255,255,.45);
+}
+
+html{
+    scroll-behavior:smooth;
 }
 
 body{
-    background:
-        radial-gradient(circle at 50% 15%,rgba(140,0,255,.25),transparent 35%),
-        linear-gradient(180deg,#08020d,#020104);
-    color:#fff;
-    font-family:Arial,Helvetica,sans-serif;
-    overflow-x:hidden;
-}
-
-.reward-page{
     min-height:100vh;
-    padding:35px 18px;
+    overflow-x:hidden;
+
+    background:#030303;
+    color:#fff;
+
+    font-family:Inter,Arial,sans-serif;
+}
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.background{
+    position:fixed;
+    inset:0;
+    z-index:-5;
+
+    background:
+        radial-gradient(
+            circle at 50% 15%,
+            rgba(255,91,25,.14),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 15% 80%,
+            rgba(255,70,20,.07),
+            transparent 28%
+        ),
+        #030303;
+}
+
+.background::before{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent,
+            rgba(0,0,0,.55)
+        );
+}
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.particles{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+}
+
+.particle{
+    position:absolute;
+
+    width:2px;
+    height:2px;
+
+    border-radius:50%;
+
+    background:#ff7b35;
+
+    box-shadow:0 0 10px #ff6b22;
+
+    animation:floatParticle linear infinite;
+}
+
+@keyframes floatParticle{
+
+    from{
+        transform:translateY(110vh);
+        opacity:0;
+    }
+
+    15%{
+        opacity:.75;
+    }
+
+    85%{
+        opacity:.75;
+    }
+
+    to{
+        transform:translateY(-10vh);
+        opacity:0;
+    }
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header{
+    position:sticky;
+    top:0;
+
+    z-index:50;
+
+    width:100%;
+
+    border-bottom:1px solid rgba(255,255,255,.07);
+
+    background:rgba(3,3,3,.78);
+
+    backdrop-filter:blur(18px);
+}
+
+.header-inner{
+    width:min(1180px,calc(100% - 36px));
+
+    min-height:72px;
+
+    margin:auto;
+
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:space-between;
+
+    gap:20px;
 }
 
-.reward-card{
-    width:min(900px,100%);
-    text-align:center;
-    padding:40px 25px;
-    border-radius:25px;
-    border:1px solid rgba(180,60,255,.4);
-    background:rgba(10,5,18,.9);
-    box-shadow:
-        0 0 45px rgba(140,0,255,.2),
-        inset 0 0 30px rgba(130,0,255,.06);
-}
+.logo{
+    color:#fff;
 
-.badge{
-    display:inline-block;
-    padding:8px 16px;
-    border-radius:30px;
-    color:#ffb347;
-    border:1px solid rgba(255,150,50,.5);
-    font-size:12px;
-    letter-spacing:3px;
-    margin-bottom:18px;
-}
+    font-size:16px;
+    font-weight:900;
 
-h1{
-    font-size:clamp(35px,7vw,65px);
     letter-spacing:5px;
-    text-shadow:0 0 20px #b000ff;
+
+    white-space:nowrap;
 }
 
-.subtitle{
-    color:#ca8cff;
-    margin-top:10px;
-    letter-spacing:2px;
+.logo span{
+    color:var(--orange);
 }
 
-.reward-icon{
-    font-size:80px;
-    margin:25px 0;
-    filter:drop-shadow(0 0 20px #ff7900);
-    animation:float 2s ease-in-out infinite;
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:14px;
 }
 
-@keyframes float{
+.user-pill{
+    display:flex;
+    align-items:center;
+    gap:9px;
+
+    padding:8px 12px;
+
+    border:1px solid var(--line);
+
+    background:rgba(255,255,255,.025);
+
+    font-size:10px;
+    font-weight:700;
+
+    color:rgba(255,255,255,.7);
+}
+
+.user-dot{
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:#ff7135;
+
+    box-shadow:0 0 10px #ff7135;
+}
+
+.logout-btn{
+    border:1px solid rgba(255,255,255,.09);
+
+    background:transparent;
+
+    color:rgba(255,255,255,.5);
+
+    padding:9px 12px;
+
+    font-family:inherit;
+
+    font-size:9px;
+    font-weight:800;
+
+    letter-spacing:1px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.logout-btn:hover{
+    border-color:rgba(255,107,34,.4);
+    color:#ff8738;
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+    width:min(1180px,calc(100% - 36px));
+
+    margin:auto;
+
+    padding:55px 0 80px;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+    position:relative;
+
+    min-height:300px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:40px;
+
+    padding:35px;
+
+    overflow:hidden;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(255,90,20,.08),
+            rgba(10,10,10,.72) 45%,
+            rgba(10,10,10,.9)
+        );
+}
+
+.hero::after{
+    content:"";
+
+    position:absolute;
+
+    width:300px;
+    height:300px;
+
+    right:-100px;
+    top:-130px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,107,34,.12);
+
+    box-shadow:
+        0 0 100px rgba(255,80,20,.08);
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+}
+
+.eyebrow{
+    color:var(--orange);
+
+    font-size:10px;
+    font-weight:900;
+
+    letter-spacing:5px;
+}
+
+.hero h1{
+    margin-top:14px;
+
+    font-size:clamp(40px,6vw,70px);
+
+    line-height:.9;
+
+    letter-spacing:-3px;
+
+    font-weight:900;
+}
+
+.hero h1 span{
+    display:block;
+    color:var(--orange);
+}
+
+.hero-description{
+    max-width:570px;
+
+    margin-top:18px;
+
+    color:var(--muted);
+
+    font-size:12px;
+
+    line-height:1.8;
+}
+
+/* HERO CROWN */
+
+.hero-symbol{
+    position:relative;
+
+    width:210px;
+    height:210px;
+
+    flex:0 0 210px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,107,34,.14);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,100,30,.12),
+            transparent 65%
+        );
+
+    box-shadow:
+        0 0 80px rgba(255,70,20,.08);
+
+    animation:heroFloat 4s ease-in-out infinite;
+}
+
+.hero-symbol::before{
+    content:"";
+
+    position:absolute;
+
+    inset:15px;
+
+    border-radius:50%;
+
+    border:1px dashed rgba(255,107,34,.18);
+
+    animation:spin 20s linear infinite;
+}
+
+.hero-symbol::after{
+    content:"";
+
+    position:absolute;
+
+    width:8px;
+    height:8px;
+
+    top:20px;
+    right:32px;
+
+    border-radius:50%;
+
+    background:#ff8a42;
+
+    box-shadow:
+        0 0 15px #ff6b22;
+}
+
+.hero-crown{
+    font-size:75px;
+
+    filter:
+        drop-shadow(
+            0 0 25px
+            rgba(255,100,30,.5)
+        );
+}
+
+@keyframes heroFloat{
+
     0%,100%{
         transform:translateY(0);
     }
 
     50%{
-        transform:translateY(-10px);
+        transform:translateY(-9px);
     }
 }
 
-.message{
-    color:#ddd;
-    line-height:1.7;
-    max-width:650px;
-    margin:auto;
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
 }
 
-.progress{
-    margin:30px auto;
-    max-width:650px;
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress-section{
+    margin-top:24px;
+
+    padding:22px;
+
+    border:1px solid var(--line);
+
+    background:rgba(10,10,10,.7);
 }
 
-.progress-title{
+.progress-top{
     display:flex;
     justify-content:space-between;
-    margin-bottom:8px;
-    color:#bbb;
-    font-size:13px;
+    align-items:end;
+
+    gap:20px;
+}
+
+.progress-label{
+    color:var(--muted);
+
+    font-size:9px;
+    font-weight:800;
+
+    letter-spacing:2px;
+}
+
+.progress-number{
+    margin-top:6px;
+
+    font-size:24px;
+    font-weight:900;
+}
+
+.progress-number span{
+    color:var(--orange);
+}
+
+.progress-percent{
+    color:var(--orange2);
+
+    font-size:12px;
+    font-weight:900;
+}
+
+.progress-track{
+    height:5px;
+
+    margin-top:15px;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.06);
 }
 
 .progress-bar{
-    height:14px;
-    border-radius:20px;
-    background:#17121d;
-    overflow:hidden;
-    border:1px solid #30243b;
-}
-
-.progress-fill{
-    height:100%;
     width:0%;
-    background:linear-gradient(90deg,#7200ff,#d100ff,#ff6900);
-    box-shadow:0 0 15px #b000ff;
-    transition:width .8s ease;
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff5a16,
+            #ff9a4d
+        );
+
+    box-shadow:
+        0 0 15px rgba(255,90,20,.35);
+
+    transition:
+        width .7s ease;
 }
 
-.rewards{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px;
-    margin:30px auto;
-    max-width:700px;
+/* =========================================================
+   MAP HEADER
+========================================================= */
+
+.map-heading{
+    margin-top:55px;
+
+    text-align:center;
 }
 
-.reward{
-    padding:22px 12px;
-    border-radius:16px;
-    background:rgba(255,255,255,.035);
-    border:1px solid rgba(180,80,255,.2);
+.map-heading .small{
+    color:var(--orange);
+
+    font-size:9px;
+    font-weight:900;
+
+    letter-spacing:4px;
 }
 
-.reward-icon-small{
-    font-size:35px;
-    margin-bottom:10px;
+.map-heading h2{
+    margin-top:10px;
+
+    font-size:32px;
+    font-weight:900;
+
+    letter-spacing:-1px;
 }
 
-.reward h3{
-    font-size:15px;
-    color:#d795ff;
-}
+.map-heading p{
+    margin-top:8px;
 
-.reward p{
-    font-size:12px;
-    color:#888;
-    margin-top:6px;
-}
+    color:var(--muted);
 
-.reward.locked{
-    opacity:.35;
-    filter:grayscale(1);
-}
-
-.reward.unlocked{
-    border-color:rgba(255,140,0,.5);
-    box-shadow:0 0 20px rgba(255,100,0,.12);
-}
-
-.buttons{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:12px;
-    margin-top:30px;
-}
-
-button{
-    border:0;
-    border-radius:12px;
-    padding:14px 22px;
-    cursor:pointer;
-    color:#fff;
-    font-weight:bold;
-    background:linear-gradient(135deg,#7900d8,#350060);
-    box-shadow:0 0 18px rgba(140,0,255,.25);
-    transition:.25s;
-}
-
-button:hover{
-    transform:translateY(-3px);
-    box-shadow:0 0 28px rgba(180,0,255,.5);
-}
-
-.secondary{
-    background:#17121d;
-}
-
-#status{
-    margin-top:18px;
-    color:#aaa;
-    font-size:13px;
-}
-
-footer{
-    margin-top:30px;
-    color:#666;
     font-size:11px;
 }
 
-@media(max-width:650px){
+/* =========================================================
+   FESTIVAL MAP
+========================================================= */
 
-    .reward-card{
-        padding:30px 16px;
+.map{
+    position:relative;
+
+    margin-top:35px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:18px;
+}
+
+/* CONNECTOR */
+
+.map::before{
+    content:"";
+
+    position:absolute;
+
+    top:98px;
+    left:12%;
+    right:12%;
+
+    height:1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,107,34,.25),
+            rgba(255,107,34,.25),
+            transparent
+        );
+
+    z-index:0;
+}
+
+/* DAY CARD */
+
+.day{
+    position:relative;
+
+    z-index:2;
+
+    min-height:235px;
+
+    padding:22px;
+
+    border:1px solid var(--line);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18,18,18,.9),
+            rgba(7,7,7,.9)
+        );
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+}
+
+.day:hover:not(.locked){
+    transform:translateY(-5px);
+
+    border-color:
+        rgba(255,107,34,.38);
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.35),
+        0 0 30px rgba(255,70,20,.06);
+}
+
+.day-number{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.day-label{
+    color:var(--orange);
+
+    font-size:9px;
+    font-weight:900;
+
+    letter-spacing:3px;
+}
+
+.status-icon{
+    font-size:14px;
+}
+
+.day-icon{
+    width:64px;
+    height:64px;
+
+    margin-top:20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,107,34,.18);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,100,30,.1),
+            transparent
+        );
+
+    font-size:27px;
+}
+
+.day h3{
+    margin-top:17px;
+
+    font-size:16px;
+
+    font-weight:900;
+}
+
+.day p{
+    margin-top:7px;
+
+    min-height:34px;
+
+    color:var(--muted);
+
+    font-size:9px;
+
+    line-height:1.6;
+}
+
+.day-btn{
+    width:100%;
+
+    margin-top:17px;
+
+    padding:11px;
+
+    border:1px solid rgba(255,107,34,.35);
+
+    background:rgba(255,107,34,.08);
+
+    color:#ff9a4d;
+
+    font-family:inherit;
+
+    font-size:8px;
+    font-weight:900;
+
+    letter-spacing:2px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.day-btn:hover{
+    background:#ff7135;
+    color:#050505;
+}
+
+.day.completed{
+    border-color:
+        rgba(255,107,34,.28);
+}
+
+.day.completed .day-icon{
+    background:
+        rgba(255,107,34,.12);
+
+    box-shadow:
+        0 0 25px rgba(255,70,20,.08);
+}
+
+.day.completed .day-btn{
+    border-color:
+        rgba(255,107,34,.18);
+
+    color:#ff9a4d;
+
+    background:
+        rgba(255,107,34,.04);
+
+    cursor:default;
+}
+
+/* LOCKED */
+
+.day.locked{
+    opacity:.42;
+
+    filter:saturate(.45);
+}
+
+.day.locked::after{
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        linear-gradient(
+            135deg,
+            transparent,
+            rgba(0,0,0,.2)
+        );
+
+    pointer-events:none;
+}
+
+.day.locked .day-btn{
+    cursor:not-allowed;
+
+    border-color:
+        rgba(255,255,255,.06);
+
+    background:
+        rgba(255,255,255,.025);
+
+    color:
+        rgba(255,255,255,.25);
+}
+
+/* =========================================================
+   REWARD
+========================================================= */
+
+.reward{
+    margin-top:28px;
+
+    padding:30px;
+
+    text-align:center;
+
+    border:1px solid rgba(255,107,34,.18);
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(255,80,20,.08),
+            transparent 55%
+        ),
+        rgba(10,10,10,.75);
+}
+
+.reward-badge{
+    color:var(--orange);
+
+    font-size:9px;
+    font-weight:900;
+
+    letter-spacing:4px;
+}
+
+.reward h2{
+    margin-top:10px;
+
+    font-size:26px;
+    font-weight:900;
+}
+
+.reward p{
+    margin:8px auto 0;
+
+    max-width:500px;
+
+    color:var(--muted);
+
+    font-size:10px;
+
+    line-height:1.7;
+}
+
+.reward-btn{
+    margin-top:20px;
+
+    padding:13px 25px;
+
+    border:0;
+
+    background:#ff7135;
+
+    color:#050505;
+
+    font-family:inherit;
+
+    font-size:9px;
+    font-weight:900;
+
+    letter-spacing:2px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.reward-btn:hover{
+    background:#fff;
+    transform:translateY(-2px);
+}
+
+.reward-btn:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+    transform:none;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading{
+    position:fixed;
+
+    inset:0;
+
+    z-index:100;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    background:#030303;
+
+    transition:
+        opacity .4s ease,
+        visibility .4s ease;
+}
+
+.loading.hidden{
+    opacity:0;
+    visibility:hidden;
+}
+
+.loader{
+    text-align:center;
+}
+
+.loader-symbol{
+    font-size:40px;
+
+    animation:
+        loaderPulse 1.2s ease-in-out infinite;
+}
+
+.loader-text{
+    margin-top:15px;
+
+    color:#ff8738;
+
+    font-size:9px;
+    font-weight:900;
+
+    letter-spacing:4px;
+}
+
+@keyframes loaderPulse{
+    0%,100%{
+        transform:scale(.9);
+        opacity:.5;
     }
 
-    .rewards{
+    50%{
+        transform:scale(1.1);
+        opacity:1;
+    }
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast{
+    position:fixed;
+
+    left:50%;
+    bottom:25px;
+
+    z-index:200;
+
+    transform:
+        translate(-50%,20px);
+
+    min-width:260px;
+
+    padding:13px 18px;
+
+    text-align:center;
+
+    border:1px solid rgba(255,107,34,.25);
+
+    background:rgba(10,10,10,.94);
+
+    color:#fff;
+
+    font-size:10px;
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:.3s;
+}
+
+.toast.show{
+    opacity:1;
+
+    transform:
+        translate(-50%,0);
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:900px){
+
+    .hero{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .hero-symbol{
+        position:absolute;
+
+        right:-55px;
+        bottom:-60px;
+
+        width:180px;
+        height:180px;
+
+        opacity:.5;
+    }
+
+    .map{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .map::before{
+        display:none;
+    }
+}
+
+@media(max-width:600px){
+
+    .header-inner{
+        width:min(100% - 24px,1180px);
+    }
+
+    .main{
+        width:calc(100% - 24px);
+
+        padding-top:30px;
+    }
+
+    .header-inner{
+        min-height:62px;
+    }
+
+    .logo{
+        font-size:13px;
+        letter-spacing:3px;
+    }
+
+    .user-pill{
+        display:none;
+    }
+
+    .hero{
+        min-height:330px;
+
+        padding:25px;
+    }
+
+    .hero h1{
+        font-size:43px;
+    }
+
+    .hero-symbol{
+        width:150px;
+        height:150px;
+
+        right:-45px;
+        bottom:-40px;
+    }
+
+    .hero-crown{
+        font-size:55px;
+    }
+
+    .progress-section{
+        padding:17px;
+    }
+
+    .map{
         grid-template-columns:1fr;
     }
 
-    button{
-        width:100%;
+    .day{
+        min-height:205px;
     }
 
+    .reward{
+        padding:24px 17px;
+    }
 }
-
 </style>
-
 </head>
 
 <body>
 
-<div class="reward-page">
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
 
-<main class="reward-card">
+<div class="background">
+    <div class="particles" id="particles"></div>
+</div>
 
-    <div class="badge">
-        🎃 VIDLYRA HALLOWEEN FEST 2026
-    </div>
 
-    <h1>REWARD</h1>
+<!-- =====================================================
+     LOADING
+===================================================== -->
 
-    <div class="subtitle">
-        YOUR JOURNEY CONTINUES
-    </div>
+<div class="loading" id="loading">
 
-    <div class="reward-icon">
-        🏆
-    </div>
+    <div class="loader">
 
-    <div class="message">
-
-        <p id="rewardMessage">
-            Checking your Halloween Fest progress...
-        </p>
-
-    </div>
-
-    <div class="progress">
-
-        <div class="progress-title">
-            <span>Festival Progress</span>
-            <span id="progressText">0 / 7</span>
+        <div class="loader-symbol">
+            🎃
         </div>
 
-        <div class="progress-bar">
-            <div
-                id="progressFill"
-                class="progress-fill">
-            </div>
+        <div class="loader-text">
+            ENTERING VIDLYRA
         </div>
 
     </div>
-
-    <div class="rewards">
-
-        <div
-            id="rewardDay5"
-            class="reward locked">
-
-            <div class="reward-icon-small">🏮</div>
-
-            <h3>Day 5</h3>
-
-            <p>The Haunted Cemetery</p>
-
-        </div>
-
-        <div
-            id="rewardDay6"
-            class="reward locked">
-
-            <div class="reward-icon-small">👻</div>
-
-            <h3>Day 6</h3>
-
-            <p>Epic Challenge</p>
-
-        </div>
-
-        <div
-            id="rewardDay7"
-            class="reward locked">
-
-            <div class="reward-icon-small">🎃</div>
-
-            <h3>Day 7</h3>
-
-            <p>Final Mystery</p>
-
-        </div>
-
-    </div>
-
-    <div class="buttons">
-
-        <button
-            onclick="location.href='map.html'">
-            🗺️ Return to Map
-        </button>
-
-        <button
-            class="secondary"
-            onclick="location.href='home.html'">
-            🏠 Home
-        </button>
-
-    </div>
-
-    <div id="status"></div>
-
-    <footer>
-        © 2026 Vidlyra Halloween Fest
-    </footer>
-
-</main>
 
 </div>
 
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <div class="logo">
+            VID<span>LYRA</span>
+        </div>
+
+        <div class="header-right">
+
+            <div class="user-pill">
+
+                <span class="user-dot"></span>
+
+                <span id="username">
+                    LOADING...
+                </span>
+
+            </div>
+
+            <button
+                class="logout-btn"
+                id="logoutBtn"
+                type="button"
+            >
+                LOGOUT
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <div class="eyebrow">
+                VIDLYRA PRESENTS
+            </div>
+
+            <h1>
+                HALLOWEEN
+                <span>FEST 2026</span>
+            </h1>
+
+            <p class="hero-description">
+                Seven chapters. Seven trials.
+                One legendary reward.
+                Enter the Halloween universe and
+                complete your journey to claim the
+                exclusive Halloween Guardian avatar.
+            </p>
+
+        </div>
+
+
+        <div class="hero-symbol">
+
+            <div class="hero-crown">
+                👑
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PROGRESS -->
+
+    <section class="progress-section">
+
+        <div class="progress-top">
+
+            <div>
+
+                <div class="progress-label">
+                    FESTIVAL PROGRESS
+                </div>
+
+                <div class="progress-number">
+                    <span id="completedCount">
+                        0
+                    </span>
+                    / 7
+                    DAYS
+                </div>
+
+            </div>
+
+            <div
+                class="progress-percent"
+                id="progressPercent"
+            >
+                0%
+            </div>
+
+        </div>
+
+        <div class="progress-track">
+
+            <div
+                class="progress-bar"
+                id="progressBar"
+            ></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MAP TITLE -->
+
+    <section class="map-heading">
+
+        <div class="small">
+            THE SEVEN CHAPTERS
+        </div>
+
+        <h2>
+            FESTIVAL MAP
+        </h2>
+
+        <p>
+            Complete each chapter to unlock the next.
+        </p>
+
+    </section>
+
+
+    <!-- FESTIVAL MAP -->
+
+    <section
+        class="map"
+        id="festivalMap"
+    >
+
+        <!-- DAY 1 -->
+
+        <article
+            class="day"
+            data-day="1"
+        >
+
+            <div class="day-number">
+
+                <div class="day-label">
+                    DAY 01
+                </div>
+
+                <div
+                    class="status-icon"
+                    id="status1"
+                >
+                    🔓
+                </div>
+
+            </div>
+
+            <div class="day-icon">
+                🏮
+            </div>
+
+            <h3>
+                Lantern of Beginnings
+            </h3>
+
+            <p>
+                Enter the haunted path and
+                begin your Halloween journey.
+            </p>
+
+            <button
+                class="day-btn"
+                data-action="1"
+            >
+                ENTER CHAPTER
+            </button>
+
+        </article>
+
+
+        <!-- DAY 2 -->
+
+        <article
+            class="day locked"
+            data-day="2"
+        >
+
+            <div class="day-number">
+
+                <div class="day-label">
+                    DAY 02
+                </div>
+
+                <div
+                    class="status-icon"
+                    id="status2"
+                >
+                    🔒
+                </div>
+
+            </div>
+
+            <div class="day-icon">
+                🌲
+            </div>
+
+            <h3>
+                Forest Spirit
+            </h3>
+
+            <p>
+                Discover what waits beyond
+                the cursed forest.
+            </p>
+
+            <button
+                class="day-btn"
+                data-action="2"
+                disabled
+            >
+                LOCKED
+            </button>
+
+        </article>
+
+
+        <!-- DAY 3 -->
+
+        <article
+            class="day locked"
+            data-day="3"
+        >
+
+            <div class="day-number">
+
+                <div class="day-label">
+                    DAY 03
+                </div>
+
+                <div
+                    class="status-icon"
+                    id="status3"
+                >
+                    🔒
+                </div>
+
+            </div>
+
+            <div class="day-icon">
+                🔮
+            </div>
+
+            <h3>
+                Witch Rune
+            </h3>
+
+            <p>
+                Follow the mysterious signs
+                hidden in the darkness.
+            </p>
+
+            <button
+                class="day-btn"
+                data-action="3"
+                disabled
+            >
+                LOCKED
+            </button>
+
+        </article>
+
+
+        <!-- DAY 4 -->
+
+        <article
+            class="day locked"
+            data-day="4"
+        >
+
+            <div class="day-number">
+
+                <div class="day-label">
+                    DAY 04
+                </div>
+
+                <div
+                    class="status-icon"
+                    id="status4"
+                >
+                    🔒
+                </div>
+
+            </div>
+
+            <div class="day-icon">
+                🗝️
+            </div>
+
+            <h3>
+                Cursed Relic
+            </h3>
+
+            <p>
+                Find the relic buried inside
+                the abandoned grounds.
+            </p>
+
+            <button
+                class="day-btn"
+                data-action="4"
+                disabled
+            >
+                LOCKED
+            </button>
+
+        </article>
+
+
+        <!-- DAY 5 -->
+
+        <article
+            class="day locked"
+            data-day="5"
+        >
+
+            <div class="day-number">
+
+                <div class="day-label">
+                    DAY 05
+                </div>
+
+                <div
+                    class="status-icon"
+                    id="status5"
+                >
+                    🔒
+                </div>
+
+            </div>
+
+            <div class="day-icon">
+                👻
+            </div>
+
+            <h3>
+                Phantom Soul
+            </h3>
+
+            <p>
+                Face the phantom and survive
+                the fifth chapter.
+            </p>
+
+            <button
+                class="day-btn"
+                data-action="5"
+                disabled
+            >
+                LOCKED
+            </button>
+
+        </article>
+
+
+        <!-- DAY 6 -->
+
+        <article
+            class="day locked"
+            data-day="6"
+        >
+
+            <div class="day-number">
+
+                <div class="day-label">
+                    DAY 06
+                </div>
+
+                <div
+                    class="status-icon"
+                    id="status6"
+                >
+                    🔒
+                </div>
+
+            </div>
+
+            <div class="day-icon">
+                💎
+            </div>
+
+            <h3>
+                Haunted Crystal
+            </h3>
+
+            <p>
+                Recover the crystal before
+                the mansion awakens.
+            </p>
+
+            <button
+                class="day-btn"
+                data-action="6"
+                disabled
+            >
+                LOCKED
+            </button>
+
+        </article>
+
+
+        <!-- DAY 7 -->
+
+        <article
+            class="day locked"
+            data-day="7"
+        >
+
+            <div class="day-number">
+
+                <div class="day-label">
+                    DAY 07
+                </div>
+
+                <div
+                    class="status-icon"
+                    id="status7"
+                >
+                    🔒
+                </div>
+
+            </div>
+
+            <div class="day-icon">
+                👑
+            </div>
+
+            <h3>
+                Guardian's Crown
+            </h3>
+
+            <p>
+                Complete the final chapter
+                and claim your legendary reward.
+            </p>
+
+            <button
+                class="day-btn"
+                data-action="7"
+                disabled
+            >
+                LOCKED
+            </button>
+
+        </article>
+
+    </section>
+
+
+    <!-- REWARD -->
+
+    <section class="reward">
+
+        <div class="reward-badge">
+            FINAL REWARD
+        </div>
+
+        <h2>
+            👑 HALLOWEEN GUARDIAN
+        </h2>
+
+        <p>
+            Complete all seven chapters to unlock
+            your exclusive Legendary Vidlyra avatar.
+        </p>
+
+        <button
+            class="reward-btn"
+            id="rewardBtn"
+            type="button"
+            disabled
+        >
+            🔒 COMPLETE 7 DAYS TO CLAIM
+        </button>
+
+    </section>
+
+</main>
+
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
 <script>
 
-"use strict";
+const particles =
+    document.getElementById("particles");
 
-function completed(key){
-    return localStorage.getItem(key) === "true";
+for(let i = 0; i < 50; i++){
+
+    const particle =
+        document.createElement("div");
+
+    particle.className =
+        "particle";
+
+    particle.style.left =
+        Math.random() * 100 + "%";
+
+    particle.style.animationDuration =
+        (5 + Math.random() * 8) + "s";
+
+    particle.style.animationDelay =
+        (-Math.random() * 10) + "s";
+
+    particle.style.opacity =
+        Math.random();
+
+    particles.appendChild(particle);
 }
 
-function setReward(id, unlocked){
+</script>
 
-    const element = document.getElementById(id);
 
-    if(!element) return;
+<script type="module">
 
-    element.classList.toggle("locked", !unlocked);
-    element.classList.toggle("unlocked", unlocked);
+import { supabase }
+    from "./js/supabase.js";
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const loading =
+    document.getElementById("loading");
+
+const usernameElement =
+    document.getElementById("username");
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+const completedCount =
+    document.getElementById("completedCount");
+
+const progressPercent =
+    document.getElementById("progressPercent");
+
+const progressBar =
+    document.getElementById("progressBar");
+
+const rewardBtn =
+    document.getElementById("rewardBtn");
+
+const toast =
+    document.getElementById("toast");
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(message){
+
+    toast.textContent =
+        message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 2800);
 }
 
-function updateRewards(){
 
-    const day5 = completed("day5Complete");
-    const day6 = completed("day6Complete");
-    const day7 = completed("day7Complete");
+/* =====================================================
+   GET CURRENT USER
+===================================================== */
 
-    setReward("rewardDay5", day5);
-    setReward("rewardDay6", day6);
-    setReward("rewardDay7", day7);
+const {
+    data: {
+        user
+    }
+} =
+    await supabase.auth.getUser();
 
-    let completedDays = 0;
+
+/*
+ * No authenticated user.
+ */
+
+if(!user){
+
+    window.location.href =
+        "login.html";
+
+    throw new Error(
+        "User is not authenticated."
+    );
+}
+
+
+/* =====================================================
+   USERNAME
+===================================================== */
+
+const profileName =
+    user.user_metadata?.username;
+
+usernameElement.textContent =
+    profileName ||
+    user.email?.split("@")[0] ||
+    "VIDLYRA USER";
+
+
+/* =====================================================
+   LOAD FESTIVAL PROGRESS
+===================================================== */
+
+async function loadProgress(){
+
+    const {
+        data,
+        error
+    } =
+        await supabase
+            .from("festival_progress")
+            .select(`
+                day1,
+                day2,
+                day3,
+                day4,
+                day5,
+                day6,
+                day7,
+                avatar_claimed
+            `)
+            .eq("user_id", user.id)
+            .eq("festival", "halloween_2026")
+            .maybeSingle();
+
+
+    if(error){
+
+        console.error(error);
+
+        showToast(
+            "Could not load festival progress."
+        );
+
+        return;
+
+    }
+
 
     /*
-     * The full festival contains seven days.
-     * These flags represent the completed days currently
-     * used by the game flow.
+     * If no progress row exists,
+     * create one.
      */
 
-    if(day5) completedDays++;
-    if(day6) completedDays++;
-    if(day7) completedDays++;
+    if(!data){
 
-    const percentage = Math.min(
-        100,
-        Math.round((completedDays / 3) * 100)
-    );
+        const {
+            data: newProgress,
+            error: createError
+        } =
+            await supabase
+                .from("festival_progress")
+                .insert({
+                    user_id:user.id,
+                    festival:"halloween_2026"
+                })
+                .select()
+                .single();
 
-    const progressFill =
-        document.getElementById("progressFill");
 
-    const progressText =
-        document.getElementById("progressText");
+        if(createError){
 
-    if(progressFill){
-        progressFill.style.width = percentage + "%";
-    }
+            console.error(createError);
 
-    if(progressText){
-        progressText.textContent =
-            completedDays + " / 3 unlocked";
-    }
+            showToast(
+                "Could not create festival progress."
+            );
 
-    const message =
-        document.getElementById("rewardMessage");
+            return;
 
-    const status =
-        document.getElementById("status");
-
-    if(day7){
-
-        if(message){
-            message.textContent =
-                "The final mystery has been revealed. You have completed the Halloween Fest journey.";
         }
 
-        if(status){
-            status.textContent =
-                "🎃 Halloween Fest 2026 — COMPLETE";
-        }
+
+        renderProgress(
+            newProgress
+        );
 
         return;
+
     }
 
-    if(day6){
 
-        if(message){
-            message.textContent =
-                "Day 6 completed! The final chapter is waiting. Prepare yourself for Day 7.";
-        }
+    renderProgress(data);
 
-        if(status){
-            status.textContent =
-                "Day 7 is your next destination.";
-        }
-
-        return;
-    }
-
-    if(day5){
-
-        if(message){
-            message.textContent =
-                "The Haunted Cemetery has been conquered. Your next destination is Day 6.";
-        }
-
-        if(status){
-            status.textContent =
-                "Day 6 unlocked.";
-        }
-
-        return;
-    }
-
-    if(message){
-        message.textContent =
-            "Complete the Halloween challenges to unlock your rewards.";
-    }
-
-    if(status){
-        status.textContent =
-            "No major festival completion has been recorded yet.";
-    }
 }
 
-window.addEventListener(
-    "DOMContentLoaded",
-    updateRewards
+
+/* =====================================================
+   RENDER PROGRESS
+===================================================== */
+
+function renderProgress(progress){
+
+    const days = [
+        progress.day1,
+        progress.day2,
+        progress.day3,
+        progress.day4,
+        progress.day5,
+        progress.day6,
+        progress.day7
+    ];
+
+
+    const completed =
+        days.filter(Boolean).length;
+
+
+    const percent =
+        Math.round(
+            (completed / 7) * 100
+        );
+
+
+    completedCount.textContent =
+        completed;
+
+    progressPercent.textContent =
+        percent + "%";
+
+    progressBar.style.width =
+        percent + "%";
+
+
+    /*
+     * Update every day.
+     */
+
+    for(
+        let i = 1;
+        i <= 7;
+        i++
+    ){
+
+        const card =
+            document.querySelector(
+                `.day[data-day="${i}"]`
+            );
+
+        const button =
+            document.querySelector(
+                `.day-btn[data-action="${i}"]`
+            );
+
+        const status =
+            document.getElementById(
+                `status${i}`
+            );
+
+
+        const isCompleted =
+            days[i - 1];
+
+
+        /*
+         * Completed
+         */
+
+        if(isCompleted){
+
+            card.classList.remove(
+                "locked"
+            );
+
+            card.classList.add(
+                "completed"
+            );
+
+            status.textContent =
+                "✓";
+
+            button.disabled =
+                true;
+
+            button.textContent =
+                "✓ COMPLETED";
+
+            continue;
+
+        }
+
+
+        /*
+         * Unlock first incomplete day
+         */
+
+        const previousCompleted =
+            i === 1
+                ? true
+                : days[i - 2];
+
+
+        if(previousCompleted){
+
+            card.classList.remove(
+                "locked"
+            );
+
+            status.textContent =
+                "🔓";
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "ENTER CHAPTER";
+
+        }else{
+
+            card.classList.add(
+                "locked"
+            );
+
+            status.textContent =
+                "🔒";
+
+            button.disabled =
+                true;
+
+            button.textContent =
+                "LOCKED";
+
+        }
+
+    }
+
+
+    /*
+     * Final reward
+     */
+
+    if(completed === 7){
+
+        rewardBtn.disabled =
+            false;
+
+        rewardBtn.textContent =
+            progress.avatar_claimed
+                ? "✓ AVATAR CLAIMED"
+                : "👑 CLAIM HALLOWEEN GUARDIAN";
+
+        rewardBtn.onclick = () => {
+
+            window.location.href =
+                "reward.html";
+
+        };
+
+    }else{
+
+        rewardBtn.disabled =
+            true;
+
+        rewardBtn.textContent =
+            "🔒 COMPLETE 7 DAYS TO CLAIM";
+
+    }
+
+}
+
+
+/* =====================================================
+   ENTER CHAPTER
+===================================================== */
+
+document
+    .querySelectorAll(".day-btn")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const day =
+                    Number(
+                        button.dataset.action
+                    );
+
+
+                if(!day){
+                    return;
+                }
+
+
+                /*
+                 * For now each chapter has
+                 * its own page.
+                 */
+
+                window.location.href =
+                    `day${day}.html`;
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+logoutBtn.addEventListener(
+    "click",
+    async () => {
+
+        const {
+            error
+        } =
+            await supabase.auth.signOut();
+
+
+        if(error){
+
+            console.error(error);
+
+            showToast(
+                "Could not log out."
+            );
+
+            return;
+
+        }
+
+
+        window.location.href =
+            "login.html";
+
+    }
 );
+
+
+/* =====================================================
+   START
+===================================================== */
+
+await loadProgress();
+
+
+/*
+ * Hide loading screen.
+ */
+
+setTimeout(() => {
+
+    loading.classList.add(
+        "hidden"
+    );
+
+}, 350);
 
 </script>
 
