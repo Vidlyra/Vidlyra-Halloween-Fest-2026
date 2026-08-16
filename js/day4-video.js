@@ -1,351 +1,352 @@
-/* ==========================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 4 VIDEO
-========================================================== */
+import { supabase } from "./supabase.js";
 
 "use strict";
 
-const Video = {
 
-    init() {
+const startScreen =
+    document.getElementById("startScreen");
 
-        this.cache();
+const startBtn =
+    document.getElementById("startBtn");
 
-        this.bindEvents();
+const introVideo =
+    document.getElementById("introVideo");
 
-        this.createParticles();
+const skipBtn =
+    document.getElementById("skipBtn");
 
-    },
+const videoOverlay =
+    document.getElementById("videoOverlay");
 
-    /* ==========================================
-       CACHE ELEMENTS
-    ========================================== */
+const enterGame =
+    document.getElementById("enterGame");
 
-    cache() {
+const bgMusic =
+    document.getElementById("bgMusic");
 
-        this.startScreen =
-            document.getElementById("startScreen");
+const thunderSound =
+    document.getElementById("thunderSound");
 
-        this.startBtn =
-            document.getElementById("startBtn");
+const witchLaugh =
+    document.getElementById("witchLaugh");
 
-        this.video =
-            document.getElementById("introVideo");
+const lightning =
+    document.getElementById("lightning");
 
-        this.skipBtn =
-            document.getElementById("skipBtn");
+const fogLayer =
+    document.getElementById("fogLayer");
 
-        this.overlay =
-            document.getElementById("videoOverlay");
+const magicParticles =
+    document.getElementById("magicParticles");
 
-        this.enterGame =
-            document.getElementById("enterGame");
 
-        this.lightning =
-            document.getElementById("lightning");
+let user = null;
+let started = false;
 
-        this.fog =
-            document.getElementById("fogLayer");
-
-        this.witch =
-            document.getElementById("witchShadow");
-
-        this.particles =
-            document.getElementById("magicParticles");
-
-        /* AUDIO */
-
-        this.bgMusic =
-            document.getElementById("bgMusic");
-
-        this.thunder =
-            document.getElementById("thunderSound");
-
-        this.witchLaugh =
-            document.getElementById("witchLaugh");
-
-    },
-
-    /* ==========================================
-       EVENTS
-    ========================================== */
-
-    bindEvents() {
-
-        if(this.startBtn){
-
-            this.startBtn.addEventListener(
-
-                "click",
-
-                ()=>this.startVideo()
-
-            );
-
-        }
-
-        if(this.skipBtn){
-
-            this.skipBtn.addEventListener(
-
-                "click",
-
-                ()=>this.finishVideo()
-
-            );
-
-        }
-
-        if(this.video){
-
-            this.video.addEventListener(
-
-                "ended",
-
-                ()=>this.finishVideo()
-
-            );
-
-        }
-
-        if(this.enterGame){
-
-            this.enterGame.addEventListener(
-
-                "click",
-
-                ()=>{
-
-                    window.location.href=
-
-                    "day4-game.html";
-
-                }
-
-            );
-
-        }
-
-    },
-
-    /* ==========================================
-       START VIDEO
-    ========================================== */
-
-    startVideo(){
-
-        this.startScreen.classList.add("hide");
-
-        this.video.style.display="block";
-
-        this.video.play();
-
-        this.bgMusic.volume=.35;
-
-        this.bgMusic.play().catch(()=>{});
-
-        this.startLightning();
-
-        this.showWitch();
-
-    },
-      /* ==========================================
-       FINISH VIDEO
-    ========================================== */
-
-    finishVideo() {
-
-        if (this.video) {
-
-            this.video.pause();
-
-            this.video.currentTime = 0;
-
-        }
-
-        if (this.overlay) {
-
-            this.overlay.classList.add("show");
-
-        }
-
-    },
-
-    /* ==========================================
-       RANDOM LIGHTNING
-    ========================================== */
-
-    startLightning() {
-
-        const flash = () => {
-
-            const delay =
-
-                Math.random() * 5000 + 3000;
-
-            setTimeout(() => {
-
-                if (this.lightning) {
-
-                    this.lightning.classList.add("flash");
-
-                    setTimeout(() => {
-
-                        this.lightning.classList.remove("flash");
-
-                    }, 450);
-
-                }
-
-                if (this.thunder) {
-
-                    this.thunder.currentTime = 0;
-
-                    this.thunder.play().catch(() => {});
-
-                }
-
-                flash();
-
-            }, delay);
-
-        };
-
-        flash();
-
-    },
-
-    /* ==========================================
-       WITCH APPEARS
-    ========================================== */
-
-    showWitch() {
-
-        setTimeout(() => {
-
-            if (this.witch) {
-
-                this.witch.classList.add("show");
-
-            }
-
-            if (this.witchLaugh) {
-
-                this.witchLaugh.currentTime = 0;
-
-                this.witchLaugh.play().catch(() => {});
-
-            }
-
-        }, 5000);
-
-    },
-
-    /* ==========================================
-       SCREEN FLASH
-    ========================================== */
-
-    flashScreen() {
-
-        if (!this.lightning) return;
-
-        this.lightning.classList.add("flash");
-
-        setTimeout(() => {
-
-            this.lightning.classList.remove("flash");
-
-        }, 450);
-
-    },
-      /* ==========================================
-       MAGIC PARTICLES
-    ========================================== */
-
-    createParticles() {
-
-        if (!this.particles) return;
-
-        for (let i = 0; i < 50; i++) {
-
-            const particle =
-
-                document.createElement("div");
-
-            particle.className = "particle";
-
-            particle.style.left =
-
-                Math.random() * 100 + "%";
-
-            particle.style.top =
-
-                Math.random() * 100 + "%";
-
-            particle.style.animationDelay =
-
-                Math.random() * 6 + "s";
-
-            particle.style.animationDuration =
-
-                (4 + Math.random() * 5) + "s";
-
-            particle.style.opacity =
-
-                Math.random();
-
-            this.particles.appendChild(particle);
-
-        }
-
-    },
-
-    /* ==========================================
-       STOP AUDIO
-    ========================================== */
-
-    stopAudio() {
-
-        if (this.bgMusic) {
-
-            this.bgMusic.pause();
-
-            this.bgMusic.currentTime = 0;
-
-        }
-
-        if (this.thunder) {
-
-            this.thunder.pause();
-
-            this.thunder.currentTime = 0;
-
-        }
-
-        if (this.witchLaugh) {
-
-            this.witchLaugh.pause();
-
-            this.witchLaugh.currentTime = 0;
-
-        }
-
-    }
-
-};
 
 /* ==========================================
-START
+CHECK LOGIN + DAY 3
 ========================================== */
 
-document.addEventListener(
+async function checkAccess() {
 
-    "DOMContentLoaded",
+    const {
+        data: {
+            user: currentUser
+        },
+        error
+    } = await supabase.auth.getUser();
 
-    () => {
 
-        Video.init();
+    if (error || !currentUser) {
+
+        window.location.href =
+            "login.html";
+
+        return false;
 
     }
 
+
+    user = currentUser;
+
+
+    const {
+        data,
+        error: progressError
+    } = await supabase
+        .from("festival_progress")
+        .select("day3, day4")
+        .eq(
+            "user_id",
+            user.id
+        )
+        .eq(
+            "festival",
+            "halloween_2026"
+        )
+        .maybeSingle();
+
+
+    if (progressError) {
+
+        console.error(
+            progressError
+        );
+
+        alert(
+            "Unable to load festival progress."
+        );
+
+        return false;
+
+    }
+
+
+    if (!data || data.day3 !== true) {
+
+        alert(
+            "🔒 Complete Day 3 before entering Day 4."
+        );
+
+        window.location.href =
+            "map.html";
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+/* ==========================================
+START EXPERIENCE
+========================================== */
+
+async function startExperience() {
+
+    if (started) {
+
+        return;
+
+    }
+
+
+    started = true;
+
+
+    startScreen.classList.add(
+        "hide"
+    );
+
+
+    try {
+
+        await introVideo.play();
+
+        skipBtn.classList.add(
+            "show"
+        );
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "Video playback requires interaction."
+        );
+
+        started = false;
+
+    }
+
+
+    playAtmosphere();
+
+}
+
+
+/* ==========================================
+ATMOSPHERE
+========================================== */
+
+function playAtmosphere() {
+
+    if (bgMusic) {
+
+        bgMusic.volume = 0.25;
+
+        bgMusic
+            .play()
+            .catch(() => {});
+
+    }
+
+}
+
+
+/* ==========================================
+VIDEO END
+========================================== */
+
+function showEnding() {
+
+    introVideo.pause();
+
+
+    skipBtn.classList.remove(
+        "show"
+    );
+
+
+    videoOverlay.classList.add(
+        "show"
+    );
+
+
+    playMagicEffects();
+
+}
+
+
+/* ==========================================
+SKIP
+========================================== */
+
+skipBtn.addEventListener(
+    "click",
+    () => {
+
+        showEnding();
+
+    }
 );
+
+
+/* ==========================================
+VIDEO ENDED
+========================================== */
+
+introVideo.addEventListener(
+    "ended",
+    () => {
+
+        showEnding();
+
+    }
+);
+
+
+/* ==========================================
+ENTER GAME
+========================================== */
+
+enterGame.addEventListener(
+    "click",
+    () => {
+
+        if (witchLaugh) {
+
+            witchLaugh.currentTime = 0;
+
+            witchLaugh
+                .play()
+                .catch(() => {});
+
+        }
+
+
+        window.location.href =
+            "day4-game.html";
+
+    }
+);
+
+
+/* ==========================================
+MAGIC EFFECTS
+========================================== */
+
+function playMagicEffects() {
+
+    if (fogLayer) {
+
+        fogLayer.classList.add(
+            "active"
+        );
+
+    }
+
+
+    if (magicParticles) {
+
+        magicParticles.classList.add(
+            "active"
+        );
+
+    }
+
+
+    setTimeout(
+        () => {
+
+            if (lightning) {
+
+                lightning.classList.add(
+                    "active"
+                );
+
+            }
+
+
+            if (thunderSound) {
+
+                thunderSound.currentTime = 0;
+
+                thunderSound
+                    .play()
+                    .catch(() => {});
+
+            }
+
+        },
+        1000
+    );
+
+}
+
+
+/* ==========================================
+INITIALIZE
+========================================== */
+
+async function initialize() {
+
+    const allowed =
+        await checkAccess();
+
+
+    if (!allowed) {
+
+        return;
+
+    }
+
+
+    console.log(
+        "🧙 Day 4 unlocked."
+    );
+
+}
+
+
+startBtn.addEventListener(
+    "click",
+    startExperience
+);
+
+
+initialize();
