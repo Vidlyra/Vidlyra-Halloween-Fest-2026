@@ -1,18 +1,19 @@
 /* ==========================================================
    VIDLYRA HALLOWEEN FEST 2026
-   DAY 4 - THE WITCH'S CURSE
+   DAY 4 — THE WITCH'S CURSE
 ========================================================== */
 
+import { supabase } from "./supabase.js";
+
 "use strict";
+
 
 const Game = {
 
     lanternsFound: 0,
-
     totalLanterns: 5,
 
     playerX: 8,
-
     playerY: 12,
 
     speed: 0.5,
@@ -21,23 +22,42 @@ const Game = {
 
     gameStarted: false,
 
-    /* ==========================================
-       INIT
-    ========================================== */
+    user: null,
 
-    init() {
+    day4Completed: false,
+
+    finalSequenceStarted: false,
+
+    messageTimer: null,
+
+
+    /* ======================================================
+       INIT
+    ====================================================== */
+
+    async init() {
 
         this.cache();
 
         this.bindEvents();
 
+        const allowed =
+            await this.checkAccess();
+
+        if (!allowed) {
+
+            return;
+
+        }
+
         this.start();
 
     },
 
-    /* ==========================================
+
+    /* ======================================================
        CACHE
-    ========================================== */
+    ====================================================== */
 
     cache() {
 
@@ -80,6 +100,7 @@ const Game = {
         this.intro =
             document.getElementById("introScreen");
 
+
         /* AUDIO */
 
         this.bgMusic =
@@ -98,132 +119,282 @@ const Game = {
             document.getElementById("cauldronSound");
 
         this.witchAppear =
-            document.getElementById("witchAppearSound");
+            document.getElementById(
+                "witchAppearSound"
+            );
 
         this.witchLaugh =
-            document.getElementById("witchLaughSound");
+            document.getElementById(
+                "witchLaughSound"
+            );
 
         this.portalSound =
-            document.getElementById("portalSound");
+            document.getElementById(
+                "portalSound"
+            );
 
         this.thunder =
-            document.getElementById("thunderSound");
+            document.getElementById(
+                "thunderSound"
+            );
 
         this.reward =
-            document.getElementById("missionCompleteSound");
+            document.getElementById(
+                "missionCompleteSound"
+            );
 
     },
 
-    /* ==========================================
+
+    /* ======================================================
+       SUPABASE ACCESS
+    ====================================================== */
+
+    async checkAccess() {
+
+        const {
+            data: {
+                user
+            },
+            error
+        } = await supabase.auth.getUser();
+
+
+        if (error || !user) {
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+
+        this.user = user;
+
+
+        const {
+            data,
+            error: progressError
+        } = await supabase
+            .from("festival_progress")
+            .select(
+                "day3, day4"
+            )
+            .eq(
+                "user_id",
+                user.id
+            )
+            .eq(
+                "festival",
+                "halloween_2026"
+            )
+            .maybeSingle();
+
+
+        if (progressError) {
+
+            console.error(
+                "Festival progress error:",
+                progressError
+            );
+
+            alert(
+                "Unable to load festival progress."
+            );
+
+            window.location.href =
+                "map.html";
+
+            return false;
+
+        }
+
+
+        if (!data) {
+
+            alert(
+                "Festival progress not found."
+            );
+
+            window.location.href =
+                "map.html";
+
+            return false;
+
+        }
+
+
+        /*
+         * DAY 3 MUST BE COMPLETE
+         */
+
+        if (data.day3 !== true) {
+
+            alert(
+                "🔒 Complete Day 3 before entering Day 4."
+            );
+
+            window.location.href =
+                "map.html";
+
+            return false;
+
+        }
+
+
+        /*
+         * Already completed?
+         */
+
+        if (data.day4 === true) {
+
+            this.day4Completed = true;
+
+        }
+
+
+        console.log(
+            "🧙 Day 4 access granted."
+        );
+
+
+        return true;
+
+    },
+
+
+    /* ======================================================
        EVENTS
-    ========================================== */
+    ====================================================== */
 
     bindEvents() {
 
-        this.lanterns.forEach((lantern) => {
+        this.lanterns.forEach(
+            (lantern) => {
 
-            lantern.addEventListener(
+                lantern.addEventListener(
+                    "click",
+                    () => {
 
-                "click",
+                        this.collectLantern(
+                            lantern
+                        );
 
-                () => this.collectLantern(lantern)
+                    }
+                );
 
-            );
+            }
+        );
 
-        });
 
         document.addEventListener(
-
             "keydown",
+            (event) => {
 
-            (e) => {
-
-                this.keys[e.key] = true;
+                this.keys[
+                    event.key
+                ] = true;
 
             }
-
         );
+
 
         document.addEventListener(
-
             "keyup",
+            (event) => {
 
-            (e) => {
-
-                this.keys[e.key] = false;
+                this.keys[
+                    event.key
+                ] = false;
 
             }
-
         );
+
 
         if (this.nextBtn) {
 
             this.nextBtn.addEventListener(
-
                 "click",
-
                 () => {
 
                     window.location.href =
-
-                    "day5-video.html";
+                        "day5-video.html";
 
                 }
-
             );
 
         }
 
     },
 
-    /* ==========================================
+
+    /* ======================================================
        START
-    ========================================== */
+    ====================================================== */
 
     start() {
 
-        console.log("Day 4 Loaded");
+        console.log(
+            "🎃 Day 4 Loaded"
+        );
+
 
         this.gameStarted = true;
+
 
         if (this.bgMusic) {
 
             this.bgMusic.volume = 0.35;
 
-            this.bgMusic.play().catch(() => {});
+            this.bgMusic
+                .play()
+                .catch(() => {});
 
         }
+
 
         if (this.cauldronSound) {
 
-            this.cauldronSound.volume = 0.45;
+            this.cauldronSound.volume =
+                0.45;
 
-            this.cauldronSound.play().catch(() => {});
+            this.cauldronSound
+                .play()
+                .catch(() => {});
 
         }
 
-        setTimeout(() => {
 
-            if (this.intro) {
+        setTimeout(
+            () => {
 
-                this.intro.classList.add("hide");
+                if (this.intro) {
 
-            }
+                    this.intro.classList.add(
+                        "hide"
+                    );
 
-        }, 5000);
+                }
+
+            },
+            5000
+        );
+
 
         this.showMessage(
-
             "Find all 5 Enchanted Lanterns."
-
         );
+
 
         this.movePlayer();
 
     },
-      /* ==========================================
+
+
+    /* ======================================================
        PLAYER MOVEMENT
-    ========================================== */
+    ====================================================== */
 
     movePlayer() {
 
@@ -231,433 +402,726 @@ const Game = {
 
             if (!this.gameStarted) {
 
-                requestAnimationFrame(update);
+                requestAnimationFrame(
+                    update
+                );
 
                 return;
 
             }
 
-            /* LEFT */
 
-            if (this.keys["ArrowLeft"] ||
+            if (
+                this.keys["ArrowLeft"] ||
                 this.keys["a"] ||
-                this.keys["A"]) {
+                this.keys["A"]
+            ) {
 
-                this.playerX -= this.speed;
+                this.playerX -=
+                    this.speed;
 
             }
 
-            /* RIGHT */
 
-            if (this.keys["ArrowRight"] ||
+            if (
+                this.keys["ArrowRight"] ||
                 this.keys["d"] ||
-                this.keys["D"]) {
+                this.keys["D"]
+            ) {
 
-                this.playerX += this.speed;
+                this.playerX +=
+                    this.speed;
 
             }
 
-            /* UP */
 
-            if (this.keys["ArrowUp"] ||
+            if (
+                this.keys["ArrowUp"] ||
                 this.keys["w"] ||
-                this.keys["W"]) {
+                this.keys["W"]
+            ) {
 
-                this.playerY += this.speed;
+                this.playerY +=
+                    this.speed;
 
             }
 
-            /* DOWN */
 
-            if (this.keys["ArrowDown"] ||
+            if (
+                this.keys["ArrowDown"] ||
                 this.keys["s"] ||
-                this.keys["S"]) {
+                this.keys["S"]
+            ) {
 
-                this.playerY -= this.speed;
+                this.playerY -=
+                    this.speed;
 
             }
 
-            /* BOUNDARIES */
 
-            this.playerX = Math.max(3, Math.min(95, this.playerX));
+            this.playerX =
+                Math.max(
+                    3,
+                    Math.min(
+                        95,
+                        this.playerX
+                    )
+                );
 
-            this.playerY = Math.max(8, Math.min(82, this.playerY));
+
+            this.playerY =
+                Math.max(
+                    8,
+                    Math.min(
+                        82,
+                        this.playerY
+                    )
+                );
+
 
             if (this.player) {
 
-                this.player.style.left = this.playerX + "%";
+                this.player.style.left =
+                    this.playerX + "%";
 
-                this.player.style.bottom = this.playerY + "%";
+                this.player.style.bottom =
+                    this.playerY + "%";
 
             }
 
-            requestAnimationFrame(update);
+
+            requestAnimationFrame(
+                update
+            );
 
         };
 
-        requestAnimationFrame(update);
+
+        requestAnimationFrame(
+            update
+        );
 
     },
 
-    /* ==========================================
+
+    /* ======================================================
        COLLECT LANTERN
-    ========================================== */
+    ====================================================== */
 
     collectLantern(lantern) {
 
-        if (lantern.classList.contains("collected")) {
+        if (
+            this.finalSequenceStarted ||
+            lantern.classList.contains(
+                "collected"
+            )
+        ) {
 
             return;
 
         }
 
-        lantern.classList.add("collected");
 
-        lantern.style.pointerEvents = "none";
+        lantern.classList.add(
+            "collected"
+        );
 
-        /* Sounds */
 
-        this.playSound(this.collectSound);
+        lantern.style.pointerEvents =
+            "none";
 
-        setTimeout(() => {
 
-            this.playSound(this.lanternSound);
+        this.playSound(
+            this.collectSound
+        );
 
-        }, 150);
 
-        /* Count */
+        setTimeout(
+            () => {
+
+                this.playSound(
+                    this.lanternSound
+                );
+
+            },
+            150
+        );
+
 
         this.lanternsFound++;
 
+
         this.updateProgress();
 
-        /* Animation */
 
-        lantern.style.transform = "scale(1.6)";
+        lantern.style.transform =
+            "scale(1.6)";
 
-        lantern.style.opacity = "0";
+
+        lantern.style.opacity =
+            "0";
+
 
         this.flashScreen();
 
+
         this.showMessage(
-
-            "Enchanted Lantern Lit!"
-
+            "🏮 Enchanted Lantern Lit!"
         );
 
-        /* Mission Complete? */
 
-        if (this.lanternsFound >= this.totalLanterns) {
+        if (
+            this.lanternsFound >=
+            this.totalLanterns
+        ) {
 
-            setTimeout(() => {
+            setTimeout(
+                () => {
 
-                this.beginFinalSequence();
+                    this.beginFinalSequence();
 
-            }, 1500);
+                },
+                1500
+            );
 
         }
 
     },
 
-    /* ==========================================
-       UPDATE PROGRESS
-    ========================================== */
+
+    /* ======================================================
+       PROGRESS
+    ====================================================== */
 
     updateProgress() {
 
         const percent =
+            (
+                this.lanternsFound /
+                this.totalLanterns
+            ) * 100;
 
-            (this.lanternsFound /
-
-            this.totalLanterns) * 100;
 
         if (this.progress) {
 
             this.progress.style.width =
-
                 percent + "%";
 
         }
 
+
         if (this.counter) {
 
-            this.counter.innerHTML =
-
+            this.counter.textContent =
                 "🏮 Enchanted Lanterns : " +
-
                 this.lanternsFound +
-
                 " / " +
-
                 this.totalLanterns;
 
         }
 
     },
 
-    /* ==========================================
-       MESSAGE BOX
-    ========================================== */
+
+    /* ======================================================
+       MESSAGE
+    ====================================================== */
 
     showMessage(text) {
 
-        if (!this.dialogBox || !this.dialog) return;
+        if (
+            !this.dialogBox ||
+            !this.dialog
+        ) {
 
-        this.dialog.textContent = text;
+            return;
 
-        this.dialogBox.classList.add("show");
+        }
 
-        clearTimeout(this.messageTimer);
 
-        this.messageTimer = setTimeout(() => {
+        this.dialog.textContent =
+            text;
 
-            this.dialogBox.classList.remove("show");
 
-        }, 2500);
+        this.dialogBox.classList.add(
+            "show"
+        );
+
+
+        clearTimeout(
+            this.messageTimer
+        );
+
+
+        this.messageTimer =
+            setTimeout(
+                () => {
+
+                    this.dialogBox.classList.remove(
+                        "show"
+                    );
+
+                },
+                2500
+            );
 
     },
 
-    /* ==========================================
+
+    /* ======================================================
        FLASH
-    ========================================== */
+    ====================================================== */
 
     flashScreen() {
 
-        if (!this.flash) return;
+        if (!this.flash) {
 
-        this.flash.classList.add("active");
+            return;
 
-        setTimeout(() => {
+        }
 
-            this.flash.classList.remove("active");
 
-        }, 450);
+        this.flash.classList.add(
+            "active"
+        );
+
+
+        setTimeout(
+            () => {
+
+                this.flash.classList.remove(
+                    "active"
+                );
+
+            },
+            450
+        );
 
     },
 
-    /* ==========================================
-       PLAY SOUND
-    ========================================== */
+
+    /* ======================================================
+       SOUND
+    ====================================================== */
 
     playSound(audio) {
 
-        if (!audio) return;
+        if (!audio) {
+
+            return;
+
+        }
+
 
         audio.currentTime = 0;
 
-        audio.play().catch(() => {});
+        audio
+            .play()
+            .catch(() => {});
 
     },
-      /* ==========================================
+
+
+    /* ======================================================
        FINAL SEQUENCE
-    ========================================== */
+    ====================================================== */
 
     beginFinalSequence() {
 
-        this.gameStarted = false;
+        if (this.finalSequenceStarted) {
+
+            return;
+
+        }
+
+
+        this.finalSequenceStarted =
+            true;
+
+
+        this.gameStarted =
+            false;
+
 
         this.showMessage(
-
             "The Witch senses the ancient light..."
-
         );
+
 
         this.flashScreen();
 
-        this.playSound(this.thunder);
 
-        setTimeout(() => {
+        this.playSound(
+            this.thunder
+        );
 
-            this.showWitch();
 
-        }, 1800);
+        setTimeout(
+            () => {
+
+                this.showWitch();
+
+            },
+            1800
+        );
 
     },
 
-    /* ==========================================
-       WITCH APPEARS
-    ========================================== */
+
+    /* ======================================================
+       WITCH
+    ====================================================== */
 
     showWitch() {
 
         if (this.witch) {
 
-            this.witch.classList.add("active");
+            this.witch.classList.add(
+                "active"
+            );
 
         }
 
-        this.playSound(this.witchAppear);
 
-        this.showMessage(
-
-            "The Witch has appeared!"
-
+        this.playSound(
+            this.witchAppear
         );
 
-        setTimeout(() => {
 
-            this.witchCastSpell();
+        this.showMessage(
+            "The Witch has appeared!"
+        );
 
-        }, 2500);
+
+        setTimeout(
+            () => {
+
+                this.witchCastSpell();
+
+            },
+            2500
+        );
 
     },
 
-    /* ==========================================
-       SPELL CAST
-    ========================================== */
+
+    /* ======================================================
+       SPELL
+    ====================================================== */
 
     witchCastSpell() {
 
         this.flashScreen();
 
-        this.playSound(this.spellSound);
 
-        this.showMessage(
-
-            "The Witch is casting a spell..."
-
+        this.playSound(
+            this.spellSound
         );
 
-        setTimeout(() => {
 
-            this.playSound(this.witchLaugh);
+        this.showMessage(
+            "The Witch is casting a spell..."
+        );
 
-        }, 800);
 
-        setTimeout(() => {
+        setTimeout(
+            () => {
 
-            this.openPortal();
+                this.playSound(
+                    this.witchLaugh
+                );
 
-        }, 3000);
+            },
+            800
+        );
+
+
+        setTimeout(
+            () => {
+
+                this.openPortal();
+
+            },
+            3000
+        );
 
     },
 
-    /* ==========================================
-       OPEN PORTAL
-    ========================================== */
+
+    /* ======================================================
+       PORTAL
+    ====================================================== */
 
     openPortal() {
 
         if (this.portal) {
 
-            this.portal.classList.add("active");
+            this.portal.classList.add(
+                "active"
+            );
 
         }
 
-        this.playSound(this.portalSound);
 
-        this.showMessage(
-
-            "The curse has been broken!"
-
+        this.playSound(
+            this.portalSound
         );
 
-        setTimeout(() => {
 
-            this.finishMission();
+        this.showMessage(
+            "The curse has been broken!"
+        );
 
-        }, 2500);
+
+        setTimeout(
+            () => {
+
+                this.finishMission();
+
+            },
+            2500
+        );
 
     },
 
-    /* ==========================================
+
+    /* ======================================================
+       SAVE DAY 4
+    ====================================================== */
+
+    async saveDay4Progress() {
+
+        if (!this.user) {
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+
+        const {
+            error
+        } = await supabase
+            .from("festival_progress")
+            .update({
+                day4: true
+            })
+            .eq(
+                "user_id",
+                this.user.id
+            )
+            .eq(
+                "festival",
+                "halloween_2026"
+            );
+
+
+        if (error) {
+
+            console.error(
+                "Day 4 save error:",
+                error
+            );
+
+            this.showMessage(
+                "⚠️ Could not save progress."
+            );
+
+            return false;
+
+        }
+
+
+        return true;
+
+    },
+
+
+    /* ======================================================
        MISSION COMPLETE
-    ========================================== */
+    ====================================================== */
 
-    finishMission() {
+    async finishMission() {
 
-        this.playSound(this.reward);
+        if (this.day4Completed) {
+
+            this.showCompletion();
+
+            return;
+
+        }
+
+
+        const saved =
+            await this.saveDay4Progress();
+
+
+        if (!saved) {
+
+            return;
+
+        }
+
+
+        this.day4Completed =
+            true;
+
+
+        this.playSound(
+            this.reward
+        );
+
 
         this.showMessage(
-
-            "Mission Complete!"
-
+            "🎉 DAY 4 COMPLETE!"
         );
+
+
+        this.showCompletion();
+
+    },
+
+
+    /* ======================================================
+       COMPLETION SCREEN
+    ====================================================== */
+
+    showCompletion() {
 
         if (this.missionComplete) {
 
-            this.missionComplete.classList.add("show");
+            this.missionComplete.classList.add(
+                "show"
+            );
 
         }
 
     },
-      /* ==========================================
-       CREATE MAGIC PARTICLES
-    ========================================== */
+
+
+    /* ======================================================
+       PARTICLES
+    ====================================================== */
 
     createParticles() {
 
         const container =
-            document.getElementById("particleContainer");
+            document.getElementById(
+                "particleContainer"
+            );
 
-        if (!container) return;
 
-        for (let i = 0; i < 60; i++) {
+        if (!container) {
+
+            return;
+
+        }
+
+
+        for (
+            let i = 0;
+            i < 60;
+            i++
+        ) {
 
             const particle =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
-            particle.className = "particle";
+
+            particle.className =
+                "particle";
+
 
             particle.style.left =
                 Math.random() * 100 + "%";
 
+
             particle.style.top =
                 Math.random() * 100 + "%";
+
 
             particle.style.animationDelay =
                 Math.random() * 8 + "s";
 
+
             particle.style.animationDuration =
-                (5 + Math.random() * 6) + "s";
+                (
+                    5 +
+                    Math.random() * 6
+                ) + "s";
+
 
             particle.style.opacity =
                 Math.random();
 
-            container.appendChild(particle);
+
+            container.appendChild(
+                particle
+            );
 
         }
 
     },
 
-    /* ==========================================
+
+    /* ======================================================
        RANDOM THUNDER
-    ========================================== */
+    ====================================================== */
 
     startThunder() {
 
-        const thunderLoop = () => {
+        const thunderLoop =
+            () => {
 
-            const delay =
-                Math.random() * 9000 + 5000;
+                const delay =
+                    Math.random() *
+                    9000 +
+                    5000;
 
-            setTimeout(() => {
 
-                if (!this.gameStarted) {
+                setTimeout(
+                    () => {
 
-                    thunderLoop();
+                        if (
+                            !this.gameStarted
+                        ) {
 
-                    return;
+                            thunderLoop();
 
-                }
+                            return;
 
-                this.flashScreen();
+                        }
 
-                this.playSound(this.thunder);
 
-                thunderLoop();
+                        this.flashScreen();
 
-            }, delay);
 
-        };
+                        this.playSound(
+                            this.thunder
+                        );
+
+
+                        thunderLoop();
+
+                    },
+                    delay
+                );
+
+            };
+
 
         thunderLoop();
 
     },
 
-    /* ==========================================
-       RESTART GAME
-    ========================================== */
+
+    /* ======================================================
+       RESTART
+    ====================================================== */
 
     restartGame() {
 
@@ -669,30 +1133,48 @@ const Game = {
 
         this.gameStarted = true;
 
+        this.finalSequenceStarted =
+            false;
+
+
         if (this.player) {
 
-            this.player.style.left = "8%";
-            this.player.style.bottom = "12%";
+            this.player.style.left =
+                "8%";
+
+            this.player.style.bottom =
+                "12%";
 
         }
 
-        this.lanterns.forEach((lantern) => {
 
-            lantern.classList.remove("collected");
+        this.lanterns.forEach(
+            (lantern) => {
 
-            lantern.style.opacity = "1";
+                lantern.classList.remove(
+                    "collected"
+                );
 
-            lantern.style.pointerEvents = "auto";
+                lantern.style.opacity =
+                    "1";
 
-            lantern.style.transform = "scale(1)";
+                lantern.style.pointerEvents =
+                    "auto";
 
-        });
+                lantern.style.transform =
+                    "scale(1)";
+
+            }
+        );
+
 
         if (this.progress) {
 
-            this.progress.style.width = "0%";
+            this.progress.style.width =
+                "0%";
 
         }
+
 
         if (this.counter) {
 
@@ -701,23 +1183,33 @@ const Game = {
 
         }
 
+
         if (this.witch) {
 
-            this.witch.classList.remove("active");
+            this.witch.classList.remove(
+                "active"
+            );
 
         }
+
 
         if (this.portal) {
 
-            this.portal.classList.remove("active");
+            this.portal.classList.remove(
+                "active"
+            );
 
         }
+
 
         if (this.missionComplete) {
 
-            this.missionComplete.classList.remove("show");
+            this.missionComplete.classList.remove(
+                "show"
+            );
 
         }
+
 
         this.showMessage(
             "Find all 5 Enchanted Lanterns."
@@ -727,22 +1219,20 @@ const Game = {
 
 };
 
-/* ==========================================
-START GAME
-========================================== */
+
+/* ==========================================================
+   START
+========================================================== */
 
 document.addEventListener(
-
     "DOMContentLoaded",
+    async () => {
 
-    () => {
-
-        Game.init();
+        await Game.init();
 
         Game.createParticles();
 
         Game.startThunder();
 
     }
-
 );
