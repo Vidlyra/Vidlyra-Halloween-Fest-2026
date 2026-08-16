@@ -1,658 +1,661 @@
-/* ==========================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 5 VIDEO INTRO
-========================================================== */
+import { supabase } from "./supabase.js";
 
 "use strict";
 
-const Intro = {
 
-    video:null,
+const Day5 = {
 
-    loadingScreen:null,
+    user: null,
 
-    loadingFill:null,
+    started: false,
 
-    startOverlay:null,
+    finished: false,
 
-    startButton:null,
+    /* ==========================================
+       ELEMENTS
+    ========================================== */
 
-    bgMusic:null,
+    cache() {
 
-    thunder:null,
+        this.loadingScreen =
+            document.getElementById("loadingScreen");
 
-    ghostWhisper:null,
+        this.loadingFill =
+            document.getElementById("loadingFill");
 
-    subtitle:null,
+        this.video =
+            document.getElementById("introVideo");
 
-    progress:null,
+        this.overlay =
+            document.getElementById("overlay");
 
-    lightning:null,
+        this.lightning =
+            document.getElementById("lightningFlash");
 
-    fadeScreen:null,
+        this.fade =
+            document.getElementById("fadeScreen");
 
-    endOverlay:null,
+        this.title =
+            document.getElementById("titleContainer");
 
-    enterButton:null,
+        this.mission =
+            document.getElementById("missionPreview");
 
-    skipButton:null,
+        this.subtitle =
+            document.getElementById("subtitleContainer");
 
-    lightningTimer:null,
+        this.skip =
+            document.getElementById("skipButton");
 
-    whisperTimer:null,
+        this.progress =
+            document.getElementById("videoFill");
 
-    init(){
+        this.endOverlay =
+            document.getElementById("endOverlay");
 
-        this.cache();
+        this.enterButton =
+            document.getElementById("enterButton");
 
-        this.bindEvents();
+        this.startOverlay =
+            document.getElementById("startOverlay");
 
-        this.fakeLoading();
+        this.startButton =
+            document.getElementById("startButton");
 
-    },
+        this.bgMusic =
+            document.getElementById("bgMusic");
 
-    cache(){
+        this.thunder =
+            document.getElementById("thunder");
 
-        this.video=document.getElementById("introVideo");
-
-        this.loadingScreen=document.getElementById("loadingScreen");
-
-        this.loadingFill=document.getElementById("loadingFill");
-
-        this.startOverlay=document.getElementById("startOverlay");
-
-        this.startButton=document.getElementById("startButton");
-
-        this.bgMusic=document.getElementById("bgMusic");
-
-        this.thunder=document.getElementById("thunder");
-
-        this.ghostWhisper=document.getElementById("ghostWhisper");
-
-        this.subtitle=document.getElementById("storySubtitle");
-
-        this.progress=document.getElementById("videoFill");
-
-        this.lightning=document.getElementById("lightningFlash");
-
-        this.fadeScreen=document.getElementById("fadeScreen");
-
-        this.endOverlay=document.getElementById("endOverlay");
-
-        this.enterButton=document.getElementById("enterButton");
-
-        this.skipButton=document.getElementById("skipButton");
+        this.ghostWhisper =
+            document.getElementById("ghostWhisper");
 
     },
 
-    bindEvents(){
 
-        if(this.startButton){
+    /* ==========================================
+       LOGIN + DAY 4 ACCESS
+    ========================================== */
+
+    async checkAccess() {
+
+        const {
+            data: {
+                user
+            },
+            error
+        } = await supabase.auth.getUser();
+
+
+        if (error || !user) {
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+
+        this.user = user;
+
+
+        const {
+            data,
+            error: progressError
+        } = await supabase
+            .from("festival_progress")
+            .select("day4, day5")
+            .eq(
+                "user_id",
+                user.id
+            )
+            .eq(
+                "festival",
+                "halloween_2026"
+            )
+            .maybeSingle();
+
+
+        if (progressError) {
+
+            console.error(
+                "Progress error:",
+                progressError
+            );
+
+            alert(
+                "Unable to load festival progress."
+            );
+
+            window.location.href =
+                "map.html";
+
+            return false;
+
+        }
+
+
+        if (!data) {
+
+            alert(
+                "Festival progress not found."
+            );
+
+            window.location.href =
+                "map.html";
+
+            return false;
+
+        }
+
+
+        /* ======================================
+           DAY 4 REQUIRED
+        ====================================== */
+
+        if (data.day4 !== true) {
+
+            alert(
+                "🔒 Complete Day 4 before entering Day 5."
+            );
+
+            window.location.href =
+                "map.html";
+
+            return false;
+
+        }
+
+
+        console.log(
+            "👻 Day 5 unlocked."
+        );
+
+
+        return true;
+
+    },
+
+
+    /* ==========================================
+       EVENTS
+    ========================================== */
+
+    bindEvents() {
+
+        if (this.startButton) {
 
             this.startButton.addEventListener(
-
                 "click",
-
-                ()=>{
-
-                    this.startExperience();
-
-                }
-
+                () => this.startExperience()
             );
 
         }
 
-        if(this.skipButton){
 
-            this.skipButton.addEventListener(
+        if (this.skip) {
 
+            this.skip.addEventListener(
                 "click",
-
-                ()=>{
-
-                    this.skipIntro();
-
-                }
-
+                () => this.finishVideo()
             );
 
         }
 
-        if(this.enterButton){
+
+        if (this.enterButton) {
 
             this.enterButton.addEventListener(
-
                 "click",
-
-                ()=>{
-
-                    window.location.href="day5-game.html";
-
-                }
-
+                () => this.enterGame()
             );
 
         }
 
-        if(this.video){
+
+        if (this.video) {
 
             this.video.addEventListener(
-
                 "timeupdate",
-
-                ()=>{
-
-                    this.updateProgress();
-
-                    this.updateSubtitle();
-
-                }
-
+                () => this.updateProgress()
             );
+
 
             this.video.addEventListener(
-
                 "ended",
+                () => this.finishVideo()
+            );
 
-                ()=>{
 
-                    this.finishVideo();
+            this.video.addEventListener(
+                "loadedmetadata",
+                () => {
+
+                    console.log(
+                        "Day 5 cinematic loaded."
+                    );
 
                 }
-
             );
 
         }
 
     },
 
-    fakeLoading(){
-
-        let value=0;
-
-        const loader=setInterval(()=>{
-
-            value+=2;
-
-            if(this.loadingFill){
-
-                this.loadingFill.style.width=value+"%";
-
-            }
-
-            if(value>=100){
-
-                clearInterval(loader);
-
-                if(this.loadingScreen){
-
-                    this.loadingScreen.classList.add("hide");
-
-                }
-
-                if(this.startOverlay){
-
-                    this.startOverlay.style.display="flex";
-
-                }else{
-
-                    this.startExperience();
-
-                }
-
-            }
-
-        },30);
-
-    },
-
-    startExperience(){
-
-        if(this.startOverlay){
-
-            this.startOverlay.style.display="none";
-
-        }
-
-        if(this.video){
-
-            this.video.muted=false;
-
-            this.video.volume=1;
-
-            this.video.play().catch(()=>{});
-
-        }
-
-        if(this.bgMusic){
-
-            this.bgMusic.volume=0.35;
-
-            this.bgMusic.play().catch(()=>{});
-
-        }
-
-        this.startLightning();
-
-        this.startGhostWhispers();
-
-    },
-
-    updateProgress(){
-
-        if(!this.video.duration) return;
-
-        const percent=(
-
-            this.video.currentTime/
-
-            this.video.duration
-
-        )*100;
-
-        if(this.progress){
-
-            this.progress.style.width=
-
-            percent+"%";
-
-        }
-
-    },
-
-    updateSubtitle(){
-
-        if(!this.subtitle) return;
-
-        const t=this.video.currentTime;
-
-        if(t<4){
-
-            this.subtitle.textContent=
-
-            "The cemetery sleeps...";
-
-        }
-
-        else if(t<8){
-
-            this.subtitle.textContent=
-
-            "Ancient spirits begin to awaken...";
-
-        }
-
-        else if(t<12){
-
-            this.subtitle.textContent=
-
-            "Seven Spirit Lanterns have faded...";
-
-        }
-
-        else if(t<16){
-
-            this.subtitle.textContent=
-
-            "Darkness spreads across every grave...";
-
-        }
-
-        else if(t<20){
-
-            this.subtitle.textContent=
-
-            "The Ghost King has awakened...";
-
-        }
-
-        else{
-
-            this.subtitle.textContent=
-
-            "Prepare to enter the Haunted Cemetery...";
-
-        }
-
-    },
-
-    playSound(audio){
-
-        if(!audio) return;
-
-        audio.currentTime=0;
-
-        audio.play().catch(()=>{});
-
-    },
-
-    startLightning(){
-
-        this.lightningTimer=setInterval(()=>{
-
-            if(this.video.paused) return;
-
-            this.flashLightning();
-
-        },7000);
-
-    },
-
-    flashLightning(){
-
-        if(!this.lightning) return;
-
-        this.lightning.classList.add("active");
-
-        this.playSound(this.thunder);
-
-        setTimeout(()=>{
-
-            this.lightning.classList.remove("active");
-
-        },450);
-
-    },
-
-    startGhostWhispers(){
-
-        this.whisperTimer=setInterval(()=>{
-
-            if(this.video.paused) return;
-
-            if(Math.random()>0.45){
-
-                this.playSound(this.ghostWhisper);
-
-            }
-
-        },9000);
-
-    },
-       /* ==========================================
-       VIDEO FINISHED
-    ========================================== */
-
-    finishVideo(){
-
-        this.stopEffects();
-
-        if(this.fadeScreen){
-
-            this.fadeScreen.classList.add("show");
-
-        }
-
-        setTimeout(()=>{
-
-            if(this.fadeScreen){
-
-                this.fadeScreen.classList.remove("show");
-
-            }
-
-            if(this.endOverlay){
-
-                this.endOverlay.classList.add("show");
-
-            }
-
-        },800);
-
-    },
 
     /* ==========================================
-       SKIP INTRO
+       START
     ========================================== */
 
-    skipIntro(){
+    async startExperience() {
 
-        this.stopEffects();
+        if (this.started) {
 
-        window.location.href="day5-game.html";
+            return;
+
+        }
+
+
+        this.started = true;
+
+
+        if (this.startOverlay) {
+
+            this.startOverlay.classList.add(
+                "hide"
+            );
+
+        }
+
+
+        this.playAudio();
+
+
+        try {
+
+            await this.video.play();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Video playback error:",
+                error
+            );
+
+        }
+
+
+        if (this.loadingScreen) {
+
+            setTimeout(
+                () => {
+
+                    this.loadingScreen.classList.add(
+                        "hide"
+                    );
+
+                },
+                700
+            );
+
+        }
+
+
+        this.showCinematicUI();
 
     },
 
+
     /* ==========================================
-       STOP ALL EFFECTS
+       AUDIO
     ========================================== */
 
-    stopEffects(){
+    playAudio() {
 
-        if(this.lightningTimer){
+        if (!this.bgMusic) {
 
-            clearInterval(this.lightningTimer);
-
-        }
-
-        if(this.whisperTimer){
-
-            clearInterval(this.whisperTimer);
+            return;
 
         }
 
-        if(this.video){
+
+        this.bgMusic.volume = 0.25;
+
+
+        this.bgMusic
+            .play()
+            .catch(() => {});
+
+    },
+
+
+    /* ==========================================
+       CINEMATIC UI
+    ========================================== */
+
+    showCinematicUI() {
+
+        if (this.title) {
+
+            this.title.classList.add(
+                "show"
+            );
+
+        }
+
+
+        if (this.mission) {
+
+            this.mission.classList.add(
+                "show"
+            );
+
+        }
+
+
+        if (this.subtitle) {
+
+            this.subtitle.classList.add(
+                "show"
+            );
+
+        }
+
+
+        if (this.skip) {
+
+            this.skip.classList.add(
+                "show"
+            );
+
+        }
+
+    },
+
+
+    /* ==========================================
+       VIDEO PROGRESS
+    ========================================== */
+
+    updateProgress() {
+
+        if (
+            !this.video ||
+            !this.progress ||
+            !this.video.duration
+        ) {
+
+            return;
+
+        }
+
+
+        const percent =
+            (
+                this.video.currentTime /
+                this.video.duration
+            ) * 100;
+
+
+        this.progress.style.width =
+            percent + "%";
+
+
+        /* Atmospheric effects */
+
+        if (
+            this.video.currentTime > 8 &&
+            this.video.currentTime < 9
+        ) {
+
+            this.lightningFlash();
+
+        }
+
+    },
+
+
+    /* ==========================================
+       LIGHTNING
+    ========================================== */
+
+    lightningFlash() {
+
+        if (this.lightning) {
+
+            this.lightning.classList.add(
+                "active"
+            );
+
+
+            setTimeout(
+                () => {
+
+                    this.lightning.classList.remove(
+                        "active"
+                    );
+
+                },
+                250
+            );
+
+        }
+
+
+        if (this.thunder) {
+
+            this.thunder.currentTime = 0;
+
+            this.thunder
+                .play()
+                .catch(() => {});
+
+        }
+
+    },
+
+
+    /* ==========================================
+       FINISH VIDEO
+    ========================================== */
+
+    finishVideo() {
+
+        if (this.finished) {
+
+            return;
+
+        }
+
+
+        this.finished = true;
+
+
+        if (this.video) {
 
             this.video.pause();
 
         }
 
-        if(this.bgMusic){
+
+        if (this.skip) {
+
+            this.skip.classList.remove(
+                "show"
+            );
+
+        }
+
+
+        if (this.progress) {
+
+            this.progress.style.width =
+                "100%";
+
+        }
+
+
+        if (this.bgMusic) {
+
+            this.bgMusic.volume = 0.12;
+
+        }
+
+
+        this.showEndOverlay();
+
+    },
+
+
+    /* ==========================================
+       END SCREEN
+    ========================================== */
+
+    showEndOverlay() {
+
+        if (this.endOverlay) {
+
+            this.endOverlay.classList.add(
+                "show"
+            );
+
+        }
+
+
+        if (this.ghostWhisper) {
+
+            this.ghostWhisper.volume =
+                0.35;
+
+            this.ghostWhisper
+                .play()
+                .catch(() => {});
+
+        }
+
+    },
+
+
+    /* ==========================================
+       ENTER GAME
+    ========================================== */
+
+    enterGame() {
+
+        if (this.fade) {
+
+            this.fade.classList.add(
+                "active"
+            );
+
+        }
+
+
+        if (this.bgMusic) {
 
             this.bgMusic.pause();
 
-            this.bgMusic.currentTime=0;
-
         }
 
-        if(this.thunder){
 
-            this.thunder.pause();
+        setTimeout(
+            () => {
 
-            this.thunder.currentTime=0;
+                window.location.href =
+                    "day5-game.html";
 
-        }
-
-        if(this.ghostWhisper){
-
-            this.ghostWhisper.pause();
-
-            this.ghostWhisper.currentTime=0;
-
-        }
-
-    },
-
-    /* ==========================================
-       TAB VISIBILITY
-    ========================================== */
-
-    handleVisibility(){
-
-        if(!this.video) return;
-
-        if(document.hidden){
-
-            this.video.pause();
-
-        }else{
-
-            if(!this.endOverlay.classList.contains("show")){
-
-                this.video.play().catch(()=>{});
-
-            }
-
-        }
-
-    },
-
-    /* ==========================================
-       KEYBOARD
-    ========================================== */
-
-    handleKeyboard(event){
-
-        switch(event.code){
-
-            case "Escape":
-
-                this.skipIntro();
-
-            break;
-
-            case "Space":
-
-                event.preventDefault();
-
-                if(!this.video) return;
-
-                if(this.video.paused){
-
-                    this.video.play().catch(()=>{});
-
-                }else{
-
-                    this.video.pause();
-
-                }
-
-            break;
-
-            case "Enter":
-
-                if(
-
-                    this.endOverlay &&
-                    this.endOverlay.classList.contains("show")
-
-                ){
-
-                    window.location.href="day5-game.html";
-
-                }
-
-            break;
-
-        }
-
-    },
-
-    /* ==========================================
-       VIDEO ERROR
-    ========================================== */
-
-    handleVideoError(){
-
-        alert(
-
-            "Unable to load the Day 5 cinematic video."
-
+            },
+            900
         );
-
-    },
-
-    /* ==========================================
-       GLOBAL EVENTS
-    ========================================== */
-
-    registerEvents(){
-
-        document.addEventListener(
-
-            "visibilitychange",
-
-            ()=>{
-
-                this.handleVisibility();
-
-            }
-
-        );
-
-        document.addEventListener(
-
-            "keydown",
-
-            (event)=>{
-
-                this.handleKeyboard(event);
-
-            }
-
-        );
-
-        if(this.video){
-
-            this.video.addEventListener(
-
-                "error",
-
-                ()=>{
-
-                    this.handleVideoError();
-
-                }
-
-            );
-
-        }
-
-    },
-
-    /* ==========================================
-       START SYSTEM
-    ========================================== */
-
-    start(){
-
-        this.registerEvents();
-
-    },
-
-    /* ==========================================
-       DESTROY
-    ========================================== */
-
-    destroy(){
-
-        this.stopEffects();
 
     }
 
 };
 
+
 /* ==========================================
-   START
+   LOADING
+========================================== */
+
+function loadingAnimation() {
+
+    const fill =
+        document.getElementById(
+            "loadingFill"
+        );
+
+
+    if (!fill) {
+
+        return;
+
+    }
+
+
+    let progress = 0;
+
+
+    const timer =
+        setInterval(
+            () => {
+
+                progress +=
+                    Math.random() * 8;
+
+
+                if (progress >= 100) {
+
+                    progress = 100;
+
+                    clearInterval(timer);
+
+                }
+
+
+                fill.style.width =
+                    progress + "%";
+
+
+            },
+            120
+        );
+
+}
+
+
+/* ==========================================
+   INITIALIZE
 ========================================== */
 
 document.addEventListener(
-
     "DOMContentLoaded",
+    async () => {
 
-    ()=>{
+        Day5.cache();
 
-        Intro.init();
+        Day5.bindEvents();
 
-        Intro.start();
+        loadingAnimation();
+
+
+        const allowed =
+            await Day5.checkAccess();
+
+
+        if (!allowed) {
+
+            return;
+
+        }
+
+
+        console.log(
+            "🎃 VIDLYRA HALLOWEEN FEST 2026 — DAY 5 READY"
+        );
 
     }
-
-);
-
-/* ==========================================
-   CLEANUP
-========================================== */
-
-window.addEventListener(
-
-    "beforeunload",
-
-    ()=>{
-
-        Intro.destroy();
-
-    }
-
 );
