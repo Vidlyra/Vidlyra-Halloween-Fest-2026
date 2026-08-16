@@ -5,443 +5,594 @@
 
 <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-<meta
-name="theme-color"
-content="#000000">
-
-<meta
-name="description"
-content="VIDLYRA HALLOWEEN FEST 2026 - DAY 5 - THE HAUNTED CEMETERY">
+<meta name="theme-color" content="#050509">
 
 <title>
-
-VIDLYRA HALLOWEEN FEST 2026
-DAY 5
-THE HAUNTED CEMETERY
-
+VIDLYRA HALLOWEEN FEST 2026 | DAY 5 | EPIC GAME
 </title>
 
 <link
-rel="stylesheet"
-href="css/day5-game.css">
+    rel="stylesheet"
+    href="css/day5-epic-game.css">
 
 </head>
 
 <body>
 
 <!-- ==========================================
-BACKGROUND
+GAME WORLD
 ========================================== -->
 
-<img
+<main id="game">
 
-src="assets/images/day5/background.png"
+    <!-- BACKGROUND -->
 
-id="background"
+    <img
+        src="assets/images/day5/background.png"
+        id="background"
+        alt="Cemetery Background">
 
-alt="Background">
+    <img
+        src="assets/images/day5/Ghost Fog.png"
+        id="fogBack"
+        class="fog"
+        alt="Fog">
 
-<img
+    <img
+        src="assets/images/day5/Ghost Fog.png"
+        id="fogFront"
+        class="fog fog-front"
+        alt="Fog">
 
-src="assets/images/day5/Ghost Fog.png"
+    <!-- WORLD OBJECTS -->
 
-id="fogBack"
+    <img
+        src="assets/images/day5/Cemetery Gate.png"
+        id="gate"
+        alt="Cemetery Gate">
 
-alt="Fogback">
+    <img
+        src="assets/images/day5/Dead Tree.png"
+        id="treeLeft"
+        alt="Dead Tree">
 
-<img
+    <img
+        src="assets/images/day5/Dead Tree.png"
+        id="treeRight"
+        alt="Dead Tree">
 
-src="assets/images/day5/Ghost Fog.png"
+    <img
+        src="assets/images/day5/Stone Cross.png"
+        id="cross"
+        alt="Stone Cross">
 
-id="fogFront"
+    <img
+        src="assets/images/day5/Bones.png"
+        id="bones"
+        alt="Bones">
 
-alt="Fogfront">
+    <!-- ==========================================
+    7 SPIRIT LANTERNS
+    ========================================== -->
 
-<div id="screenGlow"></div>
+    <div
+        class="lantern"
+        data-id="1"
+        style="left:15%; top:72%;">
 
-<div id="particleContainer"></div>
+        <img
+            src="assets/images/day5/Spirit Lantern.png"
+            alt="Spirit Lantern">
 
-<div id="lightning"></div>
+    </div>
 
-<div id="cinematicFade"></div>
+    <div
+        class="lantern"
+        data-id="2"
+        style="left:29%; top:42%;">
+
+        <img
+            src="assets/images/day5/Spirit Lantern.png"
+            alt="Spirit Lantern">
+
+    </div>
+
+    <div
+        class="lantern"
+        data-id="3"
+        style="left:46%; top:68%;">
+
+        <img
+            src="assets/images/day5/Spirit Lantern.png"
+            alt="Spirit Lantern">
+
+    </div>
+
+    <div
+        class="lantern"
+        data-id="4"
+        style="left:61%; top:36%;">
+
+        <img
+            src="assets/images/day5/Spirit Lantern.png"
+            alt="Spirit Lantern">
+
+    </div>
+
+    <div
+        class="lantern"
+        data-id="5"
+        style="left:75%; top:65%;">
+
+        <img
+            src="assets/images/day5/Spirit Lantern.png"
+            alt="Spirit Lantern">
+
+    </div>
+
+    <div
+        class="lantern"
+        data-id="6"
+        style="left:84%; top:30%;">
+
+        <img
+            src="assets/images/day5/Spirit Lantern.png"
+            alt="Spirit Lantern">
+
+    </div>
+
+    <div
+        class="lantern"
+        data-id="7"
+        style="left:50%; top:25%;">
+
+        <img
+            src="assets/images/day5/Spirit Lantern.png"
+            alt="Spirit Lantern">
+
+    </div>
+
+    <!-- ==========================================
+    BLUE SPIRIT FLAMES
+    ========================================== -->
+
+    <img
+        src="assets/images/day5/Blue Spirit Flame.png"
+        id="spirit1"
+        class="spirit"
+        alt="Spirit">
+
+    <img
+        src="assets/images/day5/Blue Spirit Flame.png"
+        id="spirit2"
+        class="spirit"
+        alt="Spirit">
+
+    <!-- ==========================================
+    GHOSTS
+    ========================================== -->
+
+    <img
+        src="assets/images/day5/Ghost.png"
+        class="ghost ghost1"
+        alt="Ghost">
+
+    <img
+        src="assets/images/day5/Ghost.png"
+        class="ghost ghost2"
+        alt="Ghost">
+
+    <img
+        src="assets/images/day5/Ghost.png"
+        class="ghost ghost3"
+        alt="Ghost">
+
+    <!-- ==========================================
+    GHOST KING
+    ========================================== -->
+
+    <img
+        src="assets/images/day5/Ghost King (Boss).png"
+        id="ghostKing"
+        alt="Ghost King">
+
+    <!-- ==========================================
+    SOUL ORB
+    ========================================== -->
+
+    <img
+        src="assets/images/day5/Soul Orb.png"
+        id="orb"
+        alt="Soul Orb">
+
+    <!-- ==========================================
+    PORTAL
+    ========================================== -->
+
+    <img
+        src="assets/images/day5/Portal.png"
+        id="portal"
+        alt="Portal">
+
+    <!-- ==========================================
+    PLAYER
+    ========================================== -->
+
+    <img
+        src="assets/images/day5/Player (Day 5 Outfit).png"
+        id="player"
+        alt="Player">
+
+    <!-- ==========================================
+    PARTICLES
+    ========================================== -->
+
+    <div id="particles"></div>
+
+    <!-- ==========================================
+    LIGHTNING
+    ========================================== -->
+
+    <div id="lightning"></div>
+
+    <div id="screenShake"></div>
+
+</main>
+
 
 <!-- ==========================================
-WORLD
+HUD
 ========================================== -->
 
-<div id="cemetery">
+<header id="hud">
 
-<img
+    <div class="hud-title">
 
-src="assets/images/day5/Cemetery Gate.png"
+        VIDLYRA
 
-id="gate"
+        <span>HALLOWEEN FEST 2026</span>
 
-alt="Cemetery Gate">
+    </div>
 
-<img
+    <div class="day-label">
 
-src="assets/images/day5/Dead Tree.png"
+        DAY 5
 
-id="treeLeft"
+    </div>
 
-alt="Dead Tree">
+</header>
 
-<img
-
-src="assets/images/day5/Dead Tree.png"
-
-id="treeRight"
-
-alt="Dead Tree">
-
-<img
-
-src="assets/images/day5grave.png"
-
-id="grave1"
-
-alt="Grave">
-
-<img
-
-src="assets/images/day5/grave.png"
-
-id="grave2"
-
-alt="Grave">
-
-<img
-
-src="assets/images/day5/Stone Cross.png"
-
-id="cross1"
-
-alt="Stone Cross">
-
-<img
-
-src="assets/images/day5/Bones.png"
-
-id="bones"
-
-alt="Bones">
-
-</div>
-
-<!-- ==========================================
-PLAYER
-========================================== -->
-
-<img
-
-src="assets/images/day5/Player (Day 5 Outfit).png"
-
-id="player"
-
-alt="Player">
-
-<!-- ==========================================
-GHOSTS
-========================================== -->
-
-<img
-
-src="assets/images/day5/Ghost.png"
-
-id="ghost1"
-
-class="ghost"
-
-alt="Ghost">
-
-<img
-
-src="assets/images/day5/Ghost.png"
-
-id="ghost2"
-
-class="ghost"
-
-alt="Ghost">
-
-<img
-
-src="assets/images/day5/Ghost.png"
-
-id="ghost3"
-
-class="ghost"
-
-alt="Ghost">
-<!-- ==========================================
-GHOST KING
-========================================== -->
-
-<img
-
-src="assets/images/day5/Ghost King (Boss).png"
-
-id="ghostKing"
-
-alt="Ghost King">
-
-<!-- ==========================================
-PORTAL
-========================================== -->
-
-<img
-
-src="assets/images/day5/Portal.png"
-
-id="portal"
-
-alt="Portal">
-
-<!-- ==========================================
-SPIRIT LANTERN
-========================================== -->
-
-<img
-
-src="assets/images/day5/Spirit Lantern.png"
-
-id="lantern"
-
-alt="Spirit Lantern">
-
-<!-- ==========================================
-BLUE SPIRIT FLAME
-========================================== -->
-
-<img
-
-src="assets/images/day5/Blue Spirit Flame.png"
-
-id="spiritFlame"
-
-alt="Blue Spirit Flame">
-
-<!-- ==========================================
-SOUL ORB
-========================================== -->
-
-<img
-
-src="assets/images/day5/Soul Orb.png"
-
-id="orb"
-
-alt="Soul Orb">
-
-<!-- ==========================================
-CROW
-========================================== -->
-
-<img
-
-src="assets/images/day5/Crow.png"
-
-id="crow"
-
-alt="Crow">
-
-<!-- ==========================================
-DIALOGUE UI
-========================================== -->
-
-<div id="dialogueBox">
-
-<div id="speaker">
-
-Narrator
-
-</div>
-
-<div id="dialogueText">
-
-The Forgotten Cemetery awaits...
-
-</div>
-
-</div>
 
 <!-- ==========================================
 MISSION PANEL
 ========================================== -->
 
-<div id="missionPanel">
+<section id="missionPanel">
 
-<h2>
+    <h2>
 
-MISSION
+        🏮 SPIRIT LANTERNS
 
-</h2>
+    </h2>
 
-<p>
+    <p>
 
-Collect all 7 Spirit Lanterns
+        Restore all seven Spirit Lanterns.
 
-<br><br>
+    </p>
 
-Seal the Ghost King
+    <div class="progress">
 
-<br><br>
+        <div id="progressFill"></div>
 
-Escape through the Portal
+    </div>
 
-</p>
+    <div id="counter">
 
-<button id="beginMission">
+        0 / 7
 
-BEGIN MISSION
+    </div>
 
-</button>
+</section>
+
+
+<!-- ==========================================
+DIALOGUE
+========================================== -->
+
+<div id="dialogueBox">
+
+    <div id="speaker">
+
+        NARRATOR
+
+    </div>
+
+    <div id="dialogueText">
+
+        Restore the seven Spirit Lanterns...
+
+    </div>
 
 </div>
+
+
+<!-- ==========================================
+INTERACTION
+========================================== -->
+
+<div id="interaction">
+
+    APPROACH A SPIRIT LANTERN
+
+</div>
+
+
+<!-- ==========================================
+BOSS WARNING
+========================================== -->
+
+<div id="bossWarning">
+
+    <div>
+
+        <small>ANCIENT EVIL AWAKENS</small>
+
+        <h1>
+
+            THE GHOST KING
+
+        </h1>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+COMPLETE SCREEN
+========================================== -->
+
+<section id="completeScreen">
+
+    <div class="complete-card">
+
+        <div class="reward-icon">
+
+            🏮
+
+        </div>
+
+        <h1>
+
+            DAY 5 COMPLETE
+
+        </h1>
+
+        <h2>
+
+            THE GHOST KING HAS BEEN SEALED
+
+        </h2>
+
+        <p>
+
+            The Seven Spirit Lanterns have restored
+            the forgotten cemetery.
+
+        </p>
+
+        <div class="reward">
+
+            <span>
+
+                🔓 REWARD UNLOCKED
+
+            </span>
+
+            <strong>
+
+                SPIRIT GUARDIAN
+
+            </strong>
+
+            <small>
+
+                AVATAR
+
+            </small>
+
+        </div>
+
+        <button id="continueBtn">
+
+            CONTINUE TO DAY 6 →
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+START OVERLAY
+========================================== -->
+
+<section id="startOverlay">
+
+    <div class="start-card">
+
+        <div class="logo">
+
+            VIDLYRA
+
+        </div>
+
+        <h1>
+
+            DAY 5
+
+        </h1>
+
+        <h2>
+
+            THE HAUNTED CEMETERY
+
+        </h2>
+
+        <p>
+
+            Seven Spirit Lanterns are waiting.
+
+            Restore their light and seal the
+            Ghost King.
+
+        </p>
+
+        <button id="startBtn">
+
+            ENTER CEMETERY
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+MOBILE CONTROLS
+========================================== -->
+
+<div id="mobileControls">
+
+    <button data-key="ArrowUp">▲</button>
+
+    <div>
+
+        <button data-key="ArrowLeft">◀</button>
+
+        <button data-key="ArrowDown">▼</button>
+
+        <button data-key="ArrowRight">▶</button>
+
+    </div>
+
+</div>
+
+
 <!-- ==========================================
 AUDIO
 ========================================== -->
 
 <audio
-id="bgm"
-loop
-preload="auto">
+    id="bgm"
+    loop
+    preload="auto">
 
-<source
-src="assets/haunted-cemetery.mp3"
-type="audio/mpeg">
-
-</audio>
-
-<audio
-id="ghostWhisper"
-preload="auto">
-
-<source
-src="assets/ghost-whisper.mp3"
-type="audio/mpeg">
+    <source
+        src="assets/haunted-cemetery.mp3"
+        type="audio/mpeg">
 
 </audio>
 
 <audio
-id="ghostAppear"
-preload="auto">
+    id="whisper"
+    preload="auto">
 
-<source
-src="assets/ghost-appear.mp3"
-type="audio/mpeg">
-
-</audio>
-
-<audio
-id="ghostKingSound"
-preload="auto">
-
-<source
-src="assets/ghost-king.mp3"
-type="audio/mpeg">
+    <source
+        src="assets/ghost-whisper.mp3"
+        type="audio/mpeg">
 
 </audio>
 
 <audio
-id="spiritLight"
-preload="auto">
+    id="ghostAppear"
+    preload="auto">
 
-<source
-src="assets/spirit-light.mp3"
-type="audio/mpeg">
-
-</audio>
-
-<audio
-id="collectSound"
-preload="auto">
-
-<source
-src="assets/collect.mp3"
-type="audio/mpeg">
+    <source
+        src="assets/ghost-appear.mp3"
+        type="audio/mpeg">
 
 </audio>
 
 <audio
-id="thunder"
-preload="auto">
+    id="kingSound"
+    preload="auto">
 
-<source
-src="assets/thunder.mp3"
-type="audio/mpeg">
-
-</audio>
-
-<audio
-id="portalSound"
-preload="auto">
-
-<source
-src="assets/portal.mp3"
-type="audio/mpeg">
+    <source
+        src="assets/ghost-king.mp3"
+        type="audio/mpeg">
 
 </audio>
 
 <audio
-id="missionComplete"
-preload="auto">
+    id="spiritLight"
+    preload="auto">
 
-<source
-src="assets/mission-complete.mp3"
-type="audio/mpeg">
+    <source
+        src="assets/spirit-light.mp3"
+        type="audio/mpeg">
 
 </audio>
 
 <audio
-id="battleMusic"
-loop
-preload="auto">
+    id="collectSound"
+    preload="auto">
 
-<source
-src="assets/Epic Anime Boss Battle Theme.mp3"
-type="audio/mpeg">
+    <source
+        src="assets/collect.mp3"
+        type="audio/mpeg">
 
 </audio>
 
-<!-- ==========================================
-NOSCRIPT
-========================================== -->
+<audio
+    id="thunder"
+    preload="auto">
 
-<noscript>
+    <source
+        src="assets/thunder.mp3"
+        type="audio/mpeg">
 
-<div
-style="
-position:fixed;
-inset:0;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#000;
-color:#fff;
-font-size:22px;
-font-family:Arial,sans-serif;
-z-index:9999;
-text-align:center;
-padding:30px;">
+</audio>
 
-JavaScript is required to play
-VIDLYRA HALLOWEEN FEST 2026
-Day 5.
+<audio
+    id="portalSound"
+    preload="auto">
 
-</div>
+    <source
+        src="assets/portal.mp3"
+        type="audio/mpeg">
 
-</noscript>
-<!-- ==========================================
-JAVASCRIPT
-========================================== -->
+</audio>
 
-<script src="js/day5-game.js"></script>
+<audio
+    id="missionComplete"
+    preload="auto">
+
+    <source
+        src="assets/mission-complete.mp3"
+        type="audio/mpeg">
+
+</audio>
+
+<audio
+    id="battleMusic"
+    loop
+    preload="auto">
+
+    <source
+        src="assets/Epic Anime Boss Battle Theme.mp3"
+        type="audio/mpeg">
+
+</audio>
+
+
+<script src="js/day5-epic-game.js"></script>
 
 </body>
 
