@@ -1,98 +1,285 @@
-/* ==========================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 2 VIDEO CONTROLLER
-========================================== */
+import { supabase } from "./supabase.js";
 
-document.addEventListener("DOMContentLoaded", () => {
 
-    const video = document.getElementById("introVideo");
+/* ==========================
+   ELEMENTS
+========================== */
 
-    const startScreen = document.getElementById("startScreen");
+const startScreen =
+    document.getElementById("startScreen");
 
-    const startBtn = document.getElementById("startBtn");
+const startBtn =
+    document.getElementById("startBtn");
 
-    const overlay = document.getElementById("videoOverlay");
+const introVideo =
+    document.getElementById("introVideo");
 
-    const enterWell = document.getElementById("enterWell");
+const skipBtn =
+    document.getElementById("skipBtn");
 
-    const skipBtn = document.getElementById("skipBtn");
+const videoOverlay =
+    document.getElementById("videoOverlay");
 
-    /* -----------------------------
-       Start Experience
-    ------------------------------ */
+const enterWell =
+    document.getElementById("enterWell");
 
-    if (startBtn) {
 
-        startBtn.addEventListener("click", () => {
+let currentUser = null;
+let introStarted = false;
 
-            startScreen.style.display = "none";
 
-            video.muted = false;
+/* ==========================
+   CHECK LOGIN
+========================== */
 
-            video.volume = 1;
+async function checkUser(){
 
-            video.currentTime = 0;
+    const {
+        data: {
+            user
+        },
+        error
+    } = await supabase.auth.getUser();
 
-            video.play().catch(error => {
 
-                console.log(error);
+    if(error || !user){
 
-            });
+        window.location.href =
+            "login.html";
 
-        });
-
+        return null;
     }
 
-    /* -----------------------------
-       Video Finished
-    ------------------------------ */
 
-    if (video) {
+    return user;
+}
 
-        video.addEventListener("ended", () => {
 
-            if (overlay) {
+/* ==========================
+   CHECK FESTIVAL PROGRESS
+========================== */
 
-                overlay.classList.add("show");
+async function checkDay2(){
 
-            }
+    currentUser =
+        await checkUser();
 
-        });
 
+    if(!currentUser){
+        return false;
     }
 
-    /* -----------------------------
-       Enter the Well
-    ------------------------------ */
 
-    if (enterWell) {
+    const {
+        data,
+        error
+    } = await supabase
+        .from("festival_progress")
+        .select(`
+            day1,
+            day2
+        `)
+        .eq("user_id", currentUser.id)
+        .eq("festival", "halloween_2026")
+        .maybeSingle();
 
-        enterWell.addEventListener("click", () => {
 
-            window.location.href = "day2-game.html";
+    if(error){
 
-        });
+        console.error(error);
 
+        alert(
+            "Unable to load your festival progress."
+        );
+
+        window.location.href =
+            "map.html";
+
+        return false;
     }
 
-    /* -----------------------------
-       Skip Intro
-    ------------------------------ */
 
-    if (skipBtn) {
+    /*
+     * No progress record.
+     */
 
-        skipBtn.addEventListener("click", () => {
+    if(!data){
 
-            if (video) {
+        window.location.href =
+            "map.html";
 
-                video.pause();
-
-            }
-
-            window.location.href = "day2-game.html";
-
-        });
-
+        return false;
     }
 
-});
+
+    /*
+     * Day 1 must be completed.
+     */
+
+    if(data.day1 !== true){
+
+        alert(
+            "🔒 Complete Day 1 before entering Day 2."
+        );
+
+        window.location.href =
+            "map.html";
+
+        return false;
+    }
+
+
+    /*
+     * If Day 2 is already completed,
+     * allow the player to replay the intro.
+     */
+
+    return true;
+}
+
+
+/* ==========================
+   START EXPERIENCE
+========================== */
+
+startBtn.addEventListener(
+    "click",
+    async () => {
+
+        if(introStarted){
+            return;
+        }
+
+        introStarted = true;
+
+        startBtn.disabled = true;
+
+        startBtn.textContent =
+            "ENTERING...";
+
+
+        introVideo.currentTime = 0;
+
+
+        try{
+
+            await introVideo.play();
+
+            startScreen.classList.add(
+                "hidden"
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+            startBtn.disabled = false;
+
+            startBtn.textContent =
+                "▶ Start Experience";
+
+        }
+
+    }
+);
+
+
+/* ==========================
+   VIDEO PLAYING
+========================== */
+
+introVideo.addEventListener(
+    "play",
+    () => {
+
+        skipBtn.classList.add(
+            "show"
+        );
+
+    }
+);
+
+
+/* ==========================
+   VIDEO ENDED
+========================== */
+
+introVideo.addEventListener(
+    "ended",
+    () => {
+
+        showVideoOverlay();
+
+    }
+);
+
+
+/* ==========================
+   SKIP INTRO
+========================== */
+
+skipBtn.addEventListener(
+    "click",
+    () => {
+
+        introVideo.pause();
+
+        showVideoOverlay();
+
+    }
+);
+
+
+/* ==========================
+   SHOW OVERLAY
+========================== */
+
+function showVideoOverlay(){
+
+    skipBtn.classList.remove(
+        "show"
+    );
+
+    videoOverlay.classList.add(
+        "show"
+    );
+
+}
+
+
+/* ==========================
+   ENTER THE WELL
+========================== */
+
+enterWell.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "day2-game.html";
+
+    }
+);
+
+
+/* ==========================
+   INITIALIZE
+========================== */
+
+async function initialize(){
+
+    const allowed =
+        await checkDay2();
+
+    if(!allowed){
+        return;
+    }
+
+    console.log(
+        "🎃 Day 2 intro unlocked."
+    );
+
+}
+
+
+initialize();
