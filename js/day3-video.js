@@ -1,235 +1,302 @@
-/* ==========================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 3 VIDEO
-========================================== */
+import { supabase } from "./supabase.js";
 
-"use strict";
 
 /* ==========================================
-ELEMENTS
+   ELEMENTS
 ========================================== */
 
 const video =
-document.getElementById("introVideo");
-
-const overlay =
-document.getElementById("videoOverlay");
+    document.getElementById("introVideo");
 
 const skipBtn =
-document.getElementById("skipBtn");
+    document.getElementById("skipBtn");
 
-const enterBtn =
-document.getElementById("enterForest");
+const overlay =
+    document.getElementById("videoOverlay");
+
+const enterForest =
+    document.getElementById("enterForest");
 
 const clickSound =
-document.getElementById("clickSound");
+    document.getElementById("clickSound");
+
+
+let currentUser = null;
+let started = false;
+
 
 /* ==========================================
-PLAY VIDEO
+   GET LOGIN USER
 ========================================== */
 
-function playIntro(){
+async function getUser() {
 
-    if(!video) return;
+    const {
+        data: {
+            user
+        },
+        error
+    } = await supabase.auth.getUser();
 
-    video.volume = 1;
 
-    video.muted = false;
+    if (error || !user) {
 
-    const promise = video.play();
+        window.location.href =
+            "login.html";
 
-    if(promise){
+        return null;
+    }
 
-        promise.catch(()=>{
 
-            console.log(
-                "Autoplay blocked."
-            );
+    return user;
+}
 
-        });
+
+/* ==========================================
+   CHECK DAY 3 ACCESS
+========================================== */
+
+async function checkDay3Access() {
+
+    currentUser =
+        await getUser();
+
+
+    if (!currentUser) {
+
+        return false;
 
     }
 
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("festival_progress")
+        .select(`
+            day1,
+            day2,
+            day3
+        `)
+        .eq(
+            "user_id",
+            currentUser.id
+        )
+        .eq(
+            "festival",
+            "halloween_2026"
+        )
+        .maybeSingle();
+
+
+    if (error) {
+
+        console.error(
+            "Festival progress error:",
+            error
+        );
+
+        alert(
+            "Unable to load festival progress."
+        );
+
+        window.location.href =
+            "map.html";
+
+        return false;
+    }
+
+
+    if (!data) {
+
+        window.location.href =
+            "map.html";
+
+        return false;
+    }
+
+
+    /*
+     * Day 2 must be complete.
+     */
+
+    if (data.day2 !== true) {
+
+        alert(
+            "🔒 Complete Day 2 before entering Day 3."
+        );
+
+        window.location.href =
+            "map.html";
+
+        return false;
+    }
+
+
+    return true;
 }
 
-/* ==========================================
-SHOW OVERLAY
-========================================== */
-
-function showOverlay(){
-
-    overlay.classList.add("show");
-
-    skipBtn.style.display="none";
-
-}
 
 /* ==========================================
-SKIP INTRO
+   START VIDEO
 ========================================== */
 
-function skipIntro(){
+async function startVideo() {
 
-    if(video){
+    if (started) {
 
-        video.pause();
+        return;
 
     }
 
-    showOverlay();
 
-}
+    started = true;
 
-/* ==========================================
-VIDEO ENDED
-========================================== */
 
-if(video){
+    try {
 
-    video.addEventListener(
+        await video.play();
 
-        "ended",
-
-        ()=>{
-
-            showOverlay();
-
-        }
-
-    );
-
-}
-
-/* ==========================================
-SKIP BUTTON
-========================================== */
-
-if(skipBtn){
-
-    skipBtn.addEventListener(
-
-        "click",
-
-        ()=>{
-
-            if(clickSound){
-
-                clickSound.currentTime=0;
-
-                clickSound.play().catch(()=>{});
-
-            }
-
-            skipIntro();
-
-        }
-
-    );
-
-}
-
-/* ==========================================
-ENTER GAME
-========================================== */
-
-if(enterBtn){
-
-    enterBtn.addEventListener(
-
-        "click",
-
-        ()=>{
-
-            if(clickSound){
-
-                clickSound.currentTime=0;
-
-                clickSound.play().catch(()=>{});
-
-            }
-
-            overlay.style.opacity="0";
-
-            setTimeout(()=>{
-
-                window.location.href=
-
-                "day3-game.html";
-
-            },700);
-
-        }
-
-    );
-
-}
-
-/* ==========================================
-KEYBOARD
-========================================== */
-
-document.addEventListener(
-
-    "keydown",
-
-    (e)=>{
-
-        if(e.code==="Space"){
-
-            e.preventDefault();
-
-            skipIntro();
-
-        }
-
-        if(e.code==="Enter" &&
-
-            overlay.classList.contains("show")){
-
-            window.location.href=
-
-            "day3-game.html";
-
-        }
-
-    }
-
-);
-
-/* ==========================================
-START
-========================================== */
-
-window.addEventListener(
-
-    "load",
-
-    ()=>{
-
-        playIntro();
-
-    }
-
-);
-
-/* ==========================================
-SAFETY
-========================================== */
-
-setTimeout(()=>{
-
-    if(video &&
-
-        video.ended===false &&
-
-        video.currentTime===0){
-
-        console.log(
-
-            "Waiting for user interaction..."
-
+        skipBtn.classList.add(
+            "show"
         );
 
     }
 
-},3000);
+    catch (error) {
+
+        console.log(
+            "Video autoplay blocked:",
+            error
+        );
+
+        started = false;
+
+    }
+
+}
+
+
+/* ==========================================
+   VIDEO FINISHED
+========================================== */
+
+function showOverlay() {
+
+    video.pause();
+
+
+    skipBtn.classList.remove(
+        "show"
+    );
+
+
+    overlay.classList.add(
+        "show"
+    );
+
+}
+
+
+/* ==========================================
+   SKIP
+========================================== */
+
+skipBtn.addEventListener(
+    "click",
+    () => {
+
+        showOverlay();
+
+    }
+);
+
+
+/* ==========================================
+   VIDEO END
+========================================== */
+
+video.addEventListener(
+    "ended",
+    () => {
+
+        showOverlay();
+
+    }
+);
+
+
+/* ==========================================
+   ENTER FOREST
+========================================== */
+
+enterForest.addEventListener(
+    "click",
+    () => {
+
+        if (clickSound) {
+
+            clickSound.currentTime =
+                0;
+
+            clickSound
+                .play()
+                .catch(() => {});
+
+        }
+
+
+        /*
+         * Day 3 gameplay page.
+         */
+
+        window.location.href =
+            "day3-game.html";
+
+    }
+);
+
+
+/* ==========================================
+   INITIALIZE
+========================================== */
+
+async function initialize() {
+
+    const allowed =
+        await checkDay3Access();
+
+
+    if (!allowed) {
+
+        return;
+
+    }
+
+
+    /*
+     * User has Day 2 complete.
+     */
+
+    console.log(
+        "🌲 Day 3 unlocked."
+    );
+
+
+    /*
+     * Start video.
+     *
+     * Browser may require user interaction.
+     */
+
+    startVideo();
+
+}
+
+
+/* ==========================================
+   START
+========================================== */
+
+initialize();
