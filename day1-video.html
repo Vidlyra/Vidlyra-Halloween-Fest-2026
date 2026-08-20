@@ -4,31 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
-
     <title>VIDLYRA HALLOWEEN FEST 2026 — DAY 1</title>
-
     <link rel="stylesheet" href="css/day1-video.css">
 </head>
-
 <body>
-
     <!-- VIDEO PAGE -->
     <main id="videoPage">
-
         <!-- Loading -->
         <div id="loading">
             <div class="loading-title">VIDLYRA</div>
             <div class="loading-subtitle">
                 HALLOWEEN FEST 2026
             </div>
-
             <div class="loading-spinner"></div>
-
             <div id="loadingText">
                 ENTERING DAY 1...
             </div>
         </div>
-
         <!-- VIDEO -->
         <video
             id="day1Video"
@@ -36,52 +28,41 @@
             preload="auto"
             disablepictureinpicture
             controlslist="nodownload nofullscreen noremoteplayback">
-
             <source
                 src="assets/video/day1-video.mp4"
                 type="video/mp4">
-
         </video>
-
+        <!-- Tap to play (shown only if autoplay is blocked) -->
+        <div id="tapToPlay" aria-label="Tap to begin">
+            <div class="tap-icon">▶</div>
+        </div>
+        <!-- Skip -->
+        <button id="skipBtn" type="button">SKIP ▸</button>
         <!-- Dark ending -->
         <div id="endOverlay">
-
             <div class="end-content">
-
                 <div class="end-title">
                     DAY 1 COMPLETE
                 </div>
-
                 <div class="end-subtitle">
                     THE JOURNEY BEGINS...
                 </div>
-
                 <div class="end-loader">
                     <span></span>
                 </div>
-
                 <div class="end-text">
                     ENTERING DAY 2
                 </div>
-
             </div>
-
         </div>
-
         <!-- Error -->
         <div id="videoError">
-
             <h1>VIDEO NOT FOUND</h1>
-
             <p>
                 Please check the Day 1 video file.
             </p>
-
         </div>
-
     </main>
-
     <script type="module" src="js/day1-video.js"></script>
-
 </body>
 </html>
