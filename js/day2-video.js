@@ -23,6 +23,9 @@ const videoOverlay =
 const enterWell =
     document.getElementById("enterWell");
 
+const videoError =
+    document.getElementById("videoError");
+
 
 let currentUser = null;
 let introStarted = false;
@@ -173,6 +176,8 @@ startBtn.addEventListener(
 
             console.error(error);
 
+            introStarted = false;
+
             startBtn.disabled = false;
 
             startBtn.textContent =
@@ -209,6 +214,44 @@ introVideo.addEventListener(
     () => {
 
         showVideoOverlay();
+
+    }
+);
+
+
+/* ==========================
+   VIDEO ERROR
+   (missing file, bad codec, network failure)
+========================== */
+
+introVideo.addEventListener(
+    "error",
+    () => {
+
+        console.error(
+            "Day 2 intro video failed to load."
+        );
+
+        skipBtn.classList.remove(
+            "show"
+        );
+
+        startScreen.classList.add(
+            "hidden"
+        );
+
+        if(videoError){
+
+            videoError.classList.add(
+                "show"
+            );
+
+        }else{
+
+            // No error element in the DOM — fall back to letting
+            // the player continue instead of getting stuck.
+            showVideoOverlay();
+        }
 
     }
 );
