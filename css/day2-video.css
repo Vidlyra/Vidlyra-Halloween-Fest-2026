@@ -1,196 +1,217 @@
 #videoOverlay{
-
     position:fixed;
-
     inset:0;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:center;
-
     align-items:center;
-
     text-align:center;
-
     background:rgba(0,0,0,.55);
-
     backdrop-filter:blur(8px);
-
     opacity:0;
-
     pointer-events:none;
-
     transition:1s;
-
     z-index:100;
-
 }
-
 #videoOverlay.show{
-
     opacity:1;
-
     pointer-events:auto;
-
 }
-
 #videoOverlay h1{
-
     color:#49d9ff;
-
     font-size:4rem;
-
     text-shadow:0 0 25px cyan;
-
 }
-
 #videoOverlay h2{
-
     color:white;
-
     margin-top:15px;
-
     font-size:2rem;
-
 }
-
 #videoOverlay p{
-
     color:#ddd;
-
     margin:25px 0;
-
     font-size:1.2rem;
-
 }
-
 #enterWell{
-
     padding:18px 45px;
-
     border:none;
-
     border-radius:50px;
-
     background:#00b7ff;
-
     color:white;
-
     cursor:pointer;
-
     font-size:1.1rem;
-
     box-shadow:0 0 25px cyan;
-
     transition:.3s;
-
 }
-
 #enterWell:hover{
-
     transform:scale(1.08);
-
 }
 /* ==========================
 START SCREEN
 ========================== */
-
 #startScreen{
-
     position:fixed;
-
     inset:0;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:center;
-
     align-items:center;
-
     text-align:center;
-
     background:#000;
-
     z-index:500;
-
+    opacity:1;
+    pointer-events:auto;
+    transition:opacity .6s ease, visibility .6s ease;
 }
-
+#startScreen.hidden{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+}
 #startScreen h1{
-
     color:#44dfff;
-
     font-size:55px;
-
     text-shadow:0 0 25px cyan;
-
 }
-
 #startScreen h2{
-
     color:white;
-
     margin-top:20px;
-
     font-size:36px;
-
 }
-
 #startScreen p{
-
     color:#ccc;
-
     margin-top:15px;
-
     font-size:22px;
-
 }
-
 #startBtn{
-
     margin-top:40px;
-
     padding:18px 50px;
-
     border:none;
-
     border-radius:50px;
-
     background:#00b7ff;
-
     color:white;
-
     font-size:22px;
-
     cursor:pointer;
-
     box-shadow:0 0 30px cyan;
-
     transition:.3s;
-
 }
-
 #startBtn:hover{
-
     transform:scale(1.08);
-
+}
+video{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    background:#000;
 }
 
-video{
-
+/* ==========================
+SKIP BUTTON
+========================== */
+#skipBtn{
     position:fixed;
+    bottom:28px;
+    right:28px;
+    z-index:200;
+    padding:12px 26px;
+    border:1px solid rgba(0,183,255,.5);
+    border-radius:50px;
+    background:rgba(0,0,0,.5);
+    backdrop-filter:blur(6px);
+    color:#cdeeff;
+    font-size:.95rem;
+    letter-spacing:.05em;
+    cursor:pointer;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s ease, border-color .3s ease, color .3s ease;
+}
+#skipBtn.show{
+    opacity:1;
+    pointer-events:auto;
+}
+#skipBtn:hover,
+#skipBtn:focus-visible{
+    border-color:#00b7ff;
+    color:#fff;
+}
+#skipBtn:focus-visible{
+    outline:2px solid #00b7ff;
+    outline-offset:3px;
+}
 
+/* ==========================
+VIDEO ERROR
+========================== */
+#videoError{
+    position:fixed;
     inset:0;
-
-    width:100%;
-
-    height:100%;
-
-    object-fit:cover;
-
+    z-index:400;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    gap:10px;
+    padding:0 24px;
     background:#000;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .5s ease, visibility .5s ease;
+}
+#videoError.show{
+    opacity:1;
+    pointer-events:auto;
+}
+#videoError h1{
+    color:#49d9ff;
+    font-size:2rem;
+    text-shadow:0 0 20px cyan;
+}
+#videoError p{
+    color:#ccc;
+    font-size:1rem;
+    max-width:360px;
+}
+#videoError button{
+    margin-top:16px;
+    padding:14px 36px;
+    border:none;
+    border-radius:50px;
+    background:#00b7ff;
+    color:#fff;
+    font-size:1rem;
+    cursor:pointer;
+    box-shadow:0 0 20px cyan;
+    transition:.3s;
+}
+#videoError button:hover{
+    transform:scale(1.06);
+}
 
+@media (prefers-reduced-motion: reduce){
+    #videoOverlay,
+    #startScreen,
+    #videoError,
+    #skipBtn,
+    #enterWell,
+    #startBtn{
+        transition:none;
+    }
+}
+
+@media (max-width:480px){
+    #startScreen h1{ font-size:34px; }
+    #startScreen h2{ font-size:24px; }
+    #startScreen p{ font-size:16px; }
+    #videoOverlay h1{ font-size:2.4rem; }
+    #videoOverlay h2{ font-size:1.4rem; }
+    #skipBtn{
+        bottom:18px;
+        right:18px;
+        padding:10px 20px;
+        font-size:.85rem;
+    }
 }
