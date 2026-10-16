@@ -1,782 +1,521 @@
-/* =========================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   OFFICIAL CINEMATIC END CREDITS
-   MASTER CLOCK = assets/credits.mp3
-========================================================= */
 
 "use strict";
 
-
 /* =========================================================
-   ELEMENTS
+   VIDLYRA HALLOWEEN FEST 2026
+   SYNCHRONIZED CINEMATIC END CREDITS
 ========================================================= */
 
-const cinema =
-    document.getElementById("creditsCinema");
+const cinema = document.getElementById("creditsCinema");
+const startScreen = document.getElementById("startScreen");
+const enterButton = document.getElementById("enterButton");
+const viewport = document.getElementById("creditViewport");
+const creditRoll = document.getElementById("creditRoll");
 
-const startScreen =
-    document.getElementById("startScreen");
+const leftImageRoll = document.getElementById("leftImageRoll");
+const rightImageRoll = document.getElementById("rightImageRoll");
 
-const enterButton =
-    document.getElementById("enterButton");
+const music = document.getElementById("creditsMusic");
+const soundButton = document.getElementById("soundButton");
 
-const viewport =
-    document.getElementById("creditViewport");
-
-const creditRoll =
-    document.getElementById("creditRoll");
-
-const music =
-    document.getElementById("creditsMusic");
-
-const soundButton =
-    document.getElementById("soundButton");
-
-const particles =
-    document.getElementById("particles");
-
-const timelineProgress =
-    document.getElementById("timelineProgress");
-
-const currentTimeDisplay =
-    document.getElementById("currentTime");
-
-
-/* =========================================================
-   CONFIGURATION
-========================================================= */
+const timelineTrack = document.getElementById("timelineTrack");
+const timelineProgress = document.getElementById("timelineProgress");
+const currentTimeDisplay = document.getElementById("currentTime");
+const durationTimeDisplay = document.getElementById("durationTime");
+const particles = document.getElementById("particles");
 
 const CONFIG = {
-
-    /*
-       Your music structure ends at approximately 3:00.
-       The actual audio position remains the master clock.
-    */
-
-    duration: 180,
-
-    /*
-       These values determine the cinematic credit-roll
-       speed across the complete 3-minute experience.
-    */
-
-    rollStart: 0,
-
-    rollEnd: 180,
-
-    /*
-       Extra space before the first real credit.
-    */
-
-    openingOffset: 0
+    fallbackDuration: 180,
+    imageCount: 15,
+    volume: 0.85
 };
-
-
-/* =========================================================
-   STATE
-========================================================= */
 
 let started = false;
 let finished = false;
-
-let animationFrame = null;
-
-let lastAudioTime = 0;
-
-let rollDistance = 0;
-
+let frameId = null;
+let trackHeight = 0;
+let slotHeight = 0;
 
 /* =========================================================
-   AUDIO SETTINGS
+   AUDIO
 ========================================================= */
 
-music.volume = 0.85;
-
 music.preload = "auto";
-
+music.volume = CONFIG.volume;
 music.loop = false;
 
+function getDuration() {
+    return Number.isFinite(music.duration) && music.duration > 0
+        ? music.duration
+        : CONFIG.fallbackDuration;
+}
+
+function formatTime(seconds) {
+    seconds = Math.max(0, Math.floor(seconds || 0));
+
+    const minutes = Math.floor(seconds / 60);
+    const remainder = seconds % 60;
+
+    return `${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`;
+}
 
 /* =========================================================
    PARTICLES
 ========================================================= */
 
 function createParticles() {
-
     if (!particles) return;
 
-    const count =
-        window.innerWidth < 700
-            ? 28
-            : 55;
-
-    const fragment =
-        document.createDocumentFragment();
+    const count = window.innerWidth < 700 ? 28 : 55;
+    const fragment = document.createDocumentFragment();
 
     for (let i = 0; i < count; i++) {
+        const particle = document.createElement("span");
 
-        const particle =
-            document.createElement("span");
-
-        particle.className =
-            "particle";
-
-        particle.style.left =
-            Math.random() * 100 + "%";
-
-        particle.style.animationDuration =
-            (8 + Math.random() * 16) + "s";
-
-        particle.style.animationDelay =
-            (-Math.random() * 18) + "s";
-
-        particle.style.opacity =
-            (0.2 + Math.random() * 0.7).toFixed(2);
-
-        particle.style.transform =
-            `scale(${0.5 + Math.random() * 1.5})`;
+        particle.className = "particle";
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDuration = `${8 + Math.random() * 16}s`;
+        particle.style.animationDelay = `${-Math.random() * 18}s`;
+        particle.style.opacity = String(0.2 + Math.random() * 0.7);
 
         fragment.appendChild(particle);
     }
 
-    particles.appendChild(fragment);
+    particles.replaceChildren(fragment);
 }
 
-
 /* =========================================================
-   FORMAT TIME
+   PRELOAD ALL 30 FILES
 ========================================================= */
 
-function formatTime(seconds) {
+function preloadVisuals() {
+    for (let i = 1; i <= CONFIG.imageCount; i++) {
+        const number = String(i).padStart(2, "0");
 
-    seconds =
-        Math.max(
-            0,
-            Math.floor(seconds || 0)
-        );
-
-    const minutes =
-        Math.floor(seconds / 60);
-
-    const secs =
-        seconds % 60;
-
-    return (
-        String(minutes).padStart(2, "0") +
-        ":" +
-        String(secs).padStart(2, "0")
-    );
+        for (const side of ["left", "right"]) {
+            const image = new Image();
+            image.src = `assets/images/credits-${side}-${number}.png`;
+        }
+    }
 }
 
-
 /* =========================================================
-   CALCULATE ROLL DISTANCE
+   PREPARE ALL THREE SCROLL TRACKS
+
+   All tracks use the same total vertical distance.
+   Each side slot occupies 1/15 of that distance.
 ========================================================= */
 
-function calculateRollDistance() {
-
-    if (!creditRoll) return;
-
-    const viewportHeight =
-        window.innerHeight;
-
-    const rollHeight =
-        creditRoll.scrollHeight;
+function prepareScrollTracks() {
+    const viewportHeight = viewport.clientHeight;
 
     /*
-       Start with the first credit below the screen
-       and finish after the complete credit sequence.
-    */
+     * The credit text content determines the total journey.
+     * Side tracks are sized to exactly the same journey.
+     */
+    trackHeight = creditRoll.scrollHeight + viewportHeight;
+    slotHeight = trackHeight / CONFIG.imageCount;
 
-    rollDistance =
-        rollHeight +
-        viewportHeight;
+    for (const track of [leftImageRoll, rightImageRoll]) {
+        track.style.height = `${trackHeight}px`;
+        track.style.transform = `translate3d(0, ${viewportHeight}px, 0)`;
+
+        const slots = track.querySelectorAll(".creditSideSlot");
+
+        slots.forEach(slot => {
+            slot.style.height = `${slotHeight}px`;
+            slot.style.flex = "0 0 auto";
+        });
+    }
 
     creditRoll.style.transform =
-        "translate3d(0, 0, 0)";
+        `translate3d(0, ${viewportHeight}px, 0)`;
 }
 
+/* =========================================================
+   MASTER SCROLL POSITION
+
+   Music time controls the shared progress.
+========================================================= */
+
+function updateScrollPosition(currentTime) {
+    const duration = getDuration();
+
+    const progress = Math.min(
+        1,
+        Math.max(0, currentTime / duration)
+    );
+
+    const viewportHeight = viewport.clientHeight;
+
+    if (!trackHeight || !slotHeight) {
+        prepareScrollTracks();
+    }
+
+    /*
+     * Begin below the screen.
+     * End above the screen.
+     */
+    const y = viewportHeight - trackHeight * progress;
+
+    /*
+     * Same Y position for:
+     * 1. Center text
+     * 2. Left visual track
+     * 3. Right visual track
+     */
+    const transform = `translate3d(0, ${y}px, 0)`;
+
+    creditRoll.style.transform = transform;
+    leftImageRoll.style.transform = transform;
+    rightImageRoll.style.transform = transform;
+
+    updateTimeline(currentTime);
+}
 
 /* =========================================================
-   START EXPERIENCE
+   TIMELINE
+========================================================= */
+
+function updateTimeline(currentTime) {
+    const duration = getDuration();
+
+    const progress = Math.min(
+        1,
+        Math.max(0, currentTime / duration)
+    );
+
+    timelineProgress.style.width = `${progress * 100}%`;
+
+    currentTimeDisplay.textContent = formatTime(currentTime);
+    durationTimeDisplay.textContent = formatTime(duration);
+
+    timelineTrack.setAttribute("aria-valuemax", String(Math.round(duration)));
+    timelineTrack.setAttribute("aria-valuenow", String(Math.round(currentTime)));
+}
+
+/* =========================================================
+   SYNCHRONIZED UPDATE
+========================================================= */
+
+function updateExperience() {
+    if (!started || finished) return;
+
+    const currentTime = music.currentTime;
+
+    updateScrollPosition(currentTime);
+
+    if (music.ended || currentTime >= getDuration()) {
+        finishCredits();
+    }
+}
+
+/* =========================================================
+   ANIMATION LOOP
+
+   The animation stops when the audio pauses.
+========================================================= */
+
+function animate() {
+    frameId = null;
+
+    if (!started || finished || music.paused) return;
+
+    updateExperience();
+
+    if (!finished && !music.paused) {
+        frameId = requestAnimationFrame(animate);
+    }
+}
+
+function startAnimation() {
+    if (frameId !== null || music.paused || finished || !started) return;
+
+    frameId = requestAnimationFrame(animate);
+}
+
+function stopAnimation() {
+    if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+        frameId = null;
+    }
+}
+
+/* =========================================================
+   ENTER / START
 ========================================================= */
 
 async function startCredits() {
-
-    if (started) return;
+    if (started) {
+        if (music.paused && !finished) {
+            try {
+                await music.play();
+            } catch (error) {
+                console.warn("Audio playback could not start:", error);
+            }
+        }
+        return;
+    }
 
     started = true;
-
+    finished = false;
     enterButton.disabled = true;
-
-    /*
-       Reset everything before playback.
-    */
 
     music.currentTime = 0;
 
-    finished = false;
-
     cinema.classList.remove("finished");
-
-    creditRoll.style.transform =
-        "translate3d(0, 0, 0)";
-
-    /*
-       Show the credit viewport immediately.
-    */
-
     viewport.classList.add("active");
-
-    /*
-       Fade away the start screen.
-    */
-
     startScreen.classList.add("hidden");
 
     /*
-       Browser autoplay policy allows audio because
-       this function is triggered directly by the click.
-    */
+     * Wait for the browser to apply the visible layout
+     * before measuring the scroll tracks.
+     */
+    requestAnimationFrame(async () => {
+        prepareScrollTracks();
+        updateScrollPosition(0);
 
-    try {
-
-        await music.play();
-
-        soundButton.textContent =
-            "SOUND ON";
-
-    } catch (error) {
-
-        console.warn(
-            "Audio could not start:",
-            error
-        );
-
-        soundButton.textContent =
-            "SOUND OFF";
-    }
-
-    /*
-       Start the visual clock.
-    */
-
-    lastAudioTime =
-        music.currentTime;
-
-    animationFrame =
-        requestAnimationFrame(
-            animationLoop
-        );
+        try {
+            await music.play();
+            soundButton.textContent = music.muted ? "SOUND OFF" : "SOUND ON";
+            startAnimation();
+        } catch (error) {
+            console.warn("Audio playback could not start:", error);
+            soundButton.textContent = music.muted ? "SOUND OFF" : "SOUND READY";
+            enterButton.disabled = false;
+        }
+    });
 }
 
+enterButton.addEventListener("click", startCredits);
 
 /* =========================================================
-   ENTER BUTTON
+   SOUND ON / OFF
 ========================================================= */
 
-enterButton.addEventListener(
-    "click",
-    startCredits
-);
+soundButton.addEventListener("click", async () => {
+    if (!started) {
+        await startCredits();
+        return;
+    }
 
+    music.muted = !music.muted;
+
+    soundButton.textContent = music.muted ? "SOUND OFF" : "SOUND ON";
+
+    /*
+     * Muting does not pause the music clock or the animation.
+     * Use Space to pause and resume the entire sequence.
+     */
+});
 
 /* =========================================================
-   MASTER ANIMATION LOOP
+   PLAY / PAUSE EVENTS
 ========================================================= */
 
-function animationLoop() {
+music.addEventListener("play", () => {
+    if (!started || finished) return;
 
+    soundButton.textContent = music.muted ? "SOUND OFF" : "SOUND ON";
+    startAnimation();
+});
+
+music.addEventListener("pause", () => {
+    stopAnimation();
+
+    if (started && !finished) {
+        updateScrollPosition(music.currentTime);
+    }
+});
+
+music.addEventListener("ended", finishCredits);
+
+/* =========================================================
+   TIMELINE SEEK
+========================================================= */
+
+function seekTo(clientX) {
+    if (!started || !timelineTrack) return;
+
+    const rect = timelineTrack.getBoundingClientRect();
+    if (!rect.width) return;
+
+    const fraction = Math.max(
+        0,
+        Math.min(1, (clientX - rect.left) / rect.width)
+    );
+
+    music.currentTime = fraction * getDuration();
+
+    /*
+     * Immediately reposition every track to the same
+     * music timestamp, including when paused.
+     */
+    updateScrollPosition(music.currentTime);
+
+    if (!music.paused) startAnimation();
+}
+
+timelineTrack.addEventListener("click", event => {
+    seekTo(event.clientX);
+});
+
+timelineTrack.addEventListener("keydown", event => {
     if (!started) return;
 
-    const current =
-        music.currentTime;
+    let targetTime = music.currentTime;
+    const duration = getDuration();
 
-    /*
-       Audio is the authority.
-       Never use setTimeout for the credit timing.
-    */
-
-    updateTimeline(current);
-
-    updateCreditRoll(current);
-
-    /*
-       Detect completion through audio itself.
-    */
-
-    if (
-        !music.paused &&
-        music.ended
-    ) {
-
-        finishCredits();
-
-        return;
+    switch (event.key) {
+        case "ArrowRight":
+            targetTime += 5;
+            break;
+        case "ArrowLeft":
+            targetTime -= 5;
+            break;
+        case "Home":
+            targetTime = 0;
+            break;
+        case "End":
+            targetTime = duration;
+            break;
+        default:
+            return;
     }
 
-    /*
-       Safety fallback for files that are slightly shorter
-       or longer than exactly 180 seconds.
-    */
+    event.preventDefault();
 
-    if (
-        current >= CONFIG.duration &&
-        !music.paused
-    ) {
-
-        finishCredits();
-
-        return;
-    }
-
-    lastAudioTime =
-        current;
-
-    animationFrame =
-        requestAnimationFrame(
-            animationLoop
-        );
-}
-
+    music.currentTime = Math.max(0, Math.min(duration, targetTime));
+    updateScrollPosition(music.currentTime);
+});
 
 /* =========================================================
-   UPDATE TIMELINE
+   AUDIO TIME / METADATA
 ========================================================= */
 
-function updateTimeline(current) {
-
-    const duration =
-        music.duration &&
-        Number.isFinite(music.duration)
-            ? music.duration
-            : CONFIG.duration;
-
-    const progress =
-        Math.min(
-            1,
-            Math.max(
-                0,
-                current / duration
-            )
-        );
-
-    if (timelineProgress) {
-
-        timelineProgress.style.width =
-            `${progress * 100}%`;
+music.addEventListener("timeupdate", () => {
+    if (started && !finished) {
+        updateScrollPosition(music.currentTime);
     }
+});
 
-    if (currentTimeDisplay) {
+music.addEventListener("loadedmetadata", () => {
+    updateTimeline(music.currentTime || 0);
 
-        currentTimeDisplay.textContent =
-            formatTime(current);
+    if (started && !finished) {
+        prepareScrollTracks();
+        updateScrollPosition(music.currentTime || 0);
     }
-}
+});
 
-
-/* =========================================================
-   CREDIT ROLL
-========================================================= */
-
-function updateCreditRoll(current) {
-
-    if (!creditRoll) return;
-
-    const duration =
-        music.duration &&
-        Number.isFinite(music.duration)
-            ? music.duration
-            : CONFIG.duration;
-
-    /*
-       Normalize the actual audio time.
-    */
-
-    const progress =
-        Math.min(
-            1,
-            Math.max(
-                0,
-                current / duration
-            )
-        );
-
-    /*
-       Move the entire credit roll continuously.
-       At 0 seconds it begins below the viewport.
-       At the end it has completely passed the screen.
-    */
-
-    const viewportHeight =
-        window.innerHeight;
-
-    const totalDistance =
-        creditRoll.scrollHeight +
-        viewportHeight;
-
-    const y =
-        viewportHeight -
-        totalDistance * progress;
-
-    creditRoll.style.transform =
-        `translate3d(0, ${y}px, 0)`;
-}
-
-
-/* =========================================================
-   SOUND BUTTON
-========================================================= */
-
-soundButton.addEventListener(
-    "click",
-    async () => {
-
-        if (!started) return;
-
-        if (music.muted) {
-
-            music.muted = false;
-
-            soundButton.textContent =
-                "SOUND ON";
-
-            /*
-               If the music was paused by the browser,
-               resume it.
-            */
-
-            if (music.paused) {
-
-                try {
-                    await music.play();
-                } catch (error) {
-                    console.warn(error);
-                }
-            }
-
-        } else {
-
-            music.muted = true;
-
-            soundButton.textContent =
-                "SOUND OFF";
-        }
-    }
-);
-
-
-/* =========================================================
-   AUDIO PAUSE / RESUME
-========================================================= */
-
-music.addEventListener(
-    "play",
-    () => {
-
-        if (!started) return;
-
-        if (!animationFrame) {
-
-            animationFrame =
-                requestAnimationFrame(
-                    animationLoop
-                );
-        }
-    }
-);
-
-
-music.addEventListener(
-    "pause",
-    () => {
-
-        /*
-           Do not reset the credits.
-
-           Because the visual position is calculated from
-           music.currentTime, the credits naturally freeze
-           exactly where the music stops.
-        */
-
-        if (animationFrame) {
-
-            cancelAnimationFrame(
-                animationFrame
-            );
-
-            animationFrame = null;
-        }
-    }
-);
-
-
-/* =========================================================
-   AUDIO SEEK SUPPORT
-========================================================= */
-
-music.addEventListener(
-    "timeupdate",
-    () => {
-
-        if (!started) return;
-
-        updateTimeline(
-            music.currentTime
-        );
-
-        updateCreditRoll(
-            music.currentTime
-        );
-    }
-);
-
-
-/* =========================================================
-   AUDIO METADATA
-========================================================= */
-
-music.addEventListener(
-    "loadedmetadata",
-    () => {
-
-        /*
-           Use the real audio duration whenever available.
-        */
-
-        if (
-            Number.isFinite(music.duration) &&
-            music.duration > 0
-        ) {
-
-            CONFIG.duration =
-                music.duration;
-        }
-
-        calculateRollDistance();
-    }
-);
-
+music.addEventListener("durationchange", () => {
+    updateTimeline(music.currentTime || 0);
+});
 
 /* =========================================================
    FINISH
 ========================================================= */
 
 function finishCredits() {
-
     if (finished) return;
 
     finished = true;
 
-    if (animationFrame) {
+    stopAnimation();
 
-        cancelAnimationFrame(
-            animationFrame
-        );
+    const duration = getDuration();
 
-        animationFrame = null;
-    }
+    updateScrollPosition(duration);
+    updateTimeline(duration);
 
-    /*
-       Force the timeline to its final position.
-    */
-
-    updateTimeline(
-        music.duration || CONFIG.duration
-    );
-
-    updateCreditRoll(
-        music.duration || CONFIG.duration
-    );
-
-    /*
-       Let the final card remain visible briefly,
-       then perform the cinematic fade.
-    */
-
-    setTimeout(() => {
-
-        cinema.classList.add("finished");
-
-    }, 800);
+    cinema.classList.add("finished");
 }
 
+/* =========================================================
+   SPACE = PAUSE / RESUME
+   M = MUTE / UNMUTE
+========================================================= */
+
+document.addEventListener("keydown", async event => {
+    const target = event.target;
+
+    if (
+        target instanceof HTMLButtonElement ||
+        target instanceof HTMLInputElement
+    ) {
+        return;
+    }
+
+    if (event.code === "Space" && started && !finished) {
+        event.preventDefault();
+
+        if (music.paused) {
+            try {
+                await music.play();
+            } catch (error) {
+                console.warn("Unable to resume audio:", error);
+            }
+        } else {
+            music.pause();
+        }
+    }
+
+    if (event.key.toLowerCase() === "m" && started) {
+        music.muted = !music.muted;
+        soundButton.textContent = music.muted ? "SOUND OFF" : "SOUND ON";
+    }
+});
 
 /* =========================================================
    RESIZE
 ========================================================= */
 
-let resizeTimer = null;
+window.addEventListener("resize", () => {
+    if (!started || finished) return;
 
-window.addEventListener(
-    "resize",
-    () => {
-
-        clearTimeout(resizeTimer);
-
-        resizeTimer =
-            setTimeout(() => {
-
-                calculateRollDistance();
-
-                if (started) {
-
-                    updateCreditRoll(
-                        music.currentTime
-                    );
-                }
-
-            }, 150);
-
-    }
-);
-
+    prepareScrollTracks();
+    updateScrollPosition(music.currentTime);
+});
 
 /* =========================================================
-   PREVENT ACCIDENTAL PAGE SCROLL
+   TAB VISIBILITY
 ========================================================= */
 
-document.addEventListener(
-    "wheel",
-    event => {
+document.addEventListener("visibilitychange", () => {
+    if (!started || finished) return;
 
-        event.preventDefault();
+    if (document.visibilityState === "visible") {
+        prepareScrollTracks();
+        updateScrollPosition(music.currentTime);
 
-    },
-    {
-        passive: false
+        if (!music.paused) startAnimation();
     }
-);
-
-
-/* =========================================================
-   KEYBOARD CONTROL
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    async event => {
-
-        /*
-           Space = pause/resume
-        */
-
-        if (
-            event.code === "Space" &&
-            started
-        ) {
-
-            event.preventDefault();
-
-            if (music.paused) {
-
-                try {
-                    await music.play();
-                } catch (error) {
-                    console.warn(error);
-                }
-
-            } else {
-
-                music.pause();
-            }
-        }
-
-        /*
-           M = mute
-        */
-
-        if (
-            event.key.toLowerCase() === "m" &&
-            started
-        ) {
-
-            music.muted =
-                !music.muted;
-
-            soundButton.textContent =
-                music.muted
-                    ? "SOUND OFF"
-                    : "SOUND ON";
-        }
-    }
-);
-
+});
 
 /* =========================================================
    INITIALIZATION
 ========================================================= */
 
 createParticles();
-
-calculateRollDistance();
-
+preloadVisuals();
 updateTimeline(0);
 
-updateCreditRoll(0);
-
-
-/* =========================================================
-   PAGE VISIBILITY
-========================================================= */
-
-document.addEventListener(
-    "visibilitychange",
-    () => {
-
-        if (!started) return;
-
-        /*
-           We deliberately do not create another timer.
-
-           Audio remains the source of truth.
-        */
-
-        if (
-            document.visibilityState ===
-            "visible"
-        ) {
-
-            updateTimeline(
-                music.currentTime
-            );
-
-            updateCreditRoll(
-                music.currentTime
-            );
-        }
-    }
-);
-
-
-/* =========================================================
-   DEBUG HELPER
-   Remove this section later if desired.
-========================================================= */
-
+/*
+ * Expose simple controls for testing in the browser console.
+ */
 window.VidlyraCredits = {
-
-    getTime() {
-        return music.currentTime;
+    play: () => music.play(),
+    pause: () => music.pause(),
+    seek: seconds => {
+        music.currentTime = Math.max(0, Math.min(getDuration(), seconds));
+        updateScrollPosition(music.currentTime);
     },
-
-    getDuration() {
-        return music.duration;
-    },
-
-    pause() {
-        music.pause();
-    },
-
-    play() {
-        return music.play();
-    },
-
-    mute() {
+    mute: () => {
         music.muted = true;
+        soundButton.textContent = "SOUND OFF";
     },
-
-    unmute() {
+    unmute: () => {
         music.muted = false;
+        soundButton.textContent = "SOUND ON";
     }
 };
