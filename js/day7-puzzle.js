@@ -9,15 +9,15 @@ const TOTAL_TILES = GRID_SIZE * GRID_SIZE;
 const PUZZLE_IMAGES = {
   mansion: {
     title: "Haunted Mansion",
-    path: "images/halloween-puzzle.png"
+    path: "assets/images/halloween-puzzle.png"
   },
   pumpkin: {
     title: "Enchanted Pumpkin",
-    path: "images/pumpkin-puzzle.png"
+    path: "assets/images/pumpkin-puzzle.png"
   },
   graveyard: {
     title: "Haunted Graveyard",
-    path: "images/graveyard-puzzle.png"
+    path: "assets/images/graveyard-puzzle.png"
   }
 };
 
