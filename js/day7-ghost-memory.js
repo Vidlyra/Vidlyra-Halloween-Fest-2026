@@ -3,7 +3,7 @@ import { supabase } from "./supabase.js";
 
 const FESTIVAL = "halloween_2026";
 const PAIR_COUNT = 8;
-const NEXT_PAGE = "day7-final-video.html";
+const NEXT_PAGE = "day7-video.html";
 
 const symbols = ["👻", "🎃", "🦇", "🕷️", "🕸️", "🧙", "💀", "🦉"];
 
