@@ -2,430 +2,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#05030b">
-    <meta name="description" content="Explore the haunted adventure map of Vidlyra Halloween Fest 2026. Seven chapters. One mysterious journey.">
-    <title>Haunted Adventure Map | VIDLYRA HALLOWEEN FEST 2026</title>
-
-    <link rel="stylesheet" href="css/map.css">
-    <script src="js/map.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080711">
+  <meta name="description" content="Explore the seven chapters of Vidlyra Halloween Fest 2026.">
+  <title>Haunted Realm | Vidlyra Halloween Fest 2026</title>
+  <link rel="stylesheet" href="css/map.css">
+  <script type="module" src="js/map.js"></script>
 </head>
-
 <body>
-    <div class="world-background" aria-hidden="true">
-        <div class="background-image"></div>
-        <div class="background-overlay"></div>
-        <div class="purple-atmosphere"></div>
-        <div class="orange-atmosphere"></div>
+  <div class="world" aria-hidden="true">
+    <div class="moon"></div>
+    <div class="mountain mountain-one"></div>
+    <div class="mountain mountain-two"></div>
+    <div class="castle">♜</div>
+    <div class="world-fog"></div>
+    <div id="embers"></div>
+    <div class="stars"></div>
+  </div>
 
-        <div class="moon"></div>
+  <header class="topbar">
+    <a href="home.html" class="brand">
+      <span class="brand-mark">V</span>
+      <span><strong>VIDLYRA</strong><small>HALLOWEEN FEST 2026</small></span>
+    </a>
+    <span class="world-status"><i></i> THE VEIL IS OPEN</span>
+    <a href="home.html" class="back-link">← HOME</a>
+  </header>
 
-        <div class="cloud cloud-one"></div>
-        <div class="cloud cloud-two"></div>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">✦ YOUR ANIME SUPERNATURAL ADVENTURE ✦</p>
+      <h1>HAUNTED <span>REALM</span></h1>
+      <p class="hero-copy">
+        Seven chapters. Seven mysteries.<br>
+        Your journey beyond the veil begins here.
+      </p>
 
-        <div class="castle-background"></div>
+      <div class="stats">
+        <div><strong>07</strong><span>CHAPTERS</span></div>
+        <div><strong id="completedCount">00</strong><span>COMPLETED</span></div>
+        <div><strong id="percentCount">0%</strong><span>PROGRESS</span></div>
+      </div>
+    </section>
 
-        <div class="tree tree-left"></div>
-        <div class="tree tree-right"></div>
+    <section class="quest-section">
+      <div class="section-heading">
+        <span></span><h2>THE FORBIDDEN JOURNEY</h2><span></span>
+      </div>
 
-        <div class="fog fog-back"></div>
-        <div class="fog fog-middle"></div>
-        <div class="fog fog-front"></div>
+      <div class="map-layout">
+        <aside class="route-panel">
+          <p class="route-label">YOUR QUEST</p>
+          <h3>Explore the unknown.</h3>
+          <p>Complete each chapter to reveal the next destination.</p>
+          <div class="mini-route">
+            <span>01</span><i></i><span>02</span><i></i><span>03</span>
+            <i></i><span>04</span><i></i><span>05</span><i></i>
+            <span>06</span><i></i><span>07</span>
+          </div>
+          <div class="reward-note">
+            <span class="reward-icon">✧</span>
+            <div><strong>FINAL REWARD</strong><small>Complete the festival to unlock your avatar reward.</small></div>
+          </div>
+          <div class="progress-heading">
+            <span>FESTIVAL PROGRESS</span><strong id="progressText">0 / 7</strong>
+          </div>
+          <div class="progress-track" id="progressBar"
+               role="progressbar" aria-label="Festival progress"
+               aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
+            <div id="progressFill"></div>
+          </div>
+          <p class="sync-status" id="syncStatus" role="status">Connecting to the realm...</p>
+        </aside>
 
-        <div class="embers" id="embers"></div>
-        <div class="vignette"></div>
-        <div class="film-grain"></div>
-    </div>
+        <div class="chapters" id="chapterList">
+          <article class="chapter" data-day="1">
+            <div class="node"><span>01</span><b>🎃</b></div>
+            <div class="chapter-card">
+              <div class="card-meta"><span>CHAPTER 01</span><span class="chapter-state">LOADING</span></div>
+              <h3>The Haunted Beginning</h3>
+              <p>The first signal calls you into the mysterious world.</p>
+              <div class="card-bottom"><span>THE FORGOTTEN GATE</span><a href="day1-video.html" class="chapter-button">ENTER ↗</a></div>
+            </div>
+          </article>
 
-    <header class="topbar">
-        <a class="brand" href="home.html" aria-label="Back to Vidlyra home">
-            <span class="brand-icon">V</span>
-            <span class="brand-text">
-                <strong>VIDLYRA</strong>
-                <small>HALLOWEEN FEST 2026</small>
-            </span>
-        </a>
+          <article class="chapter" data-day="2">
+            <div class="node"><span>02</span><b>🕯️</b></div>
+            <div class="chapter-card">
+              <div class="card-meta"><span>CHAPTER 02</span><span class="chapter-state">LOADING</span></div>
+              <h3>The Haunted Well</h3>
+              <p>A forgotten well whispers from beneath the moonlight.</p>
+              <div class="card-bottom"><span>THE CURSED WATERS</span><a href="day2-video.html" class="chapter-button">ENTER ↗</a></div>
+            </div>
+          </article>
 
-        <div class="live-status">
-            <span class="status-dot"></span>
-            THE VEIL IS OPEN
+          <article class="chapter" data-day="3">
+            <div class="node"><span>03</span><b>👻</b></div>
+            <div class="chapter-card">
+              <div class="card-meta"><span>CHAPTER 03</span><span class="chapter-state">LOADING</span></div>
+              <h3>Ghostly Shadows</h3>
+              <p>Something watches from the edge of the forest.</p>
+              <div class="card-bottom"><span>SHADOW TERRITORY</span><a href="day3-video.html" class="chapter-button">ENTER ↗</a></div>
+            </div>
+          </article>
+
+          <article class="chapter" data-day="4">
+            <div class="node"><span>04</span><b>🧙</b></div>
+            <div class="chapter-card">
+              <div class="card-meta"><span>CHAPTER 04</span><span class="chapter-state">LOADING</span></div>
+              <h3>The Witch's Domain</h3>
+              <p>Ancient magic awakens in the forbidden forest.</p>
+              <div class="card-bottom"><span>THE WITCHING WOODS</span><a href="day4-video.html" class="chapter-button">ENTER ↗</a></div>
+            </div>
+          </article>
+
+          <article class="chapter" data-day="5">
+            <div class="node"><span>05</span><b>⚔️</b></div>
+            <div class="chapter-card">
+              <div class="card-meta"><span>CHAPTER 05</span><span class="chapter-state">LOADING</span></div>
+              <h3>The Haunted Cemetery</h3>
+              <p>Restore the lanterns and face the Ghost King.</p>
+              <div class="card-bottom"><span>THE LOST GRAVEYARD</span><a href="day5-video.html" class="chapter-button">ENTER ↗</a></div>
+            </div>
+          </article>
+
+          <article class="chapter" data-day="6">
+            <div class="node"><span>06</span><b>🏚️</b></div>
+            <div class="chapter-card">
+              <div class="card-meta"><span>CHAPTER 06</span><span class="chapter-state">LOADING</span></div>
+              <h3>The Haunted Mansion</h3>
+              <p>Enter the abandoned mansion and uncover its secret.</p>
+              <div class="card-bottom"><span>THE FORGOTTEN HOUSE</span><a href="day6-video.html" class="chapter-button">ENTER ↗</a></div>
+            </div>
+          </article>
+
+          <article class="chapter" data-day="7">
+            <div class="node"><span>07</span><b>🌑</b></div>
+            <div class="chapter-card">
+              <div class="card-meta"><span>CHAPTER 07</span><span class="chapter-state">LOADING</span></div>
+              <h3>The Final Mystery</h3>
+              <p>One last mystery stands between you and the finale.</p>
+              <div class="card-bottom"><span>BEYOND THE VEIL</span><a href="day7-video.html" class="chapter-button">ENTER ↗</a></div>
+            </div>
+          </article>
         </div>
-
-        <a class="back-home" href="home.html">
-            <span aria-hidden="true">←</span>
-            <span>HAUNTED REALM</span>
-        </a>
-    </header>
-
-    <main>
-        <section class="intro">
-            <div class="eyebrow">
-                <span></span>
-                THE FORBIDDEN JOURNEY
-                <span></span>
-            </div>
-
-            <h1>
-                HAUNTED
-                <span>ADVENTURE MAP</span>
-            </h1>
-
-            <p class="intro-description">
-                Seven chapters. Seven mysteries.
-                One journey beyond the veil.
-            </p>
-
-            <div class="intro-divider">
-                <span></span>
-                <i>✦</i>
-                <span></span>
-            </div>
-
-            <div class="map-stats">
-                <div class="stat">
-                    <strong>07</strong>
-                    <span>CHAPTERS</span>
-                </div>
-
-                <div class="stat-divider"></div>
-
-                <div class="stat">
-                    <strong>13</strong>
-                    <span>QUESTS</span>
-                </div>
-
-                <div class="stat-divider"></div>
-
-                <div class="stat">
-                    <strong id="completedCount">00</strong>
-                    <span>COMPLETED</span>
-                </div>
-            </div>
-        </section>
-
-        <section class="journey-section" aria-label="Seven-day Halloween adventure">
-            <div class="journey-heading">
-                <span class="heading-line"></span>
-                <span>SELECT YOUR DESTINATION</span>
-                <span class="heading-line"></span>
-            </div>
-
-            <div class="journey-map">
-                <div class="journey-path" aria-hidden="true"></div>
-
-                <!-- DAY 1 -->
-                <article class="day-row day-left" data-day="1">
-                    <div class="node-marker">
-                        <span class="node-number">01</span>
-                        <span class="node-symbol">🎃</span>
-                    </div>
-
-                    <div class="chapter-card">
-                        <div class="card-topline">
-                            <span class="chapter-label">CHAPTER 01</span>
-                            <span class="chapter-state state-open">
-                                <span></span> OPEN
-                            </span>
-                        </div>
-
-                        <h2>The Haunted Beginning</h2>
-
-                        <p>
-                            Enter the first mysterious location
-                            and begin your Halloween journey.
-                        </p>
-
-                        <div class="card-bottom">
-                            <span class="chapter-destination">
-                                <span>⌖</span> UNKNOWN LOCATION
-                            </span>
-
-                            <a class="chapter-button" href="day1-video.html">
-                                ENTER CHAPTER <span>↗</span>
-                            </a>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- DAY 2 -->
-                <article class="day-row day-right" data-day="2">
-                    <div class="node-marker">
-                        <span class="node-number">02</span>
-                        <span class="node-symbol">🕯️</span>
-                    </div>
-
-                    <div class="chapter-card">
-                        <div class="card-topline">
-                            <span class="chapter-label">CHAPTER 02</span>
-                            <span class="chapter-state state-open">
-                                <span></span> OPEN
-                            </span>
-                        </div>
-
-                        <h2>The Cursed Path</h2>
-
-                        <p>
-                            The journey continues deeper
-                            into the unknown.
-                        </p>
-
-                        <div class="card-bottom">
-                            <span class="chapter-destination">
-                                <span>⌖</span> THE DARK TRAIL
-                            </span>
-
-                            <a class="chapter-button" href="day2-video.html">
-                                ENTER CHAPTER <span>↗</span>
-                            </a>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- DAY 3 -->
-                <article class="day-row day-left" data-day="3">
-                    <div class="node-marker">
-                        <span class="node-number">03</span>
-                        <span class="node-symbol">👻</span>
-                    </div>
-
-                    <div class="chapter-card">
-                        <div class="card-topline">
-                            <span class="chapter-label">CHAPTER 03</span>
-                            <span class="chapter-state state-open">
-                                <span></span> OPEN
-                            </span>
-                        </div>
-
-                        <h2>Ghostly Shadows</h2>
-
-                        <p>
-                            Something is watching from
-                            beyond the darkness.
-                        </p>
-
-                        <div class="card-bottom">
-                            <span class="chapter-destination">
-                                <span>⌖</span> SHADOW TERRITORY
-                            </span>
-
-                            <a class="chapter-button" href="day3-video.html">
-                                ENTER CHAPTER <span>↗</span>
-                            </a>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- DAY 4 -->
-                <article class="day-row day-right" data-day="4">
-                    <div class="node-marker">
-                        <span class="node-number">04</span>
-                        <span class="node-symbol">🧙</span>
-                    </div>
-
-                    <div class="chapter-card">
-                        <div class="card-topline">
-                            <span class="chapter-label">CHAPTER 04</span>
-                            <span class="chapter-state state-open">
-                                <span></span> OPEN
-                            </span>
-                        </div>
-
-                        <h2>The Witch's Domain</h2>
-
-                        <p>
-                            A forbidden power awakens
-                            within the forest.
-                        </p>
-
-                        <div class="card-bottom">
-                            <span class="chapter-destination">
-                                <span>⌖</span> FORBIDDEN FOREST
-                            </span>
-
-                            <a class="chapter-button" href="day4-video.html">
-                                ENTER CHAPTER <span>↗</span>
-                            </a>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- DAY 5 -->
-                <article class="day-row day-left" data-day="5">
-                    <div class="node-marker">
-                        <span class="node-number">05</span>
-                        <span class="node-symbol">⚔️</span>
-                    </div>
-
-                    <div class="chapter-card">
-                        <div class="card-topline">
-                            <span class="chapter-label">CHAPTER 05</span>
-                            <span class="chapter-state state-open">
-                                <span></span> OPEN
-                            </span>
-                        </div>
-
-                        <h2>The Haunted Cemetery</h2>
-
-                        <p>
-                            Fight through the cemetery, restore
-                            the lanterns and defeat the Ghost King.
-                        </p>
-
-                        <div class="card-bottom">
-                            <span class="chapter-destination">
-                                <span>⌖</span> THE LOST GRAVEYARD
-                            </span>
-
-                            <a class="chapter-button" href="day5-epic-game.html">
-                                PLAY CHAPTER <span>↗</span>
-                            </a>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- DAY 6 -->
-                <article class="day-row day-right" data-day="6">
-                    <div class="node-marker">
-                        <span class="node-number">06</span>
-                        <span class="node-symbol">🏚️</span>
-                    </div>
-
-                    <div class="chapter-card">
-                        <div class="card-topline">
-                            <span class="chapter-label">CHAPTER 06</span>
-                            <span class="chapter-state state-open">
-                                <span></span> OPEN
-                            </span>
-                        </div>
-
-                        <h2>The Haunted Mansion</h2>
-
-                        <p>
-                            The portal opens. Enter the mansion
-                            and discover what waits inside.
-                        </p>
-
-                        <div class="card-bottom">
-                            <span class="chapter-destination">
-                                <span>⌖</span> THE FORGOTTEN HOUSE
-                            </span>
-
-                            <a class="chapter-button" href="day6-video.html">
-                                ENTER CHAPTER <span>↗</span>
-                            </a>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- DAY 7 -->
-                <article class="day-row day-left" data-day="7">
-                    <div class="node-marker">
-                        <span class="node-number">07</span>
-                        <span class="node-symbol">🌑</span>
-                    </div>
-
-                    <div class="chapter-card">
-                        <div class="card-topline">
-                            <span class="chapter-label">CHAPTER 07</span>
-                            <span class="chapter-state state-open">
-                                <span></span> OPEN
-                            </span>
-                        </div>
-
-                        <h2>The Final Mystery</h2>
-
-                        <p>
-                            The final chapter begins.
-                            One last secret remains.
-                        </p>
-
-                        <div class="card-bottom">
-                            <span class="chapter-destination">
-                                <span>⌖</span> BEYOND THE VEIL
-                            </span>
-
-                            <a class="chapter-button" href="day7-video.html">
-                                ENTER CHAPTER <span>↗</span>
-                            </a>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- FINALE -->
-                <article class="day-row day-finale" data-finale="true">
-                    <div class="node-marker finale-marker">
-                        <span class="node-symbol">🎬</span>
-                    </div>
-
-                    <div class="chapter-card finale-card">
-                        <div class="card-topline">
-                            <span class="chapter-label">THE FINALE</span>
-                            <span class="chapter-state state-finale">
-                                FINAL DESTINATION
-                            </span>
-                        </div>
-
-                        <h2>End Credits</h2>
-
-                        <p>
-                            The Halloween journey comes to an end...
-                            but perhaps something remains.
-                        </p>
-
-                        <div class="card-bottom">
-                            <span class="chapter-destination">
-                                <span>✦</span> UNTIL WE MEET AGAIN
-                            </span>
-
-                            <a class="chapter-button" href="end-credits.html">
-                                WATCH FINALE <span>↗</span>
-                            </a>
-                        </div>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <section class="journey-progress" aria-label="Journey progress">
-            <div class="progress-top">
-                <span>YOUR JOURNEY</span>
-                <span id="progressText">0 OF 7 CHAPTERS COMPLETE</span>
-            </div>
-
-            <div
-                class="progress-track"
-                role="progressbar"
-                aria-label="Completed chapters"
-                aria-valuemin="0"
-                aria-valuemax="7"
-                aria-valuenow="0"
-                id="progressBar"
-            >
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-
-            <button class="reset-progress" id="resetProgress" type="button">
-                RESET CHAPTER PROGRESS
-            </button>
-        </section>
-    </main>
-
-    <footer class="footer">
-        <a href="home.html" class="footer-brand">VIDLYRA</a>
-
-        <p>BEYOND THE VEIL · HALLOWEEN FEST 2026</p>
-
-        <span>© 2026 VIDLYRA STUDIO</span>
-    </footer>
-
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-    <noscript>
-        <p class="noscript-message">
-            JavaScript is disabled. Chapter links will still work,
-            but animated effects and progress tracking will be unavailable.
-        </p>
-    </noscript>
+      </div>
+    </section>
+
+    <section class="finale" id="finaleCard">
+      <span class="finale-symbol">✦</span>
+      <p class="eyebrow">THE FINAL DESTINATION</p>
+      <h2>Beyond the Veil</h2>
+      <p>Complete all seven chapters to reveal your festival finale.</p>
+      <a class="chapter-button finale-button" id="finaleLink" href="end-credits.html">WATCH FINALE ↗</a>
+      <p class="sync-status" id="rewardStatus">Your avatar reward awaits your completion.</p>
+    </section>
+  </main>
+
+  <footer><strong>VIDLYRA</strong><span>BEYOND THE VEIL · HALLOWEEN FEST 2026</span></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
