@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070D">
+  <title>Ghost Memory Match | Vidlyra Halloween Fest</title>
+  <link rel="stylesheet" href="css/day7-ghost-memory.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="map.html">VIDLYRA <small>STORY WORKS</small></a>
+      <span class="day-label">DAY 7 · GAME 3</span>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">THE SPIRITS REMEMBER</p>
+      <h1>GHOST <span>MEMORY</span></h1>
+      <p>Find every matching pair hidden in the haunted cards.</p>
+    </section>
+
+    <section class="stats">
+      <div><span>MATCHES</span><strong id="matches">0 / 8</strong></div>
+      <div><span>MOVES</span><strong id="moves">0</strong></div>
+      <div><span>TIME</span><strong id="timer">00:00</strong></div>
+    </section>
+
+    <section class="game-shell">
+      <div id="board" class="board" aria-label="Ghost memory cards"></div>
+
+      <div id="overlay" class="overlay">
+        <div class="overlay-card">
+          <div class="big-icon">👻</div>
+          <h2 id="overlayTitle">READY, SPIRIT HUNTER?</h2>
+          <p id="overlayText">Match all eight pairs to unlock the final Halloween video.</p>
+          <button id="startBtn" class="primary-btn">START MEMORY GAME</button>
+        </div>
+      </div>
+    </section>
+
+    <button id="restartBtn" class="secondary-btn">RESTART GAME</button>
+    <p id="status" class="status" role="status">Checking festival progress…</p>
+
+    <footer>© 2026 VIDLYRA STORY WORKS · HALLOWEEN FEST</footer>
+  </main>
+
+  <script type="module" src="js/day7-ghost-memory.js"></script>
+</body>
+</html>
