@@ -1,415 +1,342 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#030303">
 
 <title>Login | Vidlyra Halloween Fest 2026</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+:root {
+    --orange: #ff6b22;
+    --orange-light: #ff9a4d;
+    --bg: #030303;
+    --text-muted: rgba(255,255,255,.48);
 }
 
-:root{
-    --orange:#ff6b22;
-    --orange2:#ff9a4d;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-    min-height:100vh;
-    overflow:hidden;
-    font-family:Inter,Arial,sans-serif;
-    color:#fff;
-    background:#030303;
+html {
+    min-height: 100%;
 }
 
-/* BACKGROUND */
+body {
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow-x: hidden;
+    font-family: "Inter", Arial, sans-serif;
+    color: #fff;
+    background: var(--bg);
+}
 
-.background{
-    position:fixed;
-    inset:0;
-
+.background {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
     background:
-        radial-gradient(
-            circle at 50% 45%,
-            rgba(255,91,25,.16),
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 10% 100%,
-            rgba(255,60,10,.09),
-            transparent 30%
-        ),
+        radial-gradient(circle at 50% 45%, rgba(255,91,25,.16), transparent 28%),
+        radial-gradient(circle at 10% 100%, rgba(255,60,10,.09), transparent 30%),
         #030303;
 }
 
-.background::after{
-    content:"";
-    position:absolute;
-    inset:0;
-
-    background:
-        linear-gradient(
-            115deg,
-            transparent 20%,
-            rgba(255,100,30,.025),
-            transparent 80%
-        );
+.background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        115deg,
+        transparent 20%,
+        rgba(255,100,30,.025),
+        transparent 80%
+    );
 }
 
-/* PARTICLES */
-
-.particles{
-    position:absolute;
-    inset:0;
+.particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
 }
 
-.particle{
-    position:absolute;
-
-    width:2px;
-    height:2px;
-
-    border-radius:50%;
-
-    background:#ff7b35;
-
-    box-shadow:
-        0 0 10px #ff6b22;
-
-    animation:float linear infinite;
+.particle {
+    position: absolute;
+    bottom: -10px;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: var(--orange-light);
+    box-shadow: 0 0 10px var(--orange);
+    animation: float linear infinite;
 }
 
-@keyframes float{
-    from{
-        transform:translateY(105vh);
-        opacity:0;
+@keyframes float {
+    from {
+        transform: translateY(0);
+        opacity: 0;
     }
-
-    15%{
-        opacity:.8;
+    15% {
+        opacity: .8;
     }
-
-    85%{
-        opacity:.8;
+    85% {
+        opacity: .7;
     }
-
-    to{
-        transform:translateY(-10vh);
-        opacity:0;
+    to {
+        transform: translateY(-110vh);
+        opacity: 0;
     }
 }
 
-/* HEADER */
-
-.topbar{
-    position:fixed;
-
-    top:0;
-    left:0;
-
-    width:100%;
-
-    padding:24px 34px;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    z-index:10;
+.topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 24px 34px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 2;
 }
 
-.logo{
-    font-size:17px;
-    font-weight:900;
-    letter-spacing:5px;
+.logo {
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: white;
+    text-decoration: none;
 }
 
-.logo span{
-    color:var(--orange);
+.logo span {
+    color: var(--orange);
 }
 
-.event{
-    color:rgba(255,255,255,.4);
-
-    font-size:9px;
-    font-weight:800;
-
-    letter-spacing:3px;
+.event {
+    color: rgba(255,255,255,.4);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 3px;
 }
 
-/* PAGE */
-
-.page{
-    position:relative;
-    z-index:5;
-
-    min-height:100vh;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    padding:80px 20px;
+.page {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 20px 75px;
 }
 
-/* LOGIN CARD */
-
-.card{
-    width:min(430px,100%);
-
-    padding:34px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(30,30,30,.88),
-            rgba(7,7,7,.9)
-        );
-
-    border:1px solid rgba(255,255,255,.11);
-
-    backdrop-filter:blur(25px);
-
+.card {
+    width: min(430px, 100%);
+    padding: 34px;
+    position: relative;
+    background: linear-gradient(
+        145deg,
+        rgba(30,30,30,.91),
+        rgba(7,7,7,.94)
+    );
+    border: 1px solid rgba(255,255,255,.11);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
     box-shadow:
         0 30px 90px rgba(0,0,0,.65),
         0 0 70px rgba(255,70,20,.07);
-
-    position:relative;
 }
 
-.card::before{
-    content:"";
-
-    position:absolute;
-
-    top:-1px;
-    left:15%;
-
-    width:70%;
-    height:1px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            var(--orange),
-            transparent
-        );
+.card::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 15%;
+    width: 70%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--orange),
+        transparent
+    );
 }
 
-.badge{
-    display:inline-block;
-
-    padding:7px 10px;
-
-    border:1px solid rgba(255,100,40,.25);
-
-    color:var(--orange2);
-
-    font-size:8px;
-    font-weight:900;
-
-    letter-spacing:2px;
+.badge {
+    display: inline-block;
+    padding: 7px 10px;
+    border: 1px solid rgba(255,100,40,.25);
+    color: var(--orange-light);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 2px;
 }
 
-h1{
-    margin-top:18px;
-
-    font-size:34px;
-
-    line-height:1;
-
-    letter-spacing:-1px;
-
-    font-weight:900;
+h1 {
+    margin-top: 20px;
+    font-size: clamp(29px, 6vw, 36px);
+    line-height: 1.12;
+    letter-spacing: -1.5px;
+    font-weight: 900;
 }
 
-.subtitle{
-    margin-top:10px;
-
-    color:rgba(255,255,255,.4);
-
-    font-size:11px;
-
-    line-height:1.6;
+.subtitle {
+    margin-top: 12px;
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.8;
 }
 
-/* FORM */
-
-form{
-    margin-top:28px;
+form {
+    margin-top: 28px;
 }
 
-.field{
-    margin-bottom:18px;
+.field {
+    margin-bottom: 18px;
 }
 
-label{
-    display:block;
-
-    margin-bottom:7px;
-
-    color:rgba(255,255,255,.5);
-
-    font-size:9px;
-    font-weight:800;
-
-    letter-spacing:2px;
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,.58);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 2px;
 }
 
-input{
-    width:100%;
-    height:50px;
-
-    padding:0 14px;
-
-    outline:none;
-
-    border:1px solid rgba(255,255,255,.09);
-
-    background:rgba(0,0,0,.45);
-
-    color:#fff;
-
-    font-family:inherit;
-
-    font-size:12px;
-
-    transition:.25s;
+input {
+    width: 100%;
+    height: 50px;
+    padding: 0 14px;
+    outline: none;
+    border: 1px solid rgba(255,255,255,.11);
+    border-radius: 2px;
+    background: rgba(0,0,0,.48);
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+    transition: border-color .2s, box-shadow .2s;
 }
 
-input:focus{
-    border-color:rgba(255,107,34,.65);
-
-    box-shadow:
-        0 0 0 3px rgba(255,107,34,.07);
+input:focus {
+    border-color: rgba(255,107,34,.8);
+    box-shadow: 0 0 0 3px rgba(255,107,34,.08);
 }
 
-input::placeholder{
-    color:rgba(255,255,255,.2);
+input::placeholder {
+    color: rgba(255,255,255,.25);
 }
 
-/* BUTTON */
-
-.login-btn{
-    width:100%;
-    height:52px;
-
-    margin-top:5px;
-
-    border:0;
-
-    background:
-        linear-gradient(
-            110deg,
-            #ff5a16,
-            #ff8738
-        );
-
-    color:#080808;
-
-    font-family:inherit;
-
-    font-size:10px;
-    font-weight:900;
-
-    letter-spacing:3px;
-
-    cursor:pointer;
-
-    transition:.25s;
+.login-btn {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 5px;
+    padding: 14px;
+    border: 0;
+    border-radius: 2px;
+    background: linear-gradient(110deg, #ff5a16, #ff8738);
+    color: #080808;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s, opacity .2s;
 }
 
-.login-btn:hover{
-    transform:translateY(-2px);
-
-    box-shadow:
-        0 12px 35px rgba(255,80,20,.22);
+.login-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(255,80,20,.22);
 }
 
-/* MESSAGE */
-
-#message{
-    min-height:18px;
-
-    margin-top:14px;
-
-    text-align:center;
-
-    font-size:10px;
-
-    color:var(--orange2);
+.login-btn:disabled {
+    opacity: .65;
+    cursor: wait;
 }
 
-/* SIGNUP */
-
-.signup{
-    margin-top:24px;
-
-    padding-top:20px;
-
-    border-top:
-        1px solid rgba(255,255,255,.07);
-
-    text-align:center;
-
-    color:rgba(255,255,255,.35);
-
-    font-size:10px;
+#message {
+    min-height: 18px;
+    margin-top: 14px;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    color: var(--orange-light);
 }
 
-.signup a{
-    color:#ff8738;
-
-    text-decoration:none;
-
-    font-weight:800;
+.signup {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,.07);
+    text-align: center;
+    color: rgba(255,255,255,.45);
+    font-size: 11px;
 }
 
-/* FOOTER */
-
-.footer{
-    position:fixed;
-
-    bottom:18px;
-
-    width:100%;
-
-    text-align:center;
-
-    color:rgba(255,255,255,.18);
-
-    font-size:8px;
-
-    letter-spacing:3px;
-
-    z-index:10;
+.signup a {
+    color: #ff8738;
+    text-decoration: none;
+    font-weight: 800;
 }
 
-/* MOBILE */
+.signup a:hover {
+    text-decoration: underline;
+}
 
-@media(max-width:500px){
+.footer {
+    position: absolute;
+    bottom: 18px;
+    left: 0;
+    width: 100%;
+    padding: 0 12px;
+    text-align: center;
+    color: rgba(255,255,255,.23);
+    font-size: 8px;
+    letter-spacing: 2px;
+    z-index: 2;
+}
 
-    .topbar{
-        padding:20px;
+@media (max-width: 500px) {
+    .topbar {
+        padding: 22px 20px;
     }
 
-    .event{
-        display:none;
+    .logo {
+        font-size: 15px;
+        letter-spacing: 4px;
     }
 
-    .card{
-        padding:27px 21px;
+    .event {
+        display: none;
     }
 
-    h1{
-        font-size:29px;
+    .page {
+        padding: 95px 16px 75px;
+    }
+
+    .card {
+        padding: 28px 22px;
+    }
+
+    .footer {
+        font-size: 7px;
+        letter-spacing: 1.5px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
     }
 }
 </style>
@@ -417,231 +344,161 @@ input::placeholder{
 
 <body>
 
-<div class="background">
-
-    <div
-        class="particles"
-        id="particles">
-    </div>
-
+<div class="background" aria-hidden="true">
+    <div class="particles" id="particles"></div>
 </div>
 
-
 <header class="topbar">
-
-    <div class="logo">
+    <a class="logo" href="./index.html" aria-label="Vidlyra home">
         VID<span>LYRA</span>
-    </div>
-
-    <div class="event">
-        HALLOWEEN FEST 2026
-    </div>
-
+    </a>
+    <div class="event">HALLOWEEN FEST 2026</div>
 </header>
 
-
 <main class="page">
-
     <section class="card">
+        <div class="badge">HALLOWEEN FEST 2026</div>
 
-        <div class="badge">
-            HALLOWEEN FEST 2026
-        </div>
-
-        <h1>
-            WELCOME
-            BACK.
-        </h1>
+        <h1>WELCOME<br>BACK.</h1>
 
         <p class="subtitle">
             Sign in to continue your Vidlyra journey
             and access your festival progress.
         </p>
 
-
         <form id="loginForm">
-
             <div class="field">
-
-                <label for="email">
-                    EMAIL ADDRESS
-                </label>
-
+                <label for="email">EMAIL ADDRESS</label>
                 <input
                     id="email"
+                    name="email"
                     type="email"
                     placeholder="you@example.com"
                     autocomplete="email"
                     required
                 >
-
             </div>
 
-
             <div class="field">
-
-                <label for="password">
-                    PASSWORD
-                </label>
-
+                <label for="password">PASSWORD</label>
                 <input
                     id="password"
+                    name="password"
                     type="password"
                     placeholder="Your password"
                     autocomplete="current-password"
                     required
                 >
-
             </div>
 
-
-            <button
-                class="login-btn"
-                type="submit"
-            >
+            <button class="login-btn" id="loginButton" type="submit">
                 ENTER VIDLYRA
             </button>
-
         </form>
 
-
-        <div id="message"></div>
-
+        <div id="message" role="status" aria-live="polite"></div>
 
         <div class="signup">
-
             New to Vidlyra?
-
-            <a href="signup.html">
-                Create an account
-            </a>
-
+            <a href="./signup.html">Create an account</a>
         </div>
-
     </section>
-
 </main>
 
-
-<div class="footer">
+<footer class="footer">
     VIDLYRA • WHERE IMAGINATION KNOWS NO BOUNDARIES
-</div>
-
+</footer>
 
 <script>
+(() => {
+    const container = document.getElementById("particles");
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
 
-const particles =
-    document.getElementById("particles");
+    if (reducedMotion) return;
 
-for(let i = 0; i < 45; i++){
-
-    const particle =
-        document.createElement("div");
-
-    particle.className =
-        "particle";
-
-    particle.style.left =
-        Math.random() * 100 + "%";
-
-    particle.style.animationDuration =
-        (5 + Math.random() * 8) + "s";
-
-    particle.style.animationDelay =
-        (-Math.random() * 10) + "s";
-
-    particles.appendChild(particle);
-}
-
+    for (let i = 0; i < 45; i++) {
+        const particle = document.createElement("span");
+        particle.className = "particle";
+        particle.style.left = Math.random() * 100 + "%";
+        particle.style.animationDuration = (6 + Math.random() * 9) + "s";
+        particle.style.animationDelay = (-Math.random() * 15) + "s";
+        container.appendChild(particle);
+    }
+})();
 </script>
 
-
 <script type="module">
+const form = document.getElementById("loginForm");
+const message = document.getElementById("message");
+const button = document.getElementById("loginButton");
 
-import { supabase }
-    from "./js/supabase.js";
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
+    if (button.disabled) return;
 
-const form =
-    document.getElementById("loginForm");
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-const message =
-    document.getElementById("message");
+    button.disabled = true;
+    button.textContent = "SIGNING IN...";
+    message.style.color = "#ff9a4d";
+    message.textContent = "Connecting to Vidlyra...";
 
+    try {
+        // Load the Supabase client from your project file.
+        const { supabase } = await import("./js/supabase.js");
 
-form.addEventListener(
-    "submit",
-    async (event) => {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
 
-        event.preventDefault();
-
-        const email =
-            document
-                .getElementById("email")
-                .value
-                .trim();
-
-        const password =
-            document
-                .getElementById("password")
-                .value;
-
-
-        message.textContent =
-            "Entering Vidlyra...";
-
-
-        try {
-
-            const {
-                data,
-                error
-            } =
-                await supabase.auth
-                    .signInWithPassword({
-                        email,
-                        password
-                    });
-
-
-            if(error){
-                throw error;
+        if (error) {
+            if (/invalid login credentials/i.test(error.message)) {
+                throw new Error("Incorrect email or password.");
             }
 
-
-            if(!data.user){
-
-                throw new Error(
-                    "Login failed."
-                );
-
+            if (/email not confirmed/i.test(error.message)) {
+                throw new Error("Please confirm your email before signing in.");
             }
 
-
-            message.textContent =
-                "🎃 Welcome back!";
-
-
-            setTimeout(() => {
-
-                window.location.href =
-                    "map.html";
-
-            }, 700);
-
-
-        } catch(error){
-
-            console.error(error);
-
-            message.textContent =
-                "⚠️ " + error.message;
-
+            throw error;
         }
 
-    }
-);
+        if (!data.user) {
+            throw new Error("Login could not be verified. Please try again.");
+        }
 
+        message.style.color = "#7dffad";
+        message.textContent = "Welcome back! Redirecting...";
+
+        window.location.replace("./map.html");
+    } catch (error) {
+        console.error("Vidlyra login error:", error);
+
+        const errorMessage = error?.message || "";
+
+        if (
+            error instanceof TypeError ||
+            /failed to fetch|networkerror|err_name_not_resolved/i.test(errorMessage)
+        ) {
+            message.textContent =
+                "Cannot connect to Supabase. Check the project URL and internet connection.";
+        } else if (/supabase\.js/i.test(errorMessage) || /module script/i.test(errorMessage)) {
+            message.textContent =
+                "Could not load the Supabase client. Check that js/supabase.js exists.";
+        } else {
+            message.textContent = errorMessage || "Login failed. Please try again.";
+        }
+
+        message.style.color = "#ff9a4d";
+        button.disabled = false;
+        button.textContent = "ENTER VIDLYRA";
+    }
+});
 </script>
 
 </body>
