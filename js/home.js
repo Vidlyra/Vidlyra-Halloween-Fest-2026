@@ -1040,3 +1040,44 @@ window.VidlyraHome = {
     goToPage
 
 };
+
+/* =========================================================
+   HERO CHARACTER — SUBTLE PARALLAX
+========================================================= */
+
+(() => {
+    const character = document.getElementById("heroCharacter");
+
+    if (!character) return;
+
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    );
+
+    const finePointer = window.matchMedia(
+        "(hover: hover) and (pointer: fine)"
+    );
+
+    if (reducedMotion.matches || !finePointer.matches) return;
+
+    let frame = 0;
+
+    window.addEventListener("pointermove", (event) => {
+        if (frame) cancelAnimationFrame(frame);
+
+        frame = requestAnimationFrame(() => {
+            const x = (event.clientX / window.innerWidth - 0.5) * 10;
+            const y = (event.clientY / window.innerHeight - 0.5) * 10;
+
+            character.style.setProperty("--character-x", `${x}px`);
+            character.style.setProperty("--character-y", `${y}px`);
+
+            frame = 0;
+        });
+    }, { passive: true });
+
+    window.addEventListener("pointerleave", () => {
+        character.style.setProperty("--character-x", "0px");
+        character.style.setProperty("--character-y", "0px");
+    });
+})();
