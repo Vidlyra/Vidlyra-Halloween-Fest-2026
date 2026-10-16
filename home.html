@@ -1,542 +1,288 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#030201">
+    <meta name="description" content="VIDLYRA HALLOWEEN FEST 2026 — Beyond the Veil. Enter a cinematic Halloween experience.">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>VIDLYRA — HALLOWEEN FEST 2026</title>
 
-    <meta
-        name="theme-color"
-        content="#030201"
-    >
-
-    <meta
-        name="description"
-        content="VIDLYRA HALLOWEEN FEST 2026 — Beyond the Veil"
-    >
-
-    <title>
-        VIDLYRA — HALLOWEEN FEST 2026
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="css/home.css"
-    >
-
+    <link rel="stylesheet" href="css/home.css">
 </head>
 
 <body>
-
 <div id="homePage">
 
-
-    <!-- =====================================================
-         CINEMATIC BACKGROUND
-    ====================================================== -->
-
-    <div
-        id="world"
-        aria-hidden="true"
-    >
-
+    <!-- CINEMATIC BACKGROUND -->
+    <div id="world" aria-hidden="true">
         <div class="sky"></div>
-
         <div class="orangeAtmosphere"></div>
-
         <div class="distantLight"></div>
-
         <div class="cloudLayer cloudBack"></div>
-
         <div class="cloudLayer cloudFront"></div>
 
-        <div
-            id="lightning"
-            class="lightning"
-        ></div>
-
-        <div
-            id="rain"
-            class="rain"
-        ></div>
-
-        <div
-            id="particles"
-            class="particles"
-        ></div>
-
-        <div
-            id="bats"
-            class="bats"
-        ></div>
-
-
-        <!-- Forest -->
+        <div id="lightning" class="lightning"></div>
+        <div id="rain" class="rain"></div>
+        <div id="particles" class="particles"></div>
+        <div id="bats" class="bats"></div>
 
         <div class="forest forestBack"></div>
-
         <div class="forest forestFront"></div>
 
-
-        <!-- Castle -->
-
+        <!-- HAUNTED CASTLE -->
         <div class="castle">
-
             <div class="castleTower left"></div>
-
             <div class="castleBody"></div>
-
             <div class="castleTower right"></div>
-
             <div class="castleGate"></div>
-
             <div class="castleWindow window1"></div>
-
             <div class="castleWindow window2"></div>
-
             <div class="castleWindow window3"></div>
-
         </div>
-
-
-        <!-- Ground -->
 
         <div class="ground"></div>
 
-
-        <!-- Fog -->
-
+        <!-- FOG -->
         <div class="fog fogBack"></div>
-
         <div class="fog fogCenter"></div>
-
         <div class="fog fogFront"></div>
 
-
-        <!-- Hidden eyes -->
-
+        <!-- HIDDEN EYES -->
         <div class="hiddenEyes eyesLeft"></div>
-
         <div class="hiddenEyes eyesRight"></div>
 
-
-        <!-- Pumpkins -->
-
+        <!-- PUMPKINS -->
         <div class="pumpkin pumpkinLeft"></div>
-
         <div class="pumpkin pumpkinRight"></div>
 
-
-        <!-- Vignette -->
-
         <div class="vignette"></div>
-
         <div class="filmGrain"></div>
-
     </div>
 
-
-
-    <!-- =====================================================
-         TOP NAVIGATION
-    ====================================================== -->
-
+    <!-- TOP NAVIGATION -->
     <header class="topNavigation">
 
-        <a
-            href="#"
-            class="brand"
-            id="brandHome"
-            aria-label="VidLyra Home"
-        >
+        <a href="index.html"
+           class="brand"
+           id="brandHome"
+           aria-label="Vidlyra Home">
 
-            <span class="brandSymbol">
-                V
-            </span>
+            <span class="brandSymbol">V</span>
 
             <span class="brandInformation">
-
-                <strong>
-                    VIDLYRA
-                </strong>
-
-                <small>
-                    HALLOWEEN FEST 2026
-                </small>
-
+                <strong>VIDLYRA</strong>
+                <small>HALLOWEEN FEST 2026</small>
             </span>
-
         </a>
 
-
         <div class="navStatus">
-
             <span class="statusIndicator"></span>
-
-            <span>
-                THE VEIL IS OPEN
-            </span>
-
+            <span>THE VEIL IS OPEN</span>
         </div>
 
-
-        <button
-            id="menuButton"
-            class="menuButton"
-            type="button"
-            aria-label="Open navigation"
-            aria-expanded="false"
-        >
+        <button id="menuButton"
+                class="menuButton"
+                type="button"
+                aria-label="Open navigation"
+                aria-expanded="false">
 
             <span></span>
             <span></span>
             <span></span>
-
         </button>
 
-
-        <nav
-            id="mainNavigation"
-            class="mainNavigation"
-        >
-
-            <button
-                type="button"
-                data-target="story"
-            >
-                STORY
-            </button>
-
-            <button
-                type="button"
-                data-target="map"
-            >
-                FESTIVAL MAP
-            </button>
-
-            <button
-                type="button"
-                data-target="rewards"
-            >
-                REWARDS
-            </button>
-
-            <button
-                type="button"
-                data-target="credits"
-            >
-                CREDITS
-            </button>
-
+        <nav id="mainNavigation" class="mainNavigation">
+            <button type="button" data-target="story">STORY</button>
+            <button type="button" data-target="map">FESTIVAL MAP</button>
+            <button type="button" data-target="rewards">REWARDS</button>
+            <button type="button" data-target="credits">CREDITS</button>
         </nav>
 
     </header>
 
-
-
-    <!-- =====================================================
-         HERO
-    ====================================================== -->
-
+    <!-- MAIN HERO -->
     <main>
+        <section class="hero" id="hero">
 
-        <section
-            class="hero"
-            id="hero"
-        >
-
+            <!-- ORIGINAL FESTIVAL CONTENT -->
             <div class="heroContent">
 
-
                 <div class="eventLabel">
-
                     <span class="labelLine"></span>
-
-                    <span>
-                        A VIDLYRA ORIGINAL EVENT
-                    </span>
-
+                    <span>A VIDLYRA ORIGINAL EVENT</span>
                     <span class="labelLine"></span>
-
                 </div>
-
 
                 <div class="titleReveal">
-
-                    <div class="titleSmall">
-                        WELCOME TO
-                    </div>
+                    <div class="titleSmall">WELCOME TO</div>
 
                     <h1>
-
-                        <span>
-                            VIDLYRA
-                        </span>
-
-                        <strong>
-                            HALLOWEEN
-                        </strong>
-
-                        <em>
-                            FEST 2026
-                        </em>
-
+                        <span>VIDLYRA</span>
+                        <strong>HALLOWEEN</strong>
+                        <em>FEST 2026</em>
                     </h1>
-
                 </div>
-
 
                 <div class="heroDivider">
-
                     <span></span>
-
                     <i>✦</i>
-
                     <span></span>
-
                 </div>
 
-
-                <p class="heroTagline">
-                    BEYOND THE VEIL
-                </p>
-
+                <p class="heroTagline">BEYOND THE VEIL</p>
 
                 <p class="heroDescription">
-
                     Seven days.
                     Seven destinations.
                     One mystery waiting beyond the darkness.
-
                 </p>
 
-
-                <!-- =================================================
-                     PRIMARY ACTION
-                ================================================== -->
-
+                <!-- MAIN ACTIONS -->
                 <div class="heroActions">
 
-                    <button
-                        id="enterFestival"
-                        class="enterButton"
-                        type="button"
-                    >
+                    <button id="enterFestival"
+                            class="enterButton"
+                            type="button"
+                            data-url="map.html">
 
-                        <span class="enterIcon">
-                            🎃
-                        </span>
-
-                        <span class="enterText">
-                            ENTER THE REALM
-                        </span>
-
-                        <span class="enterArrow">
-                            →
-                        </span>
-
+                        <span class="enterIcon">🎃</span>
+                        <span class="enterText">ENTER THE REALM</span>
+                        <span class="enterArrow">→</span>
                     </button>
 
-
-                    <button
-                        id="storyButton"
-                        class="storyButton"
-                        type="button"
-                    >
+                    <button id="storyButton"
+                            class="storyButton"
+                            type="button">
 
                         DISCOVER THE STORY
-
-                        <span>
-                            ↗
-                        </span>
-
+                        <span>↗</span>
                     </button>
 
                 </div>
 
-
                 <div class="heroInstruction">
-
-                    <span class="instructionKey">
-                        ENTER
-                    </span>
-
-                    <span>
-                        TO BEGIN YOUR JOURNEY
-                    </span>
-
+                    <span class="instructionKey">ENTER</span>
+                    <span>TO BEGIN YOUR JOURNEY</span>
                 </div>
 
             </div>
 
+            <!-- NEW CINEMATIC CHARACTER -->
+            <div class="heroCharacter"
+                 id="heroCharacter"
+                 aria-hidden="true">
 
-            <!-- =================================================
-                 HERO SIDE INFORMATION
-            ================================================== -->
+                <div class="characterAura"></div>
+                <div class="characterHalo"></div>
 
+                <div class="characterFigure">
+
+                    <!-- HOODED HEAD -->
+                    <div class="characterHood">
+
+                        <div class="characterFace">
+                            <span class="characterEye eyeLeft"></span>
+                            <span class="characterEye eyeRight"></span>
+                        </div>
+
+                    </div>
+
+                    <div class="characterNeck"></div>
+
+                    <!-- FLOWING DARK CLOAK -->
+                    <div class="characterCloak">
+
+                        <div class="cloakShoulder shoulderLeft"></div>
+                        <div class="cloakShoulder shoulderRight"></div>
+                        <div class="cloakInner"></div>
+                        <div class="cloakPendant">✦</div>
+
+                    </div>
+
+                </div>
+
+                <div class="characterGroundGlow"></div>
+
+                <div class="characterCaption">
+                    <span>UNKNOWN PRESENCE</span>
+                    <i></i>
+                </div>
+
+            </div>
+
+            <!-- HERO SIDE INFORMATION -->
             <aside class="heroSideInfo">
 
                 <div class="sideItem">
-
-                    <span class="sideNumber">
-                        07
-                    </span>
-
-                    <span class="sideLabel">
-                        DAYS
-                    </span>
-
+                    <span class="sideNumber">07</span>
+                    <span class="sideLabel">DAYS</span>
                 </div>
 
-
                 <div class="sideItem">
-
-                    <span class="sideNumber">
-                        13
-                    </span>
-
-                    <span class="sideLabel">
-                        QUESTS
-                    </span>
-
+                    <span class="sideNumber">13</span>
+                    <span class="sideLabel">QUESTS</span>
                 </div>
 
-
                 <div class="sideItem">
-
-                    <span class="sideNumber">
-                        ∞
-                    </span>
-
-                    <span class="sideLabel">
-                        MYSTERIES
-                    </span>
-
+                    <span class="sideNumber">∞</span>
+                    <span class="sideLabel">MYSTERIES</span>
                 </div>
 
             </aside>
 
         </section>
 
-
-
-        <!-- =====================================================
-             FESTIVAL HUD
-        ====================================================== -->
-
-        <section
-            class="festivalHUD"
-            aria-label="Festival status"
-        >
+        <!-- FESTIVAL HUD -->
+        <section class="festivalHUD" aria-label="Festival status">
 
             <div class="hudItem">
-
-                <span class="hudIcon">
-                    ◆
-                </span>
-
+                <span class="hudIcon">◆</span>
                 <div>
-
-                    <small>
-                        CURRENT QUEST
-                    </small>
-
-                    <strong id="questCounter">
-                        0 / 13
-                    </strong>
-
+                    <small>CURRENT QUEST</small>
+                    <strong id="questCounter">0 / 13</strong>
                 </div>
-
             </div>
-
 
             <div class="hudSeparator"></div>
 
-
             <div class="hudItem">
-
-                <span class="hudIcon">
-                    ✦
-                </span>
-
+                <span class="hudIcon">✦</span>
                 <div>
-
-                    <small>
-                        SECRETS FOUND
-                    </small>
-
-                    <strong id="secretCounter">
-                        0
-                    </strong>
-
+                    <small>SECRETS FOUND</small>
+                    <strong id="secretCounter">0</strong>
                 </div>
-
             </div>
-
 
             <div class="hudSeparator"></div>
 
-
             <div class="hudItem">
-
-                <span class="hudIcon">
-                    ◈
-                </span>
-
+                <span class="hudIcon">◈</span>
                 <div>
-
-                    <small>
-                        FESTIVAL
-                    </small>
-
-                    <strong>
-                        2026
-                    </strong>
-
+                    <small>FESTIVAL</small>
+                    <strong>2026</strong>
                 </div>
-
             </div>
 
         </section>
-
     </main>
 
+    <!-- STORY PANEL -->
+    <section id="storyPanel"
+             class="sidePanel"
+             aria-hidden="true">
 
-
-    <!-- =====================================================
-         STORY PANEL
-    ====================================================== -->
-
-    <section
-        id="storyPanel"
-        class="sidePanel"
-        aria-hidden="true"
-    >
-
-        <button
-            id="closeStory"
-            class="closePanel"
-            type="button"
-            aria-label="Close story"
-        >
-            ×
-        </button>
-
+        <button id="closeStory"
+                class="closePanel"
+                type="button"
+                aria-label="Close story">×</button>
 
         <div class="panelInner">
 
-            <span class="panelEyebrow">
-                THE LEGEND
-            </span>
+            <span class="panelEyebrow">THE LEGEND</span>
 
-            <h2>
-                BEYOND<br>
-                THE VEIL
-            </h2>
+            <h2>BEYOND<br>THE VEIL</h2>
 
             <div class="panelLine"></div>
 
@@ -557,182 +303,80 @@
                 remained hidden for generations.
             </p>
 
-            <p>
-                Your journey begins here.
-            </p>
+            <p>Your journey begins here.</p>
 
-
-            <button
-                id="storyEnter"
-                class="panelAction"
-                type="button"
-            >
+            <button id="storyEnter"
+                    class="panelAction"
+                    type="button">
                 BEGIN THE JOURNEY →
             </button>
 
         </div>
-
     </section>
 
+    <!-- MOBILE NAVIGATION -->
+    <div id="mobileMenu"
+         class="mobileMenu"
+         aria-hidden="true">
 
-
-    <!-- =====================================================
-         MOBILE NAVIGATION
-    ====================================================== -->
-
-    <div
-        id="mobileMenu"
-        class="mobileMenu"
-        aria-hidden="true"
-    >
-
-        <button
-            type="button"
-            data-target="story"
-        >
-            STORY
-        </button>
-
-        <button
-            type="button"
-            data-target="map"
-        >
-            FESTIVAL MAP
-        </button>
-
-        <button
-            type="button"
-            data-target="rewards"
-        >
-            REWARDS
-        </button>
-
-        <button
-            type="button"
-            data-target="credits"
-        >
-            CREDITS
-        </button>
+        <button type="button" data-target="story">STORY</button>
+        <button type="button" data-target="map">FESTIVAL MAP</button>
+        <button type="button" data-target="rewards">REWARDS</button>
+        <button type="button" data-target="credits">CREDITS</button>
 
     </div>
 
-
-
-    <!-- =====================================================
-         BOTTOM BAR
-    ====================================================== -->
-
+    <!-- BOTTOM BAR -->
     <footer class="bottomBar">
 
         <div class="copyright">
-
             © 2026 VIDLYRA STUDIO
-
         </div>
-
 
         <div class="bottomCenter">
-
             <span></span>
-
             BEYOND THE VEIL
-
             <span></span>
-
         </div>
 
-
         <div class="soundStatus">
+            <button id="soundButton"
+                    type="button"
+                    aria-label="Toggle ambient sound">
 
-            <button
-                id="soundButton"
-                type="button"
-                aria-label="Toggle ambient sound"
-            >
-
-                <span class="soundIcon">
-                    ♪
-                </span>
-
-                <span id="soundText">
-                    SOUND OFF
-                </span>
+                <span class="soundIcon">♪</span>
+                <span id="soundText">SOUND OFF</span>
 
             </button>
-
         </div>
 
     </footer>
 
-
-
-    <!-- =====================================================
-         CINEMATIC TRANSITION
-    ====================================================== -->
-
-    <div
-        id="transition"
-        class="transition"
-        aria-hidden="true"
-    >
+    <!-- CINEMATIC TRANSITION -->
+    <div id="transition"
+         class="transition"
+         aria-hidden="true">
 
         <div class="transitionGlow"></div>
-
         <div class="transitionRing"></div>
 
-        <div class="transitionTitle">
-            ENTERING THE VEIL
-        </div>
-
-        <div class="transitionSub">
-            PREPARING YOUR JOURNEY...
-        </div>
+        <div class="transitionTitle">ENTERING THE VEIL</div>
+        <div class="transitionSub">PREPARING YOUR JOURNEY...</div>
 
     </div>
 
-
-
-    <!-- =====================================================
-         AUDIO
-    ====================================================== -->
-
-    <audio
-        id="ambient"
-        loop
-        preload="auto"
-    >
-
-        <source
-            src="assets/ambience.mp3.mp3"
-            type="audio/mpeg"
-        >
-
+    <!-- AUDIO -->
+    <audio id="ambient" loop preload="auto">
+        <source src="assets/ambience.mp3.mp3" type="audio/mpeg">
     </audio>
 
-
-    <audio
-        id="thunder"
-        preload="auto"
-    >
-
-        <source
-            src="assets/thunder.mp3"
-            type="audio/mpeg"
-        >
-
+    <audio id="thunder" preload="auto">
+        <source src="assets/thunder.mp3" type="audio/mpeg">
     </audio>
 
-
-
-    <!-- =====================================================
-         JAVASCRIPT
-    ====================================================== -->
-
-    <script
-        src="js/home.js"
-    ></script>
+    <!-- EXISTING JAVASCRIPT -->
+    <script src="js/home.js"></script>
 
 </div>
-
 </body>
 </html>
