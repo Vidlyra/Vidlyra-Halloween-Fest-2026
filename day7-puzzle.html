@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#05070D">
+  <title>Day 7 — Image Puzzle | Vidlyra Halloween Fest</title>
+  <link rel="stylesheet" href="css/day7-puzzle.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="map.html">VIDLYRA <span>STORY WORKS</span></a>
+      <span class="day-label">HALLOWEEN FEST 2026 · DAY 7</span>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">THE FINAL CHALLENGE</p>
+      <h1>IMAGE <span>PUZZLE</span></h1>
+      <p>Choose one mysterious image and restore all nine pieces.</p>
+    </section>
+
+    <section id="imagePicker" class="image-picker">
+      <button class="image-card" data-image="mansion">
+        <img src="images/halloween-puzzle.png" alt="Haunted mansion beneath an orange moon">
+        <span class="image-title">A — Haunted Mansion</span>
+        <span class="image-subtitle">The Forgotten Castle</span>
+        <span class="select-label">SELECT IMAGE</span>
+      </button>
+
+      <button class="image-card" data-image="pumpkin">
+        <img src="images/pumpkin-puzzle.png" alt="Enchanted glowing Halloween pumpkin">
+        <span class="image-title">B — Enchanted Pumpkin</span>
+        <span class="image-subtitle">The Mystical Forest</span>
+        <span class="select-label">SELECT IMAGE</span>
+      </button>
+
+      <button class="image-card" data-image="graveyard">
+        <img src="images/graveyard-puzzle.png" alt="Haunted graveyard beneath a purple moon">
+        <span class="image-title">C — Haunted Graveyard</span>
+        <span class="image-subtitle">The Lost Tombs</span>
+        <span class="select-label">SELECT IMAGE</span>
+      </button>
+    </section>
+
+    <section id="game" class="game hidden">
+      <div class="game-heading">
+        <div>
+          <p class="eyebrow">YOUR SELECTED MYSTERY</p>
+          <h2 id="selectedTitle">Haunted Mansion</h2>
+        </div>
+        <button id="changeImage" class="secondary-btn">CHANGE IMAGE</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span>MOVES</span><strong id="moves">0</strong></div>
+        <div class="stat"><span>TIME</span><strong id="timer">00:00</strong></div>
+        <div class="stat"><span>PIECES</span><strong id="pieces">0 / 9</strong></div>
+      </div>
+
+      <p class="instruction">Tap one piece, then another, to swap their positions.</p>
+      <div id="puzzleBoard" class="puzzle-board" aria-label="Nine-piece image puzzle"></div>
+      <button id="restart" class="primary-btn">SHUFFLE AGAIN</button>
+
+      <div id="winMessage" class="win-message hidden" role="status">
+        <div class="win-icon">✦</div>
+        <h2>PUZZLE RESTORED!</h2>
+        <p>You have revealed the hidden Halloween artwork.</p>
+        <p id="finalStats"></p>
+        <button id="continueBtn" class="primary-btn">CONTINUE TO PUMPKIN CATCH</button>
+      </div>
+    </section>
+
+    <p id="status" class="status" role="status">Checking your festival progress…</p>
+    <footer>© 2026 VIDLYRA STORY WORKS · HALLOWEEN FEST</footer>
+  </main>
+
+  <script type="module" src="js/day7-puzzle.js"></script>
+</body>
+</html>
