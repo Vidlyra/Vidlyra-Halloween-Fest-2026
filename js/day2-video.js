@@ -1,143 +1,137 @@
+
 import { supabase } from "./supabase.js";
 
-
 /* ==========================
-   ELEMENTS
+   DAY 2 VIDEO EXPERIENCE
+   VIDLYRA HALLOWEEN FEST 2026
 ========================== */
 
-const startScreen =
-    document.getElementById("startScreen");
+/* ELEMENTS */
 
-const startBtn =
-    document.getElementById("startBtn");
-
-const introVideo =
-    document.getElementById("introVideo");
-
-const skipBtn =
-    document.getElementById("skipBtn");
-
-const videoOverlay =
-    document.getElementById("videoOverlay");
-
-const enterWell =
-    document.getElementById("enterWell");
-
-const videoError =
-    document.getElementById("videoError");
-
+const startScreen = document.getElementById("startScreen");
+const startBtn = document.getElementById("startBtn");
+const introVideo = document.getElementById("introVideo");
+const skipBtn = document.getElementById("skipBtn");
+const videoOverlay = document.getElementById("videoOverlay");
+const enterWell = document.getElementById("enterWell");
+const videoError = document.getElementById("videoError");
 
 let currentUser = null;
 let introStarted = false;
+let navigationStarted = false;
 
 
 /* ==========================
    CHECK LOGIN
 ========================== */
 
-async function checkUser(){
+async function checkUser() {
+    try {
+        const { data, error } = await supabase.auth.getUser();
 
-    const {
-        data: {
-            user
-        },
-        error
-    } = await supabase.auth.getUser();
+        if (error || !data?.user) {
+            console.warn("No active login session.");
 
+            window.location.replace("login.html");
+            return null;
+        }
 
-    if(error || !user){
+        return data.user;
 
-        window.location.href =
-            "login.html";
+    } catch (error) {
+        console.error("Login check failed:", error);
+
+        showError(
+            "Unable to verify your login. Please refresh and try again."
+        );
 
         return null;
     }
-
-
-    return user;
 }
 
 
 /* ==========================
-   CHECK FESTIVAL PROGRESS
+   CHECK DAY 1 PROGRESS
+   NO AUTOMATIC MAP REDIRECT
 ========================== */
 
-async function checkDay2(){
+async function checkDay2() {
+    currentUser = await checkUser();
 
-    currentUser =
-        await checkUser();
-
-
-    if(!currentUser){
+    if (!currentUser) {
         return false;
     }
 
+    try {
+        const { data, error } = await supabase
+            .from("festival_progress")
+            .select("day1, day2")
+            .eq("user_id", currentUser.id)
+            .eq("festival", "halloween_2026")
+            .maybeSingle();
 
-    const {
-        data,
-        error
-    } = await supabase
-        .from("festival_progress")
-        .select(`
-            day1,
-            day2
-        `)
-        .eq("user_id", currentUser.id)
-        .eq("festival", "halloween_2026")
-        .maybeSingle();
+        if (error) {
+            console.error("Progress check failed:", error);
 
+            showError(
+                "Unable to load festival progress. Please try again."
+            );
 
-    if(error){
+            return false;
+        }
 
-        console.error(error);
+        if (!data) {
+            console.error("Festival progress record not found.");
 
-        alert(
-            "Unable to load your festival progress."
+            showError(
+                "Your festival progress record was not found. Please check your account progress."
+            );
+
+            return false;
+        }
+
+        if (data.day1 !== true) {
+            console.warn("Day 1 is not completed.", data.day1);
+
+            showError(
+                "Day 1 completion is not recorded. Complete Day 1 before entering Day 2."
+            );
+
+            return false;
+        }
+
+        console.log("Day 2 access granted.", data);
+
+        return true;
+
+    } catch (error) {
+        console.error("Unexpected progress error:", error);
+
+        showError(
+            "Something went wrong while checking your progress."
         );
 
-        window.location.href =
-            "map.html";
-
         return false;
     }
+}
 
 
-    /*
-     * No progress record.
-     */
+/* ==========================
+   SHOW ERROR
+========================== */
 
-    if(!data){
+function showError(message) {
+    if (videoError) {
+        const paragraph = videoError.querySelector("p");
 
-        window.location.href =
-            "map.html";
+        if (paragraph) {
+            paragraph.textContent = message;
+        }
 
-        return false;
+        videoError.classList.add("show");
+    } else {
+        alert(message);
     }
-
-
-    /*
-     * Day 1 must be completed.
-     */
-
-    if(data.day1 !== true){
-
-        alert(
-            "🔒 Complete Day 1 before entering Day 2."
-        );
-
-        window.location.href =
-            "map.html";
-
-        return false;
-    }
-
-
-    /*
-     * If Day 2 is already completed,
-     * allow the player to replay the intro.
-     */
-
-    return true;
 }
 
 
@@ -145,184 +139,143 @@ async function checkDay2(){
    START EXPERIENCE
 ========================== */
 
-startBtn.addEventListener(
-    "click",
-    async () => {
-
-        if(introStarted){
+if (startBtn) {
+    startBtn.addEventListener("click", async () => {
+        if (introStarted || navigationStarted) {
             return;
         }
 
         introStarted = true;
-
         startBtn.disabled = true;
+        startBtn.textContent = "ENTERING...";
 
-        startBtn.textContent =
-            "ENTERING...";
+        if (introVideo) {
+            try {
+                introVideo.currentTime = 0;
+                await introVideo.play();
 
+                startScreen?.classList.add("hidden");
 
-        introVideo.currentTime = 0;
+            } catch (error) {
+                console.error("Video playback failed:", error);
 
+                introStarted = false;
+                startBtn.disabled = false;
+                startBtn.textContent = "▶ Start Experience";
 
-        try{
-
-            await introVideo.play();
-
-            startScreen.classList.add(
-                "hidden"
-            );
-
-        }catch(error){
-
-            console.error(error);
+                showError(
+                    "The intro video could not play. Check the video file and try again."
+                );
+            }
+        } else {
+            console.error("introVideo element not found.");
 
             introStarted = false;
-
             startBtn.disabled = false;
 
-            startBtn.textContent =
-                "▶ Start Experience";
-
+            showError("The video player was not found on this page.");
         }
-
-    }
-);
+    });
+}
 
 
 /* ==========================
    VIDEO PLAYING
 ========================== */
 
-introVideo.addEventListener(
-    "play",
-    () => {
+if (introVideo) {
+    introVideo.addEventListener("play", () => {
+        skipBtn?.classList.add("show");
+    });
 
-        skipBtn.classList.add(
-            "show"
-        );
-
-    }
-);
-
-
-/* ==========================
-   VIDEO ENDED
-========================== */
-
-introVideo.addEventListener(
-    "ended",
-    () => {
-
+    introVideo.addEventListener("ended", () => {
         showVideoOverlay();
+    });
 
-    }
-);
-
-
-/* ==========================
-   VIDEO ERROR
-   (missing file, bad codec, network failure)
-========================== */
-
-introVideo.addEventListener(
-    "error",
-    () => {
-
+    introVideo.addEventListener("error", () => {
         console.error(
-            "Day 2 intro video failed to load."
+            "Day 2 video failed to load:",
+            introVideo.error
         );
 
-        skipBtn.classList.remove(
-            "show"
+        skipBtn?.classList.remove("show");
+
+        showError(
+            "The Day 2 intro video could not load. Check assets/video/haunted-well.mp4."
         );
-
-        startScreen.classList.add(
-            "hidden"
-        );
-
-        if(videoError){
-
-            videoError.classList.add(
-                "show"
-            );
-
-        }else{
-
-            // No error element in the DOM — fall back to letting
-            // the player continue instead of getting stuck.
-            showVideoOverlay();
-        }
-
-    }
-);
+    });
+}
 
 
 /* ==========================
    SKIP INTRO
 ========================== */
 
-skipBtn.addEventListener(
-    "click",
-    () => {
+if (skipBtn) {
+    skipBtn.addEventListener("click", () => {
+        if (navigationStarted) {
+            return;
+        }
 
-        introVideo.pause();
+        if (introVideo) {
+            introVideo.pause();
+        }
 
         showVideoOverlay();
-
-    }
-);
-
-
-/* ==========================
-   SHOW OVERLAY
-========================== */
-
-function showVideoOverlay(){
-
-    skipBtn.classList.remove(
-        "show"
-    );
-
-    videoOverlay.classList.add(
-        "show"
-    );
-
+    });
 }
 
 
 /* ==========================
-   ENTER THE WELL
+   SHOW VIDEO OVERLAY
 ========================== */
 
-enterWell.addEventListener(
-    "click",
-    () => {
+function showVideoOverlay() {
+    skipBtn?.classList.remove("show");
+    videoOverlay?.classList.add("show");
+}
 
-        window.location.href =
-            "day2-game.html";
 
-    }
-);
+/* ==========================
+   ENTER DAY 2 GAME
+========================== */
+
+if (enterWell) {
+    enterWell.addEventListener("click", () => {
+        if (navigationStarted) {
+            return;
+        }
+
+        navigationStarted = true;
+        enterWell.disabled = true;
+        enterWell.textContent = "ENTERING THE WELL...";
+
+        window.location.href = "day2-game.html";
+    });
+}
 
 
 /* ==========================
    INITIALIZE
 ========================== */
 
-async function initialize(){
+async function initialize() {
+    console.log("Initializing Day 2 video experience...");
 
-    const allowed =
-        await checkDay2();
+    if (!startScreen || !startBtn || !introVideo) {
+        console.error("Required Day 2 video HTML elements are missing.");
 
-    if(!allowed){
+        showError("Some required page elements are missing. Check day2-video.html.");
         return;
     }
 
-    console.log(
-        "🎃 Day 2 intro unlocked."
-    );
+    const allowed = await checkDay2();
 
+    if (!allowed) {
+        return;
+    }
+
+    console.log("🎃 Day 2 intro unlocked.");
 }
-
 
 initialize();
