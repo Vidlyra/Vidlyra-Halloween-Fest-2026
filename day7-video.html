@@ -433,375 +433,262 @@ body {
 <div id="fadeScreen"></div>
 
 
-<script>
+
+<script type="module">
 "use strict";
 
-/* ==========================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 7 VIDEO
-   DAY 7 VIDEO → END CREDITS
-========================================== */
-
-
-/* ==========================================
-   CONFIGURATION
-========================================== */
+import { supabase } from "./js/supabase.js";
 
 const CONFIG = {
-
-    VIDEO_URL:
-        "assets/video/day7-video.mp4",
-
-    NEXT_PAGE:
-        "end-credits.html",
-
-    FADE_DURATION:
-        2000
-
+  VIDEO_URL: "assets/video/day7-video.mp4",
+  NEXT_PAGE: "end-credits.html",
+  FADE_DURATION: 2000
 };
 
+const video = document.getElementById("day7Video");
+const startScreen = document.getElementById("startScreen");
+const startButton = document.getElementById("startButton");
+const fadeScreen = document.getElementById("fadeScreen");
+const dayTitle = document.getElementById("dayTitle");
+const continueButton = document.getElementById("continueButton");
+const loading = document.getElementById("loading");
 
-/* ==========================================
-   DOM
-========================================== */
-
-const video =
-    document.getElementById("day7Video");
-
-const startScreen =
-    document.getElementById("startScreen");
-
-const startButton =
-    document.getElementById("startButton");
-
-const fadeScreen =
-    document.getElementById("fadeScreen");
-
-const dayTitle =
-    document.getElementById("dayTitle");
-
-const continueButton =
-    document.getElementById("continueButton");
-
-const loading =
-    document.getElementById("loading");
-
-
-/* ==========================================
-   INITIAL STATE
-========================================== */
-
+let currentUser = null;
 let finished = false;
+let saving = false;
+let videoStarted = false;
 
+function showMessage(message) {
+  loading.textContent = message;
+  loading.classList.add("show");
+}
 
-/* ==========================================
-   SAVE DAY 7 VISIT
-========================================== */
+async function checkProgress() {
+  const { data: authData, error: authError } =
+    await supabase.auth.getUser();
 
-try {
+  if (authError) throw authError;
 
-    localStorage.setItem(
-        "day7Started",
-        "true"
-    );
+  currentUser = authData.user;
 
-} catch (error) {}
+  if (!currentUser) {
+    showMessage("PLEASE LOG IN TO CONTINUE");
+    startButton.disabled = true;
+    return false;
+  }
 
+  const { data: progress, error } = await supabase
+    .from("festival_progress")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .eq("festival", "halloween_2026")
+    .maybeSingle();
 
-/* ==========================================
-   START DAY 7
-========================================== */
+  if (error) throw error;
 
-function startDay7() {
+  if (!progress) {
+    showMessage("FESTIVAL PROGRESS NOT FOUND");
+    startButton.disabled = true;
+    return false;
+  }
 
-    if (!video) return;
+  const requiredSteps = [
+    "day7_quiz_completed",
+    "day7_puzzle_completed",
+    "day7_pumpkin_catch_completed",
+    "day7_ghost_memory_completed"
+  ];
 
+  const missingStep = requiredSteps.some(
+    (key) => progress[key] !== true
+  );
+
+  if (missingStep) {
+    showMessage("COMPLETE ALL DAY 7 CHALLENGES FIRST");
+    startButton.disabled = true;
+    return false;
+  }
+
+  if (progress.day7_final_video_completed === true) {
+    finished = true;
+    showMessage("DAY 7 ALREADY COMPLETED — OPENING CREDITS");
+
+    setTimeout(() => {
+      window.location.href = CONFIG.NEXT_PAGE;
+    }, 1200);
+
+    return false;
+  }
+
+  loading.classList.remove("show");
+  return true;
+}
+
+async function startDay7() {
+  if (finished || videoStarted) return;
+
+  startButton.disabled = true;
+  showMessage("CHECKING YOUR FESTIVAL PROGRESS...");
+
+  try {
+    const allowed = await checkProgress();
+
+    if (!allowed) return;
+
+    videoStarted = true;
     startScreen.style.opacity = "0";
     startScreen.style.pointerEvents = "none";
 
     setTimeout(() => {
-
-        startScreen.style.display = "none";
-
+      startScreen.style.display = "none";
     }, 1000);
 
-
-    loading.classList.add("show");
-
-
     video.currentTime = 0;
-
     video.muted = true;
 
-
-    const playPromise =
-        video.play();
-
-
-    if (playPromise) {
-
-        playPromise
-            .then(() => {
-
-                loading.classList.remove(
-                    "show"
-                );
-
-            })
-            .catch(() => {
-
-                loading.textContent =
-                    "TAP TO PLAY";
-
-            });
-
-    }
-
+    await video.play();
+  } catch (error) {
+    console.error("Day 7 start error:", error);
+    showMessage("COULD NOT VERIFY PROGRESS. REFRESH AND TRY AGAIN.");
+    startButton.disabled = false;
+    videoStarted = false;
+  }
 }
 
+startButton.addEventListener("click", startDay7);
 
-/* ==========================================
-   START BUTTON
-========================================== */
+video.addEventListener("click", () => {
+  if (!finished && video.paused && videoStarted) {
+    video.play().catch((error) => {
+      console.error("Playback error:", error);
+    });
+  }
+});
 
-startButton.addEventListener(
-    "click",
-    startDay7
-);
+video.addEventListener("playing", () => {
+  loading.classList.remove("show");
+  dayTitle.style.opacity = "1";
+});
 
+video.addEventListener("timeupdate", () => {
+  if (!video.duration || finished) return;
 
-/* ==========================================
-   VIDEO CLICK
-   Mobile fallback
-========================================== */
+  const remaining = video.duration - video.currentTime;
 
-video.addEventListener(
-    "click",
-    () => {
+  if (remaining < 4) {
+    dayTitle.style.opacity = "0";
+  }
 
-        if (
-            video.paused &&
-            !finished
-        ) {
+  if (remaining <= 3 && remaining > 0) {
+    continueButton.classList.add("show");
+  } else {
+    continueButton.classList.remove("show");
+  }
+});
 
-            video.play().catch(() => {});
+/*
+  Continue button must NOT mark the video complete.
+  It only resumes playback if the video is paused.
+*/
+continueButton.addEventListener("click", () => {
+  continueButton.classList.remove("show");
 
-        }
+  if (video.paused && !finished) {
+    video.play().catch((error) => {
+      console.error("Playback error:", error);
+    });
+  }
+});
 
+video.addEventListener("ended", async () => {
+  await finishDay7();
+});
+
+async function finishDay7() {
+  if (finished || saving || !currentUser) return;
+
+  saving = true;
+  continueButton.classList.remove("show");
+  showMessage("SAVING YOUR DAY 7 ACHIEVEMENT...");
+
+  try {
+    /*
+      Recheck progress before saving completion.
+    */
+    const { data: progress, error: readError } = await supabase
+      .from("festival_progress")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .eq("festival", "halloween_2026")
+      .maybeSingle();
+
+    if (readError) throw readError;
+
+    const requiredSteps = [
+      "day7_quiz_completed",
+      "day7_puzzle_completed",
+      "day7_pumpkin_catch_completed",
+      "day7_ghost_memory_completed"
+    ];
+
+    if (
+      !progress ||
+      requiredSteps.some((key) => progress[key] !== true)
+    ) {
+      showMessage("CHALLENGE PROGRESS CHECK FAILED. PLEASE CONTACT SUPPORT.");
+      saving = false;
+      return;
     }
-);
 
+    /*
+      Only the video-ended event reaches this save operation.
+    */
+    const { error: updateError } = await supabase
+      .from("festival_progress")
+      .update({
+        day7: true,
+        day7_final_video_completed: true
+      })
+      .eq("user_id", currentUser.id)
+      .eq("festival", "halloween_2026");
 
-/* ==========================================
-   VIDEO STARTED
-========================================== */
-
-video.addEventListener(
-    "playing",
-    () => {
-
-        loading.classList.remove(
-            "show"
-        );
-
-        dayTitle.style.opacity = "1";
-
-    }
-);
-
-
-/* ==========================================
-   FADE TITLE
-========================================== */
-
-video.addEventListener(
-    "timeupdate",
-    () => {
-
-        if (!video.duration) return;
-
-
-        const remaining =
-            video.duration -
-            video.currentTime;
-
-
-        /*
-         * Hide title near the end
-         */
-
-        if (remaining < 4) {
-
-            dayTitle.style.opacity =
-                "0";
-
-        }
-
-
-        /*
-         * Show continue button
-         * during final seconds
-         */
-
-        if (
-            remaining <= 3 &&
-            !finished
-        ) {
-
-            continueButton.classList.add(
-                "show"
-            );
-
-        }
-
-    }
-);
-
-
-/* ==========================================
-   VIDEO FINISHED
-========================================== */
-
-video.addEventListener(
-    "ended",
-    () => {
-
-        finishDay7();
-
-    }
-);
-
-
-/* ==========================================
-   FINISH DAY 7
-========================================== */
-
-function finishDay7() {
-
-    if (finished) return;
+    if (updateError) throw updateError;
 
     finished = true;
 
-
-    /*
-     * Save completion
-     */
-
     try {
-
-        localStorage.setItem(
-            "day7Complete",
-            "true"
-        );
-
-        localStorage.setItem(
-            "halloweenFestComplete",
-            "true"
-        );
-
-    } catch (error) {}
-
-
-    /*
-     * Stop video
-     */
+      localStorage.setItem("day7Complete", "true");
+      localStorage.setItem("halloweenFestComplete", "true");
+    } catch (_) {
+      // Supabase is the main progress record.
+    }
 
     video.pause();
+    fadeScreen.classList.add("active");
 
+    setTimeout(() => {
+      window.location.href = CONFIG.NEXT_PAGE;
+    }, CONFIG.FADE_DURATION);
 
-    /*
-     * Hide continue button
-     */
-
-    continueButton.classList.remove(
-        "show"
-    );
-
-
-    /*
-     * Fade to black
-     */
-
-    fadeScreen.classList.add(
-        "active"
-    );
-
-
-    /*
-     * Redirect to credits
-     */
-
-    setTimeout(
-        () => {
-
-            window.location.href =
-                CONFIG.NEXT_PAGE;
-
-        },
-        CONFIG.FADE_DURATION
-    );
-
+  } catch (error) {
+    console.error("Could not save Day 7 completion:", error);
+    showMessage("SAVE FAILED. CHECK YOUR CONNECTION AND RELOAD THE PAGE.");
+    saving = false;
+  }
 }
 
+video.addEventListener("error", () => {
+  showMessage("VIDEO COULD NOT BE LOADED — CHECK THE VIDEO FILE PATH.");
+  console.error("Video load failed:", CONFIG.VIDEO_URL);
+});
 
-/* ==========================================
-   CONTINUE BUTTON
-========================================== */
-
-continueButton.addEventListener(
-    "click",
-    () => {
-
-        finishDay7();
-
-    }
-);
-
-
-/* ==========================================
-   VIDEO ERROR
-========================================== */
-
-video.addEventListener(
-    "error",
-    () => {
-
-        loading.textContent =
-            "VIDEO COULD NOT BE LOADED";
-
-        loading.classList.add(
-            "show"
-        );
-
-        console.error(
-            "Day 7 video could not be loaded:",
-            CONFIG.VIDEO_URL
-        );
-
-    }
-);
-
-
-/* ==========================================
-   PRELOAD
-========================================== */
+video.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
+});
 
 video.load();
-
-
-/* ==========================================
-   PREVENT RIGHT CLICK
-========================================== */
-
-video.addEventListener(
-    "contextmenu",
-    (event) => {
-
-        event.preventDefault();
-
-    }
-);
 </script>
+
 
 </body>
 </html>
