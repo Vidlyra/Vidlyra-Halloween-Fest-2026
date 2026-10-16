@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070D">
+  <title>Pumpkin Catch | Vidlyra Halloween Fest 2026</title>
+  <link rel="stylesheet" href="css/day7-pumpkin-catch.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="map.html">VIDLYRA <small>STORY WORKS</small></a>
+      <span class="day-label">DAY 7 · GAME 2</span>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">THE HAUNTED FOREST</p>
+      <h1>PUMPKIN <span>CATCH</span></h1>
+      <p>Catch the glowing pumpkins. Avoid the ghosts!</p>
+    </section>
+
+    <section class="hud">
+      <div><span>SCORE</span><strong id="score">0</strong></div>
+      <div><span>TARGET</span><strong>15</strong></div>
+      <div><span>TIME</span><strong id="time">45</strong></div>
+      <div><span>LIVES</span><strong id="lives">❤️❤️❤️</strong></div>
+    </section>
+
+    <section class="game-shell">
+      <canvas id="gameCanvas" aria-label="Pumpkin Catch game area"></canvas>
+      <div id="overlay" class="overlay">
+        <div class="overlay-card">
+          <div class="big-icon">🎃</div>
+          <h2 id="overlayTitle">READY TO CATCH?</h2>
+          <p id="overlayText">Catch 15 pumpkins in 45 seconds. Three ghost hits and the game ends!</p>
+          <button id="startBtn" class="primary-btn">START GAME</button>
+        </div>
+      </div>
+    </section>
+
+    <p class="help">Desktop: move your mouse to catch pumpkins. Mobile: drag your finger across the game. Avoid 👻 ghosts!</p>
+
+    <button id="restartBtn" class="secondary-btn">RESTART GAME</button>
+
+    <p id="status" class="status" role="status">Complete the previous Day 7 stages to play.</p>
+
+    <footer>© 2026 VIDLYRA STORY WORKS · HALLOWEEN FEST</footer>
+  </main>
+
+  <script type="module" src="js/day7-pumpkin-catch.js"></script>
+</body>
+</html>
