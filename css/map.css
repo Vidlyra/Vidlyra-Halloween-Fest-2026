@@ -1,255 +1,1869 @@
 
-/* =====================================================
+/* =========================================================
    VIDLYRA HALLOWEEN FEST 2026
-   HAUNTED ADVENTURE MAP
-===================================================== */
+   HAUNTED ADVENTURE MAP — COMPLETE CSS
+   Theme: Midnight Black | Haunted Purple | Glowing Orange
+========================================================= */
 
-"use strict";
+:root {
+    color-scheme: dark;
 
-const VidlyraMap = {
-    totalChapters: 7,
+    --bg: #05030b;
+    --bg-deep: #020106;
+    --panel: rgba(15, 8, 24, 0.96);
+    --panel-light: rgba(29, 15, 43, 0.94);
 
-    completionKeys: [
-        "day1Complete",
-        "day2Complete",
-        "day3Complete",
-        "day4Complete",
-        "day5Complete",
-        "day6Complete",
-        "day7Complete"
-    ],
+    --orange: #ff8a00;
+    --orange-light: #ffbd58;
+    --orange-hot: #ff5100;
 
-    toastTimer: null,
+    --purple: #8e35ff;
+    --purple-light: #c18aff;
 
-    init() {
-        this.cacheElements();
-        this.createEmbers();
-        this.updateProgress();
-        this.bindEvents();
+    --white: #fff7ef;
+    --muted: #b7a9c5;
+    --green: #7cffb0;
 
-        console.log("🎃 VIDLYRA HALLOWEEN FEST 2026");
-        console.log("🗺 Haunted Adventure Map initialized.");
-    },
+    --border: rgba(255, 138, 0, 0.32);
+    --purple-border: rgba(142, 53, 255, 0.42);
+}
 
-    cacheElements() {
-        this.embersContainer = document.getElementById("embers");
-        this.completedCount = document.getElementById("completedCount");
-        this.progressText = document.getElementById("progressText");
-        this.progressFill = document.getElementById("progressFill");
-        this.progressBar = document.getElementById("progressBar");
-        this.resetButton = document.getElementById("resetProgress");
-        this.toast = document.getElementById("toast");
+/* =========================================================
+   RESET
+========================================================= */
 
-        this.chapterRows = document.querySelectorAll(".day-row[data-day]");
-    },
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    bindEvents() {
-        if (this.resetButton) {
-            this.resetButton.addEventListener("click", () => {
-                this.resetProgress();
-            });
-        }
+html {
+    min-height: 100%;
+    background: var(--bg);
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+}
 
-        // Refresh completion status when returning to this page.
-        window.addEventListener("pageshow", () => {
-            this.updateProgress();
-        });
+body {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    overflow-x: hidden;
 
-        // Also refresh if completion changes in another browser tab.
-        window.addEventListener("storage", (event) => {
-            if (
-                this.completionKeys.includes(event.key) ||
-                event.key === null
-            ) {
-                this.updateProgress();
-            }
-        });
-    },
-
-    createEmbers() {
-        if (!this.embersContainer) {
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-        const emberCount = window.matchMedia(
-            "(max-width: 520px)"
-        ).matches ? 16 : 30;
-
-        for (let i = 0; i < emberCount; i++) {
-            const ember = document.createElement("span");
-
-            ember.className = "ember";
-            ember.setAttribute("aria-hidden", "true");
-
-            ember.style.left = `${Math.random() * 100}%`;
-            ember.style.setProperty(
-                "--duration",
-                `${8 + Math.random() * 12}s`
-            );
-            ember.style.setProperty(
-                "--delay",
-                `${-Math.random() * 18}s`
-            );
-            ember.style.setProperty(
-                "--drift",
-                `${Math.round(Math.random() * 120 - 60)}px`
-            );
-
-            const size = 2 + Math.random() * 2;
-            ember.style.width = `${size}px`;
-            ember.style.height = `${size}px`;
-
-            fragment.appendChild(ember);
-        }
-
-        this.embersContainer.appendChild(fragment);
-    },
-
-    getCompletedDays() {
-        let completed = 0;
-
-        this.completionKeys.forEach((key) => {
-            try {
-                if (localStorage.getItem(key) === "true") {
-                    completed++;
-                }
-            } catch (error) {
-                console.warn(
-                    "Unable to read chapter progress:",
-                    error
-                );
-            }
-        });
-
-        return completed;
-    },
-
-    isChapterCompleted(dayNumber) {
-        const key = this.completionKeys[dayNumber - 1];
-
-        if (!key) {
-            return false;
-        }
-
-        try {
-            return localStorage.getItem(key) === "true";
-        } catch (error) {
-            console.warn(
-                "Unable to read chapter completion:",
-                error
-            );
-
-            return false;
-        }
-    },
-
-    updateProgress() {
-        let completed = 0;
-
-        this.chapterRows.forEach((row) => {
-            const dayNumber = Number(row.dataset.day);
-            const isCompleted = this.isChapterCompleted(dayNumber);
-
-            row.classList.toggle("completed", isCompleted);
-
-            const state = row.querySelector(".chapter-state");
-            const button = row.querySelector(".chapter-button");
-
-            if (isCompleted) {
-                completed++;
-
-                if (state) {
-                    state.innerHTML = "<span></span> COMPLETED";
-                }
-
-                if (button) {
-                    button.classList.add("chapter-completed");
-                }
-            } else {
-                if (state) {
-                    state.innerHTML = "<span></span> OPEN";
-                }
-
-                if (button) {
-                    button.classList.remove("chapter-completed");
-                }
-            }
-        });
-
-        const percentage =
-            (completed / this.totalChapters) * 100;
-
-        if (this.completedCount) {
-            this.completedCount.textContent =
-                String(completed).padStart(2, "0");
-        }
-
-        if (this.progressText) {
-            this.progressText.textContent =
-                `${completed} OF ${this.totalChapters} CHAPTERS COMPLETE`;
-        }
-
-        if (this.progressFill) {
-            this.progressFill.style.width = `${percentage}%`;
-        }
-
-        if (this.progressBar) {
-            this.progressBar.setAttribute(
-                "aria-valuenow",
-                String(completed)
-            );
-        }
-    },
-
-    resetProgress() {
-        const confirmed = window.confirm(
-            "Reset your Halloween adventure progress?\n\n" +
-            "This will clear the completion status of all seven chapters."
+    background-color: var(--bg);
+    background-image:
+        radial-gradient(
+            ellipse at 50% 20%,
+            rgba(91, 25, 136, 0.25),
+            transparent 48%
+        ),
+        linear-gradient(
+            180deg,
+            #0c0615 0%,
+            #08040f 48%,
+            #030207 100%
         );
 
-        if (!confirmed) {
-            return;
-        }
+    color: var(--white);
+    font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
 
-        try {
-            this.completionKeys.forEach((key) => {
-                localStorage.removeItem(key);
-            });
+body,
+body * {
+    scrollbar-color: #633080 #09050f;
+}
 
-            this.updateProgress();
+body::-webkit-scrollbar {
+    width: 8px;
+}
 
-            this.showToast(
-                "Your adventure progress has been reset."
-            );
-        } catch (error) {
-            console.error("Unable to reset progress:", error);
+body::-webkit-scrollbar-track {
+    background: #09050f;
+}
 
-            this.showToast(
-                "Progress could not be reset. Check your browser storage settings."
-            );
-        }
-    },
+body::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: linear-gradient(
+        180deg,
+        var(--orange),
+        var(--purple)
+    );
+}
 
-    showToast(message) {
-        if (!this.toast) {
-            return;
-        }
+a {
+    color: inherit;
+}
 
-        this.toast.textContent = message;
-        this.toast.classList.add("visible");
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
 
-        if (this.toastTimer) {
-            window.clearTimeout(this.toastTimer);
-        }
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--orange-light);
+    outline-offset: 4px;
+}
 
-        this.toastTimer = window.setTimeout(() => {
-            this.toast.classList.remove("visible");
-            this.toastTimer = null;
-        }, 3000);
+/* =========================================================
+   BACKGROUND WORLD
+========================================================= */
+
+.world-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+
+    overflow: hidden;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 40%,
+            rgba(72, 24, 106, 0.24),
+            transparent 55%
+        ),
+        linear-gradient(
+            180deg,
+            #080411 0%,
+            #11071c 48%,
+            #030207 100%
+        );
+}
+
+.background-image,
+.background-overlay,
+.purple-atmosphere,
+.orange-atmosphere,
+.castle-background,
+.fog,
+.vignette,
+.film-grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* Primary background image */
+
+.background-image {
+    background-color: #0b0612;
+    background-image:
+        linear-gradient(
+            180deg,
+            rgba(5, 3, 11, 0.2),
+            rgba(5, 3, 11, 0.58)
+        ),
+        url("../assets/images/background 1.png");
+
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    opacity: 0.7;
+    animation: backgroundBreath 24s ease-in-out infinite alternate;
+}
+
+/* Additional background image */
+
+.background-overlay {
+    background-image: url("../assets/images/background 2.png");
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    opacity: 0.15;
+    mix-blend-mode: screen;
+}
+
+/* Purple atmospheric glow */
+
+.purple-atmosphere {
+    background:
+        radial-gradient(
+            ellipse at 18% 35%,
+            rgba(125, 28, 255, 0.25),
+            transparent 45%
+        ),
+        radial-gradient(
+            ellipse at 80% 25%,
+            rgba(75, 20, 145, 0.22),
+            transparent 43%
+        );
+
+    animation: purplePulse 9s ease-in-out infinite alternate;
+}
+
+/* Orange atmospheric glow */
+
+.orange-atmosphere {
+    background:
+        radial-gradient(
+            ellipse at 80% 70%,
+            rgba(255, 89, 0, 0.15),
+            transparent 42%
+        ),
+        radial-gradient(
+            ellipse at 15% 85%,
+            rgba(255, 110, 0, 0.09),
+            transparent 38%
+        );
+}
+
+/* =========================================================
+   MOON
+========================================================= */
+
+.moon {
+    position: absolute;
+    top: 9%;
+    right: 13%;
+
+    width: clamp(65px, 9vw, 125px);
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 34% 30%,
+            #fff5df 0%,
+            #e2c9fa 38%,
+            #a27bd2 70%,
+            #58366e 100%
+        );
+
+    opacity: 0.65;
+
+    box-shadow:
+        0 0 25px rgba(196, 146, 255, 0.4),
+        0 0 70px rgba(142, 53, 255, 0.3),
+        0 0 140px rgba(142, 53, 255, 0.13);
+}
+
+/* =========================================================
+   CASTLE
+========================================================= */
+
+.castle-background {
+    inset: auto auto 0 50%;
+
+    width: min(650px, 90vw);
+    height: min(650px, 76vh);
+
+    transform: translateX(-50%);
+
+    background-color: transparent;
+    background-image: url("../assets/images/castle.png");
+    background-position: center bottom;
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    opacity: 0.3;
+
+    filter:
+        brightness(0.72)
+        saturate(0.85)
+        drop-shadow(0 0 22px rgba(104, 40, 155, 0.15));
+}
+
+/* =========================================================
+   CLOUDS
+========================================================= */
+
+.cloud {
+    position: absolute;
+
+    left: -25%;
+    width: 150%;
+    height: 170px;
+
+    background-image: url("../assets/images/cloud.svg");
+    background-position: left center;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+
+    opacity: 0.16;
+
+    animation: cloudDrift 65s linear infinite;
+}
+
+.cloud-one {
+    top: 10%;
+}
+
+.cloud-two {
+    top: 28%;
+
+    opacity: 0.09;
+
+    animation-duration: 95s;
+    animation-direction: reverse;
+}
+
+/* =========================================================
+   FOREST SILHOUETTES
+========================================================= */
+
+.tree {
+    position: absolute;
+    bottom: 0;
+
+    width: 25%;
+    height: 52%;
+
+    opacity: 0.8;
+
+    background:
+        linear-gradient(
+            135deg,
+            transparent 38%,
+            #08040d 39% 49%,
+            transparent 50%
+        ),
+        linear-gradient(
+            225deg,
+            transparent 38%,
+            #08040d 39% 49%,
+            transparent 50%
+        );
+
+    filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.5));
+}
+
+.tree-left {
+    left: -8%;
+    transform: rotate(5deg) scale(1.2);
+}
+
+.tree-right {
+    right: -8%;
+    transform: scaleX(-1) rotate(5deg) scale(1.2);
+}
+
+/* =========================================================
+   FOG
+========================================================= */
+
+.fog {
+    inset: auto auto 0;
+
+    width: 200%;
+    height: 180px;
+
+    background-image: url("../assets/images/fog.svg.png");
+    background-position: left center;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+
+    opacity: 0.18;
+
+    will-change: transform;
+}
+
+.fog-back {
+    bottom: 19%;
+
+    opacity: 0.13;
+
+    animation: fogDrift 58s linear infinite;
+}
+
+.fog-middle {
+    bottom: 8%;
+
+    opacity: 0.19;
+
+    animation: fogDrift 40s linear infinite reverse;
+}
+
+.fog-front {
+    bottom: -35px;
+
+    height: 240px;
+    opacity: 0.24;
+
+    animation: fogDrift 50s linear infinite;
+}
+
+/* =========================================================
+   FLOATING EMBERS
+========================================================= */
+
+.embers {
+    position: absolute;
+    inset: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+}
+
+.ember {
+    position: absolute;
+    bottom: -20px;
+
+    width: 3px;
+    height: 3px;
+
+    border-radius: 50%;
+
+    background: var(--orange-light);
+
+    box-shadow:
+        0 0 5px var(--orange),
+        0 0 12px rgba(255, 88, 0, 0.55);
+
+    opacity: 0;
+
+    animation:
+        emberRise var(--duration, 12s) linear infinite;
+
+    animation-delay: var(--delay, 0s);
+}
+
+/* =========================================================
+   VIGNETTE AND FILM GRAIN
+========================================================= */
+
+.vignette {
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 20%,
+            rgba(3, 1, 7, 0.24) 65%,
+            rgba(0, 0, 0, 0.72) 100%
+        );
+}
+
+.film-grain {
+    opacity: 0.09;
+
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E");
+}
+
+/* =========================================================
+   TOP NAVIGATION
+========================================================= */
+
+.topbar {
+    position: relative;
+    z-index: 20;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    min-height: 80px;
+    padding: 15px clamp(18px, 5vw, 72px);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+
+    background: rgba(5, 3, 11, 0.88);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+
+    flex-shrink: 0;
+
+    text-decoration: none;
+}
+
+.brand-icon {
+    display: grid;
+    place-items: center;
+
+    width: 42px;
+    height: 42px;
+
+    border: 1px solid var(--orange);
+
+    background: rgba(255, 138, 0, 0.08);
+
+    color: var(--orange-light);
+
+    font-size: 23px;
+    font-weight: 900;
+
+    box-shadow:
+        inset 0 0 14px rgba(255, 138, 0, 0.1),
+        0 0 16px rgba(255, 138, 0, 0.08);
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.brand-text strong {
+    color: var(--white);
+    font-size: 17px;
+    letter-spacing: 0.2em;
+}
+
+.brand-text small {
+    color: var(--orange-light);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+}
+
+.live-status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    color: #c7b8d1;
+
+    font-size: 10px;
+    letter-spacing: 0.15em;
+}
+
+.status-dot,
+.chapter-state > span {
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+
+    flex: 0 0 auto;
+
+    border-radius: 50%;
+
+    background: var(--orange-light);
+
+    box-shadow: 0 0 10px var(--orange);
+
+    animation: statusPulse 2s ease-in-out infinite;
+}
+
+.back-home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-height: 40px;
+    padding: 10px 14px;
+
+    border: 1px solid var(--border);
+
+    background: rgba(255, 138, 0, 0.035);
+
+    color: #f2dfca;
+
+    font-size: 10px;
+    letter-spacing: 0.1em;
+
+    text-decoration: none;
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        color 0.25s ease;
+}
+
+.back-home:hover {
+    border-color: var(--orange);
+
+    background: rgba(255, 138, 0, 0.1);
+
+    color: var(--orange-light);
+}
+
+/* =========================================================
+   INTRO SECTION
+========================================================= */
+
+.intro {
+    position: relative;
+    z-index: 2;
+
+    padding: 65px 20px 35px;
+
+    text-align: center;
+}
+
+.eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+
+    color: var(--orange-light);
+
+    font-size: 10px;
+    letter-spacing: 0.3em;
+}
+
+.eyebrow span {
+    display: block;
+
+    width: 42px;
+    height: 1px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--orange)
+    );
+}
+
+.eyebrow span:last-child {
+    transform: rotate(180deg);
+}
+
+.intro h1 {
+    margin-top: 22px;
+
+    color: var(--white);
+
+    font-size: clamp(36px, 7vw, 76px);
+    font-weight: 900;
+
+    letter-spacing: 0.08em;
+    line-height: 1.02;
+
+    text-shadow:
+        0 0 15px rgba(255, 111, 0, 0.23),
+        0 0 45px rgba(142, 53, 255, 0.16);
+}
+
+.intro h1 span {
+    display: block;
+
+    margin-top: 9px;
+
+    color: var(--orange);
+
+    font-size: 0.55em;
+    letter-spacing: 0.19em;
+
+    text-shadow:
+        0 0 12px rgba(255, 106, 0, 0.6),
+        0 0 32px rgba(255, 70, 0, 0.25);
+}
+
+.intro-description {
+    max-width: 580px;
+
+    margin: 21px auto 0;
+
+    color: var(--muted);
+
+    font-size: 14px;
+    line-height: 1.8;
+    letter-spacing: 0.035em;
+}
+
+.intro-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+
+    margin: 25px auto;
+}
+
+.intro-divider span {
+    display: block;
+
+    width: 70px;
+    height: 1px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--orange)
+    );
+}
+
+.intro-divider span:last-child {
+    transform: rotate(180deg);
+}
+
+.intro-divider i {
+    color: var(--orange-light);
+
+    font-size: 15px;
+    font-style: normal;
+
+    text-shadow: 0 0 12px var(--orange);
+}
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+.map-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(22px, 5vw, 60px);
+
+    margin-top: 28px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.stat strong {
+    color: var(--orange-light);
+
+    font-size: 23px;
+    font-weight: 800;
+
+    text-shadow: 0 0 15px rgba(255, 138, 0, 0.3);
+}
+
+.stat span {
+    color: #a99ab6;
+
+    font-size: 9px;
+    letter-spacing: 0.15em;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 34px;
+
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(255, 138, 0, 0.5),
+        transparent
+    );
+}
+
+/* =========================================================
+   JOURNEY MAP
+========================================================= */
+
+.journey-section {
+    position: relative;
+    z-index: 2;
+
+    width: min(1050px, 92%);
+
+    margin: 0 auto;
+    padding: 30px 0 55px;
+}
+
+.journey-heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+
+    margin-bottom: 65px;
+
+    color: #c2b2d0;
+
+    font-size: 10px;
+    letter-spacing: 0.24em;
+
+    text-align: center;
+}
+
+.heading-line {
+    display: block;
+
+    width: 55px;
+    height: 1px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 138, 0, 0.75)
+    );
+}
+
+.heading-line:last-child {
+    transform: rotate(180deg);
+}
+
+.journey-map {
+    position: relative;
+    padding-bottom: 10px;
+}
+
+/* Glowing central path */
+
+.journey-path {
+    position: absolute;
+
+    top: 12px;
+    bottom: 90px;
+    left: 50%;
+
+    width: 3px;
+
+    transform: translateX(-50%);
+
+    border-radius: 10px;
+
+    background: linear-gradient(
+        180deg,
+        #ffb347 0%,
+        #ff6200 18%,
+        #8e35ff 48%,
+        #ff7200 78%,
+        #8e35ff 100%
+    );
+
+    box-shadow:
+        0 0 10px rgba(255, 116, 0, 0.7),
+        0 0 25px rgba(142, 53, 255, 0.3);
+}
+
+/* =========================================================
+   CHAPTER ROWS
+========================================================= */
+
+.day-row {
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        86px
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    min-height: 200px;
+    margin-bottom: 36px;
+}
+
+.day-left .chapter-card {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.day-right .chapter-card {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+/* =========================================================
+   CIRCULAR CHAPTER NODES
+========================================================= */
+
+.node-marker {
+    position: relative;
+    z-index: 3;
+
+    grid-column: 2;
+    grid-row: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+
+    width: 76px;
+    height: 76px;
+
+    border: 2px solid var(--orange);
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(67, 27, 92, 0.98),
+            rgba(8, 4, 15, 0.99) 72%
+        );
+
+    box-shadow:
+        0 0 0 7px rgba(255, 138, 0, 0.045),
+        0 0 20px rgba(255, 115, 0, 0.36),
+        inset 0 0 17px rgba(142, 53, 255, 0.28);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.node-marker::before {
+    position: absolute;
+
+    inset: -9px;
+
+    border: 1px solid rgba(255, 138, 0, 0.3);
+    border-radius: 50%;
+
+    content: "";
+
+    animation: ringPulse 3s ease-in-out infinite;
+}
+
+.node-number {
+    position: absolute;
+
+    top: -12px;
+    right: -10px;
+
+    display: grid;
+    place-items: center;
+
+    width: 25px;
+    height: 25px;
+
+    border: 1px solid var(--orange);
+    border-radius: 50%;
+
+    background: #160c20;
+
+    color: var(--orange-light);
+
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.node-symbol {
+    font-size: 29px;
+
+    filter: drop-shadow(
+        0 0 9px rgba(255, 138, 0, 0.4)
+    );
+}
+
+.day-row:hover .node-marker {
+    transform: scale(1.07);
+
+    box-shadow:
+        0 0 0 8px rgba(255, 138, 0, 0.07),
+        0 0 35px rgba(255, 115, 0, 0.65),
+        inset 0 0 20px rgba(142, 53, 255, 0.35);
+}
+
+/* =========================================================
+   CHAPTER CARDS
+========================================================= */
+
+.chapter-card {
+    position: relative;
+
+    min-width: 0;
+
+    padding: 25px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(255, 138, 0, 0.3);
+    border-radius: 4px 18px 4px 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(28, 15, 38, 0.98),
+            rgba(8, 5, 14, 0.98)
+        );
+
+    box-shadow:
+        0 14px 38px rgba(0, 0, 0, 0.35),
+        inset 0 1px rgba(255, 255, 255, 0.03);
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.chapter-card::before {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 3px;
+    height: 100%;
+
+    background: linear-gradient(
+        180deg,
+        var(--orange),
+        var(--purple),
+        transparent
+    );
+
+    content: "";
+}
+
+.chapter-card::after {
+    position: absolute;
+
+    top: -80px;
+    right: -80px;
+
+    width: 140px;
+    height: 140px;
+
+    border-radius: 50%;
+
+    background: rgba(142, 53, 255, 0.1);
+
+    filter: blur(30px);
+
+    content: "";
+    pointer-events: none;
+}
+
+.chapter-card:hover {
+    transform: translateY(-5px);
+
+    border-color: rgba(255, 138, 0, 0.8);
+
+    box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.45),
+        0 0 25px rgba(255, 111, 0, 0.1);
+}
+
+.card-topline {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    flex-wrap: wrap;
+}
+
+.chapter-label {
+    color: var(--orange-light);
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.19em;
+}
+
+.chapter-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    color: #c3b2d0;
+
+    font-size: 8px;
+    letter-spacing: 0.1em;
+}
+
+.chapter-state > span {
+    width: 6px;
+    height: 6px;
+}
+
+.chapter-card h2 {
+    position: relative;
+    z-index: 1;
+
+    margin-top: 19px;
+
+    color: var(--white);
+
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.chapter-card p {
+    position: relative;
+    z-index: 1;
+
+    margin-top: 11px;
+
+    color: #c1b3cc;
+
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.card-bottom {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    flex-wrap: wrap;
+
+    margin-top: 23px;
+    padding-top: 17px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.chapter-destination {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    color: #a79ab2;
+
+    font-size: 8px;
+    letter-spacing: 0.09em;
+}
+
+.chapter-destination > span {
+    color: var(--orange);
+    font-size: 13px;
+}
+
+/* =========================================================
+   CHAPTER BUTTONS
+========================================================= */
+
+.chapter-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    min-height: 38px;
+    padding: 10px 13px;
+
+    border: 1px solid rgba(255, 138, 0, 0.72);
+
+    background: rgba(255, 138, 0, 0.08);
+
+    color: #ffdfb8;
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+
+    text-decoration: none;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.chapter-button span {
+    font-size: 13px;
+}
+
+.chapter-button:hover {
+    border-color: transparent;
+
+    background: linear-gradient(
+        110deg,
+        #ff7900,
+        #a12dff
+    );
+
+    color: #fff;
+
+    box-shadow: 0 0 20px rgba(255, 111, 0, 0.25);
+}
+
+.chapter-button:active {
+    transform: scale(0.98);
+}
+
+/* =========================================================
+   COMPLETED CHAPTERS
+========================================================= */
+
+.day-row.completed .node-marker {
+    border-color: var(--green);
+
+    box-shadow:
+        0 0 18px rgba(124, 255, 176, 0.22),
+        inset 0 0 15px rgba(124, 255, 176, 0.12);
+}
+
+.day-row.completed .node-marker::after {
+    position: absolute;
+
+    right: -5px;
+    bottom: -3px;
+
+    display: grid;
+    place-items: center;
+
+    width: 24px;
+    height: 24px;
+
+    border: 1px solid var(--green);
+    border-radius: 50%;
+
+    background: #071a12;
+
+    color: var(--green);
+
+    font-size: 12px;
+
+    content: "✓";
+}
+
+.day-row.completed .chapter-state {
+    color: var(--green);
+}
+
+.day-row.completed .chapter-state > span {
+    background: var(--green);
+
+    box-shadow: 0 0 9px var(--green);
+}
+
+.day-row.completed .chapter-card {
+    border-color: rgba(124, 255, 176, 0.25);
+}
+
+/* =========================================================
+   FINALE
+========================================================= */
+
+.day-finale {
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+.finale-marker {
+    border-color: var(--purple-light);
+
+    box-shadow:
+        0 0 0 8px rgba(142, 53, 255, 0.06),
+        0 0 30px rgba(142, 53, 255, 0.5);
+}
+
+.finale-marker::before {
+    border-color: rgba(189, 120, 255, 0.4);
+}
+
+.finale-card {
+    border-color: var(--purple-border);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(38, 18, 58, 0.98),
+            rgba(9, 5, 18, 0.98)
+        );
+}
+
+.finale-card::before {
+    background: linear-gradient(
+        180deg,
+        var(--purple-light),
+        var(--orange),
+        transparent
+    );
+}
+
+.state-finale {
+    color: var(--purple-light);
+}
+
+/* =========================================================
+   PROGRESS PANEL
+========================================================= */
+
+.journey-progress {
+    position: relative;
+    z-index: 2;
+
+    width: min(650px, 88%);
+
+    margin: 5px auto 85px;
+    padding: 25px;
+
+    border: 1px solid rgba(255, 138, 0, 0.25);
+
+    background: rgba(10, 5, 16, 0.94);
+
+    box-shadow:
+        0 14px 35px rgba(0, 0, 0, 0.25),
+        inset 0 0 20px rgba(142, 53, 255, 0.035);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.progress-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    color: #e0d0ed;
+
+    font-size: 9px;
+    letter-spacing: 0.12em;
+}
+
+.progress-top span:last-child {
+    color: var(--orange-light);
+    text-align: right;
+}
+
+.progress-track {
+    height: 5px;
+
+    margin-top: 18px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.progress-fill {
+    width: 0;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: linear-gradient(
+        90deg,
+        var(--orange),
+        var(--orange-light),
+        var(--purple-light)
+    );
+
+    box-shadow: 0 0 12px rgba(255, 138, 0, 0.6);
+
+    transition: width 0.6s ease;
+}
+
+.reset-progress {
+    display: block;
+
+    margin: 20px auto 0;
+    padding: 8px 10px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: #a79ab2;
+
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+
+    transition: color 0.2s ease;
+}
+
+.reset-progress:hover {
+    color: var(--orange-light);
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+    position: relative;
+    z-index: 2;
+
+    padding: 30px 20px 35px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+
+    background: rgba(3, 2, 7, 0.96);
+
+    text-align: center;
+}
+
+.footer-brand {
+    color: var(--orange-light);
+
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.28em;
+
+    text-decoration: none;
+}
+
+.footer p {
+    margin-top: 11px;
+
+    color: #b2a1c0;
+
+    font-size: 9px;
+    letter-spacing: 0.12em;
+}
+
+.footer > span {
+    display: block;
+
+    margin-top: 17px;
+
+    color: #8a7a95;
+
+    font-size: 9px;
+    letter-spacing: 0.08em;
+}
+
+/* =========================================================
+   TOAST NOTIFICATION
+========================================================= */
+
+.toast {
+    position: fixed;
+    z-index: 100;
+
+    right: 20px;
+    bottom: 20px;
+
+    max-width: min(350px, calc(100% - 40px));
+
+    padding: 14px 18px;
+
+    border: 1px solid rgba(255, 138, 0, 0.55);
+
+    background: rgba(13, 8, 20, 0.98);
+
+    color: #ffe1bf;
+
+    font-size: 12px;
+    line-height: 1.6;
+
+    box-shadow: 0 0 25px rgba(255, 111, 0, 0.15);
+
+    opacity: 0;
+    transform: translateY(12px);
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+
+    pointer-events: none;
+}
+
+.toast.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================================================
+   FALLBACK / NOSCRIPT MESSAGE
+========================================================= */
+
+.noscript-message {
+    position: relative;
+    z-index: 20;
+
+    padding: 15px;
+
+    background: #241122;
+    color: #fff;
+
+    text-align: center;
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes backgroundBreath {
+    from {
+        transform: scale(1);
     }
-};
 
-document.addEventListener("DOMContentLoaded", () => {
-    VidlyraMap.init();
-});
+    to {
+        transform: scale(1.055);
+    }
+}
+
+@keyframes purplePulse {
+    from {
+        opacity: 0.55;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes cloudDrift {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(15%);
+    }
+}
+
+@keyframes fogDrift {
+    from {
+        transform: translateX(-20%);
+    }
+
+    to {
+        transform: translateX(5%);
+    }
+}
+
+@keyframes emberRise {
+    0% {
+        transform: translate3d(0, 0, 0) scale(0.5);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 0.8;
+    }
+
+    85% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform:
+            translate3d(var(--drift, 40px), -105vh, 0)
+            scale(1.3);
+
+        opacity: 0;
+    }
+}
+
+@keyframes ringPulse {
+    0%,
+    100% {
+        transform: scale(0.96);
+        opacity: 0.45;
+    }
+
+    50% {
+        transform: scale(1.07);
+        opacity: 1;
+    }
+}
+
+@keyframes statusPulse {
+    0%,
+    100% {
+        opacity: 0.55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* =========================================================
+   TABLET RESPONSIVE
+========================================================= */
+
+@media (max-width: 760px) {
+    .topbar {
+        min-height: 70px;
+        padding: 12px 18px;
+    }
+
+    .brand-icon {
+        width: 36px;
+        height: 36px;
+
+        font-size: 20px;
+    }
+
+    .brand-text strong {
+        font-size: 14px;
+    }
+
+    .brand-text small {
+        font-size: 8px;
+    }
+
+    .live-status {
+        font-size: 8px;
+        letter-spacing: 0.07em;
+    }
+
+    .back-home {
+        padding: 9px;
+        font-size: 8px;
+    }
+
+    .intro {
+        padding-top: 50px;
+    }
+
+    .journey-section {
+        width: 94%;
+    }
+
+    .day-row {
+        grid-template-columns:
+            minmax(0, 1fr)
+            66px
+            minmax(0, 1fr);
+
+        min-height: 190px;
+        margin-bottom: 25px;
+    }
+
+    .node-marker {
+        width: 62px;
+        height: 62px;
+    }
+
+    .node-symbol {
+        font-size: 24px;
+    }
+
+    .chapter-card {
+        padding: 19px 15px;
+    }
+
+    .chapter-card h2 {
+        font-size: 18px;
+    }
+
+    .card-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .chapter-button {
+        min-height: 36px;
+    }
+
+    .chapter-destination {
+        line-height: 1.6;
+    }
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE
+========================================================= */
+
+@media (max-width: 520px) {
+    .topbar {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .live-status {
+        order: 3;
+
+        width: 100%;
+
+        justify-content: center;
+
+        padding-top: 9px;
+
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .back-home {
+        margin-left: auto;
+    }
+
+    .intro {
+        padding: 42px 17px 28px;
+    }
+
+    .eyebrow {
+        gap: 8px;
+
+        font-size: 8px;
+        letter-spacing: 0.17em;
+    }
+
+    .eyebrow span {
+        width: 22px;
+    }
+
+    .intro h1 {
+        font-size: clamp(32px, 9vw, 48px);
+        letter-spacing: 0.04em;
+    }
+
+    .intro h1 span {
+        letter-spacing: 0.11em;
+    }
+
+    .intro-description {
+        max-width: 310px;
+        font-size: 12px;
+    }
+
+    .map-stats {
+        gap: 22px;
+    }
+
+    .stat strong {
+        font-size: 20px;
+    }
+
+    .stat span {
+        font-size: 8px;
+    }
+
+    .journey-section {
+        width: calc(100% - 28px);
+        padding-top: 22px;
+    }
+
+    .journey-heading {
+        gap: 8px;
+
+        margin-bottom: 38px;
+
+        font-size: 8px;
+        letter-spacing: 0.12em;
+    }
+
+    .heading-line {
+        width: 22px;
+    }
+
+    /* Move the path to the left on small screens. */
+
+    .journey-path {
+        top: 10px;
+        bottom: 80px;
+        left: 25px;
+
+        transform: none;
+    }
+
+    .day-row,
+    .day-row.day-left,
+    .day-row.day-right,
+    .day-row.day-finale {
+        display: grid;
+
+        grid-template-columns: 52px minmax(0, 1fr);
+
+        align-items: start;
+
+        min-height: 0;
+        margin-bottom: 25px;
+    }
+
+    .day-row .node-marker {
+        grid-column: 1;
+        grid-row: 1;
+
+        justify-self: start;
+
+        width: 46px;
+        height: 46px;
+
+        margin-top: 15px;
+    }
+
+    .node-number {
+        top: -8px;
+        right: -7px;
+
+        width: 21px;
+        height: 21px;
+
+        font-size: 8px;
+    }
+
+    .node-symbol {
+        font-size: 19px;
+    }
+
+    .day-row .chapter-card {
+        grid-column: 2;
+        grid-row: 1;
+
+        padding: 19px 14px;
+    }
+
+    .chapter-card h2 {
+        margin-top: 15px;
+        font-size: 18px;
+    }
+
+    .chapter-card p {
+        font-size: 12px;
+    }
+
+    .card-bottom {
+        gap: 13px;
+
+        margin-top: 18px;
+        padding-top: 14px;
+    }
+
+    .chapter-button {
+        width: 100%;
+
+        justify-content: space-between;
+
+        padding: 12px;
+    }
+
+    .journey-progress {
+        width: calc(100% - 32px);
+
+        margin-bottom: 55px;
+        padding: 20px 15px;
+    }
+
+    .progress-top {
+        font-size: 8px;
+        line-height: 1.7;
+    }
+
+    .footer p {
+        font-size: 8px;
+        line-height: 1.8;
+    }
+
+    .moon {
+        top: 18%;
+        right: 5%;
+
+        opacity: 0.35;
+    }
+
+    .castle-background {
+        width: 110vw;
+        height: 45vh;
+
+        opacity: 0.15;
+    }
+
+    .fog {
+        height: 130px;
+    }
+}
+
+/* =========================================================
+   ACCESSIBILITY: REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
