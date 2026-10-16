@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#05070D">
+  <title>Vidlyra Universe Quiz | Day 7</title>
+  <link rel="stylesheet" href="css/day7-quiz.css">
+  <script type="module" src="js/day7-quiz.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="topbar">
+    <a class="brand" href="map.html">VIDLYRA <span>STORY WORKS</span></a>
+    <span class="event-tag">HALLOWEEN FEST · DAY 7</span>
+  </header>
+
+  <main class="quiz-shell">
+    <section class="hero">
+      <div class="eyebrow">THE FINAL CHALLENGE</div>
+      <h1>VIDLYRA UNIVERSE <span>QUIZ</span></h1>
+      <p>Enter the worlds. Remember the stories. Prove your knowledge.</p>
+      <div class="rules">
+        <span>🎃 10 Questions</span>
+        <span>⚡ 10 Points Each</span>
+        <span>🏆 Pass: 70/100</span>
+      </div>
+    </section>
+
+    <section id="quizPanel" class="panel">
+      <div class="progress-heading">
+        <span id="questionCounter">QUESTION 1 OF 10</span>
+        <span id="scorePreview">0 POINTS</span>
+      </div>
+
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+
+      <form id="quizForm">
+        <h2 id="questionText">Loading your challenge...</h2>
+        <p id="questionHint" class="question-hint"></p>
+        <div id="optionsContainer" class="options"></div>
+
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+
+        <button id="nextButton" class="primary-button" type="submit">
+          CONFIRM ANSWER →
+        </button>
+      </form>
+    </section>
+
+    <section id="resultPanel" class="panel result-panel" hidden>
+      <div id="resultIcon" class="result-icon">🎃</div>
+      <div class="eyebrow">CHALLENGE COMPLETE</div>
+      <h2 id="resultTitle">Your result</h2>
+      <div id="finalScore" class="final-score">0/100</div>
+      <p id="resultMessage"></p>
+      <div id="saveStatus" class="save-status" aria-live="polite"></div>
+
+      <button id="continueButton" class="primary-button" hidden>
+        CONTINUE TO IMAGE PUZZLE →
+      </button>
+
+      <button id="retryButton" class="secondary-button" hidden>
+        TRY AGAIN
+      </button>
+
+      <a class="back-link" href="map.html">← Return to Festival Map</a>
+    </section>
+
+    <footer>
+      <p>VIDLYRA STORY WORKS</p>
+      <span>One universe. Countless mysteries.</span>
+    </footer>
+  </main>
+</body>
+</html>
