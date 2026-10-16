@@ -1,31 +1,13 @@
-/* =========================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   OFFICIAL CINEMATIC END CREDITS
-   3:00 EXPERIENCE
-   PALETTE: BLACK • ORANGE • WHITE
-========================================================= */
 
 :root {
     --black: #020201;
-    --black-soft: #080604;
-
     --orange: #ff7518;
     --orange-bright: #ff9b3d;
-    --orange-dark: #8f3000;
-
     --white: #fffaf2;
     --white-soft: #e9e0d5;
-
     --gray: #9b9187;
     --gray-dark: #5b524b;
-
-    --orange-glow: rgba(255, 117, 24, 0.45);
 }
-
-
-/* =========================================================
-   RESET
-========================================================= */
 
 * {
     margin: 0;
@@ -33,714 +15,390 @@
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     width: 100%;
     height: 100%;
 }
 
 body {
     overflow: hidden;
-
     background: var(--black);
-
     color: var(--white);
-
-    font-family:
-        "Segoe UI",
-        Arial,
-        Helvetica,
-        sans-serif;
-
+    font-family: "Segoe UI", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
 }
 
-
-/* =========================================================
-   MAIN CINEMA
-========================================================= */
+button {
+    font: inherit;
+}
 
 #creditsCinema {
     position: fixed;
-
     inset: 0;
-
-    width: 100%;
-    height: 100%;
-
     overflow: hidden;
-
-    background:
-        radial-gradient(
-            ellipse at 50% 45%,
-            rgba(105, 35, 4, 0.12),
-            transparent 58%
-        ),
-        var(--black);
-
     isolation: isolate;
+    background:
+        radial-gradient(ellipse at center, #1b0a03 0%, #080604 45%, #020201 100%);
 }
 
-
-/* =========================================================
-   ATMOSPHERE
-========================================================= */
+/* ATMOSPHERE */
 
 .atmosphere {
-    position: fixed;
-
+    position: absolute;
     inset: 0;
-
     z-index: 1;
-
-    pointer-events: none;
-
     overflow: hidden;
+    pointer-events: none;
 }
-
-
-/* =========================================================
-   ORANGE AMBIENT LIGHT
-========================================================= */
 
 .orangeGlow {
     position: absolute;
-
     width: 75vw;
     height: 75vw;
-
     max-width: 900px;
     max-height: 900px;
-
     left: 50%;
     top: 48%;
-
-    transform:
-        translate(-50%, -50%);
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(255, 105, 20, 0.12),
-            rgba(180, 55, 0, 0.045) 35%,
-            transparent 72%
-        );
-
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255,105,20,.15), transparent 70%);
     filter: blur(28px);
-
-    animation:
-        orangeBreath 8s ease-in-out infinite;
+    animation: orangeBreath 8s ease-in-out infinite;
 }
 
 @keyframes orangeBreath {
-
-    0%,
-    100% {
-        opacity: 0.4;
-
-        transform:
-            translate(-50%, -50%)
-            scale(0.94);
-    }
-
-    50% {
-        opacity: 0.9;
-
-        transform:
-            translate(-50%, -50%)
-            scale(1.06);
-    }
+    0%, 100% { opacity: .4; transform: translate(-50%, -50%) scale(.94); }
+    50% { opacity: .9; transform: translate(-50%, -50%) scale(1.06); }
 }
-
-
-/* =========================================================
-   FOG
-========================================================= */
 
 .fog {
     position: absolute;
-
     left: -30%;
-
     width: 160%;
     height: 35%;
-
     border-radius: 50%;
-
-    background:
-        radial-gradient(
-            ellipse,
-            rgba(210, 195, 180, 0.055),
-            transparent 68%
-        );
-
+    background: radial-gradient(ellipse, rgba(210,195,180,.07), transparent 68%);
     filter: blur(42px);
 }
 
 .fogOne {
     bottom: 2%;
-
-    animation:
-        fogMoveOne 26s ease-in-out infinite alternate;
+    animation: fogMoveOne 26s ease-in-out infinite alternate;
 }
 
 .fogTwo {
     bottom: 16%;
-
-    opacity: 0.55;
-
-    animation:
-        fogMoveTwo 34s ease-in-out infinite alternate;
+    opacity: .55;
+    animation: fogMoveTwo 34s ease-in-out infinite alternate;
 }
 
 @keyframes fogMoveOne {
-
-    from {
-        transform:
-            translateX(-8%);
-    }
-
-    to {
-        transform:
-            translateX(8%);
-    }
+    from { transform: translateX(-8%); }
+    to { transform: translateX(8%); }
 }
 
 @keyframes fogMoveTwo {
-
-    from {
-        transform:
-            translateX(7%);
-    }
-
-    to {
-        transform:
-            translateX(-7%);
-    }
+    from { transform: translateX(7%); }
+    to { transform: translateX(-7%); }
 }
-
-
-/* =========================================================
-   PARTICLES
-========================================================= */
 
 #particles {
     position: absolute;
-
     inset: 0;
-
     overflow: hidden;
 }
 
 .particle {
     position: absolute;
-
+    bottom: -10px;
     width: 2px;
     height: 2px;
-
     border-radius: 50%;
-
-    background:
-        rgba(255, 155, 61, 0.7);
-
-    box-shadow:
-        0 0 8px
-        rgba(255, 100, 20, 0.5);
-
-    animation:
-        particleRise linear infinite;
+    background: rgba(255,155,61,.8);
+    box-shadow: 0 0 8px rgba(255,100,20,.5);
+    animation: particleRise linear infinite;
 }
 
 @keyframes particleRise {
-
-    from {
-        transform:
-            translate3d(0, 110vh, 0);
-
-        opacity: 0;
-    }
-
-    15% {
-        opacity: 0.7;
-    }
-
-    85% {
-        opacity: 0.7;
-    }
-
-    to {
-        transform:
-            translate3d(0, -10vh, 0);
-
-        opacity: 0;
-    }
+    from { transform: translateY(0); opacity: 0; }
+    15%, 85% { opacity: .7; }
+    to { transform: translateY(-110vh); opacity: 0; }
 }
-
-
-/* =========================================================
-   FILM GRAIN
-========================================================= */
 
 .grain {
     position: absolute;
-
     inset: -50%;
-
-    opacity: 0.035;
-
-    background:
-        repeating-radial-gradient(
-            circle at 0 0,
-            transparent 0,
-            rgba(255, 255, 255, 0.45) 1px,
-            transparent 2px
-        );
-
+    opacity: .035;
+    background: repeating-radial-gradient(
+        circle at 0 0,
+        transparent 0,
+        rgba(255,255,255,.45) 1px,
+        transparent 2px
+    );
     background-size: 7px 7px;
-
-    animation:
-        grainMove 0.25s steps(2) infinite;
+    animation: grainMove .25s steps(2) infinite;
 }
 
 @keyframes grainMove {
-
-    0% {
-        transform:
-            translate(0, 0);
-    }
-
-    25% {
-        transform:
-            translate(2%, -1%);
-    }
-
-    50% {
-        transform:
-            translate(-1%, 2%);
-    }
-
-    75% {
-        transform:
-            translate(1%, 1%);
-    }
-
-    100% {
-        transform:
-            translate(-2%, -1%);
-    }
+    0% { transform: translate(0,0); }
+    25% { transform: translate(2%,-1%); }
+    50% { transform: translate(-1%,2%); }
+    75% { transform: translate(1%,1%); }
+    100% { transform: translate(-2%,-1%); }
 }
-
-
-/* =========================================================
-   VIGNETTE
-========================================================= */
 
 .vignette {
     position: absolute;
-
     inset: 0;
-
-    background:
-        radial-gradient(
-            ellipse at center,
-            transparent 36%,
-            rgba(0, 0, 0, 0.58) 100%
-        );
+    background: radial-gradient(ellipse at center, transparent 32%, rgba(0,0,0,.72) 100%);
 }
 
-
-/* =========================================================
-   START SCREEN
-========================================================= */
+/* START SCREEN */
 
 #startScreen {
     position: absolute;
-
     inset: 0;
-
     z-index: 50;
-
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     padding: 30px;
-
-    background:
-        rgba(0, 0, 0, 0.93);
-
-    transition:
-        opacity 1.5s ease,
-        visibility 1.5s ease;
+    background: rgba(0,0,0,.94);
+    transition: opacity 1.5s ease, visibility 1.5s ease;
 }
 
 #startScreen.hidden {
     opacity: 0;
-
     visibility: hidden;
-
     pointer-events: none;
 }
 
 .startContent {
-    width:
-        min(900px, 92%);
-
+    width: min(900px, 92%);
     text-align: center;
-
-    animation:
-        startAppear 2s ease both;
+    animation: startAppear 2s ease both;
 }
 
 @keyframes startAppear {
-
-    from {
-        opacity: 0;
-
-        transform:
-            translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-
-
-/* =========================================================
-   START TYPOGRAPHY
-========================================================= */
 
 .startEyebrow {
     font-size: 10px;
-
-    letter-spacing:
-        0.48em;
-
-    text-indent:
-        0.48em;
-
-    color:
-        var(--gray);
+    letter-spacing: .48em;
+    text-indent: .48em;
+    color: var(--gray);
 }
 
 .startContent h1 {
     margin-top: 24px;
-
-    font-size:
-        clamp(52px, 11vw, 125px);
-
+    font-size: clamp(52px, 11vw, 125px);
     font-weight: 200;
-
-    letter-spacing:
-        0.27em;
-
-    text-indent:
-        0.27em;
-
-    color:
-        var(--white);
-
-    text-shadow:
-        0 0 35px
-        rgba(255, 117, 24, 0.15);
+    letter-spacing: .27em;
+    text-indent: .27em;
+    text-shadow: 0 0 35px rgba(255,117,24,.2);
 }
 
 .startLine {
     width: 115px;
-
     height: 1px;
-
-    margin:
-        24px auto;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            var(--orange),
-            transparent
-        );
+    margin: 24px auto;
+    background: linear-gradient(90deg, transparent, var(--orange), transparent);
 }
 
 .startContent h2 {
-    font-size:
-        clamp(12px, 2vw, 19px);
-
+    font-size: clamp(12px, 2vw, 19px);
     font-weight: 400;
-
-    letter-spacing:
-        0.4em;
-
-    text-indent:
-        0.4em;
-
-    color:
-        var(--white-soft);
+    letter-spacing: .4em;
+    text-indent: .4em;
+    color: var(--white-soft);
 }
 
 .startContent p {
     margin-top: 16px;
-
     font-size: 10px;
-
-    letter-spacing:
-        0.3em;
-
-    text-indent:
-        0.3em;
-
-    color:
-        var(--gray);
+    letter-spacing: .3em;
+    color: var(--gray);
 }
-
-
-/* =========================================================
-   ENTER BUTTON
-========================================================= */
 
 #enterButton {
     margin-top: 48px;
-
     min-width: 145px;
-
-    padding:
-        13px 28px;
-
-    border:
-        1px solid
-        rgba(255, 117, 24, 0.5);
-
-    background:
-        rgba(255, 90, 10, 0.06);
-
-    color:
-        var(--white);
-
+    padding: 13px 28px;
+    border: 1px solid rgba(255,117,24,.5);
+    background: rgba(255,90,10,.06);
+    color: var(--white);
     font-size: 10px;
-
-    letter-spacing:
-        0.28em;
-
-    text-indent:
-        0.28em;
-
+    letter-spacing: .28em;
     cursor: pointer;
-
-    transition:
-        background 0.35s ease,
-        border-color 0.35s ease,
-        box-shadow 0.35s ease,
-        transform 0.35s ease;
+    transition: .35s ease;
 }
 
 #enterButton:hover {
-    background:
-        rgba(255, 117, 24, 0.15);
-
-    border-color:
-        var(--orange);
-
-    box-shadow:
-        0 0 30px
-        rgba(255, 117, 24, 0.18);
-
-    transform:
-        translateY(-2px);
+    background: rgba(255,117,24,.15);
+    border-color: var(--orange);
+    box-shadow: 0 0 30px rgba(255,117,24,.18);
+    transform: translateY(-2px);
 }
 
-#enterButton:active {
-    transform:
-        translateY(0)
-        scale(0.98);
+#enterButton:disabled {
+    opacity: .6;
+    cursor: wait;
 }
 
-
-/* =========================================================
-   CREDIT VIEWPORT
-========================================================= */
+/* CREDIT VIEWPORT */
 
 #creditViewport {
     position: absolute;
-
     inset: 0;
-
     z-index: 20;
-
     overflow: hidden;
-
     opacity: 0;
-
     visibility: hidden;
-
-    transition:
-        opacity 1.2s ease,
-        visibility 1.2s ease;
+    transition: opacity 1.2s ease, visibility 1.2s ease;
 }
 
 #creditViewport.active {
     opacity: 1;
-
     visibility: visible;
 }
 
+/* SIDE TRACK WINDOWS */
 
-/* =========================================================
-   CREDIT ROLL
-========================================================= */
+.creditSideWindow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    width: clamp(145px, 23vw, 360px);
+    overflow: hidden;
+    pointer-events: none;
+
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        black 10%,
+        black 88%,
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        black 10%,
+        black 88%,
+        transparent 100%
+    );
+}
+
+.creditSideLeft {
+    left: clamp(8px, 2.2vw, 34px);
+}
+
+.creditSideRight {
+    right: clamp(8px, 2.2vw, 34px);
+}
+
+/* THE TRACKS ARE MOVED BY JAVASCRIPT USING THE SAME Y POSITION AS TEXT */
+
+.creditSideRoll {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    will-change: transform;
+}
+
+.creditSideSlot {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 12px 0;
+}
+
+.creditSideSlot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 22px rgba(255,117,24,.25));
+    opacity: .88;
+    animation: visualGlow 5s ease-in-out infinite alternate;
+}
+
+@keyframes visualGlow {
+    from { filter: drop-shadow(0 0 12px rgba(255,117,24,.15)); }
+    to { filter: drop-shadow(0 0 26px rgba(255,117,24,.34)); }
+}
+
+/* CENTER CREDIT ROLL */
 
 #creditRoll {
     position: absolute;
-
-    left: 0;
-
     top: 100%;
-
+    left: 0;
+    z-index: 3;
     width: 100%;
-
     text-align: center;
-
-    will-change:
-        transform;
+    will-change: transform;
+    pointer-events: none;
 }
-
-
-/* =========================================================
-   CREDIT BLOCK
-========================================================= */
 
 .creditBlock {
-    width:
-        min(820px, 90%);
-
-    min-height:
-        62vh;
-
-    margin:
-        0 auto;
-
-    padding:
-        100px 20px;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
+    position: relative;
+    width: min(820px, 62%);
+    min-height: 62vh;
+    margin: 0 auto;
+    padding: 100px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 0 2px 12px rgba(0,0,0,.9);
 }
 
-
-/* =========================================================
-   OPENING BLOCK
-========================================================= */
-
 .openingBlock {
-    min-height:
-        75vh;
+    min-height: 75vh;
 }
 
 .vidlyraMark {
-    font-size:
-        clamp(48px, 9vw, 100px);
-
+    font-size: clamp(48px, 9vw, 100px);
     font-weight: 200;
-
-    letter-spacing:
-        0.25em;
-
-    text-indent:
-        0.25em;
-
-    color:
-        var(--white);
-
-    text-shadow:
-        0 0 30px
-        rgba(255, 117, 24, 0.18);
+    letter-spacing: .25em;
+    text-indent: .25em;
+    text-shadow: 0 0 30px rgba(255,117,24,.25);
 }
 
 .festivalTitle {
     margin-top: 22px;
-
-    font-size:
-        clamp(12px, 2vw, 18px);
-
-    letter-spacing:
-        0.35em;
-
-    text-indent:
-        0.35em;
-
-    color:
-        var(--white-soft);
+    font-size: clamp(12px, 2vw, 18px);
+    letter-spacing: .35em;
+    color: var(--white-soft);
 }
 
-.thinLine {
+.thinLine,
+.finalLine {
     width: 100px;
-
     height: 1px;
-
-    margin:
-        28px auto;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            var(--orange),
-            transparent
-        );
+    margin: 28px auto;
+    background: linear-gradient(90deg, transparent, var(--orange), transparent);
 }
 
 .creditLabel {
     font-size: 9px;
-
-    letter-spacing:
-        0.3em;
-
-    text-indent:
-        0.3em;
-
-    color:
-        var(--gray);
+    letter-spacing: .3em;
+    color: var(--gray);
 }
 
-
-/* =========================================================
-   CREDIT TYPOGRAPHY
-========================================================= */
-
 .creditRole {
-    margin-top: 34px;
-
     max-width: 650px;
-
+    margin-top: 34px;
     font-size: 10px;
-
     line-height: 1.8;
-
-    letter-spacing:
-        0.22em;
-
-    text-indent:
-        0.22em;
-
-    text-transform:
-        uppercase;
-
-    color:
-        var(--gray);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--gray);
 }
 
 .creditRole:first-child {
@@ -749,790 +407,316 @@ body {
 
 .creditName {
     margin-top: 9px;
-
-    font-size:
-        clamp(18px, 2.5vw, 28px);
-
+    font-size: clamp(18px, 2.5vw, 28px);
     font-weight: 400;
-
-    letter-spacing:
-        0.06em;
-
-    color:
-        var(--white-soft);
+    letter-spacing: .06em;
+    color: var(--white-soft);
 }
 
 .creditName.featured {
-    font-size:
-        clamp(25px, 4vw, 40px);
-
-    color:
-        var(--white);
-
-    text-shadow:
-        0 0 22px
-        rgba(255, 117, 24, 0.1);
+    font-size: clamp(25px, 4vw, 40px);
+    color: var(--white);
 }
 
-
-/* =========================================================
-   TEAM
-========================================================= */
+/* TEAM */
 
 .teamBlock {
-    width:
-        min(1050px, 94%);
-
-    min-height:
-        90vh;
+    width: min(1050px, 76%);
+    min-height: 90vh;
 }
 
 .teamBlock .creditRole {
-    margin-bottom:
-        55px;
+    margin-bottom: 55px;
 }
 
 .teamGrid {
-    width:
-        min(900px, 100%);
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(5, 1fr);
-
-    gap:
-        22px 15px;
+    width: min(900px, 100%);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 22px 15px;
 }
 
 .teamGrid span {
-    font-size:
-        13px;
-
-    letter-spacing:
-        0.07em;
-
-    color:
-        var(--white-soft);
+    font-size: 13px;
+    letter-spacing: .07em;
+    color: var(--white-soft);
 }
 
-
-/* =========================================================
-   THANKS
-========================================================= */
+/* THANKS */
 
 .thanksBlock {
-    min-height:
-        80vh;
+    min-height: 80vh;
 }
 
 .thanksBlock p {
-    width:
-        min(620px, 90%);
-
-    margin:
-        24px auto;
-
-    font-size:
-        14px;
-
-    line-height:
-        2;
-
-    color:
-        var(--gray);
+    width: min(620px, 90%);
+    margin: 24px auto;
+    font-size: 14px;
+    line-height: 2;
+    color: var(--gray);
 }
 
 .producedLabel {
-    margin-top:
-        60px;
-
-    font-size:
-        10px;
-
-    letter-spacing:
-        0.25em;
-
-    color:
-        var(--gray);
+    margin-top: 60px;
+    font-size: 10px;
+    letter-spacing: .25em;
+    color: var(--gray);
 }
 
 .studioName {
-    margin-top:
-        17px;
-
-    font-size:
-        clamp(34px, 6vw, 64px);
-
-    font-weight:
-        200;
-
-    letter-spacing:
-        0.18em;
-
-    text-indent:
-        0.18em;
-
-    color:
-        var(--white);
+    margin-top: 17px;
+    font-size: clamp(34px, 6vw, 64px);
+    font-weight: 200;
+    letter-spacing: .18em;
+    color: var(--white);
 }
 
 .studioTagline {
-    margin-top:
-        15px;
-
-    font-size:
-        10px;
-
-    letter-spacing:
-        0.18em;
-
-    color:
-        var(--gray-dark);
+    margin-top: 15px;
+    font-size: 10px;
+    letter-spacing: .18em;
+    color: var(--gray-dark);
 }
 
-
-/* =========================================================
-   FINAL CARD
-========================================================= */
+/* FINALE */
 
 .finalBlock {
-    min-height:
-        90vh;
-
-    padding-top:
-        120px;
-
-    padding-bottom:
-        120px;
+    min-height: 90vh;
+    padding: 120px 20px;
 }
 
 .pumpkin {
-    font-size:
-        clamp(46px, 8vw, 82px);
-
-    filter:
-        drop-shadow(
-            0 0 20px
-            rgba(255, 117, 24, 0.55)
-        );
-
-    animation:
-        pumpkinPulse 3.5s ease-in-out infinite;
+    font-size: clamp(46px, 8vw, 82px);
+    filter: drop-shadow(0 0 20px rgba(255,117,24,.55));
+    animation: pumpkinPulse 3.5s ease-in-out infinite;
 }
 
 @keyframes pumpkinPulse {
-
-    0%,
-    100% {
-        transform:
-            scale(0.97);
-    }
-
-    50% {
-        transform:
-            scale(1.04);
-    }
+    0%, 100% { transform: scale(.97); }
+    50% { transform: scale(1.04); }
 }
 
 .thankYou {
-    margin-top:
-        28px;
-
-    font-size:
-        clamp(12px, 2vw, 17px);
-
-    letter-spacing:
-        0.34em;
-
-    text-indent:
-        0.34em;
-
-    color:
-        var(--gray);
+    margin-top: 28px;
+    font-size: clamp(12px, 2vw, 17px);
+    letter-spacing: .34em;
+    color: var(--gray);
 }
 
 .universe {
-    margin-top:
-        12px;
-
-    font-size:
-        clamp(22px, 4vw, 42px);
-
-    font-weight:
-        300;
-
-    letter-spacing:
-        0.16em;
-
-    text-indent:
-        0.16em;
-
-    color:
-        var(--white);
-}
-
-.finalLine {
-    width:
-        90px;
-
-    height:
-        1px;
-
-    margin:
-        28px auto;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            var(--orange),
-            transparent
-        );
+    margin-top: 12px;
+    font-size: clamp(22px, 4vw, 42px);
+    font-weight: 300;
+    letter-spacing: .16em;
 }
 
 .nextHalloween {
-    font-size:
-        11px;
-
-    letter-spacing:
-        0.35em;
-
-    text-indent:
-        0.35em;
-
-    color:
-        var(--gray);
+    font-size: 11px;
+    letter-spacing: .35em;
+    color: var(--gray);
 }
 
 .finalBlock h2 {
-    margin-top:
-        17px;
-
-    font-size:
-        clamp(27px, 6vw, 60px);
-
-    font-weight:
-        300;
-
-    letter-spacing:
-        0.15em;
-
-    text-indent:
-        0.15em;
-
-    color:
-        var(--white);
+    margin-top: 17px;
+    font-size: clamp(27px, 6vw, 60px);
+    font-weight: 300;
+    letter-spacing: .15em;
 }
 
 .quote {
-    margin-top:
-        32px;
-
-    font-size:
-        13px;
-
-    letter-spacing:
-        0.08em;
-
-    color:
-        var(--gray);
+    margin-top: 32px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--gray);
 }
 
 .finalLogo {
-    margin-top:
-        65px;
-
-    font-size:
-        clamp(42px, 8vw, 92px);
-
-    font-weight:
-        200;
-
-    letter-spacing:
-        0.24em;
-
-    text-indent:
-        0.24em;
-
-    color:
-        var(--white);
-
-    text-shadow:
-        0 0 32px
-        rgba(255, 117, 24, 0.16);
+    margin-top: 65px;
+    font-size: clamp(42px, 8vw, 92px);
+    font-weight: 200;
+    letter-spacing: .24em;
+    text-shadow: 0 0 32px rgba(255,117,24,.2);
 }
 
 .copyright {
-    margin-top:
-        35px;
-
-    font-size:
-        8px;
-
-    letter-spacing:
-        0.28em;
-
-    color:
-        var(--gray-dark);
+    margin-top: 35px;
+    font-size: 8px;
+    letter-spacing: .28em;
+    color: var(--gray-dark);
 }
-
-
-/* =========================================================
-   END SPACE
-========================================================= */
 
 .endSpace {
-    height:
-        65vh;
+    height: 65vh;
 }
 
-
-/* =========================================================
-   SOUND BUTTON
-========================================================= */
+/* SOUND BUTTON */
 
 #soundButton {
-    position:
-        fixed;
-
-    right:
-        20px;
-
-    bottom:
-        20px;
-
-    z-index:
-        100;
-
-    padding:
-        9px 14px;
-
-    border:
-        1px solid
-        rgba(255, 117, 24, 0.28);
-
-    background:
-        rgba(0, 0, 0, 0.68);
-
-    color:
-        var(--white-soft);
-
-    font-size:
-        9px;
-
-    letter-spacing:
-        0.15em;
-
-    cursor:
-        pointer;
-
-    backdrop-filter:
-        blur(8px);
-
-    transition:
-        0.3s ease;
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 100;
+    padding: 9px 14px;
+    border: 1px solid rgba(255,117,24,.35);
+    background: rgba(0,0,0,.82);
+    color: var(--white-soft);
+    font-size: 9px;
+    letter-spacing: .15em;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
 }
 
-#soundButton:hover {
-    border-color:
-        rgba(255, 117, 24, 0.7);
-
-    background:
-        rgba(255, 117, 24, 0.1);
-
-    color:
-        var(--white);
-}
-
-
-/* =========================================================
-   TIMELINE
-========================================================= */
+/* TIMELINE */
 
 #timeline {
-    position:
-        fixed;
-
-    left:
-        50%;
-
-    bottom:
-        20px;
-
-    transform:
-        translateX(-50%);
-
-    z-index:
-        90;
-
-    width:
-        min(430px, 55vw);
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    gap:
-        10px;
-
-    color:
-        var(--gray);
-
-    font-size:
-        8px;
-
-    letter-spacing:
-        0.08em;
-
-    opacity:
-        0.65;
-
-    transition:
-        opacity 0.5s ease;
-}
-
-#timeline:hover {
-    opacity:
-        1;
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 90;
+    width: min(430px, 48vw);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--gray);
+    font-size: 8px;
+    letter-spacing: .08em;
+    opacity: .75;
 }
 
 .timelineTrack {
-    flex:
-        1;
+    position: relative;
+    flex: 1;
+    height: 4px;
+    min-width: 30px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: rgba(255,255,255,.16);
+    cursor: pointer;
+    outline: none;
+}
 
-    height:
-        2px;
-
-    overflow:
-        hidden;
-
-    background:
-        rgba(255, 255, 255, 0.12);
+.timelineTrack:focus-visible {
+    box-shadow: 0 0 0 2px var(--orange);
 }
 
 #timelineProgress {
-    width:
-        0%;
-
-    height:
-        100%;
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--orange-dark),
-            var(--orange),
-            var(--orange-bright)
-        );
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--orange), var(--orange-bright));
+    box-shadow: 0 0 10px rgba(255,117,24,.45);
 }
 
-
-/* =========================================================
-   FINISHED STATE
-========================================================= */
+/* END */
 
 #creditsCinema.finished {
-    animation:
-        cinemaFadeOut 3.5s ease forwards;
+    animation: cinemaFadeOut 2.5s ease forwards;
 }
 
 @keyframes cinemaFadeOut {
-
-    from {
-        opacity:
-            1;
-    }
-
-    to {
-        opacity:
-            0;
-    }
+    to { opacity: 0; visibility: hidden; }
 }
 
+/* RESPONSIVE */
 
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 700px) {
-
-    .startEyebrow {
-        font-size:
-            8px;
-
-        letter-spacing:
-            0.32em;
-
-        text-indent:
-            0.32em;
-    }
-
-    .startContent h1 {
-        letter-spacing:
-            0.18em;
-
-        text-indent:
-            0.18em;
-    }
-
-    .startContent h2 {
-        letter-spacing:
-            0.22em;
-
-        text-indent:
-            0.22em;
-    }
-
-    .startContent p {
-        letter-spacing:
-            0.2em;
-
-        text-indent:
-            0.2em;
-    }
-
-    #enterButton {
-        margin-top:
-            38px;
-
-        padding:
-            12px 23px;
+@media (max-width: 900px) {
+    .creditSideWindow {
+        width: clamp(115px, 22vw, 220px);
     }
 
     .creditBlock {
-        width:
-            92%;
-
-        min-height:
-            65vh;
-
-        padding:
-            80px 10px;
-    }
-
-    .creditRole {
-        font-size:
-            8px;
-
-        letter-spacing:
-            0.15em;
-
-        text-indent:
-            0.15em;
-    }
-
-    .creditName {
-        font-size:
-            17px;
-    }
-
-    .creditName.featured {
-        font-size:
-            24px;
-    }
-
-    .teamGrid {
-        grid-template-columns:
-            repeat(2, 1fr);
-
-        gap:
-            16px 8px;
-    }
-
-    .teamGrid span {
-        font-size:
-            11px;
-    }
-
-    .thanksBlock p {
-        font-size:
-            12px;
-    }
-
-    .studioName {
-        font-size:
-            34px;
-
-        letter-spacing:
-            0.1em;
-
-        text-indent:
-            0.1em;
-    }
-
-    .finalBlock h2 {
-        font-size:
-            27px;
-
-        letter-spacing:
-            0.1em;
-
-        text-indent:
-            0.1em;
-    }
-
-    .quote {
-        font-size:
-            11px;
-    }
-
-    .finalLogo {
-        margin-top:
-            48px;
-
-        font-size:
-            43px;
-
-        letter-spacing:
-            0.14em;
-
-        text-indent:
-            0.14em;
-    }
-
-    #soundButton {
-        right:
-            12px;
-
-        bottom:
-            12px;
-
-        padding:
-            8px 10px;
-
-        font-size:
-            8px;
-    }
-
-    #timeline {
-        left:
-            12px;
-
-        right:
-            12px;
-
-        bottom:
-            52px;
-
-        width:
-            auto;
-
-        transform:
-            none;
-    }
-}
-
-
-/* =========================================================
-   SMALL PHONES
-========================================================= */
-
-@media (max-width: 380px) {
-
-    .teamGrid {
-        gap:
-            13px 5px;
-    }
-
-    .teamGrid span {
-        font-size:
-            10px;
-    }
-
-    .finalBlock h2 {
-        font-size:
-            23px;
-    }
-
-    .nextHalloween {
-        letter-spacing:
-            0.24em;
-
-        text-indent:
-            0.24em;
-    }
-}
-
-
-/* =========================================================
-   LANDSCAPE MOBILE
-========================================================= */
-
-@media (
-    max-height: 500px
-) and (
-    orientation: landscape
-) {
-
-    .creditBlock {
-        min-height:
-            100vh;
-
-        padding:
-            50px 15px;
-    }
-
-    .openingBlock {
-        min-height:
-            100vh;
+        width: 68%;
+        padding: 80px 12px;
     }
 
     .teamBlock {
-        min-height:
-            130vh;
+        width: 80%;
     }
 
-    .finalBlock {
-        min-height:
-            120vh;
-    }
-
-    .startContent h1 {
-        font-size:
-            45px;
-    }
-
-    #enterButton {
-        margin-top:
-            20px;
+    .teamGrid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px 10px;
     }
 }
 
+@media (max-width: 600px) {
+    .creditSideWindow {
+        width: 24vw;
+    }
 
-/* =========================================================
-   ACCESSIBILITY
-========================================================= */
+    .creditSideSlot {
+        padding: 8px 0;
+    }
 
-button:focus-visible {
-    outline:
-        2px solid
-        var(--orange);
+    .creditBlock {
+        width: 72%;
+        min-height: 58vh;
+        padding: 65px 4px;
+    }
 
-    outline-offset:
-        4px;
+    .teamBlock {
+        width: 90%;
+        min-height: 95vh;
+    }
+
+    .teamBlock .creditRole {
+        margin-bottom: 35px;
+    }
+
+    .teamGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px 6px;
+    }
+
+    .teamGrid span {
+        font-size: 11px;
+        overflow-wrap: anywhere;
+    }
+
+    .creditRole {
+        font-size: 8px;
+        letter-spacing: .13em;
+    }
+
+    .thanksBlock p {
+        font-size: 12px;
+    }
+
+    .copyright {
+        font-size: 7px;
+        letter-spacing: .12em;
+    }
+
+    #timeline {
+        left: 12px;
+        bottom: 18px;
+        transform: none;
+        width: calc(100% - 150px);
+        gap: 7px;
+    }
+
+    #soundButton {
+        right: 10px;
+        bottom: 10px;
+        padding: 10px;
+        font-size: 8px;
+    }
 }
-
-
-/* =========================================================
-   REDUCED MOTION
-========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
+    .orangeGlow,
+    .fog,
+    .particle,
+    .grain,
+    .pumpkin,
+    .creditSideSlot img {
+        animation: none !important;
+    }
 
-    *,
-    *::before,
-    *::after {
-        animation-duration:
-            0.01ms !important;
-
-        animation-iteration-count:
-            1 !important;
-
-        transition-duration:
-            0.01ms !important;
+    #startScreen,
+    #creditViewport,
+    #creditsCinema {
+        transition-duration: .01ms !important;
     }
 }
