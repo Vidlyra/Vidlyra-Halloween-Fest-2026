@@ -1,255 +1,243 @@
 
-/* =====================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   HAUNTED ADVENTURE MAP
-===================================================== */
+import { supabase } from './supabase.js';
 
-"use strict";
+const FESTIVAL = 'halloween_2026';
+const TOTAL_DAYS = 7;
 
 const VidlyraMap = {
-    totalChapters: 7,
+  progress: null,
+  userId: null,
+  toastTimer: null,
 
-    completionKeys: [
-        "day1Complete",
-        "day2Complete",
-        "day3Complete",
-        "day4Complete",
-        "day5Complete",
-        "day6Complete",
-        "day7Complete"
-    ],
+  async init() {
+    this.createEmbers();
+    this.bindEvents();
+    await this.loadProgress();
 
-    toastTimer: null,
+    window.addEventListener('pageshow', () => {
+      this.loadProgress();
+    });
 
-    init() {
-        this.cacheElements();
-        this.createEmbers();
-        this.updateProgress();
-        this.bindEvents();
+    // Recheck when the user returns to this tab.
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) this.loadProgress();
+    });
 
-        console.log("🎃 VIDLYRA HALLOWEEN FEST 2026");
-        console.log("🗺 Haunted Adventure Map initialized.");
-    },
+    // Listen for login/logout in the same browser session.
+    supabase.auth.onAuthStateChange(() => {
+      window.setTimeout(() => this.loadProgress(), 0);
+    });
+  },
 
-    cacheElements() {
-        this.embersContainer = document.getElementById("embers");
-        this.completedCount = document.getElementById("completedCount");
-        this.progressText = document.getElementById("progressText");
-        this.progressFill = document.getElementById("progressFill");
-        this.progressBar = document.getElementById("progressBar");
-        this.resetButton = document.getElementById("resetProgress");
-        this.toast = document.getElementById("toast");
+  createEmbers() {
+    const container = document.getElementById('embers');
+    if (!container) return;
 
-        this.chapterRows = document.querySelectorAll(".day-row[data-day]");
-    },
+    const fragment = document.createDocumentFragment();
+    const count = window.innerWidth < 600 ? 18 : 38;
 
-    bindEvents() {
-        if (this.resetButton) {
-            this.resetButton.addEventListener("click", () => {
-                this.resetProgress();
-            });
-        }
+    for (let i = 0; i < count; i++) {
+      const ember = document.createElement('span');
+      ember.className = 'ember';
+      ember.setAttribute('aria-hidden', 'true');
+      ember.style.left = `${Math.random() * 100}%`;
+      ember.style.setProperty('--duration', `${8 + Math.random() * 12}s`);
+      ember.style.setProperty('--delay', `${-Math.random() * 18}s`);
+      ember.style.setProperty('--drift', `${Math.round(Math.random() * 100 - 50)}px`);
 
-        // Refresh completion status when returning to this page.
-        window.addEventListener("pageshow", () => {
-            this.updateProgress();
-        });
-
-        // Also refresh if completion changes in another browser tab.
-        window.addEventListener("storage", (event) => {
-            if (
-                this.completionKeys.includes(event.key) ||
-                event.key === null
-            ) {
-                this.updateProgress();
-            }
-        });
-    },
-
-    createEmbers() {
-        if (!this.embersContainer) {
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-        const emberCount = window.matchMedia(
-            "(max-width: 520px)"
-        ).matches ? 16 : 30;
-
-        for (let i = 0; i < emberCount; i++) {
-            const ember = document.createElement("span");
-
-            ember.className = "ember";
-            ember.setAttribute("aria-hidden", "true");
-
-            ember.style.left = `${Math.random() * 100}%`;
-            ember.style.setProperty(
-                "--duration",
-                `${8 + Math.random() * 12}s`
-            );
-            ember.style.setProperty(
-                "--delay",
-                `${-Math.random() * 18}s`
-            );
-            ember.style.setProperty(
-                "--drift",
-                `${Math.round(Math.random() * 120 - 60)}px`
-            );
-
-            const size = 2 + Math.random() * 2;
-            ember.style.width = `${size}px`;
-            ember.style.height = `${size}px`;
-
-            fragment.appendChild(ember);
-        }
-
-        this.embersContainer.appendChild(fragment);
-    },
-
-    getCompletedDays() {
-        let completed = 0;
-
-        this.completionKeys.forEach((key) => {
-            try {
-                if (localStorage.getItem(key) === "true") {
-                    completed++;
-                }
-            } catch (error) {
-                console.warn(
-                    "Unable to read chapter progress:",
-                    error
-                );
-            }
-        });
-
-        return completed;
-    },
-
-    isChapterCompleted(dayNumber) {
-        const key = this.completionKeys[dayNumber - 1];
-
-        if (!key) {
-            return false;
-        }
-
-        try {
-            return localStorage.getItem(key) === "true";
-        } catch (error) {
-            console.warn(
-                "Unable to read chapter completion:",
-                error
-            );
-
-            return false;
-        }
-    },
-
-    updateProgress() {
-        let completed = 0;
-
-        this.chapterRows.forEach((row) => {
-            const dayNumber = Number(row.dataset.day);
-            const isCompleted = this.isChapterCompleted(dayNumber);
-
-            row.classList.toggle("completed", isCompleted);
-
-            const state = row.querySelector(".chapter-state");
-            const button = row.querySelector(".chapter-button");
-
-            if (isCompleted) {
-                completed++;
-
-                if (state) {
-                    state.innerHTML = "<span></span> COMPLETED";
-                }
-
-                if (button) {
-                    button.classList.add("chapter-completed");
-                }
-            } else {
-                if (state) {
-                    state.innerHTML = "<span></span> OPEN";
-                }
-
-                if (button) {
-                    button.classList.remove("chapter-completed");
-                }
-            }
-        });
-
-        const percentage =
-            (completed / this.totalChapters) * 100;
-
-        if (this.completedCount) {
-            this.completedCount.textContent =
-                String(completed).padStart(2, "0");
-        }
-
-        if (this.progressText) {
-            this.progressText.textContent =
-                `${completed} OF ${this.totalChapters} CHAPTERS COMPLETE`;
-        }
-
-        if (this.progressFill) {
-            this.progressFill.style.width = `${percentage}%`;
-        }
-
-        if (this.progressBar) {
-            this.progressBar.setAttribute(
-                "aria-valuenow",
-                String(completed)
-            );
-        }
-    },
-
-    resetProgress() {
-        const confirmed = window.confirm(
-            "Reset your Halloween adventure progress?\n\n" +
-            "This will clear the completion status of all seven chapters."
-        );
-
-        if (!confirmed) {
-            return;
-        }
-
-        try {
-            this.completionKeys.forEach((key) => {
-                localStorage.removeItem(key);
-            });
-
-            this.updateProgress();
-
-            this.showToast(
-                "Your adventure progress has been reset."
-            );
-        } catch (error) {
-            console.error("Unable to reset progress:", error);
-
-            this.showToast(
-                "Progress could not be reset. Check your browser storage settings."
-            );
-        }
-    },
-
-    showToast(message) {
-        if (!this.toast) {
-            return;
-        }
-
-        this.toast.textContent = message;
-        this.toast.classList.add("visible");
-
-        if (this.toastTimer) {
-            window.clearTimeout(this.toastTimer);
-        }
-
-        this.toastTimer = window.setTimeout(() => {
-            this.toast.classList.remove("visible");
-            this.toastTimer = null;
-        }, 3000);
+      const size = 2 + Math.random() * 2;
+      ember.style.width = `${size}px`;
+      ember.style.height = `${size}px`;
+      fragment.appendChild(ember);
     }
+
+    container.appendChild(fragment);
+  },
+
+  bindEvents() {
+    document.querySelectorAll('.chapter-button').forEach(button => {
+      button.addEventListener('click', event => {
+        const chapter = button.closest('.chapter');
+        if (!chapter) return;
+
+        if (chapter.classList.contains('is-locked')) {
+          event.preventDefault();
+          this.showToast('🔒 Complete the previous chapter to unlock this destination.');
+        }
+      });
+    });
+
+    const finaleLink = document.getElementById('finaleLink');
+    finaleLink?.addEventListener('click', event => {
+      if (!this.isFestivalComplete()) {
+        event.preventDefault();
+        this.showToast('Complete all seven chapters before entering the finale.');
+      }
+    });
+  },
+
+  async loadProgress() {
+    const status = document.getElementById('syncStatus');
+
+    if (status) status.textContent = 'Syncing your adventure...';
+
+    try {
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+
+      if (authError) throw authError;
+
+      const user = authData?.user;
+
+      if (!user) {
+        this.userId = null;
+        this.progress = null;
+        this.render();
+        if (status) status.textContent = 'Log in to load your saved festival progress.';
+        return;
+      }
+
+      this.userId = user.id;
+
+      const { data, error } = await supabase
+        .from('festival_progress')
+        .select('id, day1, day2, day3, day4, day5, day6, day7, avatar_claimed')
+        .eq('user_id', user.id)
+        .eq('festival', FESTIVAL)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (!data) {
+        // Do not silently create a row here. Progress creation should be
+        // handled by the registration/onboarding flow or a secure RPC.
+        this.progress = {
+          day1: false, day2: false, day3: false, day4: false,
+          day5: false, day6: false, day7: false,
+          avatar_claimed: false
+        };
+
+        this.render();
+        if (status) status.textContent = 'No progress record found. Your saved chapter progress needs to be initialized.';
+        return;
+      }
+
+      this.progress = data;
+      this.render();
+
+      if (status) status.textContent = '✓ Progress synced with the festival realm.';
+
+    } catch (error) {
+      console.error('Unable to load festival progress:', error);
+      this.progress = null;
+      this.render();
+
+      if (status) {
+        status.textContent = 'Could not sync progress. Check your connection and Supabase permissions.';
+      }
+    }
+  },
+
+  isCompleted(day) {
+    return this.progress?.[`day${day}`] === true;
+  },
+
+  isUnlocked(day) {
+    if (day === 1) return true;
+    return this.isCompleted(day - 1);
+  },
+
+  isFestivalComplete() {
+    return Array.from({ length: TOTAL_DAYS }, (_, index) => index + 1)
+      .every(day => this.isCompleted(day));
+  },
+
+  render() {
+    const chapters = document.querySelectorAll('.chapter[data-day]');
+    let completedCount = 0;
+
+    chapters.forEach(chapter => {
+      const day = Number(chapter.dataset.day);
+      const completed = this.isCompleted(day);
+      const unlocked = this.isUnlocked(day);
+
+      chapter.classList.toggle('is-completed', completed);
+      chapter.classList.toggle('is-locked', !unlocked);
+      chapter.classList.toggle('is-current', unlocked && !completed);
+
+      const state = chapter.querySelector('.chapter-state');
+      const button = chapter.querySelector('.chapter-button');
+
+      if (state) {
+        state.textContent = completed
+          ? 'COMPLETED ✓'
+          : unlocked
+            ? 'UNLOCKED'
+            : 'LOCKED 🔒';
+      }
+
+      if (button) {
+        button.setAttribute('aria-disabled', String(!unlocked));
+        button.textContent = completed
+          ? 'REPLAY ↗'
+          : unlocked
+            ? 'ENTER ↗'
+            : 'LOCKED 🔒';
+      }
+
+      if (completed) completedCount++;
+    });
+
+    const percent = Math.round((completedCount / TOTAL_DAYS) * 100);
+
+    const countEl = document.getElementById('completedCount');
+    const percentEl = document.getElementById('percentCount');
+    const progressText = document.getElementById('progressText');
+    const progressFill = document.getElementById('progressFill');
+    const progressBar = document.getElementById('progressBar');
+
+    if (countEl) countEl.textContent = String(completedCount).padStart(2, '0');
+    if (percentEl) percentEl.textContent = `${percent}%`;
+    if (progressText) progressText.textContent = `${completedCount} / ${TOTAL_DAYS}`;
+    if (progressFill) progressFill.style.width = `${percent}%`;
+    if (progressBar) progressBar.setAttribute('aria-valuenow', String(completedCount));
+
+    const finale = document.getElementById('finaleCard');
+    const finaleLink = document.getElementById('finaleLink');
+    const rewardStatus = document.getElementById('rewardStatus');
+    const complete = this.isFestivalComplete();
+
+    finale?.classList.toggle('is-locked', !complete);
+
+    if (finaleLink) {
+      finaleLink.setAttribute('aria-disabled', String(!complete));
+      finaleLink.textContent = complete ? 'WATCH FINALE ↗' : 'COMPLETE ALL CHAPTERS 🔒';
+    }
+
+    if (rewardStatus) {
+      rewardStatus.textContent = complete
+        ? (this.progress?.avatar_claimed
+            ? 'Festival complete! Your avatar reward is recorded as claimed.'
+            : 'Festival complete! Avatar reward eligibility unlocked.')
+        : 'Complete all seven chapters to become eligible for your avatar reward.';
+    }
+  },
+
+  showToast(message) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+
+    toast.textContent = message;
+    toast.classList.add('visible');
+
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+
+    this.toastTimer = setTimeout(() => {
+      toast.classList.remove('visible');
+      this.toastTimer = null;
+    }, 2800);
+  }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-    VidlyraMap.init();
+document.addEventListener('DOMContentLoaded', () => {
+  VidlyraMap.init();
 });
