@@ -26,7 +26,7 @@ const A = {};
 
 /* ---------- CONFIG ---------- */
 const FESTIVAL_ID = "halloween_2026";
-const NEXT_URL = "day7-video.html";
+const NEXT_URL = "day7-quiz.html";
 const ORB_HEAL = 30, ORB_RESPAWN = 18;
 const ATTACK_RANGE = 170, ATTACK_DAMAGE = 25, ATTACK_COOLDOWN = 0.35;   /* px */
 const DASH_COST = 25, DASH_TIME = 0.18, DASH_SPEED = 90, DASH_COOLDOWN = 0.6;
