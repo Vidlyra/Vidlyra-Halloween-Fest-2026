@@ -1,1228 +1,510 @@
+
 /* ===========================================================
    VIDLYRA HALLOWEEN FEST 2026
    DAY 2 - THE HAUNTED WELL
+   Supabase Progress Integration
 =========================================================== */
 
 import { supabase } from "./supabase.js";
 
 "use strict";
 
-
 const Game = {
-
-    /* ==========================================
-       GAME STATE
-    ========================================== */
-
     runesFound: 0,
     totalRunes: 3,
 
     user: null,
     supabaseReady: false,
     day2Finished: false,
+    savingProgress: false,
 
     gameStarted: false,
     canMove: false,
 
     playerX: 15,
     playerY: 12,
-
     moveSpeed: 0.30,
 
     keys: {},
-
     dialogTimer: null,
 
-
-    /* ==========================================
-       CACHE DOM
-    ========================================== */
-
     cache() {
+        this.player = document.getElementById("player");
+        this.runes = document.querySelectorAll(".rune");
+        this.progress = document.getElementById("progressFill");
+        this.counter = document.getElementById("runeCounter");
+        this.dialogBox = document.getElementById("dialogBox");
+        this.dialog = document.getElementById("dialogText");
+        this.intro = document.getElementById("introScreen");
+        this.flash = document.getElementById("flash");
+        this.ghost = document.querySelector(".ghost");
+        this.crystal = document.querySelector(".crystal");
+        this.missionComplete = document.getElementById("missionComplete");
+        this.nextButton = document.getElementById("nextBtn");
 
-        this.player =
-            document.getElementById("player");
-
-        this.runes =
-            document.querySelectorAll(".rune");
-
-        this.progress =
-            document.getElementById("progressFill");
-
-        this.counter =
-            document.getElementById("runeCounter");
-
-        this.dialogBox =
-            document.getElementById("dialogBox");
-
-        this.dialog =
-            document.getElementById("dialogText");
-
-        this.intro =
-            document.getElementById("introScreen");
-
-        this.flash =
-            document.getElementById("flash");
-
-        this.ghost =
-            document.querySelector(".ghost");
-
-        this.crystal =
-            document.querySelector(".crystal");
-
-        this.missionComplete =
-            document.getElementById("missionComplete");
-
-        this.nextButton =
-            document.getElementById("nextBtn");
-
-
-        /* AUDIO */
-
-        this.bgMusic =
-            document.getElementById("bgMusic");
-
-        this.ghostWhisper =
-            document.getElementById("ghostWhisper");
-
-        this.wellRumble =
-            document.getElementById("wellRumble");
-
-        this.magicSound =
-            document.getElementById("magicSound");
-
-        this.rewardSound =
-            document.getElementById("rewardSound");
-
-        this.collectSound =
-            document.getElementById("collectSound");
-
+        this.bgMusic = document.getElementById("bgMusic");
+        this.ghostWhisper = document.getElementById("ghostWhisper");
+        this.wellRumble = document.getElementById("wellRumble");
+        this.magicSound = document.getElementById("magicSound");
+        this.rewardSound = document.getElementById("rewardSound");
+        this.collectSound = document.getElementById("collectSound");
     },
 
-
-    /* ==========================================
-       CHECK FESTIVAL ACCESS
-    ========================================== */
+    /* ================= ACCESS & PROGRESS ================= */
 
     async checkFestivalAccess() {
+        try {
+            const {
+                data: { user },
+                error: authError
+            } = await supabase.auth.getUser();
 
-        const {
-            data: {
-                user
-            },
-            error
-        } = await supabase.auth.getUser();
+            if (authError || !user) {
+                window.location.replace("login.html");
+                return false;
+            }
 
+            this.user = user;
 
-        if (error || !user) {
+            const { data, error } = await supabase
+                .from("festival_progress")
+                .select("day1,day2,day3,day4,day5,day6,day7")
+                .eq("user_id", user.id)
+                .eq("festival", "halloween_2026")
+                .maybeSingle();
 
-            window.location.href =
-                "login.html";
+            if (error) {
+                console.error("Festival progress read error:", error);
+                this.showMessage("Unable to load your festival progress.");
+                return false;
+            }
 
+            if (!data) {
+                console.error("No festival progress row found for:", user.id);
+                this.showMessage("Festival progress not found. Please contact the festival administrator.");
+                return false;
+            }
+
+            // Day 2 requires Day 1 completion.
+            if (data.day1 !== true) {
+                alert("🔒 Complete Day 1 first!");
+                window.location.replace("map.html");
+                return false;
+            }
+
+            this.day2Finished = data.day2 === true;
+            this.supabaseReady = true;
+
+            console.log("🎃 Day 2 access granted", {
+                userId: user.id,
+                day1: data.day1,
+                day2: data.day2
+            });
+
+            return true;
+        } catch (error) {
+            console.error("Festival access check failed:", error);
+            this.showMessage("Connection error. Please refresh and try again.");
             return false;
         }
-
-
-        this.user = user;
-
-
-        const {
-            data,
-            error: progressError
-        } = await supabase
-            .from("festival_progress")
-            .select(`
-                day1,
-                day2,
-                day3,
-                day4,
-                day5,
-                day6,
-                day7
-            `)
-            .eq("user_id", user.id)
-            .eq("festival", "halloween_2026")
-            .maybeSingle();
-
-
-        if (progressError) {
-
-            console.error(
-                "Festival progress error:",
-                progressError
-            );
-
-            alert(
-                "Unable to load festival progress."
-            );
-
-            window.location.href =
-                "map.html";
-
-            return false;
-        }
-
-
-        if (!data) {
-
-            alert(
-                "Festival progress was not found."
-            );
-
-            window.location.href =
-                "map.html";
-
-            return false;
-        }
-
-
-        /*
-         * DAY 1 REQUIRED
-         */
-
-        if (data.day1 !== true) {
-
-            alert(
-                "🔒 Complete Day 1 first!"
-            );
-
-            window.location.href =
-                "map.html";
-
-            return false;
-        }
-
-
-        /*
-         * Remember whether Day 2
-         * has already been completed.
-         */
-
-        if (data.day2 === true) {
-
-            this.day2Finished = true;
-
-        }
-
-
-        this.supabaseReady = true;
-
-        console.log(
-            "🎃 Day 2 access granted"
-        );
-
-        return true;
     },
-
-
-    /* ==========================================
-       INITIALIZE
-    ========================================== */
 
     async init() {
-
         this.cache();
-
         this.bindEvents();
 
-
-        const allowed =
-            await this.checkFestivalAccess();
-
+        const allowed = await this.checkFestivalAccess();
 
         if (!allowed) {
-
+            this.canMove = false;
             return;
-
         }
 
+        if (this.day2Finished) {
+            this.showMessage("🎃 You have already completed Day 2!");
+        }
 
         this.startIntro();
-
     },
 
-
-    /* ==========================================
-       EVENTS
-    ========================================== */
+    /* ================= EVENTS ================= */
 
     bindEvents() {
+        window.addEventListener("keydown", (event) => {
+            this.keys[event.key.toLowerCase()] = true;
+        });
 
-        window.addEventListener(
+        window.addEventListener("keyup", (event) => {
+            this.keys[event.key.toLowerCase()] = false;
+        });
 
-            "keydown",
-
-            (e) => {
-
-                this.keys[
-                    e.key.toLowerCase()
-                ] = true;
-
-            }
-
-        );
-
-
-        window.addEventListener(
-
-            "keyup",
-
-            (e) => {
-
-                this.keys[
-                    e.key.toLowerCase()
-                ] = false;
-
-            }
-
-        );
-
-
-        this.runes.forEach(
-
-            (rune) => {
-
-                rune.addEventListener(
-
-                    "click",
-
-                    () => {
-
-                        this.collectRune(
-                            rune
-                        );
-
-                    }
-
-                );
-
-            }
-
-        );
-
+        this.runes.forEach((rune) => {
+            rune.addEventListener("click", () => {
+                this.collectRune(rune);
+            });
+        });
 
         if (this.nextButton) {
-
-            this.nextButton.addEventListener(
-
-                "click",
-
-                () => {
-
-                    /*
-                     * Return to map first.
-                     *
-                     * Map will now show:
-                     *
-                     * DAY 1 ✓
-                     * DAY 2 ✓
-                     * DAY 3 🔓
-                     */
-
-                    window.location.href =
-                        "map.html";
-
-                }
-
-            );
-
+            this.nextButton.addEventListener("click", () => {
+                window.location.href = "map.html";
+            });
         }
-
     },
 
-
-    /* ==========================================
-       INTRO
-    ========================================== */
+    /* ================= INTRO ================= */
 
     startIntro() {
+        console.log("Day 2 Loaded");
+        this.showMessage("Find the three Ancient Runes...");
 
-        console.log(
-            "Day 2 Loaded"
-        );
-
-
-        this.showMessage(
-            "Find the three Ancient Runes..."
-        );
-
-
-        setTimeout(
-
-            () => {
-
-                if (this.intro) {
-
-                    this.intro.classList.add(
-                        "hide"
-                    );
-
-                }
-
-
-                this.startGame();
-
-            },
-
-            5000
-
-        );
-
+        setTimeout(() => {
+            if (this.intro) {
+                this.intro.classList.add("hide");
+            }
+            this.startGame();
+        }, 5000);
     },
-
-
-    /* ==========================================
-       START GAME
-    ========================================== */
 
     startGame() {
-
         this.gameStarted = true;
-
-        this.canMove = true;
-
+        this.canMove = !this.day2Finished;
 
         if (this.bgMusic) {
-
             this.bgMusic.volume = 0.35;
-
-            this.bgMusic
-                .play()
-                .catch(() => {});
-
+            this.bgMusic.play().catch(() => {});
         }
 
+        if (this.day2Finished) {
+            this.showMissionComplete();
+            return;
+        }
 
         this.gameLoop();
-
     },
 
-
-    /* ==========================================
-       GAME LOOP
-    ========================================== */
+    /* ================= GAME LOOP ================= */
 
     gameLoop() {
+        if (!this.gameStarted) return;
 
         this.updatePlayer();
 
-
-        requestAnimationFrame(
-
-            () => {
-
-                this.gameLoop();
-
-            }
-
-        );
-
+        requestAnimationFrame(() => this.gameLoop());
     },
-
-
-    /* ==========================================
-       PLAYER MOVEMENT
-    ========================================== */
 
     updatePlayer() {
+        if (!this.canMove) return;
 
-        if (!this.canMove) {
-
-            return;
-
+        if (this.keys["arrowleft"] || this.keys["a"]) {
+            this.playerX -= this.moveSpeed;
         }
 
-
-        if (
-            this.keys["arrowleft"] ||
-            this.keys["a"]
-        ) {
-
-            this.playerX -=
-                this.moveSpeed;
-
+        if (this.keys["arrowright"] || this.keys["d"]) {
+            this.playerX += this.moveSpeed;
         }
 
-
-        if (
-            this.keys["arrowright"] ||
-            this.keys["d"]
-        ) {
-
-            this.playerX +=
-                this.moveSpeed;
-
+        if (this.keys["arrowup"] || this.keys["w"]) {
+            this.playerY += this.moveSpeed;
         }
 
-
-        if (
-            this.keys["arrowup"] ||
-            this.keys["w"]
-        ) {
-
-            this.playerY +=
-                this.moveSpeed;
-
+        if (this.keys["arrowdown"] || this.keys["s"]) {
+            this.playerY -= this.moveSpeed;
         }
 
-
-        if (
-            this.keys["arrowdown"] ||
-            this.keys["s"]
-        ) {
-
-            this.playerY -=
-                this.moveSpeed;
-
-        }
-
-
-        this.playerX =
-            Math.max(
-                3,
-                Math.min(
-                    94,
-                    this.playerX
-                )
-            );
-
-
-        this.playerY =
-            Math.max(
-                5,
-                Math.min(
-                    75,
-                    this.playerY
-                )
-            );
-
+        this.playerX = Math.max(3, Math.min(94, this.playerX));
+        this.playerY = Math.max(5, Math.min(75, this.playerY));
 
         if (this.player) {
-
-            this.player.style.left =
-                this.playerX + "%";
-
-            this.player.style.bottom =
-                this.playerY + "%";
-
+            this.player.style.left = this.playerX + "%";
+            this.player.style.bottom = this.playerY + "%";
         }
-
     },
 
+    /* ================= DIALOG ================= */
 
-    /* ==========================================
-       DIALOG
-    ========================================== */
+    showMessage(message) {
+        if (!this.dialogBox || !this.dialog) return;
 
-    showMessage(text) {
+        // Use textContent rather than innerHTML for messages.
+        this.dialog.textContent = message;
+        this.dialogBox.classList.add("show");
 
-        if (
-            !this.dialogBox ||
-            !this.dialog
-        ) {
+        clearTimeout(this.dialogTimer);
 
-            return;
-
-        }
-
-
-        this.dialog.innerHTML =
-            text;
-
-
-        this.dialogBox.classList.add(
-            "show"
-        );
-
-
-        clearTimeout(
-            this.dialogTimer
-        );
-
-
-        this.dialogTimer =
-            setTimeout(
-
-                () => {
-
-                    this.dialogBox.classList.remove(
-                        "show"
-                    );
-
-                },
-
-                2500
-
-            );
-
+        this.dialogTimer = setTimeout(() => {
+            this.dialogBox.classList.remove("show");
+        }, 3000);
     },
 
-
-    /* ==========================================
-       COLLECT RUNE
-    ========================================== */
+    /* ================= COLLECT RUNES ================= */
 
     collectRune(rune) {
+        if (!this.canMove || rune.classList.contains("found")) return;
 
-        if (
-            rune.classList.contains(
-                "found"
-            )
-        ) {
-
-            return;
-
-        }
-
-
-        rune.classList.add(
-            "found"
-        );
-
-
-        rune.style.opacity =
-            "0";
-
-
-        rune.style.pointerEvents =
-            "none";
-
+        rune.classList.add("found");
+        rune.style.opacity = "0";
+        rune.style.pointerEvents = "none";
 
         this.runesFound++;
 
-
-        const percent =
-            (
-                this.runesFound /
-                this.totalRunes
-            ) * 100;
-
+        const percent = (this.runesFound / this.totalRunes) * 100;
 
         if (this.progress) {
-
-            this.progress.style.width =
-                percent + "%";
-
+            this.progress.style.width = percent + "%";
         }
-
 
         if (this.counter) {
-
-            this.counter.innerHTML =
-                "🔷 Ancient Runes : " +
-                this.runesFound +
-                " / " +
-                this.totalRunes;
-
+            this.counter.textContent =
+                `🔷 Ancient Runes: ${this.runesFound} / ${this.totalRunes}`;
         }
 
+        this.playSound(this.collectSound);
+        this.playSound(this.magicSound);
 
-        /*
-         * Collection sound
-         */
-
-        if (this.collectSound) {
-
-            this.collectSound.currentTime =
-                0;
-
-            this.collectSound
-                .play()
-                .catch(() => {});
-
-        }
-
-
-        /*
-         * Magic sound
-         */
-
-        if (this.magicSound) {
-
-            this.magicSound.currentTime =
-                0;
-
-            this.magicSound
-                .play()
-                .catch(() => {});
-
-        }
-
-
-        switch (
-            this.runesFound
-        ) {
-
+        switch (this.runesFound) {
             case 1:
-
-                this.showMessage(
-                    "The first rune has awakened..."
-                );
-
+                this.showMessage("The first rune has awakened...");
                 break;
-
 
             case 2:
-
-                this.showMessage(
-                    "A strange energy surrounds the well..."
-                );
-
+                this.showMessage("A strange energy surrounds the well...");
                 break;
-
 
             case 3:
-
-                this.showMessage(
-                    "The Haunted Well is awakening..."
-                );
-
-
-                setTimeout(
-
-                    () => {
-
-                        this.awakenWell();
-
-                    },
-
-                    1500
-
-                );
-
+                this.showMessage("The Haunted Well is awakening...");
+                setTimeout(() => this.awakenWell(), 1500);
                 break;
-
         }
-
     },
 
+    /* ================= SOUND ================= */
 
-    /* ==========================================
-       WELL EVENT
-    ========================================== */
+    playSound(audio) {
+        if (!audio) return;
+
+        audio.currentTime = 0;
+        audio.play().catch((error) => {
+            console.debug("Audio playback unavailable:", error.message);
+        });
+    },
+
+    /* ================= WELL EVENT ================= */
 
     awakenWell() {
-
         this.canMove = false;
 
-
         if (this.flash) {
+            this.flash.classList.add("active");
 
-            this.flash.classList.add(
-                "active"
-            );
-
-
-            setTimeout(
-
-                () => {
-
-                    this.flash.classList.remove(
-                        "active"
-                    );
-
-                },
-
-                500
-
-            );
-
+            setTimeout(() => {
+                this.flash.classList.remove("active");
+            }, 500);
         }
 
+        document.body.classList.add("shake");
 
-        document.body.classList.add(
-            "shake"
-        );
+        setTimeout(() => {
+            document.body.classList.remove("shake");
+        }, 1200);
 
+        this.playSound(this.wellRumble);
+        this.playSound(this.ghostWhisper);
 
-        setTimeout(
+        setTimeout(() => {
+            if (this.ghost) {
+                this.ghost.classList.add("active");
+            }
+        }, 1000);
 
-            () => {
+        setTimeout(() => {
+            if (this.crystal) {
+                this.crystal.classList.add("active");
+            }
 
-                document.body.classList.remove(
-                    "shake"
-                );
-
-            },
-
-            1200
-
-        );
-
-
-        if (this.wellRumble) {
-
-            this.wellRumble.currentTime =
-                0;
-
-            this.wellRumble
-                .play()
-                .catch(() => {});
-
-        }
-
-
-        if (this.ghostWhisper) {
-
-            this.ghostWhisper.currentTime =
-                0;
-
-            this.ghostWhisper
-                .play()
-                .catch(() => {});
-
-        }
-
-
-        setTimeout(
-
-            () => {
-
-                if (this.ghost) {
-
-                    this.ghost.classList.add(
-                        "active"
-                    );
-
-                }
-
-            },
-
-            1000
-
-        );
-
-
-        setTimeout(
-
-            () => {
-
-                if (this.crystal) {
-
-                    this.crystal.classList.add(
-                        "active"
-                    );
-
-                }
-
-
-                this.showMessage(
-                    "Touch the Magic Crystal..."
-                );
-
-
-                this.enableCrystal();
-
-            },
-
-            3000
-
-        );
-
+            this.showMessage("Touch the Magic Crystal...");
+            this.enableCrystal();
+        }, 3000);
     },
 
-
-    /* ==========================================
-       CRYSTAL
-    ========================================== */
+    /* ================= CRYSTAL ================= */
 
     enableCrystal() {
-
         if (!this.crystal) {
-
+            this.showMessage("Magic Crystal is missing from the game page.");
+            console.error("Missing .crystal element in day2-game.html");
             return;
-
         }
 
-
-        this.crystal.addEventListener(
-
-            "click",
-
-            () => {
-
-                this.collectCrystal();
-
-            },
-
-            {
-                once: true
-            }
-
-        );
-
+        this.crystal.addEventListener("click", () => {
+            this.collectCrystal();
+        }, { once: true });
     },
-
-
-    /* ==========================================
-       COLLECT CRYSTAL
-    ========================================== */
 
     collectCrystal() {
-
-        if (this.rewardSound) {
-
-            this.rewardSound.currentTime =
-                0;
-
-            this.rewardSound
-                .play()
-                .catch(() => {});
-
-        }
-
-
-        if (this.flash) {
-
-            this.flash.classList.add(
-                "active"
-            );
-
-
-            setTimeout(
-
-                () => {
-
-                    this.flash.classList.remove(
-                        "active"
-                    );
-
-                },
-
-                400
-
-            );
-
-        }
-
-
-        this.showMessage(
-            "The Ancient Spirit accepts you."
-        );
-
-
-        setTimeout(
-
-            () => {
-
-                this.finishDay();
-
-            },
-
-            1500
-
-        );
-
-    },
-
-
-    /* ==========================================
-       MISSION COMPLETE
-    ========================================== */
-
-    showMissionComplete() {
-
-        if (!this.missionComplete) {
-
-            return;
-
-        }
-
-
-        this.missionComplete.classList.add(
-            "show"
-        );
-
-    },
-
-
-    /* ==========================================
-       SAVE LOCAL PROGRESS
-    ========================================== */
-
-    saveProgress() {
-
-        try {
-
-            localStorage.setItem(
-                "vidlyra_day2_complete",
-                "true"
-            );
-
-
-            localStorage.setItem(
-                "vidlyra_day2_runes",
-                this.runesFound
-            );
-
-        }
-
-        catch (e) {
-
-            console.log(e);
-
-        }
-
-    },
-
-
-    /* ==========================================
-       LOAD LOCAL PROGRESS
-    ========================================== */
-
-    loadProgress() {
-
-        try {
-
-            const runes =
-                localStorage.getItem(
-                    "vidlyra_day2_runes"
-                );
-
-
-            if (runes) {
-
-                /*
-                 * Don't restore more than
-                 * the maximum number of runes.
-                 */
-
-                this.runesFound =
-                    Math.min(
-                        parseInt(runes),
-                        this.totalRunes
-                    );
-
-            }
-
-        }
-
-        catch (e) {
-
-            console.log(e);
-
-        }
-
-    },
-
-
-    /* ==========================================
-       SAVE DAY 2 TO SUPABASE
-    ========================================== */
-
-    async finishDay() {
-
-        if (this.day2Finished) {
-
-            this.showMissionComplete();
-
-            return;
-
-        }
-
+        if (!this.canMove || this.savingProgress || this.day2Finished) return;
 
         this.canMove = false;
+        this.playSound(this.rewardSound);
 
+        if (this.flash) {
+            this.flash.classList.add("active");
 
-        if (!this.user) {
-
-            window.location.href =
-                "login.html";
-
-            return;
-
+            setTimeout(() => {
+                this.flash.classList.remove("active");
+            }, 400);
         }
 
+        this.showMessage("The Ancient Spirit accepts you...");
 
-        /*
-         * Save Day 2 completion.
-         */
+        setTimeout(() => {
+            this.finishDay();
+        }, 1500);
+    },
 
-        const {
-            error
-        } = await supabase
-            .from("festival_progress")
-            .update({
-                day2: true
-            })
-            .eq(
-                "user_id",
-                this.user.id
-            )
-            .eq(
-                "festival",
-                "halloween_2026"
-            );
+    /* ================= MISSION COMPLETE ================= */
 
+    showMissionComplete() {
+        if (this.missionComplete) {
+            this.missionComplete.classList.add("show");
+        }
+    },
 
-        if (error) {
+    /* ================= SUPABASE SAVE ================= */
 
-            console.error(
-                "DAY 2 SAVE ERROR:",
-                error
-            );
+    async finishDay() {
+        if (this.day2Finished) {
+            this.showMissionComplete();
+            return;
+        }
 
+        if (this.savingProgress) return;
+
+        if (!this.user || !this.supabaseReady) {
+            this.showMessage("Please log in and reload the game.");
+            return;
+        }
+
+        this.savingProgress = true;
+        this.canMove = false;
+        this.showMessage("Saving your festival progress...");
+
+        try {
+            // Verify the current session before writing progress.
+            const {
+                data: { user },
+                error: authError
+            } = await supabase.auth.getUser();
+
+            if (authError || !user || user.id !== this.user.id) {
+                throw new Error("Your login session expired. Please log in again.");
+            }
+
+            const { data, error } = await supabase
+                .from("festival_progress")
+                .update({ day2: true })
+                .eq("user_id", user.id)
+                .eq("festival", "halloween_2026")
+                .select("day2")
+                .maybeSingle();
+
+            if (error) {
+                throw error;
+            }
+
+            // Prevent showing success if no row was updated.
+            if (!data || data.day2 !== true) {
+                throw new Error(
+                    "No progress row was updated. Check the user row and RLS policies."
+                );
+            }
+
+            this.day2Finished = true;
+
+            try {
+                localStorage.setItem("vidlyra_day2_complete", "true");
+                localStorage.setItem("vidlyra_day2_runes", String(this.runesFound));
+            } catch (storageError) {
+                console.warn("Local backup could not be saved:", storageError);
+            }
+
+            console.log("✅ Day 2 progress saved to Supabase:", data);
+
+            this.showMessage("🎃 Day 2 Complete! Progress saved.");
+            setTimeout(() => this.showMissionComplete(), 1200);
+
+        } catch (error) {
+            console.error("DAY 2 SUPABASE SAVE ERROR:", error);
 
             this.showMessage(
-                "⚠️ Progress could not be saved."
+                "⚠️ Progress could not be saved. Check your connection and try again."
             );
 
-
+            // Allow a retry without recollecting the crystal.
             this.canMove = false;
 
-            return;
+            if (this.missionComplete) {
+                const retryButton = document.getElementById("retrySaveBtn");
 
+                if (retryButton) {
+                    retryButton.onclick = () => this.finishDay();
+                } else {
+                    console.error(
+                        "Add a button with id='retrySaveBtn' to retry saving progress."
+                    );
+                }
+            }
+        } finally {
+            this.savingProgress = false;
         }
-
-
-        /*
-         * Mark locally completed.
-         */
-
-        this.day2Finished = true;
-
-
-        /*
-         * Keep local save as backup.
-         */
-
-        this.saveProgress();
-
-
-        this.showMessage(
-            "🎃 Day 2 Complete!"
-        );
-
-
-        setTimeout(
-
-            () => {
-
-                this.showMissionComplete();
-
-            },
-
-            1200
-
-        );
-
     },
 
-
-    /* ==========================================
-       MOBILE TOUCH
-    ========================================== */
+    /* ================= MOBILE TOUCH ================= */
 
     enableTouchControls() {
-
         let startX = 0;
-
         let startY = 0;
 
+        window.addEventListener("touchstart", (event) => {
+            if (!event.touches.length) return;
 
-        window.addEventListener(
+            startX = event.touches[0].clientX;
+            startY = event.touches[0].clientY;
+        }, { passive: true });
 
-            "touchstart",
+        window.addEventListener("touchmove", (event) => {
+            if (!this.canMove || !event.touches.length) return;
 
-            (e) => {
+            const dx = event.touches[0].clientX - startX;
+            const dy = event.touches[0].clientY - startY;
 
-                startX =
-                    e.touches[0].clientX;
+            this.playerX += dx * 0.01;
+            this.playerY -= dy * 0.01;
 
-                startY =
-                    e.touches[0].clientY;
+            this.playerX = Math.max(3, Math.min(94, this.playerX));
+            this.playerY = Math.max(5, Math.min(75, this.playerY));
 
-            }
-
-        );
-
-
-        window.addEventListener(
-
-            "touchmove",
-
-            (e) => {
-
-                if (!this.canMove) {
-
-                    return;
-
-                }
-
-
-                const dx =
-                    e.touches[0].clientX -
-                    startX;
-
-
-                const dy =
-                    e.touches[0].clientY -
-                    startY;
-
-
-                this.playerX +=
-                    dx * 0.01;
-
-
-                this.playerY -=
-                    dy * 0.01;
-
-
-                startX =
-                    e.touches[0].clientX;
-
-
-                startY =
-                    e.touches[0].clientY;
-
-            }
-
-        );
-
+            startX = event.touches[0].clientX;
+            startY = event.touches[0].clientY;
+        }, { passive: true });
     },
 
-
-    /* ==========================================
-       RESET
-    ========================================== */
+    /* ================= RESET / HOME ================= */
 
     restart() {
-
-        location.reload();
-
+        window.location.reload();
     },
 
-
-    /* ==========================================
-       GO HOME
-    ========================================== */
-
     home() {
-
-        window.location.href =
-            "map.html";
-
+        window.location.href = "map.html";
     }
-
 };
 
+/* ================= START GAME ================= */
 
-/* ==========================================
-   START GAME
-========================================== */
+document.addEventListener("DOMContentLoaded", async () => {
+    await Game.init();
+    Game.enableTouchControls();
+});
 
-document.addEventListener(
-
-    "DOMContentLoaded",
-
-    async () => {
-
-        await Game.init();
-
-        Game.loadProgress();
-
-        Game.enableTouchControls();
-
-    }
-
-);
+// Keep the existing inline HTML buttons compatible if they call Game methods.
+window.Game = Game;
