@@ -1,189 +1,66 @@
-/* =========================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 6 — HAUNTED MANSION
-   EPIC GAME ENGINE
-========================================================= */
-
-"use strict";
-
-
-/* =========================================================
-   DOM
-========================================================= */
-
-const player =
-    document.getElementById("player");
-
-const mansionSoldierEls =
-    [...document.querySelectorAll(".mansion-soldier")];
-
-const boss =
-    document.getElementById("boss");
-
-const attackEffect =
-    document.getElementById("attackEffect");
-
-const dashEffect =
-    document.getElementById("dashEffect");
-
-const hurtEffect =
-    document.getElementById("hurtEffect");
-
-const crystals =
-    [...document.querySelectorAll(".crystal")];
-
 const healthOrbs =
     [...document.querySelectorAll(".healthOrb")];
 
-const healthFill =
-    document.getElementById("healthFill");
+const healthFill = document.getElementById("healthFill");
+const spiritFill = document.getElementById("spiritFill");
+const healthText = document.getElementById("healthText");
+const spiritText = document.getElementById("spiritText");
+const crystalCounter = document.getElementById("crystalCounter");
+const scoreCounter = document.getElementById("scoreCounter");
+const speedSlider = document.getElementById("speedSlider");
+const speedValue = document.getElementById("speedValue");
+const missionCrystal = document.getElementById("missionCrystal");
+const missionSoldier = document.getElementById("missionSoldier");
+const missionBoss = document.getElementById("missionBoss");
+const bossHUD = document.getElementById("bossHUD");
+const bossHealthFill = document.getElementById("bossHealthFill");
+const notification = document.getElementById("notification");
+const pauseMenu = document.getElementById("pauseMenu");
+const victoryScreen = document.getElementById("victoryScreen");
+const gameOverScreen = document.getElementById("gameOverScreen");
+const resumeButton = document.getElementById("resumeButton");
+const continueButton = document.getElementById("continueButton");
+const retryButton = document.getElementById("retryButton");
 
-const spiritFill =
-    document.getElementById("spiritFill");
+/* AUDIO */
+const bgMusic = document.getElementById("bgMusic");
+const footstepSound = document.getElementById("footstepSound");
+const collectSound = document.getElementById("collectSound");
+const attackSound = document.getElementById("attackSound");
+const dashSound = document.getElementById("dashSound");
+const hurtSound = document.getElementById("hurtSound");
+const soldierSound = document.getElementById("soldierSound");
+const bossMusic = document.getElementById("bossMusic");
+const bossRoar = document.getElementById("bossRoar");
+const victorySound = document.getElementById("victorySound");
+const gameOverSound = document.getElementById("gameOverSound");
 
-const healthText =
-    document.getElementById("healthText");
-
-const spiritText =
-    document.getElementById("spiritText");
-
-const crystalCounter =
-    document.getElementById("crystalCounter");
-
-const scoreCounter =
-    document.getElementById("scoreCounter");
-
-const speedSlider =
-    document.getElementById("speedSlider");
-
-const speedValue =
-    document.getElementById("speedValue");
-
-const missionCrystal =
-    document.getElementById("missionCrystal");
-
-const missionSoldier =
-    document.getElementById("missionSoldier");
-
-const missionBoss =
-    document.getElementById("missionBoss");
-
-const bossHUD =
-    document.getElementById("bossHUD");
-
-const bossHealthFill =
-    document.getElementById("bossHealthFill");
-
-const notification =
-    document.getElementById("notification");
-
-const pauseMenu =
-    document.getElementById("pauseMenu");
-
-const victoryScreen =
-    document.getElementById("victoryScreen");
-
-const gameOverScreen =
-    document.getElementById("gameOverScreen");
-
-const resumeButton =
-    document.getElementById("resumeButton");
-
-const continueButton =
-    document.getElementById("continueButton");
-
-const retryButton =
-    document.getElementById("retryButton");
-
-
-/* =========================================================
-   AUDIO
-========================================================= */
-
-const bgMusic =
-    document.getElementById("bgMusic");
-
-const footstepSound =
-    document.getElementById("footstepSound");
-
-const collectSound =
-    document.getElementById("collectSound");
-
-const attackSound =
-    document.getElementById("attackSound");
-
-const dashSound =
-    document.getElementById("dashSound");
-
-const hurtSound =
-    document.getElementById("hurtSound");
-
-const soldierSound =
-    document.getElementById("soldierSound");
-
-const bossMusic =
-    document.getElementById("bossMusic");
-
-const bossRoar =
-    document.getElementById("bossRoar");
-
-const victorySound =
-    document.getElementById("victorySound");
-
-const gameOverSound =
-    document.getElementById("gameOverSound");
-
-
-/* =========================================================
-   GAME STATE
-========================================================= */
-
+/* GAME STATE */
 const state = {
-
     running: true,
-
     paused: false,
-
     gameOver: false,
-
     victory: false,
-
     lastTime: 0,
-
     speedMultiplier: 1,
-
     score: 0,
-
     crystals: 0,
-
     health: 100,
-
     maxHealth: 100,
-
     spirit: 100,
-
     maxSpirit: 100,
 
     player: {
-
         x: 50,
-
         y: 15,
-
         speed: 24,
-
         facing: 1,
-
         attacking: false,
-
         dashing: false,
-
         hurt: false
-
     },
 
     soldiers: [
-
         {
             active: true,
             x: 72,
@@ -194,7 +71,6 @@ const state = {
             attackCooldown: 0,
             attackDelay: 1.4
         },
-
         {
             active: true,
             x: 22,
@@ -205,7 +81,6 @@ const state = {
             attackCooldown: 0,
             attackDelay: 1.4
         },
-
         {
             active: true,
             x: 58,
@@ -216,1969 +91,1060 @@ const state = {
             attackCooldown: 0,
             attackDelay: 1.4
         }
-
     ],
 
     boss: {
-
         active: false,
-
         defeated: false,
-
         x: 50,
-
         y: 22,
-
         health: 300,
-
         maxHealth: 300,
-
         speed: 5,
-
         attackCooldown: 0,
-
         attackDelay: 2,
-
         hitCooldown: 0
-
     },
 
     keys: {
-
         up: false,
-
         down: false,
-
         left: false,
-
         right: false
-
     }
-
 };
 
-
-/* =========================================================
-   HEALTH ORB CONFIG
-========================================================= */
-
 const HEALTH_ORB_HEAL_AMOUNT = 30;
-
 const HEALTH_ORB_RESPAWN_SECONDS = 18;
 
+/* DAY 5 -> DAY 6 PROGRESSION GATE */
+function showDay6AccessBlock() {
+    const panel = document.createElement("div");
+    panel.id = "day6AccessBlock";
+    panel.style.cssText =
+        "position:fixed;inset:0;z-index:999999;background:#050309;color:#fff;" +
+        "display:flex;flex-direction:column;align-items:center;justify-content:center;" +
+        "padding:28px;text-align:center;font-family:Georgia,serif;gap:16px";
 
-/* =========================================================
-   INITIALIZATION
-========================================================= */
+    const title = document.createElement("h1");
+    title.textContent = "DAY 6 LOCKED";
+    title.style.color = "#ff8a00";
 
+    const message = document.createElement("p");
+    message.textContent =
+        "Complete Day 5 — The Haunted Cemetery — before entering the Haunted Mansion.";
+    message.style.maxWidth = "560px";
+    message.style.lineHeight = "1.6";
+
+    const back = document.createElement("button");
+    back.type = "button";
+    back.textContent = "RETURN TO FESTIVAL";
+    back.style.cssText =
+        "padding:12px 22px;border:0;border-radius:8px;background:#ff8a00;" +
+        "color:#050309;font-weight:bold;cursor:pointer";
+    back.addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
+    panel.append(title, message, back);
+    document.body.appendChild(panel);
+}
+
+/* INITIALIZATION */
 function init() {
+    let day5Unlocked = false;
+
+    try {
+        day5Unlocked = localStorage.getItem("day5Complete") === "true";
+    } catch (error) {
+        console.error("Unable to verify Day 5 progress:", error);
+    }
+
+    if (!day5Unlocked) {
+        showDay6AccessBlock();
+        return;
+    }
 
     updateHUD();
-
     updatePlayerVisual();
-
     setupSoldiers();
-
     updateBossVisual();
-
     setupKeyboard();
-
     setupSpeedControl();
-
     setupCrystals();
-
     setupHealthOrbs();
-
     setupMobileControls();
-
     setupButtons();
-
     setupVisibilityHandling();
-
     startAudio();
 
-    showNotification(
-        "ENTER THE HAUNTED MANSION"
-    );
-
+    showNotification("ENTER THE HAUNTED MANSION");
     requestAnimationFrame(gameLoop);
 }
 
-
-/* =========================================================
-   AUDIO START
-========================================================= */
-
+/* AUDIO START */
 function startAudio() {
+    if (!bgMusic) return;
 
     bgMusic.volume = 0.35;
 
-    bgMusic.play()
-        .catch(() => {
-            document.addEventListener(
-                "pointerdown",
-                () => {
-
-                    if (!state.paused) {
-                        bgMusic.play()
-                            .catch(() => {});
-                    }
-
-                },
-                {
-                    once: true
-                }
-            );
-        });
+    bgMusic.play().catch(() => {
+        document.addEventListener("pointerdown", () => {
+            if (!state.paused) {
+                bgMusic.play().catch(() => {});
+            }
+        }, { once: true });
+    });
 }
 
-
-/* =========================================================
-   KEYBOARD
-========================================================= */
-
+/* KEYBOARD */
 function setupKeyboard() {
+    window.addEventListener("keydown", event => {
+        if (event.repeat) return;
 
-    window.addEventListener(
-        "keydown",
-        event => {
-
-            if (event.repeat) return;
-
-            switch (event.key.toLowerCase()) {
-
-                case "w":
-                case "arrowup":
-                    state.keys.up = true;
-                    break;
-
-                case "s":
-                case "arrowdown":
-                    state.keys.down = true;
-                    break;
-
-                case "a":
-                case "arrowleft":
-                    state.keys.left = true;
-                    state.player.facing = -1;
-                    break;
-
-                case "d":
-                case "arrowright":
-                    state.keys.right = true;
-                    state.player.facing = 1;
-                    break;
-
-                case " ":
-                    event.preventDefault();
-                    attack();
-                    break;
-
-                case "shift":
-                    dash();
-                    break;
-
-                case "p":
-                    togglePause();
-                    break;
-
-                case "e":
-                    attack();
-                    break;
-
-            }
-
+        switch (event.key.toLowerCase()) {
+            case "w":
+            case "arrowup":
+                state.keys.up = true;
+                break;
+            case "s":
+            case "arrowdown":
+                state.keys.down = true;
+                break;
+            case "a":
+            case "arrowleft":
+                state.keys.left = true;
+                state.player.facing = -1;
+                break;
+            case "d":
+            case "arrowright":
+                state.keys.right = true;
+                state.player.facing = 1;
+                break;
+            case " ":
+                event.preventDefault();
+                attack();
+                break;
+            case "shift":
+                dash();
+                break;
+            case "p":
+                togglePause();
+                break;
+            case "e":
+                attack();
+                break;
         }
-    );
+    });
 
-
-    window.addEventListener(
-        "keyup",
-        event => {
-
-            switch (event.key.toLowerCase()) {
-
-                case "w":
-                case "arrowup":
-                    state.keys.up = false;
-                    break;
-
-                case "s":
-                case "arrowdown":
-                    state.keys.down = false;
-                    break;
-
-                case "a":
-                case "arrowleft":
-                    state.keys.left = false;
-                    break;
-
-                case "d":
-                case "arrowright":
-                    state.keys.right = false;
-                    break;
-
-            }
-
+    window.addEventListener("keyup", event => {
+        switch (event.key.toLowerCase()) {
+            case "w":
+            case "arrowup":
+                state.keys.up = false;
+                break;
+            case "s":
+            case "arrowdown":
+                state.keys.down = false;
+                break;
+            case "a":
+            case "arrowleft":
+                state.keys.left = false;
+                break;
+            case "d":
+            case "arrowright":
+                state.keys.right = false;
+                break;
         }
-    );
+    });
 
-    /* FIX: if the window/tab loses focus while a movement key is
-       held (alt-tab, switching apps on mobile, etc.) the keyup
-       event never fires and the player would walk forever in one
-       direction. Clear all movement keys on blur. */
-    window.addEventListener(
-        "blur",
-        () => {
-
-            state.keys.up = false;
-            state.keys.down = false;
-            state.keys.left = false;
-            state.keys.right = false;
-
-        }
-    );
-
+    window.addEventListener("blur", () => {
+        state.keys.up = false;
+        state.keys.down = false;
+        state.keys.left = false;
+        state.keys.right = false;
+    });
 }
 
-
-/* =========================================================
-   VISIBILITY HANDLING
-========================================================= */
-
+/* VISIBILITY HANDLING */
 function setupVisibilityHandling() {
-
-    /* FIX: prevents a huge delta-time spike (and the player/enemies
-       "teleporting") the moment the tab regains visibility after
-       being backgrounded for a while. */
-    document.addEventListener(
-        "visibilitychange",
-        () => {
-
-            if (!document.hidden) {
-                state.lastTime = 0;
-            }
-
-        }
-    );
-
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) state.lastTime = 0;
+    });
 }
 
-
-/* =========================================================
-   SPEED CONTROL
-========================================================= */
-
+/* SPEED CONTROL */
 function setupSpeedControl() {
+    if (!speedSlider || !speedValue) return;
 
-    speedSlider.addEventListener(
-        "input",
-        () => {
-
-            state.speedMultiplier =
-                Number(speedSlider.value);
-
-            speedValue.textContent =
-                `${state.speedMultiplier.toFixed(1)}x`;
-
-        }
-    );
-
+    speedSlider.addEventListener("input", () => {
+        state.speedMultiplier = Number(speedSlider.value);
+        speedValue.textContent = `${state.speedMultiplier.toFixed(1)}x`;
+    });
 }
 
-
-/* =========================================================
-   SOLDIERS SETUP
-========================================================= */
-
+/* SOLDIERS SETUP */
 function setupSoldiers() {
-
-    state.soldiers.forEach(
-        (soldier, index) => {
-
-            soldier.el =
-                mansionSoldierEls[index] ||
-                null;
-
-            updateSoldierVisual(soldier);
-
-        }
-    );
+    state.soldiers.forEach((soldier, index) => {
+        soldier.el = mansionSoldierEls[index] || null;
+        updateSoldierVisual(soldier);
+    });
 
     updateMissionSoldierText();
-
 }
 
-
-/* =========================================================
-   CRYSTALS
-========================================================= */
-
+/* CRYSTALS */
 function setupCrystals() {
+    crystals.forEach(crystal => {
+        crystal._px = parseFloat(crystal.style.left) || 0;
+        crystal._py = parseFloat(crystal.style.bottom) || 0;
 
-    crystals.forEach(
-        crystal => {
-
-            /* FIX: precompute each crystal's world-space position
-               ONCE from its inline style, instead of calling
-               getBoundingClientRect() on every crystal, every
-               single movement frame (major jank source). Crystals
-               live inside #crystalLayer, which — like #playerLayer —
-               is inset:0 over #gameWorld, so the percentages line
-               up directly with state.player.x / state.player.y. */
-            crystal._px = parseFloat(crystal.style.left) || 0;
-            crystal._py = parseFloat(crystal.style.bottom) || 0;
-
-            crystal.addEventListener(
-                "click",
-                () => {
-
-                    collectCrystal(crystal);
-
-                }
-            );
-
-        }
-    );
-
+        crystal.addEventListener("click", () => {
+            collectCrystal(crystal);
+        });
+    });
 }
-
 
 function collectCrystal(crystal) {
+    if (crystal.classList.contains("collected")) return;
 
-    if (
-        crystal.classList.contains(
-            "collected"
-        )
-    ) {
-        return;
-    }
-
-    crystal.classList.add(
-        "collected"
-    );
-
+    crystal.classList.add("collected");
     state.crystals++;
-
     state.score += 500;
 
-    playSound(
-        collectSound,
-        0.65
-    );
-
+    playSound(collectSound, 0.65);
     updateHUD();
-
-    showNotification(
-        `ANCIENT CRYSTAL ${state.crystals}/6`
-    );
+    showNotification(`ANCIENT CRYSTAL ${state.crystals}/6`);
 
     if (state.crystals >= 6) {
+        missionCrystal.classList.add("complete");
+        showNotification("ALL 6 CRYSTALS COLLECTED");
 
-        missionCrystal.classList.add(
-            "complete"
-        );
-
-        showNotification(
-            "ALL 6 CRYSTALS COLLECTED"
-        );
-
-        if (allSoldiersDefeated()) {
-
-            activateBoss();
-
-        }
-
+        if (allSoldiersDefeated()) activateBoss();
     }
+}
+/* HEALTH ORBS */
+function setupHealthOrbs() {
+    healthOrbs.forEach((orb, index) => {
+        orb._collected = false;
+        orb._respawn = 0;
+        orb._orbIndex = index;
 
+        orb.addEventListener("click", () => {
+            collectHealthOrb(orb);
+        });
+    });
 }
 
+function collectHealthOrb(orb) {
+    if (!orb || orb._collected || state.gameOver || state.victory) return;
 
-/* =========================================================
-   PLAYER MOVEMENT
-========================================================= */
-
-function updatePlayer(delta) {
-
-    if (state.player.dashing) {
+    if (state.health >= state.maxHealth) {
+        showNotification("HEALTH ALREADY FULL");
         return;
     }
+
+    orb._collected = true;
+    orb._respawn = HEALTH_ORB_RESPAWN_SECONDS;
+    orb.style.display = "none";
+
+    state.health = Math.min(
+        state.maxHealth,
+        state.health + HEALTH_ORB_HEAL_AMOUNT
+    );
+
+    state.score += 100;
+    playSound(collectSound, 0.5);
+    updateHUD();
+    showNotification("+30 HEALTH");
+}
+
+/* PLAYER VISUAL */
+function updatePlayerVisual() {
+    const player = document.getElementById("player");
+    if (!player) return;
+
+    player.style.left = `${state.player.x}%`;
+    player.style.bottom = `${state.player.y}%`;
+
+    if (state.player.facing < 0) {
+        player.style.transform = "scaleX(-1)";
+    } else {
+        player.style.transform = "scaleX(1)";
+    }
+
+    player.classList.toggle("attacking", state.player.attacking);
+    player.classList.toggle("dashing", state.player.dashing);
+    player.classList.toggle("hurt", state.player.hurt);
+}
+
+/* MOVEMENT */
+function updatePlayer(delta) {
+    if (state.gameOver || state.victory) return;
 
     let dx = 0;
     let dy = 0;
 
-    if (state.keys.left) {
-        dx -= 1;
-        state.player.facing = -1;
+    if (state.keys.left) dx -= 1;
+    if (state.keys.right) dx += 1;
+    if (state.keys.up) dy += 1;
+    if (state.keys.down) dy -= 1;
+
+    const magnitude = Math.hypot(dx, dy);
+
+    if (magnitude > 0) {
+        dx /= magnitude;
+        dy /= magnitude;
+
+        const speed = state.player.speed * state.speedMultiplier;
+        state.player.x += dx * speed * delta;
+        state.player.y += dy * speed * delta;
+
+        if (dx !== 0) state.player.facing = dx > 0 ? 1 : -1;
     }
 
-    if (state.keys.right) {
-        dx += 1;
-        state.player.facing = 1;
-    }
+    state.player.x = clamp(state.player.x, 3, 97);
+    state.player.y = clamp(state.player.y, 3, 78);
 
-    if (state.keys.up) {
-        dy += 1;
-    }
-
-    if (state.keys.down) {
-        dy -= 1;
-    }
-
-    if (
-        dx === 0 &&
-        dy === 0
-    ) {
-
-        if (!state.player.attacking) {
-
-            player.src =
-                "assets/images/day6/player-idle.png";
-
-        }
-
-        return;
-    }
-
-    const length =
-        Math.sqrt(
-            dx * dx +
-            dy * dy
-        );
-
-    dx /= length;
-    dy /= length;
-
-    const movement =
-        state.player.speed *
-        state.speedMultiplier *
-        delta;
-
-    state.player.x +=
-        dx * movement;
-
-    state.player.y +=
-        dy * movement;
-
-    state.player.x =
-        clamp(
-            state.player.x,
-            5,
-            95
-        );
-
-    state.player.y =
-        clamp(
-            state.player.y,
-            5,
-            65
-        );
-
-    if (!state.player.attacking) {
-
-        player.src =
-            "assets/images/day6/player-walk.png";
-
-    }
-
-    if (
-        Math.random() < 0.03
-    ) {
-
-        playSound(
-            footstepSound,
-            0.18
-        );
-
-    }
-
-    checkCrystalDistance();
-
-    checkHealthOrbDistance();
-
+    updatePlayerVisual();
 }
 
-
-/* =========================================================
-   CRYSTAL DISTANCE
-========================================================= */
-
-function checkCrystalDistance() {
-
-    crystals.forEach(
-        crystal => {
-
-            if (
-                crystal.classList.contains(
-                    "collected"
-                )
-            ) {
-                return;
-            }
-
-            /* FIX: uses the precomputed _px/_py instead of
-               getBoundingClientRect(), avoiding a forced
-               synchronous layout reflow on every crystal every
-               frame the player moves. */
-            const distance =
-                Math.hypot(
-                    state.player.x -
-                    crystal._px,
-
-                    state.player.y -
-                    crystal._py
-                );
-
-            if (distance < 6) {
-
-                collectCrystal(
-                    crystal
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   HEALTH ORBS (vitality pickups)
-========================================================= */
-
-function setupHealthOrbs() {
-
-    healthOrbs.forEach(
-        orb => {
-
-            /* Same trick as crystals: read the world-space
-               position once from the inline style instead of
-               measuring the DOM every frame. */
-            orb._px = parseFloat(orb.style.left) || 0;
-            orb._py = parseFloat(orb.style.bottom) || 0;
-            orb._respawnTimer = 0;
-
-            orb.addEventListener(
-                "click",
-                () => {
-
-                    collectHealthOrb(orb);
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-function checkHealthOrbDistance() {
-
-    healthOrbs.forEach(
-        orb => {
-
-            if (
-                orb.classList.contains(
-                    "collected"
-                )
-            ) {
-                return;
-            }
-
-            const distance =
-                Math.hypot(
-                    state.player.x -
-                    orb._px,
-
-                    state.player.y -
-                    orb._py
-                );
-
-            if (distance < 6) {
-
-                collectHealthOrb(orb);
-
-            }
-
-        }
-    );
-
-}
-
-
-function collectHealthOrb(orb) {
-
-    if (
-        orb.classList.contains(
-            "collected"
-        )
-    ) {
-        return;
-    }
-
-    if (
-        state.health >= state.maxHealth
-    ) {
-
-        showNotification(
-            "VITALITY ALREADY FULL"
-        );
-
-        return;
-
-    }
-
-    state.health =
-        Math.min(
-            state.maxHealth,
-            state.health +
-            HEALTH_ORB_HEAL_AMOUNT
-        );
-
-    orb.classList.add(
-        "collected"
-    );
-
-    orb._respawnTimer =
-        HEALTH_ORB_RESPAWN_SECONDS;
-
-    playSound(
-        collectSound,
-        0.6
-    );
-
-    updateHUD();
-
-    showNotification(
-        `VITALITY RESTORED +${HEALTH_ORB_HEAL_AMOUNT}`
-    );
-
-}
-
-
-function updateHealthOrbs(delta) {
-
-    healthOrbs.forEach(
-        orb => {
-
-            if (
-                !orb.classList.contains(
-                    "collected"
-                )
-            ) {
-                return;
-            }
-
-            orb._respawnTimer -=
-                delta;
-
-            if (
-                orb._respawnTimer <= 0
-            ) {
-
-                orb.classList.remove(
-                    "collected"
-                );
-
-                orb.classList.add(
-                    "ready-pulse"
-                );
-
-                setTimeout(
-                    () => {
-
-                        orb.classList.remove(
-                            "ready-pulse"
-                        );
-
-                    },
-                    650
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   PLAYER VISUAL
-========================================================= */
-
-function updatePlayerVisual() {
-
-    player.style.left =
-        `${state.player.x}%`;
-
-    player.style.bottom =
-        `${state.player.y}%`;
-
-    player.style.transform =
-        `translateX(-50%) scaleX(${state.player.facing})`;
-
-}
-
-
-/* =========================================================
-   EFFECT POSITIONING
-========================================================= */
-
-function positionEffectOnPlayer(effect) {
-
-    /* FIX: attack/dash/hurt effects used to sit at a fixed
-       left:50%, bottom:15%, so they only ever flashed at the
-       center of the screen instead of on the player. Now they're
-       moved to the player's current position right before the
-       animation plays. This only touches left/bottom (not
-       transform), so it doesn't fight with the CSS keyframe
-       animation that drives the transform/opacity. */
-
-    effect.style.left =
-        `${state.player.x}%`;
-
-    effect.style.bottom =
-        `${state.player.y + 6}%`;
-
-}
-
-
-/* =========================================================
-   MANSION SOLDIERS AI
-========================================================= */
-
-function updateSoldiers(delta) {
-
-    state.soldiers.forEach(
-        soldier => {
-
-            if (!soldier.active) {
-                return;
-            }
-
-            soldier.attackCooldown -= delta;
-
-            const dx =
-                state.player.x -
-                soldier.x;
-
-            const dy =
-                state.player.y -
-                soldier.y;
-
-            const distance =
-                Math.hypot(dx, dy);
-
-
-            /* Follow player */
-
-            if (distance > 7) {
-
-                const directionX =
-                    dx / Math.max(distance, 0.001);
-
-                const directionY =
-                    dy / Math.max(distance, 0.001);
-
-                const movement =
-                    soldier.speed *
-                    state.speedMultiplier *
-                    delta;
-
-                soldier.x +=
-                    directionX * movement;
-
-                soldier.y +=
-                    directionY * movement;
-
-                soldier.x =
-                    clamp(
-                        soldier.x,
-                        5,
-                        95
-                    );
-
-                soldier.y =
-                    clamp(
-                        soldier.y,
-                        8,
-                        70
-                    );
-
-            }
-
-
-            /* Attack player */
-
-            if (
-                distance <= 7 &&
-                soldier.attackCooldown <= 0
-            ) {
-
-                damagePlayer(10);
-
-                soldier.attackCooldown =
-                    soldier.attackDelay;
-
-                playSound(
-                    soldierSound,
-                    0.5
-                );
-
-            }
-
-
-            updateSoldierVisual(soldier);
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   SOLDIER VISUAL
-========================================================= */
-
-function updateSoldierVisual(soldier) {
-
-    const el = soldier.el;
-
-    if (!el) {
-        return;
-    }
-
-    if (!soldier.active) {
-
-        el.style.opacity =
-            "0";
-
-        return;
-
-    }
-
-    el.style.left =
-        `${soldier.x}%`;
-
-    el.style.bottom =
-        `${soldier.y}%`;
-
-    const facing =
-        state.player.x <
-        soldier.x
-            ? -1
-            : 1;
-
-    el.style.transform =
-        `translateX(-50%) scaleX(${facing})`;
-
-}
-
-
-/* =========================================================
-   SOLDIER HELPERS
-========================================================= */
-
-function allSoldiersDefeated() {
-
-    return state.soldiers.every(
-        soldier => !soldier.active
-    );
-
-}
-
-
-function defeatedSoldierCount() {
-
-    return state.soldiers.filter(
-        soldier => !soldier.active
-    ).length;
-
-}
-
-
-function updateMissionSoldierText() {
-
-    missionSoldier.textContent =
-        `◇ Defeat all Mansion Soldiers (${defeatedSoldierCount()}/${state.soldiers.length})`;
-
-}
-
-
-/* =========================================================
-   PLAYER ATTACK
-========================================================= */
-
+/* ATTACK */
 function attack() {
-
-
-    if (
-        state.paused ||
-        state.gameOver ||
-        state.victory ||
-        state.player.attacking
-    ) {
-        return;
-    }
+    if (state.paused || state.gameOver || state.victory) return;
+    if (state.player.attacking) return;
 
     state.player.attacking = true;
+    playSound(attackSound, 0.6);
 
-    player.src =
-        "assets/images/day6/player-attack.png";
+    const attackRange = 17;
 
-    positionEffectOnPlayer(attackEffect);
+    state.soldiers.forEach(soldier => {
+        if (!soldier.active) return;
 
-    attackEffect.classList.remove(
-        "active"
-    );
-
-    void attackEffect.offsetWidth;
-
-    attackEffect.classList.add(
-        "active"
-    );
-
-    playSound(
-        attackSound,
-        0.65
-    );
-
-
-    /* Hit soldiers — any soldier within range takes damage, so
-       players get rewarded for luring soldiers into a cluster. */
-
-    state.soldiers.forEach(
-        soldier => {
-
-            if (
-                soldier.active &&
-                distanceToSoldier(soldier) <= 10
-            ) {
-
-                damageSoldier(soldier, 35);
-
-            }
-
-        }
-    );
-
-
-    /* Hit boss */
-
-    if (
-        state.boss.active &&
-        distanceToBoss() <= 12
-    ) {
-
-        damageBoss(35);
-
-    }
-
-
-    setTimeout(
-        () => {
-
-            state.player.attacking =
-                false;
-
-            if (
-                !state.player.dashing
-            ) {
-
-                player.src =
-                    "assets/images/day6/player-idle.png";
-
-            }
-
-        },
-        280
-    );
-
-}
-
-
-/* =========================================================
-   SOLDIER DAMAGE
-========================================================= */
-
-function damageSoldier(soldier, amount) {
-
-    if (
-        !soldier.active
-    ) {
-        return;
-    }
-
-    soldier.health -=
-        amount;
-
-    state.score += 100;
-
-    if (
-        soldier.health <= 0
-    ) {
-
-        soldier.health = 0;
-
-        soldier.active =
-            false;
-
-        if (soldier.el) {
-
-            soldier.el.style.opacity =
-                "0";
-
-        }
-
-        state.score += 1000;
-
-        updateMissionSoldierText();
-
-        if (
-            allSoldiersDefeated()
-        ) {
-
-            missionSoldier.classList.add(
-                "complete"
-            );
-
-            showNotification(
-                "ALL MANSION SOLDIERS DEFEATED"
-            );
-
-        } else {
-
-            showNotification(
-                `SOLDIER DEFEATED (${defeatedSoldierCount()}/${state.soldiers.length})`
-            );
-
-        }
-
-        updateHUD();
-
-        if (
-            state.crystals >= 6 &&
-            allSoldiersDefeated()
-        ) {
-
-            activateBoss();
-
-        }
-
-    } else {
-
-        updateHUD();
-
-    }
-
-}
-
-
-/* =========================================================
-   BOSS ACTIVATION
-========================================================= */
-
-function activateBoss() {
-
-    if (
-        state.boss.active ||
-        state.boss.defeated
-    ) {
-        return;
-    }
-
-    state.boss.active = true;
-
-    boss.classList.add(
-        "active"
-    );
-
-    bossHUD.classList.add(
-        "active"
-    );
-
-    playSound(
-        bossRoar,
-        0.75
-    );
-
-    bgMusic.pause();
-
-    bossMusic.volume = 0.4;
-
-    bossMusic.play()
-        .catch(() => {});
-
-    showNotification(
-        "THE HAUNTED GUARDIAN AWAKENS"
-    );
-
-}
-
-
-/* =========================================================
-   BOSS AI
-========================================================= */
-
-function updateBoss(delta) {
-
-    const enemy =
-        state.boss;
-
-    if (
-        !enemy.active ||
-        enemy.defeated
-    ) {
-        return;
-    }
-
-    enemy.attackCooldown -=
-        delta;
-
-    const dx =
-        state.player.x -
-        enemy.x;
-
-    const dy =
-        state.player.y -
-        enemy.y;
-
-    const distance =
-        Math.hypot(dx, dy);
-
-
-    if (distance > 9) {
-
-        const length =
-            Math.max(
-                distance,
-                .001
-            );
-
-        enemy.x +=
-            (
-                dx / length
-            ) *
-            enemy.speed *
-            state.speedMultiplier *
-            delta;
-
-        enemy.y +=
-            (
-                dy / length
-            ) *
-            enemy.speed *
-            state.speedMultiplier *
-            delta;
-
-        enemy.x =
-            clamp(
-                enemy.x,
-                5,
-                95
-            );
-
-        enemy.y =
-            clamp(
-                enemy.y,
-                8,
-                65
-            );
-
-    }
-
-
-    if (
-        distance <= 9 &&
-        enemy.attackCooldown <= 0
-    ) {
-
-        damagePlayer(18);
-
-        enemy.attackCooldown =
-            enemy.attackDelay;
-
-        playSound(
-            bossRoar,
-            .3
-        );
-
-    }
-
-
-    updateBossVisual();
-
-}
-
-
-/* =========================================================
-   BOSS VISUAL
-========================================================= */
-
-function updateBossVisual() {
-
-    if (!boss) {
-        return;
-    }
-
-    boss.style.left =
-        `${state.boss.x}%`;
-
-    boss.style.bottom =
-        `${state.boss.y}%`;
-
-    const facing =
-        state.player.x < state.boss.x
-            ? -1
-            : 1;
-
-    boss.style.transform =
-        `translateX(-50%) scale(${facing},1)`;
-
-}
-
-
-/* =========================================================
-   BOSS DAMAGE
-========================================================= */
-
-function damageBoss(amount) {
-
-    if (
-        !state.boss.active
-    ) {
-        return;
-    }
-
-    state.boss.health -=
-        amount;
-
-    state.score += 200;
-
-    const percentage =
-        Math.max(
-            0,
-            state.boss.health /
-            state.boss.maxHealth *
-            100
-        );
-
-    bossHealthFill.style.width =
-        `${percentage}%`;
-
-
-    if (
-        state.boss.health <= 0
-    ) {
-
-        defeatBoss();
-
-    }
-
-}
-
-
-/* =========================================================
-   DEFEAT BOSS
-========================================================= */
-
-function defeatBoss() {
-
-    state.boss.health = 0;
-
-    state.boss.active = false;
-
-    state.boss.defeated = true;
-
-    boss.classList.remove(
-        "active"
-    );
-
-    bossHUD.classList.remove(
-        "active"
-    );
-
-    missionBoss.classList.add(
-        "complete"
-    );
-
-    state.score += 5000;
-
-    bossMusic.pause();
-
-    bossMusic.currentTime = 0;
-
-    playSound(
-        victorySound,
-        0.7
-    );
-
-    updateHUD();
-
-    showNotification(
-        "HAUNTED MANSION CLEARED"
-    );
-
-    setTimeout(
-        showVictory,
-        1200
-    );
-
-}
-
-
-/* =========================================================
-   DISTANCE
-========================================================= */
-
-function distanceToSoldier(soldier) {
-
-    return Math.hypot(
-        state.player.x -
-        soldier.x,
-
-        state.player.y -
-        soldier.y
-    );
-
-}
-
-
-function distanceToBoss() {
-
-    return Math.hypot(
-        state.player.x -
-        state.boss.x,
-
-        state.player.y -
-        state.boss.y
-    );
-
-}
-
-
-/* =========================================================
-   PLAYER DAMAGE
-========================================================= */
-
-function damagePlayer(amount) {
-
-    if (
-        state.gameOver ||
-        state.victory
-    ) {
-        return;
-    }
-
-    state.health -=
-        amount;
-
-    state.health =
-        Math.max(
-            0,
-            state.health
-        );
-
-    player.classList.add(
-        "hurt"
-    );
-
-    positionEffectOnPlayer(hurtEffect);
-
-    hurtEffect.classList.remove(
-        "active"
-    );
-
-    void hurtEffect.offsetWidth;
-
-    hurtEffect.classList.add(
-        "active"
-    );
-
-    if (!state.player.attacking) {
-
-        player.src =
-            "assets/images/day6/player-hurt.png";
-
-    }
-
-    playSound(
-        hurtSound,
-        0.55
-    );
-
-    updateHUD();
-
-    setTimeout(
-        () => {
-
-            player.classList.remove(
-                "hurt"
-            );
-
-            if (
-                !state.gameOver &&
-                !state.player.attacking
-            ) {
-
-                player.src =
-                    "assets/images/day6/player-idle.png";
-
-            }
-
-        },
-        350
-    );
-
-
-    if (
-        state.health <= 0
-    ) {
-
-        showGameOver();
-
-    }
-
-}
-
-
-/* =========================================================
-   DASH
-========================================================= */
-
-function dash() {
-
-    if (
-        state.paused ||
-        state.gameOver ||
-        state.victory ||
-        state.player.dashing ||
-        state.spirit < 20
-    ) {
-        return;
-    }
-
-    state.player.dashing =
-        true;
-
-    state.spirit -= 20;
-
-    const direction =
-        state.player.facing;
-
-    state.player.x +=
-        15 * direction;
-
-    state.player.x =
-        clamp(
+        if (distance(
             state.player.x,
-            5,
-            95
-        );
+            state.player.y,
+            soldier.x,
+            soldier.y
+        ) <= attackRange) {
+            damageSoldier(soldier, 35);
+        }
+    });
 
-    player.src =
-        "assets/images/day6/player-dash.png";
-
-    positionEffectOnPlayer(dashEffect);
-
-    dashEffect.classList.remove(
-        "active"
-    );
-
-    void dashEffect.offsetWidth;
-
-    dashEffect.classList.add(
-        "active"
-    );
-
-    playSound(
-        dashSound,
-        0.65
-    );
-
-    updateHUD();
+    if (state.boss.active && !state.boss.defeated) {
+        if (distance(
+            state.player.x,
+            state.player.y,
+            state.boss.x,
+            state.boss.y
+        ) <= 21) {
+            damageBoss(25);
+        }
+    }
 
     updatePlayerVisual();
 
-    setTimeout(
-        () => {
-
-            state.player.dashing =
-                false;
-
-            if (!state.player.attacking) {
-
-                player.src =
-                    "assets/images/day6/player-idle.png";
-
-            }
-
-        },
-        350
-    );
-
+    setTimeout(() => {
+        state.player.attacking = false;
+        updatePlayerVisual();
+    }, 250);
 }
 
+/* DASH */
+function dash() {
+    if (state.paused || state.gameOver || state.victory) return;
+    if (state.player.dashing || state.spirit < 15) return;
 
-/* =========================================================
-   SPIRIT REGENERATION
-========================================================= */
+    state.player.dashing = true;
+    state.spirit = Math.max(0, state.spirit - 15);
 
-function regenerateSpirit(delta) {
+    let dx = 0;
+    let dy = 0;
 
-    if (
-        state.player.dashing
-    ) {
-        return;
+    if (state.keys.left) dx -= 1;
+    if (state.keys.right) dx += 1;
+    if (state.keys.up) dy += 1;
+    if (state.keys.down) dy -= 1;
+
+    if (dx === 0 && dy === 0) {
+        dx = state.player.facing;
     }
 
-    state.spirit +=
-        8 * delta;
+    const magnitude = Math.hypot(dx, dy) || 1;
+    dx /= magnitude;
+    dy /= magnitude;
 
-    state.spirit =
-        Math.min(
-            state.maxSpirit,
-            state.spirit
+    state.player.x = clamp(state.player.x + dx * 13, 3, 97);
+    state.player.y = clamp(state.player.y + dy * 13, 3, 78);
+
+    playSound(dashSound, 0.6);
+    updatePlayerVisual();
+    updateHUD();
+
+    setTimeout(() => {
+        state.player.dashing = false;
+        updatePlayerVisual();
+    }, 350);
+}
+
+/* SOLDIER AI */
+function updateSoldiers(delta) {
+    if (state.gameOver || state.victory) return;
+
+    state.soldiers.forEach(soldier => {
+        if (!soldier.active) return;
+
+        soldier.attackCooldown = Math.max(
+            0,
+            soldier.attackCooldown - delta
         );
 
+        const dist = distance(
+            soldier.x,
+            soldier.y,
+            state.player.x,
+            state.player.y
+        );
+
+        if (dist > 7) {
+            const dx = state.player.x - soldier.x;
+            const dy = state.player.y - soldier.y;
+            const magnitude = Math.hypot(dx, dy) || 1;
+
+            soldier.x += (dx / magnitude) * soldier.speed * delta;
+            soldier.y += (dy / magnitude) * soldier.speed * delta;
+        } else if (soldier.attackCooldown <= 0) {
+            soldier.attackCooldown = soldier.attackDelay;
+            damagePlayer(8);
+        }
+
+        soldier.x = clamp(soldier.x, 3, 97);
+        soldier.y = clamp(soldier.y, 3, 78);
+
+        updateSoldierVisual(soldier);
+    });
 }
 
+/* SOLDIER DAMAGE */
+function damageSoldier(soldier, damage) {
+    if (!soldier || !soldier.active) return;
 
-/* =========================================================
-   HUD
-========================================================= */
+    soldier.health = Math.max(0, soldier.health - damage);
+    state.score += 50;
 
-function updateHUD() {
+    if (soldier.health <= 0) {
+        soldier.active = false;
+        soldier.el?.classList.add("defeated");
+        if (soldier.el) soldier.el.style.display = "none";
 
-    const healthPercent =
-        state.health /
-        state.maxHealth *
-        100;
+        state.score += 300;
+        showNotification("HAUNTED SOLDIER DEFEATED");
+        updateMissionSoldierText();
 
-    const spiritPercent =
-        state.spirit /
-        state.maxSpirit *
-        100;
+        if (allSoldiersDefeated()) {
+            missionSoldier?.classList.add("complete");
+            showNotification("ALL SOLDIERS DEFEATED");
 
-    healthFill.style.width =
-        `${healthPercent}%`;
-
-    spiritFill.style.width =
-        `${spiritPercent}%`;
-
-    healthText.textContent =
-        `${Math.ceil(state.health)} / ${state.maxHealth}`;
-
-    spiritText.textContent =
-        `${Math.ceil(state.spirit)} / ${state.maxSpirit}`;
-
-    crystalCounter.textContent =
-        `${state.crystals} / 6`;
-
-    scoreCounter.textContent =
-        String(state.score)
-            .padStart(6, "0");
-
-}
-
-
-/* =========================================================
-   PAUSE
-========================================================= */
-
-function togglePause() {
-
-    if (
-        state.gameOver ||
-        state.victory
-    ) {
-        return;
-    }
-
-    state.paused =
-        !state.paused;
-
-    pauseMenu.classList.toggle(
-        "hidden",
-        !state.paused
-    );
-
-    if (state.paused) {
-
-        bgMusic.pause();
-        bossMusic.pause();
-
+            if (state.crystals >= 6) activateBoss();
+        }
     } else {
-
-        state.lastTime = 0;
-
-        if (
-            state.boss.active
-        ) {
-
-            bossMusic.play()
-                .catch(() => {});
-
-        } else {
-
-            bgMusic.play()
-                .catch(() => {});
-
-        }
-
+        showNotification(`SOLDIER HIT — ${soldier.health} HP`);
     }
 
+    updateHUD();
 }
 
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-function setupButtons() {
-
-    resumeButton.addEventListener(
-        "click",
-        togglePause
-    );
-
-    continueButton.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "day7-video.html";
-
-        }
-    );
-
-    retryButton.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "day6-epic-game.html";
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   MOBILE CONTROLS
-========================================================= */
-
-function setupMobileControls() {
-
-    const buttons =
-        document.querySelectorAll(
-            ".moveButton"
-        );
-
-    buttons.forEach(
-        button => {
-
-            const direction =
-                button.dataset.key;
-
-            button.addEventListener(
-                "pointerdown",
-                event => {
-
-                    event.preventDefault();
-
-                    state.keys[
-                        direction
-                    ] = true;
-
-                    if (
-                        direction === "left"
-                    ) {
-                        state.player.facing =
-                            -1;
-                    }
-
-                    if (
-                        direction === "right"
-                    ) {
-                        state.player.facing =
-                            1;
-                    }
-
-                }
-            );
-
-            button.addEventListener(
-                "pointerup",
-                () => {
-
-                    state.keys[
-                        direction
-                    ] = false;
-
-                }
-            );
-
-            button.addEventListener(
-                "pointercancel",
-                () => {
-
-                    state.keys[
-                        direction
-                    ] = false;
-
-                }
-            );
-
-            button.addEventListener(
-                "pointerleave",
-                () => {
-
-                    state.keys[
-                        direction
-                    ] = false;
-
-                }
-            );
-
-        }
-    );
-
-
-    document
-        .getElementById("mobileAttack")
-        .addEventListener(
-            "pointerdown",
-            event => {
-
-                event.preventDefault();
-                attack();
-
-            }
-        );
-
-
-    document
-        .getElementById("mobileDash")
-        .addEventListener(
-            "pointerdown",
-            event => {
-
-                event.preventDefault();
-                dash();
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   VICTORY
-========================================================= */
-
-function showVictory() {
-
-    state.victory = true;
-
-    victoryScreen.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-/* =========================================================
-   GAME OVER
-========================================================= */
-
-function showGameOver() {
-
-    state.gameOver = true;
-
-    bgMusic.pause();
-
-    bossMusic.pause();
-
-    playSound(
-        gameOverSound,
-        0.7
-    );
-
-    gameOverScreen.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-/* =========================================================
-   NOTIFICATION
-========================================================= */
-
-let notificationTimer = null;
-
-function showNotification(message) {
-
-    notification.textContent =
-        message;
-
-    notification.classList.add(
-        "show"
-    );
-
-    clearTimeout(
-        notificationTimer
-    );
-
-    notificationTimer =
-        setTimeout(
-            () => {
-
-                notification.classList.remove(
-                    "show"
-                );
-
-            },
-            1800
-        );
-
-}
-
-
-/* =========================================================
-   AUDIO HELPER
-========================================================= */
-
-function playSound(
-    audio,
-    volume = 0.5
-) {
-
-    if (!audio) {
-        return;
+/* SOLDIER DISPLAY */
+function updateSoldierVisual(soldier) {
+    if (!soldier.el) return;
+
+    soldier.el.style.left = `${soldier.x}%`;
+    soldier.el.style.bottom = `${soldier.y}%`;
+
+    let bar = soldier.el.querySelector(".enemyHealthFill");
+
+    if (!bar) {
+        bar = document.createElement("div");
+        bar.className = "enemyHealthFill";
+        bar.style.cssText =
+            "position:absolute;left:0;top:-8px;height:4px;" +
+            "background:#ff3030;width:100%;transition:width .15s";
+        soldier.el.appendChild(bar);
     }
+
+    bar.style.width =
+        `${Math.max(0, soldier.health / soldier.maxHealth * 100)}%`;
+
+    soldier.el.style.display = soldier.active ? "" : "none";
+}
+
+function updateMissionSoldierText() {
+    if (!missionSoldier) return;
+
+    const defeated = state.soldiers.filter(soldier => !soldier.active).length;
+    missionSoldier.textContent =
+        `Defeat Haunted Soldiers (${defeated}/${state.soldiers.length})`;
+}
+
+/* BOSS ACTIVATION */
+function activateBoss() {
+    if (state.boss.active || state.boss.defeated) return;
+
+    state.boss.active = true;
+
+    if (bossHUD) bossHUD.classList.remove("hidden");
+
+    updateBossVisual();
+    playBossMusic();
+    playSound(bossRoar, 0.8);
+    showNotification("THE HAUNTED MANSION BOSS HAS AWAKENED!");
+}
+
+/* BOSS VISUAL */
+function updateBossVisual() {
+    const boss = document.getElementById("boss");
+    if (!boss) return;
+
+    boss.style.left = `${state.boss.x}%`;
+    boss.style.bottom = `${state.boss.y}%`;
+    boss.style.display =
+        state.boss.active && !state.boss.defeated ? "" : "none";
+
+    if (bossHealthFill) {
+        bossHealthFill.style.width =
+            `${Math.max(0, state.boss.health / state.boss.maxHealth * 100)}%`;
+    }
+}
+
+/* BOSS AI */
+function updateBoss(delta) {
+    if (!state.boss.active || state.boss.defeated) return;
+
+    state.boss.attackCooldown = Math.max(
+        0,
+        state.boss.attackCooldown - delta
+    );
+
+    state.boss.hitCooldown = Math.max(
+        0,
+        state.boss.hitCooldown - delta
+    );
+
+    const dist = distance(
+        state.boss.x,
+        state.boss.y,
+        state.player.x,
+        state.player.y
+    );
+
+    if (dist > 10) {
+        const dx = state.player.x - state.boss.x;
+        const dy = state.player.y - state.boss.y;
+        const magnitude = Math.hypot(dx, dy) || 1;
+
+        state.boss.x += (dx / magnitude) * state.boss.speed * delta;
+        state.boss.y += (dy / magnitude) * state.boss.speed * delta;
+    } else if (state.boss.attackCooldown <= 0) {
+        state.boss.attackCooldown = state.boss.attackDelay;
+        damagePlayer(18);
+        showNotification("BOSS ATTACK!");
+    }
+
+    state.boss.x = clamp(state.boss.x, 5, 95);
+    state.boss.y = clamp(state.boss.y, 5, 75);
+
+    updateBossVisual();
+}
+
+/* BOSS DAMAGE */
+function damageBoss(damage) {
+    if (!state.boss.active || state.boss.defeated) return;
+    if (state.boss.hitCooldown > 0) return;
+
+    state.boss.hitCooldown = 0.35;
+    state.boss.health = Math.max(0, state.boss.health - damage);
+    state.score += 100;
+
+    updateBossVisual();
+    updateHUD();
+
+    if (state.boss.health <= 0) {
+        defeatBoss();
+    }
+}
+
+/* BOSS DEFEAT */
+function defeatBoss() {
+    if (state.boss.defeated) return;
+
+    state.boss.defeated = true;
+    state.boss.active = false;
+
+    if (bossHUD) bossHUD.classList.add("hidden");
+
+    stopBossMusic();
+    showNotification("THE HAUNTED MANSION BOSS IS DEFEATED!");
+
+    setTimeout(() => {
+        showVictory();
+    }, 1200);
+}
+
+/* PLAYER DAMAGE */
+function damagePlayer(damage) {
+    if (state.gameOver || state.victory || state.player.dashing) return;
+
+    state.health = Math.max(0, state.health - damage);
+    state.player.hurt = true;
+
+    playSound(hurtSound, 0.65);
+    updateHUD();
+    updatePlayerVisual();
+
+    setTimeout(() => {
+        state.player.hurt = false;
+        updatePlayerVisual();
+    }, 250);
+
+    if (state.health <= 0) {
+        endGame();
+    }
+}
+
+/* UTILITIES */
+function distance(x1, y1, x2, y2) {
+    return Math.hypot(x2 - x1, y2 - y1);
+}
+
+function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+}
+
+function allSoldiersDefeated() {
+    return state.soldiers.every(soldier => !soldier.active);
+}
+
+function playSound(sound, volume = 0.5) {
+    if (!sound) return;
 
     try {
-
-        audio.pause();
-
-        audio.currentTime = 0;
-
-        audio.volume =
-            volume;
-
-        audio.play()
-            .catch(() => {});
-
+        sound.volume = volume;
+        sound.currentTime = 0;
+        sound.play().catch(() => {});
     } catch (error) {
+        console.warn("Sound playback unavailable:", error);
+    }
+}
 
-        console.warn(
-            "Audio error:",
-            error
-        );
+function playBossMusic() {
+    if (bgMusic) bgMusic.pause();
 
+    if (bossMusic) {
+        bossMusic.volume = 0.45;
+        bossMusic.currentTime = 0;
+        bossMusic.play().catch(() => {});
+    }
+}
+
+function stopBossMusic() {
+    if (bossMusic) bossMusic.pause();
+
+    if (bgMusic && !state.gameOver && !state.victory) {
+        bgMusic.play().catch(() => {});
+    }
+}
+
+/* NOTIFICATION */
+let notificationTimeout;
+
+function showNotification(message) {
+    if (!notification) {
+        console.log("[DAY 6]", message);
+        return;
     }
 
+    notification.textContent = message;
+    notification.classList.remove("hidden");
+    notification.classList.add("show");
+
+    clearTimeout(notificationTimeout);
+
+    notificationTimeout = setTimeout(() => {
+        notification.classList.remove("show");
+        notification.classList.add("hidden");
+    }, 2400);
 }
 
+/* HUD */
+function updateHUD() {
+    if (healthFill) {
+        healthFill.style.width =
+            `${state.health / state.maxHealth * 100}%`;
+    }
 
-/* =========================================================
-   CLAMP
-========================================================= */
+    if (spiritFill) {
+        spiritFill.style.width =
+            `${state.spirit / state.maxSpirit * 100}%`;
+    }
 
-function clamp(
-    value,
-    min,
-    max
-) {
+    if (healthText) healthText.textContent = `${state.health}`;
+    if (spiritText) spiritText.textContent = `${state.spirit}`;
+    if (crystalCounter) crystalCounter.textContent = `${state.crystals}/6`;
+    if (scoreCounter) scoreCounter.textContent = `${state.score}`;
 
-    return Math.min(
-        Math.max(
-            value,
-            min
-        ),
-        max
-    );
+    if (missionCrystal && state.crystals >= 6) {
+        missionCrystal.classList.add("complete");
+    }
 
+    if (missionBoss && state.boss.defeated) {
+        missionBoss.classList.add("complete");
+    }
 }
-
-
-/* =========================================================
-   GAME LOOP
-========================================================= */
+/* ==========================================
+   DAY 6 — GAME LOOP
+========================================== */
 
 function gameLoop(timestamp) {
+    if (!state.running) return;
 
-    if (!state.lastTime) {
+    if (!state.lastTime) state.lastTime = timestamp;
 
-        state.lastTime =
-            timestamp;
+    const delta = Math.min((timestamp - state.lastTime) / 1000, 0.05);
+    state.lastTime = timestamp;
 
-        requestAnimationFrame(gameLoop);
-
-        return;
-
-    }
-
-    let delta =
-        (
-            timestamp -
-            state.lastTime
-        ) / 1000;
-
-    state.lastTime =
-        timestamp;
-
-    /* FIX: cap delta a bit tighter and guard against a negative/zero
-       value (can happen right after a visibility-change reset) so
-       enemies/effects never jump. */
-    delta =
-        clamp(
-            delta,
-            0,
-            0.05
-        );
-
-
-    if (
-        !state.paused &&
-        !state.gameOver &&
-        !state.victory
-    ) {
-
+    if (!state.paused && !state.gameOver && !state.victory) {
         updatePlayer(delta);
-
         updateSoldiers(delta);
-
         updateBoss(delta);
-
-        updateHealthOrbs(delta);
-
-        regenerateSpirit(
-            delta
-        );
-
-        updatePlayerVisual();
-
+        updateHealthOrbRespawns(delta);
+        regenerateSpirit(delta);
+        updateMiniMap();
         updateHUD();
-
     }
 
-
-    requestAnimationFrame(
-        gameLoop
-    );
-
+    requestAnimationFrame(gameLoop);
 }
 
+/* ==========================================
+   SPIRIT REGENERATION
+========================================== */
 
-/* =========================================================
-   START
-========================================================= */
+function regenerateSpirit(delta) {
+    if (state.player.dashing) return;
 
-init();
+    state.spirit = Math.min(
+        state.maxSpirit,
+        state.spirit + 3 * delta
+    );
+}
+
+/* ==========================================
+   HEALTH ORB RESPAWN
+========================================== */
+
+function updateHealthOrbRespawns(delta) {
+    healthOrbs.forEach(orb => {
+        if (!orb._collected) return;
+
+        orb._respawn -= delta;
+
+        if (orb._respawn <= 0) {
+            orb._collected = false;
+            orb.style.display = "";
+            orb.classList.remove("collected");
+        }
+    });
+}
+
+/* ==========================================
+   MINI-MAP
+========================================== */
+
+function updateMiniMap() {
+    const map = document.getElementById("miniMap");
+    if (!map) return;
+
+    let playerMarker = map.querySelector(".mini-player");
+
+    if (!playerMarker) {
+        playerMarker = document.createElement("div");
+        playerMarker.className = "mini-player";
+        playerMarker.title = "Player";
+        playerMarker.style.cssText =
+            "position:absolute;width:9px;height:9px;border-radius:50%;" +
+            "background:#ff8a00;box-shadow:0 0 8px #ff8a00;" +
+            "transform:translate(-50%,50%);z-index:10";
+        map.appendChild(playerMarker);
+    }
+
+    playerMarker.style.left = `${state.player.x}%`;
+    playerMarker.style.bottom = `${state.player.y}%`;
+
+    state.soldiers.forEach((soldier, index) => {
+        let marker = map.querySelector(`.mini-soldier-${index}`);
+
+        if (!marker) {
+            marker = document.createElement("div");
+            marker.className = `mini-soldier-${index}`;
+            marker.title = `Haunted Soldier ${index + 1}`;
+            marker.style.cssText =
+                "position:absolute;width:6px;height:6px;border-radius:50%;" +
+                "background:#ff3030;transform:translate(-50%,50%);z-index:5";
+            map.appendChild(marker);
+        }
+
+        marker.style.display = soldier.active ? "" : "none";
+        marker.style.left = `${soldier.x}%`;
+        marker.style.bottom = `${soldier.y}%`;
+    });
+
+    let bossMarker = map.querySelector(".mini-boss");
+
+    if (!bossMarker) {
+        bossMarker = document.createElement("div");
+        bossMarker.className = "mini-boss";
+        bossMarker.title = "Boss";
+        bossMarker.style.cssText =
+            "position:absolute;width:9px;height:9px;border-radius:2px;" +
+            "background:#c000ff;box-shadow:0 0 7px #c000ff;" +
+            "transform:translate(-50%,50%);z-index:6";
+        map.appendChild(bossMarker);
+    }
+
+    bossMarker.style.display =
+        state.boss.active && !state.boss.defeated ? "" : "none";
+    bossMarker.style.left = `${state.boss.x}%`;
+    bossMarker.style.bottom = `${state.boss.y}%`;
+}
+
+/* ==========================================
+   PAUSE / RESUME
+========================================== */
+
+function togglePause(forceState) {
+    if (state.gameOver || state.victory) return;
+
+    state.paused = typeof forceState === "boolean"
+        ? forceState
+        : !state.paused;
+
+    if (pauseMenu) {
+        pauseMenu.classList.toggle("hidden", !state.paused);
+    }
+
+    if (state.paused) {
+        if (bgMusic) bgMusic.pause();
+        if (bossMusic) bossMusic.pause();
+    } else {
+        state.lastTime = 0;
+
+        if (state.boss.active) {
+            if (bossMusic) bossMusic.play().catch(() => {});
+        } else if (bgMusic) {
+            bgMusic.play().catch(() => {});
+        }
+    }
+}
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+function setupButtons() {
+    if (resumeButton) {
+        resumeButton.addEventListener("click", () => {
+            togglePause(false);
+        });
+    }
+
+    const pauseButton = document.getElementById("pauseButton");
+
+    if (pauseButton) {
+        pauseButton.addEventListener("click", () => {
+            togglePause();
+        });
+    }
+
+    if (continueButton) {
+        continueButton.addEventListener("click", () => {
+            let completed = false;
+
+            try {
+                completed = localStorage.getItem("day6Complete") === "true";
+            } catch (error) {
+                console.error("Unable to read game progress:", error);
+            }
+
+            if (!state.victory || !completed) {
+                showNotification("DEFEAT THE BOSS TO UNLOCK DAY 7");
+                return;
+            }
+
+            window.location.href = "day7-video.html";
+        });
+    }
+
+    if (retryButton) {
+        retryButton.addEventListener("click", () => {
+            window.location.href = "day6-epic-game.html";
+        });
+    }
+
+    const attackButton = document.getElementById("attackButton");
+
+    if (attackButton) {
+        attackButton.addEventListener("pointerdown", event => {
+            event.preventDefault();
+            attack();
+        });
+    }
+
+    const dashButton = document.getElementById("dashButton");
+
+    if (dashButton) {
+        dashButton.addEventListener("pointerdown", event => {
+            event.preventDefault();
+            dash();
+        });
+    }
+}
+
+/* ==========================================
+   MOBILE MOVEMENT CONTROLS
+========================================== */
+
+function setupMobileControls() {
+    const controls = {
+        up: document.getElementById("moveUp"),
+        down: document.getElementById("moveDown"),
+        left: document.getElementById("moveLeft"),
+        right: document.getElementById("moveRight")
+    };
+
+    Object.entries(controls).forEach(([direction, button]) => {
+        if (!button) return;
+
+        const start = event => {
+            event.preventDefault();
+            state.keys[direction] = true;
+
+            if (button.setPointerCapture && event.pointerId !== undefined) {
+                try {
+                    button.setPointerCapture(event.pointerId);
+                } catch (_) {}
+            }
+        };
+
+        const stop = event => {
+            if (event) event.preventDefault();
+            state.keys[direction] = false;
+        };
+
+        button.addEventListener("pointerdown", start);
+        button.addEventListener("pointerup", stop);
+        button.addEventListener("pointercancel", stop);
+        button.addEventListener("lostpointercapture", stop);
+        button.addEventListener("contextmenu", event => event.preventDefault());
+    });
+}
+
+/* ==========================================
+   GAME OVER
+========================================== */
+
+function endGame() {
+    if (state.gameOver || state.victory) return;
+
+    state.gameOver = true;
+    state.running = true;
+    state.paused = false;
+
+    if (gameOverScreen) {
+        gameOverScreen.classList.remove("hidden");
+    }
+
+    if (pauseMenu) pauseMenu.classList.add("hidden");
+
+    if (bgMusic) bgMusic.pause();
+    if (bossMusic) bossMusic.pause();
+
+    playSound(gameOverSound, 0.8);
+    showNotification("YOU HAVE FALLEN IN THE HAUNTED MANSION");
+}
+
+/* ==========================================
+   VICTORY / SAVE PROGRESS
+========================================== */
+
+function showVictory() {
+    if (state.victory) return;
+
+    state.victory = true;
+    state.paused = false;
+
+    if (victoryScreen) {
+        victoryScreen.classList.remove("hidden");
+    }
+
+    if (gameOverScreen) {
+        gameOverScreen.classList.add("hidden");
+    }
+
+    if (pauseMenu) {
+        pauseMenu.classList.add("hidden");
+    }
+
+    if (bgMusic) bgMusic.pause();
+    if (bossMusic) bossMusic.pause();
+
+    playSound(victorySound, 0.85);
+
+    try {
+        localStorage.setItem("day6Complete", "true");
+        localStorage.setItem("day6Score", String(state.score));
+        localStorage.setItem("day6CompletedAt", new Date().toISOString());
+    } catch (error) {
+        console.error("Could not save Day 6 progress:", error);
+        showNotification("WARNING: PROGRESS COULD NOT BE SAVED");
+        return;
+    }
+
+    if (missionBoss) {
+        missionBoss.classList.add("complete");
+    }
+
+    const finalScore = document.getElementById("finalScore");
+    if (finalScore) {
+        finalScore.textContent = String(state.score);
+    }
+
+    const finalCrystals = document.getElementById("finalCrystals");
+    if (finalCrystals) {
+        finalCrystals.textContent = `${state.crystals}/6`;
+    }
+
+    showNotification("DAY 6 COMPLETE — DAY 7 UNLOCKED");
+}
+
+/* ==========================================
+   OPTIONAL RESTART SUPPORT
+========================================== */
+
+function resetDay6Progress() {
+    try {
+        localStorage.removeItem("day6Complete");
+        localStorage.removeItem("day6Score");
+        localStorage.removeItem("day6CompletedAt");
+    } catch (error) {
+        console.error("Could not reset Day 6 progress:", error);
+    }
+}
+
+/* ==========================================
+   START GAME
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+    init();
+});
