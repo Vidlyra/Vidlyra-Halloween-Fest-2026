@@ -1,320 +1,147 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#05070d">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#000000">
+  <title>VIDLYRA Halloween Fest 2026 | Day 5</title>
 
-<title>
-VIDLYRA HALLOWEEN FEST 2026
-DAY 5
-THE HAUNTED CEMETERY
-</title>
-
-<link rel="stylesheet" href="css/day5-video.css">
-<link rel="icon" href="data:,">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/day5-video.css">
 </head>
 
 <body>
+  <!-- Loading Screen -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-symbol">✦</div>
+      <h1>VIDLYRA</h1>
+      <p>HALLOWEEN FEST 2026</p>
 
-<!-- ==========================================
-LOADING SCREEN
-========================================== -->
+      <div class="loading-track">
+        <div id="loadingFill" class="loading-fill"></div>
+      </div>
 
-<div id="loadingScreen">
+      <span class="loading-label">ENTERING THE SPIRIT WORLD...</span>
+    </div>
+  </div>
 
-    <div id="loadingContent">
+  <!-- Start Experience Overlay -->
+  <div id="startOverlay" class="start-overlay">
+    <div class="start-content">
+      <p class="eyebrow">VIDLYRA HALLOWEEN FEST 2026</p>
+      <h1>DAY <span>05</span></h1>
+      <h2>THE SEVEN SPIRIT LANTERNS</h2>
 
-        <h2>Preparing Day 5...</h2>
+      <p class="start-description">
+        Seven ancient lanterns hold the boundary between the living
+        and the spirit world. The Ghost King is awakening.
+        Your journey begins now.
+      </p>
 
-        <p>Loading cinematic...</p>
+      <button id="startButton" type="button">
+        START EXPERIENCE
+      </button>
 
-        <div id="loadingBar">
+      <p class="start-hint">
+        Headphones recommended · Sound enabled after starting
+      </p>
+    </div>
+  </div>
 
-            <div id="loadingFill"></div>
+  <!-- Cinematic Video -->
+  <main id="videoContainer" class="video-container">
+    <video
+      id="introVideo"
+      class="intro-video"
+      autoplay
+      muted
+      playsinline
+      preload="auto"
+      disablepictureinpicture
+    >
+      <source src="assets/video/day5-intro.mp4" type="video/mp4">
+      Your browser does not support HTML video.
+    </video>
 
-        </div>
+    <!-- Cinematic overlays -->
+    <div id="overlay" class="cinematic-overlay"></div>
+    <div id="lightningFlash" class="lightning-flash"></div>
+    <div id="fadeScreen" class="fade-screen"></div>
 
+    <!-- Title -->
+    <div id="titleContainer" class="title-container">
+      <p class="title-kicker">VIDLYRA HALLOWEEN FEST 2026</p>
+      <h1>THE SEVEN<br><span>SPIRIT LANTERNS</span></h1>
+      <p class="title-subtitle">DAY FIVE — THE AWAKENING</p>
     </div>
 
-</div>
-
-<!-- ==========================================
-VIDEO
-========================================== -->
-
-<div id="videoContainer">
-    
-<video
-id="introVideo"
-class="introVideo"
-autoplay
-muted
-playsinline
-preload="auto">
-
-<source
-src="assets/video/day5-intro.mp4"
-type="video/mp4">
-
-Your browser does not support HTML5 video.
-
-</video>
-
-</div>
-
-<!-- ==========================================
-OVERLAY
-========================================== -->
-
-<div id="overlay"></div>
-
-<div id="lightningFlash"></div>
-
-<div id="fadeScreen"></div>
-
-<!-- ==========================================
-TITLE
-========================================== -->
-
-<header id="titleContainer">
-
-<h1 id="dayTitle">
-
-DAY 5
-
-</h1>
-
-<h2 id="locationTitle">
-
-THE HAUNTED CEMETERY
-
-</h2>
-
-<p id="introText">
-
-The Forgotten Cemetery has awakened.
-
-Restore the Seven Spirit Lanterns
-
-before the Ghost King rises.
-
-</p>
-
-</header>
-
-<!-- ==========================================
-MISSION
-========================================== -->
-
-<section id="missionPreview">
-
-<div class="missionHeader">
-
-TODAY'S MISSION
-
-</div>
-
-<ul>
-
-<li>Explore the Haunted Cemetery</li>
-
-<li>Restore 7 Spirit Lanterns</li>
-
-<li>Defeat the Ghost King</li>
-
-</ul>
-
-</section>
-
-<!-- ==========================================
-SUBTITLE
-========================================== -->
-
-<div id="subtitleContainer">
-
-<p id="storySubtitle">
-
-The cemetery sleeps...
-
-</p>
-
-</div>
-
-<!-- ==========================================
-SKIP BUTTON
-========================================== -->
-
-<button
-id="skipButton"
-type="button">
-
-SKIP ▶
-
-</button>
-
-<!-- ==========================================
-PROGRESS BAR
-========================================== -->
-
-<div id="videoProgress">
-
-<div id="videoFill"></div>
-
-</div>
-
-<!-- ==========================================
-END OVERLAY
-========================================== -->
-
-<section id="endOverlay">
-
-<div id="endContent">
-
-<h1>
-
-THE JOURNEY CONTINUES
-
-</h1>
-
-<h2>
-
-THE HAUNTED CEMETERY
-
-</h2>
-
-<p>
-
-The cinematic has ended.
-
-Your mission begins now.
-
-</p>
-
-<button
-id="enterButton"
-type="button">
-
-CLICK TO ENTER
-THE CEMETERY
-
-</button>
-
-</div>
-
-</section>
-<!-- ==========================================
-OPTIONAL AUDIO OVERLAY
-(Remove if your MP4 already contains audio)
-========================================== -->
-
-<audio
-id="bgMusic"
-preload="auto"
-loop>
-
-    <source
+    <!-- Mission Preview -->
+    <section id="missionPreview" class="mission-preview">
+      <p class="mission-label">YOUR NEXT OBJECTIVE</p>
+      <h2>RESTORE THE SEVEN LANTERNS</h2>
+      <p>
+        Find the lost spirit lanterns, survive the haunted cemetery,
+        and confront the Ghost King.
+      </p>
+    </section>
+
+    <!-- Story subtitles -->
+    <div id="subtitleContainer" class="subtitle-container">
+      <p id="storySubtitle" aria-live="polite"></p>
+    </div>
+
+    <!-- Video progress -->
+    <div id="videoProgress" class="video-progress">
+      <div id="videoFill" class="video-fill"></div>
+    </div>
+
+    <!-- Skip cinematic -->
+    <button id="skipButton" class="skip-button" type="button">
+      SKIP INTRO <span aria-hidden="true">»</span>
+    </button>
+  </main>
+
+  <!-- End of Cinematic -->
+  <section id="endOverlay" class="end-overlay">
+    <div class="end-content">
+      <p class="end-kicker">THE SPIRIT WORLD AWAITS</p>
+      <h1>THE HUNT <span>BEGINS</span></h1>
+      <p>
+        The seven lanterns are scattered across the haunted cemetery.
+        Find them before the Ghost King consumes the last light.
+      </p>
+
+      <button id="enterButton" type="button">
+        ENTER DAY 5 GAME
+      </button>
+    </div>
+  </section>
+
+  <!-- Audio: played by day5-video.js after user interaction -->
+  <audio
+    id="bgMusic"
     src="assets/day5-theme.mp3"
-    type="audio/mpeg">
+    preload="auto"
+    loop
+  ></audio>
 
-</audio>
-
-<audio
-id="thunder"
-preload="auto">
-
-    <source
+  <audio
+    id="thunder"
     src="assets/thunder.mp3"
-    type="audio/mpeg">
+    preload="auto"
+  ></audio>
 
-</audio>
-
-<audio
-id="ghostWhisper"
-preload="auto">
-
-    <source
+  <audio
+    id="ghostWhisper"
     src="assets/ghost-whisper.mp3"
-    type="audio/mpeg">
+    preload="auto"
+  ></audio>
 
-</audio>
-
-<!-- ==========================================
-START SCREEN
-(Needed if you want sound on all browsers)
-========================================== -->
-
-<div id="startOverlay">
-
-    <div id="startCard">
-
-        <h1>
-
-            VIDLYRA HALLOWEEN FEST 2026
-
-        </h1>
-
-        <h2>
-
-            DAY 5
-
-        </h2>
-
-        <p>
-
-            Click below to begin the cinematic.
-
-        </p>
-
-        <button
-        id="startButton"
-        type="button">
-
-            START EXPERIENCE
-
-        </button>
-
-    </div>
-
-</div>
-
-<!-- ==========================================
-NO JAVASCRIPT
-========================================== -->
-
-<noscript>
-
-<div
-style="
-position:fixed;
-inset:0;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#000;
-color:#fff;
-font-size:22px;
-font-family:Arial,sans-serif;
-z-index:9999;
-text-align:center;
-padding:30px;">
-
-JavaScript is required
-to play the Day 5 cinematic.
-
-</div>
-
-</noscript>
-
-<!-- ==========================================
-JAVASCRIPT
-========================================== -->
-
-<script
-    type="module"
-    src="js/day5-video.js">
-</script>
+  <!-- Main cinematic controller -->
+  <script type="module" src="js/day5-video.js"></script>
 </body>
 </html>
+```
