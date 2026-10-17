@@ -2,1880 +2,1437 @@ import { supabase } from "./supabase.js";
 
 "use strict";
 
-/*=========================================================
-VIDLYRA HALLOWEEN FEST 2026
-DAY 5 - THE HAUNTED CEMETERY
-SUPABASE-INTEGRATED BUILD
-DAY 5 → DAY 6 VIDEO
-=========================================================*/
-
-/*=========================================================
-DOM HELPERS
-=========================================================*/
-
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => document.querySelectorAll(sel);
-
-function on(el, evt, fn, opts) {
-    if (el) el.addEventListener(evt, fn, opts);
-}
-
-function safePlay(audioEl) {
-    if (!audioEl) return;
-
-    try {
-        audioEl.currentTime = 0;
-        const promise = audioEl.play();
-
-        if (promise && promise.catch) {
-            promise.catch(() => {});
-        }
-    } catch (e) {
-        // Audio playback is optional.
-    }
-}
-
-/*=========================================================
-DOM REFERENCES
-=========================================================*/
-
-const loadingScreen = $("#loadingScreen");
-const loadingFill = $("#loadingFill");
-const loadingPercent = $("#loadingPercent");
-const loadingMessage = $("#loadingMessage");
-
-const gameWorld = $("#gameWorld");
-
-const player = $("#player");
-const slashEffect = $("#slashEffect");
-const dashTrailEl = $("#dashTrail");
-
-const healthFill = $("#healthFill");
-const spiritFill = $("#spiritFill");
-const healthText = $("#healthText");
-const spiritText = $("#spiritText");
-const lanternCounter = $("#lanternCounter");
-const scoreCounter = $("#scoreCounter");
-
-const missionPopup = $("#missionPopup");
-const mission1 = $("#mission1");
-const mission2 = $("#mission2");
-const mission3 = $("#mission3");
-
-const bossEl = $("#ghostKing");
-const bossHUD = $("#bossHUD");
-const bossHealthFill = $("#bossHealthFill");
-
-const inventoryPanel = $("#inventoryPanel");
-const closeInventory = $("#closeInventory");
-
-const pauseMenu = $("#pauseMenu");
-const resumeButton = $("#resumeButton");
-const restartButton = $("#restartButton");
-const openSettingsButton = $("#openSettingsButton");
-const exitGameButton = $("#exitGameButton");
-const settingsPanel = $("#settingsPanel");
-const closeSettingsButton = $("#closeSettingsButton");
-const musicSlider = $("#musicSlider");
-const effectsSlider = $("#effectsSlider");
-const screenShakeToggle = $("#screenShakeToggle");
-
-const mobileControls = $("#mobileControls");
-const joystickBase = $("#joystickBase");
-const joystickStick = $("#joystickStick");
-const attackButton = $("#attackButton");
-const dashButton = $("#dashButton");
-const skillButton = $("#skillButton");
-const interactButton = $("#interactButton");
-const pauseButton = $("#pauseButton");
-
-const victoryScreen = $("#victoryScreen");
-const continueButton = $("#continueButton");
-
-const gameOverScreen = $("#gameOverScreen");
-const retryGameButton = $("#retryGameButton");
-const quitEventButton = $("#quitEventButton");
-
-const notificationContainer = $("#notificationContainer");
-const interactionPrompt = $("#interactionPrompt");
-
-const fpsValue = $("#fpsValue");
-const playerXLabel = $("#playerX");
-const playerYLabel = $("#playerY");
-const aliveGhostsLabel = $("#aliveGhosts");
-const activeLanternsLabel = $("#activeLanterns");
-
-const bossIntroScreen = $("#bossIntroScreen");
-const bossWarning = $("#bossWarning");
-const ghostKingSprite = $("#ghostKingSprite");
-
-const day6Portal = $("#day6Portal");
-const portalSound = $("#portalSound");
-const lightningLayer = $("#lightningLayer");
-
-const miniPlayerEl = $("#miniPlayer");
-const miniBossEl = $("#miniBoss");
-const miniMapFrame = $("#miniMapFrame");
-const compassNeedle = $("#compassNeedle");
-
-const bgMusic = $("#bgMusic");
-const ambientWind = $("#ambientWind");
-const ghostAttackSound = $("#ghostAttack");
-const lanternSound = $("#lanternLight");
-const swordSlashSound = $("#swordSlash");
-const heroDashSound = $("#heroDash");
-const bossRoarSound = $("#bossRoar");
-const lightningSound = $("#lightningSound");
-const victorySound = $("#victorySound");
-const gameOverSound = $("#gameOverSound");
-
-/*=========================================================
-CONFIGURATION
-=========================================================*/
+/* -------------------- CONFIGURATION -------------------- */
 
 const CONFIG = {
-    PLAYER_SPEED: 6,
-    DASH_SPEED: 16,
-    ATTACK_DAMAGE: 25,
-    MAX_HEALTH: 100,
-    MAX_SPIRIT: 100,
-    TOTAL_LANTERNS: 7,
-    WORLD_WIDTH: 5000,
-    WORLD_HEIGHT: 2200,
-    CAMERA_SMOOTH: 0.1,
-    LANTERN_HINT_RADIUS: 220,
-    LANTERN_PICKUP_RADIUS: 130,
-    PORTAL_HINT_RADIUS: 220,
-    PORTAL_ENTER_RADIUS: 90,
-    NEXT_LEVEL_URL: "day6-video.html"
+  festival: "halloween_2026",
+  nextPage: "day6-video.html",
+  worldWidth: 5000,
+  worldHeight: 2200,
+  playerSpeed: 300,
+  dashSpeed: 850,
+  playerMaxHealth: 100,
+  playerMaxSpirit: 100,
+  ghostMaxHealth: 40,
+  bossMaxHealth: 600,
+  lanternCount: 7,
+  attackRange: 190,
+  attackDamage: 20,
+  bossDamage: 30,
+  ghostContactDamage: 12
 };
 
-/*=========================================================
-GLOBAL GAME STATE
-=========================================================*/
+const $ = (id) => document.getElementById(id);
 
-const GAME = {
-    running: false,
-    paused: false,
-    loading: true,
-    victory: false,
-    gameOver: false,
-    mobile: false,
-    score: 0,
-    lanterns: 0,
-    kills: 0,
+const state = {
+  ready: false,
+  running: false,
+  paused: false,
+  gameOver: false,
+  winning: false,
+  saving: false,
+  saved: false,
 
-    // Supabase state
-    user: null,
-    accessGranted: false,
-    day5Saved: false,
-    savingDay5: false,
-    initializing: false
+  user: null,
+  progress: null,
+
+  x: 500,
+  y: 1600,
+  facingX: 1,
+  facingY: 0,
+
+  health: 100,
+  spirit: 100,
+  score: 0,
+  lanterns: 0,
+  ghostsKilled: 0,
+  elapsed: 0,
+
+  bossActive: false,
+  bossHealth: CONFIG.bossMaxHealth,
+  bossX: 4100,
+  bossY: 1050,
+
+  attackCooldown: 0,
+  dashCooldown: 0,
+  skillCooldown: 0,
+  damageCooldown: 0,
+  bossAttackCooldown: 0,
+
+  keys: new Set(),
+  joystickX: 0,
+  joystickY: 0,
+  lastFrame: 0,
+  animationFrame: 0
 };
 
-const PLAYER = {
-    x: 500,
-    y: 1600,
-    health: CONFIG.MAX_HEALTH,
-    maxHealth: CONFIG.MAX_HEALTH,
-    spirit: CONFIG.MAX_SPIRIT,
-    maxSpirit: CONFIG.MAX_SPIRIT,
-    runSpeed: CONFIG.PLAYER_SPEED,
-    facing: 1,
-    moving: false,
-    attacking: false,
-    invincible: false,
-    velocityX: 0,
-    velocityY: 0,
-    stamina: 100,
-    maxStamina: 100,
-    state: "idle"
+const lanterns = [];
+const ghosts = [];
+
+const audio = {
+  music: $("bgMusic"),
+  wind: $("ambientWind"),
+  rain: $("rainSound"),
+  slash: $("swordSlash"),
+  dash: $("heroDash"),
+  light: $("lanternLight"),
+  boss: $("bossRoar"),
+  victory: $("victorySound"),
+  gameOver: $("gameOverSound"),
+  portal: $("portalSound"),
+  click: $("buttonClick")
 };
 
-const INPUT = {
-    left: false,
-    right: false,
-    up: false,
-    down: false
-};
+/* -------------------- UTILITIES -------------------- */
 
-const JOYSTICK = {
-    active: false,
-    startX: 0,
-    startY: 0,
-    dx: 0,
-    dy: 0,
-    radius: 55
-};
-
-const AUDIOSETTINGS = {
-    effects: 0.9,
-    screenShake: true
-};
-
-/*=========================================================
-HELPERS
-=========================================================*/
-
-function clamp(v, min, max) {
-    return Math.max(min, Math.min(max, v));
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
 }
 
-function random(min, max) {
-    return Math.random() * (max - min) + min;
+function distance(x1, y1, x2, y2) {
+  return Math.hypot(x2 - x1, y2 - y1);
 }
 
-/*=========================================================
-SUPABASE: VERIFY DAY 5 ACCESS
-=========================================================*/
+function notify(message, duration = 2400) {
+  const box = $("notificationContainer");
 
-async function checkDay5Access() {
-    try {
-        const {
-            data: authData,
-            error: authError
-        } = await supabase.auth.getUser();
+  if (!box) {
+    console.log("[VIDLYRA]", message);
+    return;
+  }
 
-        const user = authData?.user;
+  const item = document.createElement("div");
+  item.className = "gameNotification";
+  item.textContent = message;
 
-        if (authError || !user) {
-            console.warn("Day 5 requires login.", authError);
-            window.location.replace("login.html");
-            return false;
-        }
+  Object.assign(item.style, {
+    marginBottom: "8px",
+    padding: "12px 18px",
+    background: "rgba(8,8,8,.92)",
+    border: "1px solid #ff8a00",
+    borderRadius: "12px",
+    color: "#fff",
+    boxShadow: "0 0 18px rgba(255,138,0,.25)"
+  });
 
-        GAME.user = user;
+  box.appendChild(item);
 
-        const {
-            data,
-            error
-        } = await supabase
-            .from("festival_progress")
-            .select("day4, day5")
-            .eq("user_id", user.id)
-            .eq("festival", "halloween_2026")
-            .maybeSingle();
-
-        if (error) {
-            console.error("Festival progress load failed:", error);
-            showNotification("UNABLE TO LOAD FESTIVAL PROGRESS");
-            return false;
-        }
-
-        if (!data) {
-            showNotification("FESTIVAL PROGRESS NOT FOUND");
-            window.location.replace("map.html");
-            return false;
-        }
-
-        if (data.day4 !== true) {
-            alert("🔒 Complete Day 4 before entering Day 5.");
-            window.location.replace("map.html");
-            return false;
-        }
-
-        GAME.day5Saved = data.day5 === true;
-        GAME.accessGranted = true;
-
-        console.info(
-            "Day 5 access granted. Previously completed:",
-            GAME.day5Saved
-        );
-
-        return true;
-
-    } catch (error) {
-        console.error("Day 5 access check failed:", error);
-        showNotification("CONNECTION ERROR CHECKING FESTIVAL ACCESS");
-        return false;
-    }
+  setTimeout(() => item.remove(), duration);
 }
 
-/*=========================================================
-SUPABASE: SAVE DAY 5 COMPLETION
-=========================================================*/
+function setText(id, value) {
+  const el = $(id);
+  if (el) el.textContent = String(value);
+}
+
+function setWidth(id, percentage) {
+  const el = $(id);
+  if (el) el.style.width = `${clamp(percentage, 0, 100)}%`;
+}
+
+function showScreen(id) {
+  const el = $(id);
+  if (el) {
+    el.style.display = "flex";
+    el.classList.add("active");
+  }
+}
+
+function hideScreen(id) {
+  const el = $(id);
+  if (el) {
+    el.style.display = "none";
+    el.classList.remove("active");
+  }
+}
+
+function playSound(name, volume = 0.8) {
+  const sound = audio[name];
+
+  if (!sound) return;
+
+  try {
+    sound.volume = clamp(volume, 0, 1);
+    sound.currentTime = 0;
+
+    const promise = sound.play();
+    if (promise) promise.catch(() => {});
+  } catch (error) {
+    console.debug("Audio unavailable:", name);
+  }
+}
+
+function stopSound(name) {
+  const sound = audio[name];
+  if (!sound) return;
+
+  sound.pause();
+
+  try {
+    sound.currentTime = 0;
+  } catch (_) {}
+}
+
+/* -------------------- SUPABASE ACCESS CONTROL -------------------- */
+
+async function authenticateAndLoadProgress() {
+  setLoading(10, "Connecting to VIDLYRA festival...");
+
+  const {
+    data: { session },
+    error: sessionError
+  } = await supabase.auth.getSession();
+
+  if (sessionError) {
+    throw new Error("Unable to verify your login. Please try again.");
+  }
+
+  if (!session?.user) {
+    throw new Error(
+      "Please sign in before entering Day 5. Your festival progress must be verified."
+    );
+  }
+
+  state.user = session.user;
+
+  setLoading(30, "Verifying Day 4 completion...");
+
+  const { data, error } = await supabase
+    .from("festival_progress")
+    .select("user_id, festival, day4, day5")
+    .eq("user_id", state.user.id)
+    .eq("festival", CONFIG.festival)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Progress lookup failed:", error);
+    throw new Error(
+      "Unable to verify festival progress. Check your Supabase configuration and permissions."
+    );
+  }
+
+  if (!data) {
+    throw new Error(
+      "No Halloween Fest 2026 progress record was found for your account."
+    );
+  }
+
+  if (data.day4 !== true) {
+    throw new Error(
+      "Day 5 is locked. Complete Day 4 before entering the Haunted Cemetery."
+    );
+  }
+
+  state.progress = data;
+
+  setLoading(55, "Loading the Haunted Cemetery...");
+
+  return true;
+}
 
 async function saveDay5Completion() {
-    if (GAME.day5Saved) {
-        return true;
+  if (!state.user || !state.progress) {
+    throw new Error("Your authenticated festival progress is unavailable.");
+  }
+
+  if (!state.bossActive || state.bossHealth > 0) {
+    throw new Error("The Ghost King must be defeated before completing Day 5.");
+  }
+
+  if (state.lanterns !== CONFIG.lanternCount) {
+    throw new Error("Restore all seven Spirit Lanterns first.");
+  }
+
+  if (ghosts.some(ghost => ghost.alive)) {
+    throw new Error("Defeat every Cemetery Ghost before completing Day 5.");
+  }
+
+  if (state.saved) return true;
+  if (state.saving) return false;
+
+  state.saving = true;
+
+  const continueButton = $("continueButton");
+
+  if (continueButton) {
+    continueButton.disabled = true;
+    continueButton.textContent = "SAVING PROGRESS...";
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("festival_progress")
+      .update({ day5: true })
+      .eq("user_id", state.user.id)
+      .eq("festival", CONFIG.festival)
+      .eq("day4", true)
+      .select("user_id, festival, day4, day5");
+
+    if (error) throw error;
+
+    if (!data || data.length !== 1 || data[0].day5 !== true) {
+      throw new Error(
+        "Supabase did not confirm the Day 5 completion update."
+      );
     }
 
-    if (GAME.savingDay5) {
-        return false;
+    state.progress = data[0];
+    state.saved = true;
+
+    if (continueButton) {
+      continueButton.disabled = false;
+      continueButton.textContent = "CONTINUE TO DAY 6";
     }
 
-    if (!GAME.user) {
-        showNotification("LOGIN REQUIRED TO SAVE PROGRESS");
-        return false;
+    notify("Day 5 completion saved successfully!");
+    return true;
+
+  } catch (error) {
+    console.error("Day 5 progress save failed:", error);
+
+    if (continueButton) {
+      continueButton.disabled = false;
+      continueButton.textContent = "RETRY SAVE";
     }
 
-    GAME.savingDay5 = true;
+    notify("Progress could not be saved. Please retry.", 4000);
+    return false;
+
+  } finally {
+    state.saving = false;
+  }
+}
+
+function setLoading(percent, message) {
+  setWidth("loadingFill", percent);
+  setText("loadingPercent", `${Math.round(percent)}%`);
+  setText("loadingMessage", message);
+}
+
+function showFatalError(message) {
+  console.error(message);
+
+  setText("loadingMessage", message);
+  setText("loadingPercent", "ACCESS BLOCKED");
+
+  const fill = $("loadingFill");
+
+  if (fill) {
+    fill.style.width = "100%";
+    fill.style.background = "#b00020";
+  }
+
+  // Keep the loading/access screen visible.
+  // Do not start the game without verified access.
+
+  const screen = $("loadingScreen");
+  if (screen) screen.style.display = "flex";
+
+  let retryButton = $("accessRetryButton");
+
+  if (!retryButton) {
+    retryButton = document.createElement("button");
+    retryButton.id = "accessRetryButton";
+    retryButton.textContent = "RETRY ACCESS CHECK";
+
+    Object.assign(retryButton.style, {
+      padding: "14px 24px",
+      border: "1px solid #ff8a00",
+      borderRadius: "10px",
+      background: "#161616",
+      color: "#fff",
+      cursor: "pointer",
+      fontWeight: "700"
+    });
+
+    $("loadingScreen")
+      ?.querySelector(".loadingContent")
+      ?.appendChild(retryButton);
+  }
+
+  retryButton.onclick = async () => {
+    retryButton.disabled = true;
 
     try {
-        const {
-            data,
-            error
-        } = await supabase
-            .from("festival_progress")
-            .update({
-                day5: true
-            })
-            .eq("user_id", GAME.user.id)
-            .eq("festival", "halloween_2026")
-            .select("day5")
-            .maybeSingle();
-
-        if (error) {
-            console.error("Supabase Day 5 save failed:", error);
-            showNotification("SAVE FAILED — CHECK CONNECTION AND RETRY");
-            return false;
-        }
-
-        // Do not report success if no database row was updated.
-        if (!data || data.day5 !== true) {
-            console.error("Day 5 progress row was not updated.");
-            showNotification("SAVE FAILED — PROGRESS ROW NOT UPDATED");
-            return false;
-        }
-
-        GAME.day5Saved = true;
-
-        // Local storage is only a convenience backup.
-        // Supabase remains the source of truth.
-        try {
-            localStorage.setItem("day5Complete", "true");
-            localStorage.setItem("day5Score", String(GAME.score));
-        } catch (storageError) {
-            console.warn("Local backup unavailable:", storageError);
-        }
-
-        console.info("Supabase saved: day5 = true");
-        return true;
-
+      await bootGame();
     } catch (error) {
-        console.error("Unexpected Day 5 save error:", error);
-        showNotification("COULD NOT SAVE DAY 5 — RETRY");
-        return false;
-
+      showFatalError(error.message);
     } finally {
-        GAME.savingDay5 = false;
+      retryButton.disabled = false;
     }
+  };
 }
 
-/*=========================================================
-DEVICE DETECTION
-=========================================================*/
+/* -------------------- INITIALIZATION -------------------- */
 
-function detectDevice() {
-    const touchCapable =
-        ("ontouchstart" in window) ||
-        (navigator.maxTouchPoints > 0);
+async function bootGame() {
+  state.ready = false;
+  state.running = false;
 
-    const narrowViewport = window.innerWidth <= 992;
+  if ($("accessRetryButton")) {
+    $("accessRetryButton").remove();
+  }
 
-    GAME.mobile = touchCapable && narrowViewport;
+  try {
+    await authenticateAndLoadProgress();
 
-    if (mobileControls) {
-        mobileControls.style.display =
-            GAME.mobile ? "flex" : "none";
+    setLoading(70, "Preparing spirits and lanterns...");
+
+    initializeLanterns();
+    initializeGhosts();
+    initializeDecorations();
+    initializeControls();
+    initializeSettings();
+    initializeAudio();
+    updateHUD();
+    updateMiniMap();
+
+    setLoading(90, "Preparing the Ghost King...");
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    setLoading(100, "The Haunted Cemetery awaits...");
+
+    const loading = $("loadingScreen");
+
+    if (loading) {
+      loading.style.opacity = "0";
+
+      await new Promise(resolve => setTimeout(resolve, 550));
+
+      loading.style.display = "none";
     }
+
+    state.ready = true;
+    state.running = true;
+    state.lastFrame = performance.now();
+
+    showScreen("dialogueContainer");
+    setText(
+      "dialogueText",
+      "Seven Spirit Lanterns are scattered across this cemetery. Restore them, defeat the restless ghosts, and face the Ghost King."
+    );
+
+    requestAnimationFrame(gameLoop);
+
+  } catch (error) {
+    showFatalError(error.message || "Unable to initialize Day 5.");
+  }
 }
 
-window.addEventListener("resize", detectDevice);
-window.addEventListener("orientationchange", detectDevice);
+/* -------------------- LANTERNS -------------------- */
 
-/*=========================================================
-LOADING SCREEN
-=========================================================*/
+function initializeLanterns() {
+  lanterns.length = 0;
 
-const loadingMessages = [
-    "Entering the cemetery...",
-    "Summoning spirits...",
-    "Lighting cursed lanterns...",
-    "Awakening the Ghost King...",
-    "Preparing your sword...",
-    "Loading haunted world..."
-];
+  const positions = [
+    [800, 1550],
+    [1400, 800],
+    [2050, 1450],
+    [2650, 650],
+    [3200, 1550],
+    [3800, 850],
+    [4350, 1350]
+  ];
 
-function startLoading() {
-    let progress = 0;
+  positions.forEach(([x, y], index) => {
+    const element = $(`lantern${index + 1}`);
 
-    const interval = setInterval(() => {
-        progress += random(4, 12);
+    if (!element) return;
 
-        if (progress >= 100) {
-            progress = 100;
-        }
-
-        if (loadingFill) {
-            loadingFill.style.width = progress + "%";
-        }
-
-        if (loadingPercent) {
-            loadingPercent.textContent =
-                Math.floor(progress) + "%";
-        }
-
-        if (loadingMessage) {
-            const idx = Math.min(
-                loadingMessages.length - 1,
-                Math.floor(
-                    (progress / 100) * loadingMessages.length
-                )
-            );
-
-            loadingMessage.textContent = loadingMessages[idx];
-        }
-
-        if (progress >= 100) {
-            clearInterval(interval);
-            setTimeout(finishLoading, 400);
-        }
-    }, 140);
-}
-
-function finishLoading() {
-    GAME.loading = false;
-    GAME.running = true;
-
-    if (loadingScreen) {
-        loadingScreen.style.opacity = "0";
-        loadingScreen.style.pointerEvents = "none";
-
-        setTimeout(() => {
-            loadingScreen.style.display = "none";
-        }, 500);
-    }
-
-    if (missionPopup) {
-        missionPopup.style.opacity = "1";
-
-        setTimeout(() => {
-            missionPopup.style.opacity = "0";
-        }, 3500);
-    }
-
-    if (bgMusic) {
-        bgMusic.volume = 0.5;
-        safePlay(bgMusic);
-    }
-
-    if (ambientWind) {
-        ambientWind.volume = 0.3;
-        safePlay(ambientWind);
-    }
-}
-
-/*=========================================================
-KEYBOARD INPUT
-=========================================================*/
-
-window.addEventListener("keydown", (e) => {
-    if (e.repeat) return;
-
-    switch (e.code) {
-        case "ArrowLeft":
-        case "KeyA":
-            INPUT.left = true;
-            break;
-
-        case "ArrowRight":
-        case "KeyD":
-            INPUT.right = true;
-            break;
-
-        case "ArrowUp":
-        case "KeyW":
-            INPUT.up = true;
-            break;
-
-        case "ArrowDown":
-        case "KeyS":
-            INPUT.down = true;
-            break;
-
-        case "Space":
-            e.preventDefault();
-            startAttack();
-            break;
-
-        case "ShiftLeft":
-        case "ShiftRight":
-            startDash();
-            break;
-
-        case "KeyE":
-            castSpiritSkill();
-            break;
-
-        case "KeyF":
-            tryInteract();
-            break;
-
-        case "Escape":
-            togglePause();
-            break;
-    }
-});
-
-window.addEventListener("keyup", (e) => {
-    switch (e.code) {
-        case "ArrowLeft":
-        case "KeyA":
-            INPUT.left = false;
-            break;
-
-        case "ArrowRight":
-        case "KeyD":
-            INPUT.right = false;
-            break;
-
-        case "ArrowUp":
-        case "KeyW":
-            INPUT.up = false;
-            break;
-
-        case "ArrowDown":
-        case "KeyS":
-            INPUT.down = false;
-            break;
-    }
-});
-
-/*=========================================================
-MOBILE JOYSTICK
-=========================================================*/
-
-function joystickPointFromEvent(e) {
-    const touch = e.touches ? e.touches[0] : e;
-
-    return {
-        x: touch.clientX,
-        y: touch.clientY
+    const lantern = {
+      id: index + 1,
+      x,
+      y,
+      collected: false,
+      element,
+      mini: $(`miniLantern${index + 1}`)
     };
-}
 
-on(joystickBase, "touchstart", (e) => {
-    e.preventDefault();
-
-    const p = joystickPointFromEvent(e);
-
-    JOYSTICK.active = true;
-    JOYSTICK.startX = p.x;
-    JOYSTICK.startY = p.y;
-}, { passive: false });
-
-on(joystickBase, "touchmove", (e) => {
-    e.preventDefault();
-
-    if (!JOYSTICK.active) return;
-
-    const p = joystickPointFromEvent(e);
-
-    let dx = p.x - JOYSTICK.startX;
-    let dy = p.y - JOYSTICK.startY;
-
-    const dist = Math.hypot(dx, dy);
-
-    if (dist > JOYSTICK.radius) {
-        const angle = Math.atan2(dy, dx);
-
-        dx = Math.cos(angle) * JOYSTICK.radius;
-        dy = Math.sin(angle) * JOYSTICK.radius;
-    }
-
-    JOYSTICK.dx = dx;
-    JOYSTICK.dy = dy;
-
-    if (joystickStick) {
-        joystickStick.style.transform =
-            `translate(-50%,-50%) translate(${dx}px, ${dy}px)`;
-    }
-}, { passive: false });
-
-function resetJoystick() {
-    JOYSTICK.active = false;
-    JOYSTICK.dx = 0;
-    JOYSTICK.dy = 0;
-
-    if (joystickStick) {
-        joystickStick.style.transform = "translate(-50%,-50%)";
-    }
-}
-
-on(joystickBase, "touchend", resetJoystick);
-on(joystickBase, "touchcancel", resetJoystick);
-
-on(attackButton, "touchstart", (e) => {
-    e.preventDefault();
-    startAttack();
-});
-
-on(dashButton, "touchstart", (e) => {
-    e.preventDefault();
-    startDash();
-});
-
-on(skillButton, "touchstart", (e) => {
-    e.preventDefault();
-    castSpiritSkill();
-});
-
-on(interactButton, "touchstart", (e) => {
-    e.preventDefault();
-    tryInteract();
-});
-
-on(pauseButton, "touchstart", (e) => {
-    e.preventDefault();
-    togglePause();
-});
-
-/*=========================================================
-PAUSE / SETTINGS
-=========================================================*/
-
-function togglePause() {
-    if (GAME.gameOver || GAME.victory) return;
-
-    GAME.paused = !GAME.paused;
-
-    if (pauseMenu) {
-        pauseMenu.style.display =
-            GAME.paused ? "flex" : "none";
-    }
-}
-
-on(resumeButton, "click", () => {
-    GAME.paused = false;
-
-    if (pauseMenu) {
-        pauseMenu.style.display = "none";
-    }
-});
-
-on(restartButton, "click", () => {
-    window.location.reload();
-});
-
-on(openSettingsButton, "click", () => {
-    if (settingsPanel) {
-        settingsPanel.style.display = "flex";
-    }
-});
-
-on(closeSettingsButton, "click", () => {
-    if (settingsPanel) {
-        settingsPanel.style.display = "none";
-    }
-});
-
-on(exitGameButton, "click", () => {
-    window.location.reload();
-});
-
-on(musicSlider, "input", (e) => {
-    if (bgMusic) {
-        bgMusic.volume = e.target.value / 100;
-    }
-});
-
-on(effectsSlider, "input", (e) => {
-    AUDIOSETTINGS.effects = e.target.value / 100;
-});
-
-on(screenShakeToggle, "change", (e) => {
-    AUDIOSETTINGS.screenShake = e.target.checked;
-});
-
-/*=========================================================
-CAMERA
-=========================================================*/
-
-const CAMERA = {
-    x: 0,
-    y: 0,
-    targetX: 0,
-    targetY: 0,
-    smooth: CONFIG.CAMERA_SMOOTH,
-    width: window.innerWidth,
-    height: window.innerHeight
-};
-
-window.addEventListener("resize", () => {
-    CAMERA.width = window.innerWidth;
-    CAMERA.height = window.innerHeight;
-});
-
-function updateCamera() {
-    CAMERA.targetX = PLAYER.x - CAMERA.width / 2;
-    CAMERA.targetY = PLAYER.y - CAMERA.height / 2;
-
-    CAMERA.x += (CAMERA.targetX - CAMERA.x) * CAMERA.smooth;
-    CAMERA.y += (CAMERA.targetY - CAMERA.y) * CAMERA.smooth;
-
-    CAMERA.x = clamp(
-        CAMERA.x,
-        0,
-        Math.max(0, CONFIG.WORLD_WIDTH - CAMERA.width)
-    );
-
-    CAMERA.y = clamp(
-        CAMERA.y,
-        0,
-        Math.max(0, CONFIG.WORLD_HEIGHT - CAMERA.height)
-    );
-
-    if (gameWorld) {
-        gameWorld.style.transform =
-            `translate(${-CAMERA.x}px, ${-CAMERA.y}px)`;
-    }
-}
-/*=========================================================
-PLAYER MOVEMENT
-=========================================================*/
-
-function applyMovement() {
-    if (!GAME.running || GAME.paused || GAME.gameOver || GAME.victory) {
-        return;
-    }
-
-    let dx = 0;
-    let dy = 0;
-
-    if (INPUT.left) dx -= 1;
-    if (INPUT.right) dx += 1;
-    if (INPUT.up) dy -= 1;
-    if (INPUT.down) dy += 1;
-
-    if (JOYSTICK.active) {
-        dx = JOYSTICK.dx / JOYSTICK.radius;
-        dy = JOYSTICK.dy / JOYSTICK.radius;
-    }
-
-    const length = Math.hypot(dx, dy);
-
-    if (length > 0) {
-        dx /= length;
-        dy /= length;
-
-        PLAYER.moving = true;
-        PLAYER.state = "walk";
-
-        PLAYER.x += dx * PLAYER.runSpeed;
-        PLAYER.y += dy * PLAYER.runSpeed;
-
-        if (Math.abs(dx) > 0.1) {
-            PLAYER.facing = dx > 0 ? 1 : -1;
-        }
-    } else {
-        PLAYER.moving = false;
-        PLAYER.state = "idle";
-    }
-
-    PLAYER.x = clamp(PLAYER.x, 0, CONFIG.WORLD_WIDTH);
-    PLAYER.y = clamp(PLAYER.y, 0, CONFIG.WORLD_HEIGHT);
-}
-
-/*=========================================================
-PLAYER RENDER
-=========================================================*/
-
-function renderPlayer() {
-    if (!player) return;
-
-    player.style.left = PLAYER.x + "px";
-    player.style.top = PLAYER.y + "px";
-
-    player.style.transform =
-        `translate(-50%, -50%) scaleX(${PLAYER.facing})`;
-
-    player.classList.toggle("moving", PLAYER.moving);
-    player.classList.toggle("attacking", PLAYER.attacking);
-    player.classList.toggle("invincible", PLAYER.invincible);
-}
-
-/*=========================================================
-PLAYER HEALTH AND SPIRIT HUD
-=========================================================*/
-
-function updatePlayerHUD() {
-    PLAYER.health = clamp(PLAYER.health, 0, PLAYER.maxHealth);
-    PLAYER.spirit = clamp(PLAYER.spirit, 0, PLAYER.maxSpirit);
-
-    if (healthFill) {
-        healthFill.style.width =
-            `${(PLAYER.health / PLAYER.maxHealth) * 100}%`;
-    }
-
-    if (spiritFill) {
-        spiritFill.style.width =
-            `${(PLAYER.spirit / PLAYER.maxSpirit) * 100}%`;
-    }
-
-    if (healthText) {
-        healthText.textContent = Math.ceil(PLAYER.health);
-    }
-
-    if (spiritText) {
-        spiritText.textContent = Math.ceil(PLAYER.spirit);
-    }
-
-    if (lanternCounter) {
-        lanternCounter.textContent =
-            `${GAME.lanterns}/${CONFIG.TOTAL_LANTERNS}`;
-    }
-
-    if (scoreCounter) {
-        scoreCounter.textContent = GAME.score;
-    }
-
-    if (aliveGhostsLabel) {
-        aliveGhostsLabel.textContent =
-            GHOSTS.filter(g => g.alive).length;
-    }
-
-    if (activeLanternsLabel) {
-        activeLanternsLabel.textContent = GAME.lanterns;
-    }
-
-    if (playerXLabel) {
-        playerXLabel.textContent = Math.round(PLAYER.x);
-    }
-
-    if (playerYLabel) {
-        playerYLabel.textContent = Math.round(PLAYER.y);
-    }
-}
-
-/*=========================================================
-NOTIFICATIONS
-=========================================================*/
-
-function showNotification(message) {
-    if (!notificationContainer) {
-        console.log("[VIDLYRA]", message);
-        return;
-    }
-
-    const notification = document.createElement("div");
-
-    notification.className = "gameNotification";
-    notification.textContent = message;
-
-    Object.assign(notification.style, {
-        padding: "12px 18px",
-        margin: "8px",
-        color: "#fff",
-        background: "rgba(5, 7, 13, 0.94)",
-        border: "1px solid #ff8a00",
-        borderRadius: "8px",
-        fontFamily: "sans-serif",
-        fontSize: "13px",
-        letterSpacing: "1px",
-        boxShadow: "0 0 18px rgba(255,138,0,.3)",
-        pointerEvents: "none"
+    Object.assign(element.style, {
+      left: `${x}px`,
+      top: `${y}px`,
+      display: "flex"
     });
 
-    notificationContainer.appendChild(notification);
+    element.onclick = () => {
+      if (!state.running || state.paused) return;
 
-    setTimeout(() => {
-        notification.style.opacity = "0";
-        notification.style.transition = "opacity .3s";
+      if (distance(state.x, state.y, x, y) <= 190) {
+        collectLantern(lantern);
+      } else {
+        notify("Move closer to the Spirit Lantern.");
+      }
+    };
 
-        setTimeout(() => notification.remove(), 350);
-    }, 2600);
+    lanterns.push(lantern);
+  });
 }
 
-/*=========================================================
-PLAYER DAMAGE
-=========================================================*/
+function collectLantern(lantern) {
+  if (lantern.collected || state.gameOver || state.winning) return;
+
+  lantern.collected = true;
+  state.lanterns++;
+  state.score += 500;
+  state.spirit = Math.min(100, state.spirit + 10);
+
+  lantern.element.style.display = "none";
+
+  if (lantern.mini) {
+    lantern.mini.style.opacity = "0";
+  }
+
+  playSound("light", 0.9);
+
+  updateHUD();
+
+  notify(`Spirit Lantern ${state.lanterns}/7 restored!`);
+
+  setText(
+    "objectiveTracker",
+    state.lanterns === 7
+      ? "Defeat the remaining Cemetery Ghosts"
+      : "Restore the remaining Spirit Lanterns"
+  );
+
+  updateMission("mission1", state.lanterns === 7);
+
+  if (state.lanterns === 7) {
+    notify("All lanterns restored! The cemetery spirits are weakening.");
+    checkBossUnlock();
+  }
+}
+
+/* -------------------- GHOSTS -------------------- */
+
+function initializeGhosts() {
+  ghosts.length = 0;
+
+  const positions = [
+    [1100, 1200],
+    [1550, 1750],
+    [1850, 600],
+    [2350, 1100],
+    [2800, 1750],
+    [3150, 1050],
+    [3550, 500],
+    [3900, 1700],
+    [4200, 600],
+    [4550, 1050]
+  ];
+
+  positions.forEach(([x, y], index) => {
+    const element = $(`ghost${index + 1}`);
+
+    if (!element) return;
+
+    const ghost = {
+      id: index + 1,
+      x,
+      y,
+      health: CONFIG.ghostMaxHealth,
+      maxHealth: CONFIG.ghostMaxHealth,
+      alive: true,
+      speed: 65 + Math.random() * 25,
+      attackCooldown: Math.random(),
+      element,
+      healthFill: element.querySelector(".enemyHealthFill")
+    };
+
+    Object.assign(element.style, {
+      left: `${x}px`,
+      top: `${y}px`,
+      display: "flex"
+    });
+
+    ghosts.push(ghost);
+  });
+
+  setText("aliveGhosts", ghosts.length);
+}
+
+function updateGhosts(dt) {
+  for (const ghost of ghosts) {
+    if (!ghost.alive) continue;
+
+    const d = distance(state.x, state.y, ghost.x, ghost.y);
+
+    if (d < 650 && d > 65) {
+      const dx = (state.x - ghost.x) / d;
+      const dy = (state.y - ghost.y) / d;
+
+      ghost.x += dx * ghost.speed * dt;
+      ghost.y += dy * ghost.speed * dt;
+    }
+
+    ghost.x = clamp(ghost.x, 80, CONFIG.worldWidth - 100);
+    ghost.y = clamp(ghost.y, 100, CONFIG.worldHeight - 100);
+
+    ghost.element.style.left = `${ghost.x}px`;
+    ghost.element.style.top = `${ghost.y}px`;
+
+    ghost.attackCooldown -= dt;
+
+    if (d < 105 && ghost.attackCooldown <= 0) {
+      damagePlayer(CONFIG.ghostContactDamage);
+      ghost.attackCooldown = 1.1;
+    }
+
+    if (ghost.healthFill) {
+      setWidth(
+        ghost.healthFill.id,
+        (ghost.health / ghost.maxHealth) * 100
+      );
+    }
+  }
+}
+
+function damageGhost(ghost, amount) {
+  if (!ghost.alive) return;
+
+  ghost.health = Math.max(0, ghost.health - amount);
+
+  if (ghost.healthFill) {
+    ghost.healthFill.style.width =
+      `${(ghost.health / ghost.maxHealth) * 100}%`;
+  }
+
+  if (ghost.health <= 0) {
+    ghost.alive = false;
+    ghost.element.style.display = "none";
+
+    state.ghostsKilled++;
+    state.score += 250;
+
+    setText("ghostKillCount", state.ghostsKilled);
+    setText("aliveGhosts", ghosts.filter(g => g.alive).length);
+
+    notify(`Cemetery Ghost ${ghost.id} defeated!`);
+
+    updateMission(
+      "mission2",
+      ghosts.every(g => !g.alive)
+    );
+
+    checkBossUnlock();
+  }
+}
+
+/* -------------------- GHOST KING -------------------- */
+
+function checkBossUnlock() {
+  const allLanterns = lanterns.length === 7 &&
+    lanterns.every(lantern => lantern.collected);
+
+  const allGhostsDefeated =
+    ghosts.length > 0 && ghosts.every(ghost => !ghost.alive);
+
+  if (!allLanterns || !allGhostsDefeated || state.bossActive) {
+    return;
+  }
+
+  state.bossActive = true;
+
+  const boss = $("ghostKing");
+
+  if (boss) {
+    boss.style.display = "flex";
+    boss.style.left = `${state.bossX}px`;
+    boss.style.top = `${state.bossY}px`;
+  }
+
+  const bossHud = $("bossHUD");
+  if (bossHud) bossHud.style.display = "block";
+
+  const gameState = $("gameState");
+  if (gameState) gameState.dataset.boss = "active";
+
+  showScreen("bossIntroScreen");
+
+  playSound("boss", 1);
+
+  notify("THE GHOST KING HAS AWAKENED!", 4000);
+
+  setTimeout(() => {
+    hideScreen("bossIntroScreen");
+    showScreen("bossWarning");
+
+    setTimeout(() => hideScreen("bossWarning"), 2200);
+  }, 2400);
+
+  updateMission("mission3", false);
+}
+
+function updateBoss(dt) {
+  if (!state.bossActive || state.bossHealth <= 0) return;
+
+  const boss = $("ghostKing");
+  if (!boss) return;
+
+  const d = distance(
+    state.x,
+    state.y,
+    state.bossX,
+    state.bossY
+  );
+
+  if (d > 130 && d < 850) {
+    const dx = (state.x - state.bossX) / d;
+    const dy = (state.y - state.bossY) / d;
+
+    state.bossX += dx * 55 * dt;
+    state.bossY += dy * 55 * dt;
+  }
+
+  boss.style.left = `${state.bossX}px`;
+  boss.style.top = `${state.bossY}px`;
+
+  state.bossAttackCooldown -= dt;
+
+  if (d < 175 && state.bossAttackCooldown <= 0) {
+    damagePlayer(CONFIG.bossDamage);
+    state.bossAttackCooldown = 1.5;
+  }
+
+  setWidth(
+    "bossHealthFill",
+    (state.bossHealth / CONFIG.bossMaxHealth) * 100
+  );
+}
+
+function damageBoss(amount) {
+  if (!state.bossActive || state.bossHealth <= 0) return;
+
+  state.bossHealth = Math.max(0, state.bossHealth - amount);
+
+  setWidth(
+    "bossHealthFill",
+    (state.bossHealth / CONFIG.bossMaxHealth) * 100
+  );
+
+  if (state.bossHealth === 0) {
+    defeatBoss();
+  }
+}
+
+async function defeatBoss() {
+  if (state.winning || state.gameOver) return;
+
+  state.winning = true;
+  state.running = false;
+
+  const boss = $("ghostKing");
+  if (boss) boss.style.display = "none";
+
+  stopSound("music");
+  playSound("victory", 1);
+
+  state.score += 5000;
+
+  setText("objectiveTracker", "The cemetery has been purified");
+  updateMission("mission3", true);
+  updateHUD();
+
+  showScreen("victoryScreen");
+
+  const button = $("continueButton");
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "SAVING PROGRESS...";
+  }
+
+  const saved = await saveDay5Completion();
+
+  if (!saved) {
+    notify("Victory achieved, but saving failed. Retry when ready.", 4500);
+  }
+}
+
+/* -------------------- PLAYER COMBAT -------------------- */
+
+function attack() {
+  if (!state.running || state.paused || state.gameOver ||
+      state.winning || state.attackCooldown > 0) return;
+
+  state.attackCooldown = 0.42;
+
+  const sword = $("playerSword");
+  const slash = $("slashEffect");
+
+  if (sword) {
+    sword.style.transform = "rotate(-70deg)";
+
+    setTimeout(() => {
+      sword.style.transform = "";
+    }, 160);
+  }
+
+  if (slash) {
+    slash.style.opacity = "1";
+    slash.style.transform = "translate(-50%,-50%) scale(1.25)";
+
+    setTimeout(() => {
+      slash.style.opacity = "0";
+      slash.style.transform = "translate(-50%,-50%) scale(1)";
+    }, 180);
+  }
+
+  playSound("slash", 0.8);
+
+  for (const ghost of ghosts) {
+    if (!ghost.alive) continue;
+
+    if (distance(state.x, state.y, ghost.x, ghost.y) <
+        CONFIG.attackRange) {
+      damageGhost(ghost, CONFIG.attackDamage);
+    }
+  }
+
+  if (
+    state.bossActive &&
+    state.bossHealth > 0 &&
+    distance(state.x, state.y, state.bossX, state.bossY) < 280
+  ) {
+    damageBoss(CONFIG.attackDamage);
+  }
+}
+
+function dash() {
+  if (!state.running || state.paused ||
+      state.dashCooldown > 0 || state.gameOver || state.winning) {
+    return;
+  }
+
+  state.dashCooldown = 1.1;
+
+  let dx = state.facingX;
+  let dy = state.facingY;
+
+  if (Math.hypot(dx, dy) < 0.1) dx = 1;
+
+  state.x += dx * 210;
+  state.y += dy * 210;
+
+  clampPlayer();
+
+  const trail = $("dashTrail");
+
+  if (trail) {
+    trail.style.opacity = "1";
+    setTimeout(() => trail.style.opacity = "0", 250);
+  }
+
+  playSound("dash", 0.75);
+  renderPlayer();
+}
+
+function spiritSkill() {
+  if (!state.running || state.paused ||
+      state.skillCooldown > 0 || state.spirit < 25 ||
+      state.gameOver || state.winning) {
+    notify("Spirit energy is insufficient or the skill is cooling down.");
+    return;
+  }
+
+  state.spirit -= 25;
+  state.skillCooldown = 4;
+
+  const radius = 380;
+
+  for (const ghost of ghosts) {
+    if (
+      ghost.alive &&
+      distance(state.x, state.y, ghost.x, ghost.y) <= radius
+    ) {
+      damageGhost(ghost, 35);
+    }
+  }
+
+  if (
+    state.bossActive &&
+    state.bossHealth > 0 &&
+    distance(state.x, state.y, state.bossX, state.bossY) <= radius
+  ) {
+    damageBoss(55);
+  }
+
+  const flash = $("screenFlash");
+
+  if (flash) {
+    flash.style.opacity = "0.8";
+    setTimeout(() => flash.style.opacity = "0", 220);
+  }
+
+  state.score += 50;
+  updateHUD();
+
+  notify("SPIRIT BURST!");
+}
 
 function damagePlayer(amount) {
-    if (
-        PLAYER.invincible ||
-        GAME.gameOver ||
-        GAME.victory ||
-        !GAME.running
-    ) {
-        return;
-    }
+  if (state.damageCooldown > 0 || state.gameOver || state.winning) {
+    return;
+  }
 
-    PLAYER.health = Math.max(0, PLAYER.health - amount);
-    PLAYER.invincible = true;
+  state.damageCooldown = 0.7;
+  state.health = Math.max(0, state.health - amount);
 
-    if (player) {
-        player.classList.add("damageFlash");
-    }
+  const overlay = $("damageOverlay");
 
-    setTimeout(() => {
-        PLAYER.invincible = false;
+  if (overlay) {
+    overlay.style.opacity = "0.8";
+    setTimeout(() => overlay.style.opacity = "0", 180);
+  }
 
-        if (player) {
-            player.classList.remove("damageFlash");
-        }
-    }, 800);
+  updateHUD();
 
-    updatePlayerHUD();
-
-    if (PLAYER.health <= 0) {
-        gameOver();
-    }
+  if (state.health <= 0) {
+    endGame();
+  }
 }
 
-/*=========================================================
-PLAYER ATTACK
-=========================================================*/
+function endGame() {
+  if (state.gameOver || state.winning) return;
 
-let attackCooldown = false;
+  state.gameOver = true;
+  state.running = false;
 
-function startAttack() {
-    if (
-        !GAME.running ||
-        GAME.paused ||
-        GAME.gameOver ||
-        GAME.victory ||
-        attackCooldown
-    ) {
-        return;
-    }
+  stopSound("music");
+  playSound("gameOver", 1);
 
-    attackCooldown = true;
-    PLAYER.attacking = true;
-    PLAYER.state = "attack";
-
-    safePlay(swordSlashSound);
-
-    if (slashEffect) {
-        slashEffect.style.display = "block";
-        slashEffect.style.left = PLAYER.x + "px";
-        slashEffect.style.top = PLAYER.y + "px";
-        slashEffect.style.transform =
-            `translate(-50%, -50%) scaleX(${PLAYER.facing})`;
-
-        setTimeout(() => {
-            slashEffect.style.display = "none";
-        }, 180);
-    }
-
-    const attackRange = 125;
-
-    GHOSTS.forEach(ghost => {
-        if (!ghost.alive) return;
-
-        const distance = Math.hypot(
-            ghost.x - PLAYER.x,
-            ghost.y - PLAYER.y
-        );
-
-        const inFront =
-            (ghost.x - PLAYER.x) * PLAYER.facing > -25;
-
-        if (distance <= attackRange && inFront) {
-            damageGhost(ghost, CONFIG.ATTACK_DAMAGE);
-        }
-    });
-
-    if (BOSS.alive) {
-        const distance = Math.hypot(
-            BOSS.x - PLAYER.x,
-            BOSS.y - PLAYER.y
-        );
-
-        const inFront =
-            (BOSS.x - PLAYER.x) * PLAYER.facing > -35;
-
-        if (distance <= attackRange + 30 && inFront) {
-            damageBoss(CONFIG.ATTACK_DAMAGE);
-        }
-    }
-
-    setTimeout(() => {
-        PLAYER.attacking = false;
-
-        if (!PLAYER.moving) {
-            PLAYER.state = "idle";
-        }
-    }, 220);
-
-    setTimeout(() => {
-        attackCooldown = false;
-    }, 380);
+  showScreen("gameOverScreen");
 }
 
-/*=========================================================
-PLAYER DASH
-=========================================================*/
+/* -------------------- PLAYER MOVEMENT -------------------- */
 
-let dashCooldown = false;
-let dashTimer = 0;
-
-function startDash() {
-    if (
-        !GAME.running ||
-        GAME.paused ||
-        GAME.gameOver ||
-        GAME.victory ||
-        dashCooldown ||
-        PLAYER.spirit < 10
-    ) {
-        return;
-    }
-
-    PLAYER.spirit -= 10;
-    dashTimer = 180;
-    dashCooldown = true;
-
-    safePlay(heroDashSound);
-
-    if (dashTrailEl) {
-        dashTrailEl.style.display = "block";
-        dashTrailEl.style.left = PLAYER.x + "px";
-        dashTrailEl.style.top = PLAYER.y + "px";
-
-        setTimeout(() => {
-            dashTrailEl.style.display = "none";
-        }, 250);
-    }
-
-    const dashDirection =
-        INPUT.left ? -1 :
-        INPUT.right ? 1 :
-        PLAYER.facing;
-
-    PLAYER.x += dashDirection * CONFIG.DASH_SPEED * 4;
-
-    PLAYER.x = clamp(PLAYER.x, 0, CONFIG.WORLD_WIDTH);
-
-    setTimeout(() => {
-        dashCooldown = false;
-    }, 900);
-
-    updatePlayerHUD();
+function clampPlayer() {
+  state.x = clamp(state.x, 50, CONFIG.worldWidth - 100);
+  state.y = clamp(state.y, 50, CONFIG.worldHeight - 100);
 }
 
-function updateDash(delta) {
-    if (dashTimer > 0) {
-        dashTimer -= delta;
-    }
+function updatePlayer(dt) {
+  let dx = 0;
+  let dy = 0;
+
+  if (state.keys.has("w") || state.keys.has("arrowup")) dy--;
+  if (state.keys.has("s") || state.keys.has("arrowdown")) dy++;
+  if (state.keys.has("a") || state.keys.has("arrowleft")) dx--;
+  if (state.keys.has("d") || state.keys.has("arrowright")) dx++;
+
+  dx += state.joystickX;
+  dy += state.joystickY;
+
+  const length = Math.hypot(dx, dy);
+
+  if (length > 0) {
+    dx /= Math.max(1, length);
+    dy /= Math.max(1, length);
+
+    state.facingX = dx;
+    state.facingY = dy;
+
+    state.x += dx * CONFIG.playerSpeed * dt;
+    state.y += dy * CONFIG.playerSpeed * dt;
+
+    clampPlayer();
+  }
+
+  state.attackCooldown = Math.max(0, state.attackCooldown - dt);
+  state.dashCooldown = Math.max(0, state.dashCooldown - dt);
+  state.skillCooldown = Math.max(0, state.skillCooldown - dt);
+  state.damageCooldown = Math.max(0, state.damageCooldown - dt);
+
+  state.spirit = Math.min(100, state.spirit + 2 * dt);
+
+  renderPlayer();
 }
 
-/*=========================================================
-SPIRIT SKILL
-=========================================================*/
+function renderPlayer() {
+  const player = $("playerContainer");
+  if (!player) return;
 
-let skillCooldown = false;
+  player.style.left = `${state.x}px`;
+  player.style.top = `${state.y}px`;
 
-function castSpiritSkill() {
-    if (
-        !GAME.running ||
-        GAME.paused ||
-        GAME.gameOver ||
-        GAME.victory ||
-        skillCooldown ||
-        PLAYER.spirit < 30
-    ) {
-        showNotification("NOT ENOUGH SPIRIT ENERGY");
-        return;
-    }
+  const sprite = $("playerSprite");
 
-    PLAYER.spirit -= 30;
-    skillCooldown = true;
+  if (sprite) {
+    sprite.style.transform =
+      state.facingX < -0.1 ? "scaleX(-1)" : "scaleX(1)";
+  }
 
-    showNotification("SPIRIT BURST!");
+  const world = $("gameWorld");
 
-    const radius = 260;
+  if (world) {
+    const viewWidth = window.innerWidth;
+    const viewHeight = window.innerHeight;
 
-    GHOSTS.forEach(ghost => {
-        if (!ghost.alive) return;
-
-        const distance = Math.hypot(
-            ghost.x - PLAYER.x,
-            ghost.y - PLAYER.y
-        );
-
-        if (distance <= radius) {
-            damageGhost(ghost, 50);
-        }
-    });
-
-    const bossDistance = Math.hypot(
-        BOSS.x - PLAYER.x,
-        BOSS.y - PLAYER.y
+    const cameraX = clamp(
+      state.x - viewWidth / 2,
+      0,
+      CONFIG.worldWidth - viewWidth
     );
 
-    if (BOSS.alive && bossDistance <= radius) {
-        damageBoss(45);
-    }
-
-    setTimeout(() => {
-        skillCooldown = false;
-    }, 1600);
-
-    updatePlayerHUD();
-}
-
-/*=========================================================
-SPIRIT REGENERATION
-=========================================================*/
-
-function regenerate(delta) {
-    if (PLAYER.spirit < PLAYER.maxSpirit) {
-        PLAYER.spirit = Math.min(
-            PLAYER.maxSpirit,
-            PLAYER.spirit + delta * 0.004
-        );
-    }
-
-    updatePlayerHUD();
-}
-
-/*=========================================================
-GHOST ENTITIES
-=========================================================*/
-
-const GHOSTS = [];
-
-function initGhosts() {
-    GHOSTS.length = 0;
-
-    for (let i = 0; i < 10; i++) {
-        const ghost = {
-            id: i + 1,
-            x: random(250, CONFIG.WORLD_WIDTH - 250),
-            y: random(250, CONFIG.WORLD_HEIGHT - 250),
-            health: 100,
-            maxHealth: 100,
-            speed: random(0.7, 1.5),
-            damage: 8,
-            alive: true,
-            attackCooldown: false,
-            element: null
-        };
-
-        const el = document.createElement("div");
-
-        el.className = "ghostEnemy";
-        el.dataset.ghostId = ghost.id;
-
-        Object.assign(el.style, {
-            position: "absolute",
-            left: ghost.x + "px",
-            top: ghost.y + "px",
-            width: "42px",
-            height: "52px",
-            transform: "translate(-50%, -50%)",
-            borderRadius: "50% 50% 35% 35%",
-            background:
-                "radial-gradient(circle at 50% 30%, #c9f5ff, #5978b8 65%, #18233d)",
-            boxShadow: "0 0 18px rgba(110,190,255,.65)",
-            zIndex: "10"
-        });
-
-        if (gameWorld) {
-            gameWorld.appendChild(el);
-        }
-
-        ghost.element = el;
-
-        GHOSTS.push(ghost);
-    }
-
-    updatePlayerHUD();
-}
-
-/*=========================================================
-GHOST HEALTH BAR
-=========================================================*/
-
-function updateGhostHealthBar(ghost) {
-    if (!ghost || !ghost.element) return;
-
-    let bar = ghost.element.querySelector(".enemyHealthFill");
-
-    if (!bar) {
-        const outer = document.createElement("div");
-
-        Object.assign(outer.style, {
-            position: "absolute",
-            width: "48px",
-            height: "5px",
-            left: "50%",
-            top: "-12px",
-            transform: "translateX(-50%)",
-            background: "#2a1720",
-            border: "1px solid #111",
-            borderRadius: "5px",
-            overflow: "hidden"
-        });
-
-        bar = document.createElement("div");
-        bar.className = "enemyHealthFill";
-
-        Object.assign(bar.style, {
-            width: "100%",
-            height: "100%",
-            background: "#ff3b3b",
-            transition: "width .15s"
-        });
-
-        outer.appendChild(bar);
-        ghost.element.appendChild(outer);
-    }
-
-    const percent = clamp(
-        (ghost.health / ghost.maxHealth) * 100,
-        0,
-        100
+    const cameraY = clamp(
+      state.y - viewHeight / 2,
+      0,
+      CONFIG.worldHeight - viewHeight
     );
 
-    bar.style.width = percent + "%";
+    world.style.transform =
+      `translate(${-cameraX}px, ${-cameraY}px)`;
+  }
 }
 
-/*=========================================================
-DAMAGE GHOST
-=========================================================*/
+/* -------------------- HUD AND MINI-MAP -------------------- */
 
-function damageGhost(ghost, damage) {
-    if (!ghost || !ghost.alive) return;
+function updateHUD() {
+  setWidth("healthFill", state.health);
+  setWidth("spiritFill", state.spirit);
 
-    ghost.health = Math.max(0, ghost.health - damage);
+  setText("healthText", `${Math.ceil(state.health)} / 100`);
+  setText("spiritText", `${Math.floor(state.spirit)} / 100`);
+  setText("lanternCounter", `${state.lanterns} / 7`);
+  setText("scoreCounter", String(state.score).padStart(6, "0"));
 
-    updateGhostHealthBar(ghost);
+  setText("statSpirit", Math.floor(state.spirit));
+  setText("ghostKillCount", state.ghostsKilled);
+  setText("aliveGhosts", ghosts.filter(g => g.alive).length);
+  setText("activeLanterns", state.lanterns);
 
-    if (ghost.element) {
-        ghost.element.style.filter =
-            "brightness(2) saturate(0.3)";
+  const gameState = $("gameState");
 
-        setTimeout(() => {
-            if (ghost.element) {
-                ghost.element.style.filter = "";
-            }
-        }, 120);
-    }
-
-    if (ghost.health <= 0) {
-        ghost.alive = false;
-
-        if (ghost.element) {
-            ghost.element.style.opacity = "0";
-            ghost.element.style.pointerEvents = "none";
-
-            setTimeout(() => {
-                ghost.element?.remove();
-            }, 250);
-        }
-
-        GAME.kills++;
-        GAME.score += 100;
-
-        showNotification("GHOST BANISHED +100");
-
-        updatePlayerHUD();
-    }
-}
-
-/*=========================================================
-GHOST AI
-=========================================================*/
-
-function updateGhostAI(delta) {
-    if (!GAME.running || GAME.paused) return;
-
-    GHOSTS.forEach(ghost => {
-        if (!ghost.alive || !ghost.element) return;
-
-        const dx = PLAYER.x - ghost.x;
-        const dy = PLAYER.y - ghost.y;
-        const distance = Math.hypot(dx, dy);
-
-        if (distance < 520 && distance > 65) {
-            ghost.x += (dx / distance) * ghost.speed * (delta / 16);
-            ghost.y += (dy / distance) * ghost.speed * (delta / 16);
-        }
-
-        ghost.element.style.left = ghost.x + "px";
-        ghost.element.style.top = ghost.y + "px";
-
-        if (distance <= 75 && !ghost.attackCooldown) {
-            ghost.attackCooldown = true;
-
-            damagePlayer(ghost.damage);
-            safePlay(ghostAttackSound);
-
-            setTimeout(() => {
-                ghost.attackCooldown = false;
-            }, 1300);
-        }
-    });
-}
-
-/*=========================================================
-LANTERNS
-=========================================================*/
-
-const LANTERNS = [];
-
-function initLanterns() {
-    LANTERNS.length = 0;
-
-    const positions = [
-        [700, 1450],
-        [1250, 1150],
-        [1850, 1600],
-        [2450, 950],
-        [3100, 1450],
-        [3800, 850],
-        [4400, 1600]
-    ];
-
-    positions.forEach((position, index) => {
-        const lantern = {
-            id: index + 1,
-            x: position[0],
-            y: position[1],
-            active: true,
-            element: null
-        };
-
-        const el = document.createElement("div");
-
-        el.className = "collectibleLantern";
-        el.dataset.lanternId = lantern.id;
-
-        Object.assign(el.style, {
-            position: "absolute",
-            left: lantern.x + "px",
-            top: lantern.y + "px",
-            width: "24px",
-            height: "34px",
-            transform: "translate(-50%, -50%)",
-            background:
-                "radial-gradient(circle, #fff1a6, #ff8a00 55%, #5c2300)",
-            borderRadius: "8px",
-            boxShadow: "0 0 22px #ff8a00",
-            zIndex: "5"
-        });
-
-        if (gameWorld) {
-            gameWorld.appendChild(el);
-        }
-
-        lantern.element = el;
-
-        LANTERNS.push(lantern);
-    });
-}
-
-/*=========================================================
-LANTERN INTERACTION
-=========================================================*/
-
-function updateLanternProximity() {
-    let nearby = null;
-
-    LANTERNS.forEach(lantern => {
-        if (!lantern.active) return;
-
-        const distance = Math.hypot(
-            lantern.x - PLAYER.x,
-            lantern.y - PLAYER.y
-        );
-
-        if (distance <= CONFIG.LANTERN_PICKUP_RADIUS) {
-            nearby = lantern;
-        }
-    });
-
-    if (interactionPrompt) {
-        interactionPrompt.style.display = nearby ? "block" : "none";
-
-        if (nearby) {
-            interactionPrompt.textContent =
-                "Press F / INTERACT to light lantern";
-        }
-    }
-
-    GAME.nearbyLantern = nearby;
-}
-
-function tryInteract() {
-    if (!GAME.running || GAME.paused) return;
-
-    const lantern = GAME.nearbyLantern;
-
-    if (!lantern || !lantern.active) {
-        showNotification("NOTHING TO INTERACT WITH");
-        return;
-    }
-
-    lantern.active = false;
-
-    if (lantern.element) {
-        lantern.element.style.filter = "brightness(2)";
-        lantern.element.style.boxShadow =
-            "0 0 35px #ffb52e";
-
-        lantern.element.style.opacity = "0.3";
-    }
-
-    GAME.lanterns++;
-    GAME.score += 150;
-
-    PLAYER.spirit = Math.min(
-        PLAYER.maxSpirit,
-        PLAYER.spirit + 15
+  if (gameState) {
+    gameState.dataset.health = String(Math.ceil(state.health));
+    gameState.dataset.spirit = String(Math.floor(state.spirit));
+    gameState.dataset.score = String(state.score);
+    gameState.dataset.lanterns = String(state.lanterns);
+    gameState.dataset.ghosts = String(
+      ghosts.filter(g => g.alive).length
     );
+  }
 
-    safePlay(lanternSound);
+  const minutes = Math.floor(state.elapsed / 60);
+  const seconds = Math.floor(state.elapsed % 60);
 
-    showNotification(
-        `LANTERN ${GAME.lanterns}/${CONFIG.TOTAL_LANTERNS} ACTIVATED`
-    );
+  setText(
+    "gameTimer",
+    `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
+  );
 
-    updatePlayerHUD();
-
-    if (GAME.lanterns >= CONFIG.TOTAL_LANTERNS) {
-        showNotification("ALL LANTERNS ACTIVATED!");
-    }
+  setText("playerX", Math.round(state.x));
+  setText("playerY", Math.round(state.y));
 }
-
-/*=========================================================
-GHOST KING BOSS
-=========================================================*/
-
-const BOSS = {
-    x: 4300,
-    y: 500,
-    health: 1000,
-    maxHealth: 1000,
-    damage: 20,
-    speed: 1.1,
-    alive: true,
-    activated: false,
-    attackCooldown: false
-};
-
-function updateBoss(delta) {
-    if (!BOSS.alive || !BOSS.activated) return;
-
-    const dx = PLAYER.x - BOSS.x;
-    const dy = PLAYER.y - BOSS.y;
-    const distance = Math.hypot(dx, dy);
-
-    if (distance > 130) {
-        BOSS.x += (dx / distance) * BOSS.speed * (delta / 16);
-        BOSS.y += (dy / distance) * BOSS.speed * (delta / 16);
-    }
-
-    if (bossEl) {
-        bossEl.style.left = BOSS.x + "px";
-        bossEl.style.top = BOSS.y + "px";
-    }
-
-    if (distance <= 140 && !BOSS.attackCooldown) {
-        BOSS.attackCooldown = true;
-
-        damagePlayer(BOSS.damage);
-        safePlay(bossRoarSound);
-
-        setTimeout(() => {
-            BOSS.attackCooldown = false;
-        }, 1500);
-    }
-
-    if (bossHealthFill) {
-        bossHealthFill.style.width =
-            `${(BOSS.health / BOSS.maxHealth) * 100}%`;
-    }
-}
-
-function damageBoss(damage) {
-    if (!BOSS.alive) return;
-
-    BOSS.health = Math.max(0, BOSS.health - damage);
-
-    if (bossHealthFill) {
-        bossHealthFill.style.width =
-            `${(BOSS.health / BOSS.maxHealth) * 100}%`;
-    }
-
-    if (BOSS.health <= 0) {
-        defeatBoss();
-    }
-}
-
-function activateBoss() {
-    if (BOSS.activated || !BOSS.alive) return;
-
-    BOSS.
-/*=========================================================
-MINI-MAP
-=========================================================*/
 
 function updateMiniMap() {
-    if (!miniMap || !gameWorld) return;
+  const player = $("miniPlayer");
+  const map = $("miniMapFrame");
 
-    const worldWidth = CONFIG.WORLD_WIDTH;
-    const worldHeight = CONFIG.WORLD_HEIGHT;
+  if (!player || !map) return;
 
-    const mapWidth = miniMap.clientWidth || 180;
-    const mapHeight = miniMap.clientHeight || 120;
+  const width = map.clientWidth;
+  const height = map.clientHeight;
 
-    const scaleX = mapWidth / worldWidth;
-    const scaleY = mapHeight / worldHeight;
+  const mapX = (state.x / CONFIG.worldWidth) * width;
+  const mapY = (state.y / CONFIG.worldHeight) * height;
 
-    if (miniMapPlayer) {
-        miniMapPlayer.style.left = `${PLAYER.x * scaleX}px`;
-        miniMapPlayer.style.top = `${PLAYER.y * scaleY}px`;
-    }
+  player.style.left = `${mapX}px`;
+  player.style.top = `${mapY}px`;
 
-    GHOSTS.forEach(ghost => {
-        if (!ghost.alive) return;
+  for (const lantern of lanterns) {
+    if (!lantern.mini) continue;
 
-        let dot = miniMap.querySelector(
-            `[data-map-ghost="${ghost.id}"]`
-        );
+    lantern.mini.style.left =
+      `${(lantern.x / CONFIG.worldWidth) * width}px`;
 
-        if (!dot) {
-            dot = document.createElement("div");
-            dot.dataset.mapGhost = ghost.id;
-            dot.className = "miniMapGhost";
+    lantern.mini.style.top =
+      `${(lantern.y / CONFIG.worldHeight) * height}px`;
 
-            Object.assign(dot.style, {
-                position: "absolute",
-                width: "5px",
-                height: "5px",
-                borderRadius: "50%",
-                background: "#8ad8ff",
-                boxShadow: "0 0 5px #8ad8ff"
-            });
+    lantern.mini.style.opacity = lantern.collected ? "0" : "1";
+  }
 
-            miniMap.appendChild(dot);
-        }
+  const miniBoss = $("miniBoss");
 
-        dot.style.left = `${ghost.x * scaleX}px`;
-        dot.style.top = `${ghost.y * scaleY}px`;
-    });
+  if (miniBoss) {
+    miniBoss.style.left =
+      `${(state.bossX / CONFIG.worldWidth) * width}px`;
 
-    LANTERNS.forEach(lantern => {
-        if (!lantern.active) return;
+    miniBoss.style.top =
+      `${(state.bossY / CONFIG.worldHeight) * height}px`;
 
-        let dot = miniMap.querySelector(
-            `[data-map-lantern="${lantern.id}"]`
-        );
+    miniBoss.style.display =
+      state.bossActive && state.bossHealth > 0 ? "block" : "none";
+  }
 
-        if (!dot) {
-            dot = document.createElement("div");
-            dot.dataset.mapLantern = lantern.id;
+  const compass = $("compassNeedle");
 
-            Object.assign(dot.style, {
-                position: "absolute",
-                width: "5px",
-                height: "5px",
-                borderRadius: "50%",
-                background: "#ff8a00",
-                boxShadow: "0 0 6px #ff8a00"
-            });
+  if (compass) {
+    const targetX = state.bossX - state.x;
+    const targetY = state.bossY - state.y;
 
-            miniMap.appendChild(dot);
-        }
-
-        dot.style.left = `${lantern.x * scaleX}px`;
-        dot.style.top = `${lantern.y * scaleY}px`;
-    });
+    compass.style.transform =
+      `rotate(${Math.atan2(targetX, -targetY)}rad)`;
+  }
 }
 
-/*=========================================================
-GAME OVER
-=========================================================*/
+function updateMission(id, completed) {
+  const element = $(id);
+  if (!element) return;
 
-function gameOver() {
-    if (GAME.gameOver || GAME.victory) return;
+  element.classList.toggle("completed", completed);
+  element.classList.toggle("active", !completed);
 
-    GAME.gameOver = true;
-    GAME.running = false;
+  if (completed && !element.textContent.startsWith("✓")) {
+    element.textContent = `✓ ${element.textContent}`;
+  }
+}
 
-    if (gameOverScreen) {
-        gameOverScreen.style.display = "flex";
+/* -------------------- GAME LOOP -------------------- */
+
+function gameLoop(timestamp) {
+  if (!state.ready) return;
+
+  const dt = Math.min(
+    Math.max((timestamp - state.lastFrame) / 1000, 0),
+    0.05
+  );
+
+  state.lastFrame = timestamp;
+
+  if (state.running && !state.paused &&
+      !state.gameOver && !state.winning) {
+    state.elapsed += dt;
+
+    updatePlayer(dt);
+    updateGhosts(dt);
+    updateBoss(dt);
+    updateHUD();
+    updateMiniMap();
+
+    state.animationFrame++;
+
+    if (state.animationFrame % 120 === 0) {
+      setText("fpsCounter", "FPS: " + Math.round(1 / Math.max(dt, 0.001)));
+      setText("fpsValue", Math.round(1 / Math.max(dt, 0.001)));
     }
+  }
 
-    if (finalScore) {
-        finalScore.textContent = String(GAME.score);
-    }
+  requestAnimationFrame(gameLoop);
+}
 
-    safePlay(gameOverSound);
+/* -------------------- INTERACTION -------------------- */
+
+function interact() {
+  if (!state.running || state.paused) return;
+
+  const nearby = lanterns.find(
+    lantern => !lantern.collected &&
+      distance(state.x, state.y, lantern.x, lantern.y) < 190
+  );
+
+  if (nearby) {
+    collectLantern(nearby);
+    return;
+  }
+
+  if (state.bossActive &&
+      distance(state.x, state.y, state.bossX, state.bossY) < 230) {
+    attack();
+    return;
+  }
+
+  notify("Explore the cemetery and find the nearest Spirit Lantern.");
+}
+
+function togglePause() {
+  if (!state.ready || state.gameOver || state.winning) return;
+
+  state.paused = !state.paused;
+  state.running = !state.paused;
+
+  if (state.paused) {
+    showScreen("pauseMenu");
+    if (audio.music) audio.music.pause();
+  } else {
+    hideScreen("pauseMenu");
+    if (audio.music) audio.music.play().catch(() => {});
+    state.lastFrame = performance.now();
+  }
 }
 
 function restartGame() {
-    window.location.reload();
+  // Reloading resets the encounter, but never clears saved progress.
+  window.location.reload();
 }
 
-/*=========================================================
-DAY 5 COMPLETION
-Only call after the actual boss victory.
-=========================================================*/
+/* -------------------- CONTROLS -------------------- */
 
-async function saveDay5Completion() {
-    if (GAME.day5Saved) return true;
+function initializeControls() {
+  document.addEventListener("keydown", event => {
+    const key = event.key.toLowerCase();
 
-    if (!supabase) {
-        showNotification("Unable to save progress: database unavailable.");
-        return false;
+    if ([
+      "arrowup", "arrowdown", "arrowleft", "arrowright", " "
+    ].includes(key)) {
+      event.preventDefault();
     }
 
-    try {
-        const {
-            data: { user },
-            error: userError
-        } = await supabase.auth.getUser();
+    state.keys.add(key);
 
-        if (userError || !user) {
-            showNotification("Sign in to save your festival progress.");
-            return false;
-        }
+    if (event.repeat) return;
 
-        const { data: progress, error: fetchError } = await supabase
-            .from("festival_progress")
-            .select("day4, day5")
-            .eq("user_id", user.id)
-            .eq("festival", "halloween_2026")
-            .maybeSingle();
-
-        if (fetchError) throw fetchError;
-
-        if (!progress || progress.day4 !== true) {
-            showNotification("Complete Day 4 before unlocking Day 5.");
-            return false;
-        }
-
-        const { error: saveError } = await supabase
-            .from("festival_progress")
-            .update({ day5: true })
-            .eq("user_id", user.id)
-            .eq("festival", "halloween_2026");
-
-        if (saveError) throw saveError;
-
-        GAME.day5Saved = true;
-        return true;
-    } catch (error) {
-        console.error("Day 5 progress save failed:", error);
-        showNotification("Progress save failed. Please try again.");
-        return false;
+    if (key === " " || key === "j") attack();
+    if (key === "shift" || key === "k") dash();
+    if (key === "e" || key === "l") spiritSkill();
+    if (key === "f") interact();
+    if (key === "escape" || key === "p") togglePause();
+    if (key === "i") {
+      $("inventoryPanel")?.classList.toggle("active");
     }
+    if (key === "q") {
+      $("questPanel")?.classList.toggle("active");
+    }
+  });
+
+  document.addEventListener("keyup", event => {
+    state.keys.delete(event.key.toLowerCase());
+  });
+
+  $("attackButton")?.addEventListener("click", attack);
+  $("dashButton")?.addEventListener("click", dash);
+  $("skillButton")?.addEventListener("click", spiritSkill);
+  $("interactButton")?.addEventListener("click", interact);
+  $("pauseButton")?.addEventListener("click", togglePause);
+
+  $("resumeButton")?.addEventListener("click", togglePause);
+  $("restartButton")?.addEventListener("click", restartGame);
+
+  $("closeInventory")?.addEventListener("click", () => {
+    $("inventoryPanel")?.classList.remove("active");
+  });
+
+  $("nextDialogue")?.addEventListener("click", () => {
+    hideScreen("dialogueContainer");
+  });
+
+  $("continueButton")?.addEventListener("click", async () => {
+    if (!state.saved) {
+      const saved = await saveDay5Completion();
+      if (!saved) return;
+    }
+
+    if (state.saved) {
+      window.location.assign(CONFIG.nextPage);
+    }
+  });
+
+  $("retryGameButton")?.addEventListener("click", restartGame);
+
+  $("quitEventButton")?.addEventListener("click", () => {
+    window.location.assign("index.html");
+  });
+
+  $("exitGameButton")?.addEventListener("click", () => {
+    window.location.assign("index.html");
+  });
+
+  $("openSettingsButton")?.addEventListener("click", () => {
+    hideScreen("pauseMenu");
+    showScreen("settingsPanel");
+  });
+
+  $("closeSettingsButton")?.addEventListener("click", () => {
+    hideScreen("settingsPanel");
+    showScreen("pauseMenu");
+  });
+
+  $("muteButton")?.addEventListener("click", () => {
+    const muted = !audio.music?.muted;
+
+    Object.values(audio).forEach(sound => {
+      if (sound instanceof HTMLAudioElement) sound.muted = muted;
+    });
+
+    setText("muteButton", muted ? "🔇" : "🔊");
+  });
+
+  initializeJoystick();
 }
 
-/*=========================================================
-VICTORY
-=========================================================*/
+function initializeJoystick() {
+  const base = $("joystickBase");
+  const stick = $("joystickStick");
 
-async function winGame() {
-    if (GAME.victory || GAME.gameOver) return;
+  if (!base || !stick) return;
 
-    // Prevent victory unless the boss has actually been defeated.
-    if (BOSS.alive || BOSS.health > 0) {
-        showNotification("Defeat the Ghost King first!");
-        return;
+  let activePointer = null;
+
+  function moveJoystick(event) {
+    const rect = base.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    let dx = event.clientX - centerX;
+    let dy = event.clientY - centerY;
+
+    const max = rect.width * 0.34;
+    const length = Math.hypot(dx, dy);
+
+    if (length > max) {
+      dx = dx / length * max;
+      dy = dy / length * max;
     }
 
-    GAME.victory = true;
-    GAME.running = false;
+    state.joystickX = dx / max;
+    state.joystickY = dy / max;
 
-    safePlay(victorySound);
+    stick.style.transform =
+      `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+  }
 
-    if (victoryScreen) {
-        victoryScreen.style.display = "flex";
+  base.addEventListener("pointerdown", event => {
+    activePointer = event.pointerId;
+    base.setPointerCapture(event.pointerId);
+    moveJoystick(event);
+  });
+
+  base.addEventListener("pointermove", event => {
+    if (event.pointerId === activePointer) moveJoystick(event);
+  });
+
+  function releaseJoystick(event) {
+    if (event.pointerId !== activePointer) return;
+
+    activePointer = null;
+    state.joystickX = 0;
+    state.joystickY = 0;
+
+    stick.style.transform = "translate(-50%,-50%)";
+  }
+
+  base.addEventListener("pointerup", releaseJoystick);
+  base.addEventListener("pointercancel", releaseJoystick);
+
+  if (window.matchMedia("(pointer: coarse)").matches) {
+    const controls = $("mobileControls");
+    if (controls) controls.style.display = "flex";
+  }
+}
+
+/* -------------------- SETTINGS AND AUDIO -------------------- */
+
+function initializeSettings() {
+  $("musicSlider")?.addEventListener("input", event => {
+    const volume = Number(event.target.value) / 100;
+    if (audio.music) audio.music.volume = volume;
+    if (audio.wind) audio.wind.volume = volume * 0.45;
+    if (audio.rain) audio.rain.volume = volume * 0.35;
+  });
+
+  $("effectsSlider")?.addEventListener("input", event => {
+    const volume = Number(event.target.value) / 100;
+
+    [
+      audio.slash,
+      audio.dash,
+      audio.light,
+      audio.boss,
+      audio.victory,
+      audio.gameOver
+    ].forEach(sound => {
+      if (sound) sound.volume = volume;
+    });
+  });
+
+  $("brightnessSlider")?.addEventListener("input", event => {
+    const brightness = Number(event.target.value) / 100;
+
+    const world = $("gameWorld");
+
+    if (world) world.style.filter = `brightness(${brightness})`;
+  });
+
+  $("screenShakeToggle")?.addEventListener("change", event => {
+    document.body.dataset.screenShake =
+      event.target.checked ? "enabled" : "disabled";
+  });
+}
+
+function initializeAudio() {
+  // Browsers require a user gesture before audio can play.
+  const startAudio = () => {
+    if (!state.ready || state.paused) return;
+
+    if (audio.music) audio.music.play().catch(() => {});
+    if (audio.wind) audio.wind.play().catch(() => {});
+    if (audio.rain) audio.rain.play().catch(() => {});
+
+    document.removeEventListener("pointerdown", startAudio);
+    document.removeEventListener("keydown", startAudio);
+  };
+
+  document.addEventListener("pointerdown", startAudio);
+  document.addEventListener("keydown", startAudio);
+}
+
+/* -------------------- DECORATIONS -------------------- */
+
+function initializeDecorations() {
+  const batLayer = $("batLayer");
+
+  if (batLayer && !batLayer.dataset.initialized) {
+    batLayer.dataset.initialized = "true";
+
+    for (let i = 0; i < 12; i++) {
+      const bat = document.createElement("div");
+
+      bat.className = "bat";
+      bat.style.top = `${100 + Math.random() * 1500}px`;
+      bat.style.animationDuration = `${18 + Math.random() * 30}s`;
+      bat.style.animationDelay = `${-Math.random() * 25}s`;
+
+      batLayer.appendChild(bat);
     }
+  }
 
-    if (finalScore) {
-        finalScore.textContent = String(GAME.score);
+  const treePositions = [
+    ["deadTree1", 300, 1450],
+    ["deadTree2", 2300, 1000],
+    ["deadTree3", 4000, 1450]
+  ];
+
+  for (const [id, x, y] of treePositions) {
+    const element = $(id);
+
+    if (element) {
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
     }
+  }
 
-    if (victoryMessage) {
-        victoryMessage.textContent =
-            "The Ghost King has fallen. Your Day 5 journey is complete!";
+  const gravePositions = [
+    ["grave1", 600, 1250],
+    ["grave2", 1250, 1000],
+    ["grave3", 1900, 1600],
+    ["grave4", 2500, 1200],
+    ["grave5", 3300, 900],
+    ["grave6", 4200, 1600]
+  ];
+
+  for (const [id, x, y] of gravePositions) {
+    const element = $(id);
+
+    if (element) {
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
     }
-
-    const saved = await saveDay5Completion();
-
-    if (day6Button) {
-        day6Button.disabled = !saved;
-        day6Button.style.opacity = saved ? "1" : "0.5";
-        day6Button.style.pointerEvents = saved ? "auto" : "none";
-    }
-
-    if (saved) {
-        showNotification("DAY 5 COMPLETE — DAY 6 UNLOCKED!");
-    } else {
-        showNotification(
-            "Victory achieved, but progress was not saved. Check your connection and try again."
-        );
-    }
+  }
 }
 
-/*=========================================================
-DAY 6 NAVIGATION
-=========================================================*/
+/* -------------------- START -------------------- */
 
-async function goToDay6() {
-    if (!GAME.victory || BOSS.alive || BOSS.health > 0) {
-        showNotification("Complete the boss fight to unlock Day 6.");
-        return;
-    }
-
-    const saved = await saveDay5Completion();
-
-    if (!saved) {
-        showNotification("Day 6 is locked until progress is saved.");
-        return;
-    }
-
-    window.location.assign(CONFIG.NEXT_LEVEL_URL);
-}
-
-/*=========================================================
-INTERACTION LISTENERS
-=========================================================*/
-
-if (attackButton) {
-    attackButton.addEventListener("click", startAttack);
-}
-
-if (dashButton) {
-    dashButton.addEventListener("click", startDash);
-}
-
-if (skillButton) {
-    skillButton.addEventListener("click", castSpiritSkill);
-}
-
-if (interactButton) {
-    interactButton.addEventListener("click", tryInteract);
-}
-
-if (day6Button) {
-    day6Button.addEventListener("click", goToDay6);
-}
-
-if (restartButton) {
-    restartButton.addEventListener("click", restartGame);
-}
-
-/*=========================================================
-MAIN GAME LOOP
-=========================================================*/
-
-let previousFrameTime = 0;
-
-function gameLoop(timestamp = 0) {
-    requestAnimationFrame(gameLoop);
-
-    const delta = Math.min(
-        timestamp - (previousFrameTime || timestamp),
-        50
-    );
-
-    previousFrameTime = timestamp;
-
-    if (!GAME.running || GAME.paused || GAME.gameOver || GAME.victory) {
-        return;
-    }
-
-    applyMovement();
-    updateDash(delta);
-    regenerate(delta);
-
-    updateGhostAI(delta);
-    updateBoss(delta);
-
-    updateLanternProximity();
-    updatePortalProximity();
-
-    renderPlayer();
-    updatePlayerHUD();
-    updateMiniMap();
-
-    if (
-        GAME.lanterns >= CONFIG.TOTAL_LANTERNS &&
-        !BOSS.activated &&
-        Math.hypot(PLAYER.x - BOSS.x, PLAYER.y - BOSS.y) < 650
-    ) {
-        activateBoss();
-    }
-}
-
-/*=========================================================
-INITIALIZATION
-=========================================================*/
-
-async function initializeGame() {
-    if (GAME.initialized) return;
-
-    GAME.initialized = true;
-    GAME.running = false;
-
-    try {
-        const allowed = await checkDay5Access();
-
-        if (!allowed) {
-            showNotification(
-                "Day 5 is locked. Complete Day 4 first."
-            );
-
-            if (lockedScreen) {
-                lockedScreen.style.display = "flex";
-            }
-
-            return;
-        }
-
-        if (loadingScreen) {
-            loadingScreen.style.display = "none";
-        }
-
-        if (gameWorld) {
-            gameWorld.style.width = `${CONFIG.WORLD_WIDTH}px`;
-            gameWorld.style.height = `${CONFIG.WORLD_HEIGHT}px`;
-        }
-
-        initGhosts();
-        initLanterns();
-
-        PLAYER.x = Math.max(100, PLAYER.x);
-        PLAYER.y = Math.max(100, PLAYER.y);
-
-        updatePlayerHUD();
-        renderPlayer();
-
-        GAME.running = true;
-
-        showNotification("DAY 5 — THE HAUNTED FOREST");
-
-        requestAnimationFrame(gameLoop);
-    } catch (error) {
-        console.error("Game initialization failed:", error);
-
-        showNotification(
-            "Unable to start the game. Please refresh and try again."
-        );
-    }
-}
-
-/*=========================================================
-START GAME
-=========================================================*/
-
-if (document.readyState === "loading") {
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeGame,
-        { once: true }
-    );
-} else {
-    initializeGame();
-}
-
-/*=========================================================
-END OF PART 3
-=========================================================*/
+bootGame().catch(error => {
+  showFatalError(error.message || "An unexpected error occurred.");
+});
