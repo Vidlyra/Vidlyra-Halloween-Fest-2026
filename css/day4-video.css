@@ -1,758 +1,742 @@
-/* ==========================================
+
+/* =====================================================
    VIDLYRA HALLOWEEN FEST 2026
-   DAY 4 VIDEO
-========================================== */
+   DAY 4 — THE WITCH'S CURSE
+   File: css/day4-video.css
+===================================================== */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+/* =========================
+   ROOT / RESET
+========================= */
+
+:root {
+    --orange: #ff8a00;
+    --orange-light: #ffb347;
+    --purple: #9b4dff;
+    --purple-light: #c084fc;
+    --dark: #05030d;
+    --dark-blue: #0b1220;
+    --white: #ffffff;
+    --muted: #c7bfd8;
+    --panel: rgba(8, 5, 20, 0.88);
+    --border: rgba(255, 138, 0, 0.45);
+    --transition: 300ms ease;
 }
 
-html,
-body{
-
-    width:100%;
-    height:100%;
-    overflow:hidden;
-
-    background:#000;
-
-    font-family:Arial,Helvetica,sans-serif;
-
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-/* ==========================================
-START SCREEN
-========================================== */
+html {
+    width: 100%;
+    min-height: 100%;
+    background: var(--dark);
+    scroll-behavior: smooth;
+}
 
-#startScreen{
-
-    position:fixed;
-
-    inset:0;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
+body {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: hidden;
+    isolation: isolate;
     background:
-    radial-gradient(circle,#24103b,#09060f);
-
-    z-index:100;
-
-    transition:1s;
-
+        radial-gradient(
+            ellipse at 50% 45%,
+            rgba(75, 24, 105, 0.25),
+            transparent 60%
+        ),
+        var(--dark);
+    color: var(--white);
+    font-family: "Segoe UI", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
-#startScreen.hide{
-
-    opacity:0;
-
-    visibility:hidden;
-
+button {
+    font: inherit;
 }
 
-.start-content{
-
-    width:90%;
-
-    max-width:900px;
-
-    text-align:center;
-
+button:focus-visible {
+    outline: 3px solid var(--orange-light);
+    outline-offset: 5px;
 }
 
-.start-content h1{
+/* =========================
+   BACKGROUND VIDEO
 
-    font-size:58px;
+   HTML video ID: bgVideo
+========================= */
 
-    color:#ffb347;
+#bgVideo {
+    position: fixed;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: -5;
+    background: var(--dark);
+    pointer-events: none;
+}
 
+/* Cinematic dark overlay */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -4;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(3, 2, 10, 0.48) 0%,
+            rgba(3, 2, 10, 0.12) 38%,
+            rgba(3, 2, 10, 0.42) 68%,
+            rgba(3, 2, 10, 0.88) 100%
+        ),
+        radial-gradient(
+            ellipse at center,
+            transparent 20%,
+            rgba(0, 0, 0, 0.55) 100%
+        );
+}
+
+/* =========================
+   START SCREEN
+========================= */
+
+#startScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 30px 20px;
+    background:
+        radial-gradient(
+            ellipse at 50% 40%,
+            rgba(79, 24, 105, 0.38),
+            transparent 65%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(5, 3, 13, 0.97),
+            rgba(11, 8, 28, 0.92)
+        );
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity 700ms ease,
+        visibility 700ms ease;
+}
+
+#startScreen.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.start-content {
+    width: min(100%, 760px);
+    padding: clamp(25px, 5vw, 58px);
+    text-align: center;
+    border: 1px solid rgba(255, 138, 0, 0.35);
+    border-radius: 24px;
+    background: rgba(5, 3, 13, 0.55);
+    box-shadow:
+        0 0 40px rgba(155, 77, 255, 0.12),
+        0 0 80px rgba(255, 138, 0, 0.07),
+        inset 0 0 35px rgba(155, 77, 255, 0.04);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    animation: startAppear 900ms ease both;
+}
+
+.festival-label,
+.overlay-label {
+    margin-bottom: 18px;
+    color: var(--orange);
+    font-size: clamp(10px, 1.5vw, 13px);
+    font-weight: 800;
+    letter-spacing: 0.28em;
+    line-height: 1.8;
+    text-transform: uppercase;
+}
+
+.start-content h1,
+.overlay-content h1 {
+    margin: 0;
+    color: var(--white);
+    font-size: clamp(64px, 13vw, 130px);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
     text-shadow:
-    0 0 20px orange;
-
-}
-
-.start-content h2{
-
-    margin-top:25px;
-
-    font-size:42px;
-
-    color:#9d7cff;
-
-}
-
-.start-content h3{
-
-    margin-top:20px;
-
-    font-size:32px;
-
-    color:white;
-
-}
-
-.start-content p{
-
-    margin-top:35px;
-
-    line-height:1.8;
-
-    color:#ddd;
-
-    font-size:22px;
-
-}
-
-#startBtn{
-
-    margin-top:50px;
-
-    padding:18px 55px;
-
-    border:none;
-
-    border-radius:50px;
-
-    background:
-
-    linear-gradient(
-
-        90deg,
-
-        #8b5cf6,
-
-        #6d28d9
-
-    );
-
-    color:white;
-
-    font-size:20px;
-
-    cursor:pointer;
-
-    transition:.35s;
-
-}
-
-#startBtn:hover{
-
-    transform:scale(1.08);
-
-    box-shadow:
-
-    0 0 25px #8b5cf6;
-
-}
-
-/* ==========================================
-VIDEO
-========================================== */
-
-#introVideo{
-
-    position:fixed;
-
-    inset:0;
-
-    width:100%;
-
-    height:100%;
-
-    object-fit:cover;
-
-    display:none;
-
-    background:black;
-
-}
-/* ==========================================
-SKIP BUTTON
-========================================== */
-
-#skipBtn{
-
-    position:fixed;
-
-    top:25px;
-
-    right:25px;
-
-    padding:12px 28px;
-
-    border:none;
-
-    border-radius:30px;
-
-    background:rgba(0,0,0,.55);
-
-    color:#fff;
-
-    font-size:17px;
-
-    cursor:pointer;
-
-    backdrop-filter:blur(8px);
-
-    transition:.35s;
-
-    z-index:90;
-
-}
-
-#skipBtn:hover{
-
-    background:#8b5cf6;
-
-    transform:scale(1.08);
-
-}
-
-/* ==========================================
-VIDEO OVERLAY
-========================================== */
-
-#videoOverlay{
-
-    position:fixed;
-
-    inset:0;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    background:rgba(0,0,0,.82);
-
-    backdrop-filter:blur(10px);
-
-    opacity:0;
-
-    visibility:hidden;
-
-    transition:1s;
-
-    z-index:95;
-
-}
-
-#videoOverlay.show{
-
-    opacity:1;
-
-    visibility:visible;
-
-}
-
-.overlay-content{
-
-    width:90%;
-
-    max-width:900px;
-
-    text-align:center;
-
-}
-
-.overlay-content h1{
-
-    font-size:70px;
-
-    color:#ffb347;
-
-    text-shadow:0 0 30px orange;
-
-}
-
-.overlay-content h2{
-
-    margin-top:20px;
-
-    font-size:42px;
-
-    color:#a855f7;
-
-    text-shadow:0 0 20px #8b5cf6;
-
-}
-
-.overlay-content p{
-
-    margin-top:30px;
-
-    font-size:22px;
-
-    color:#f3f3f3;
-
-    line-height:1.8;
-
-}
-
-#enterGame{
-
-    margin-top:45px;
-
-    padding:18px 55px;
-
-    border:none;
-
-    border-radius:50px;
-
-    background:
-
-    linear-gradient(
-
-        90deg,
-
-        #9333ea,
-
-        #6d28d9
-
-    );
-
-    color:#fff;
-
-    font-size:20px;
-
-    cursor:pointer;
-
-    transition:.35s;
-
-}
-
-#enterGame:hover{
-
-    transform:scale(1.08);
-
-    box-shadow:0 0 28px #9333ea;
-
-}
-
-/* ==========================================
-LIGHTNING
-========================================== */
-
-#lightning{
-
-    position:fixed;
-
-    inset:0;
-
-    background:white;
-
-    opacity:0;
-
-    pointer-events:none;
-
-    z-index:80;
-
-}
-
-/* ==========================================
-PURPLE FOG
-========================================== */
-
-#fogLayer{
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-
-    radial-gradient(
-
-        circle,
-
-        rgba(168,85,247,.12),
-
-        rgba(0,0,0,0)
-
-    );
-
-    pointer-events:none;
-
-    z-index:12;
-
-}
-
-/* ==========================================
-WITCH SHADOW
-========================================== */
-
-#witchShadow{
-
-    position:absolute;
-
-    bottom:8%;
-
-    right:10%;
-
-    width:380px;
-
-    opacity:0;
-
-    pointer-events:none;
-
-    z-index:20;
-
-}
-
-/* ==========================================
-MAGIC PARTICLES
-========================================== */
-
-#magicParticles{
-
-    position:fixed;
-
-    inset:0;
-
-    overflow:hidden;
-
-    pointer-events:none;
-
-    z-index:15;
-
-}
-/* ==========================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 4 VIDEO ANIMATIONS
-========================================== */
-
-/* ==========================================
-FOG ANIMATION
-========================================== */
-
-#fogLayer{
-
-    animation:fogMove 18s ease-in-out infinite;
-
-}
-
-@keyframes fogMove{
-
-    0%{
-
-        transform:translateX(-4%) scale(1);
-
-        opacity:.25;
-
-    }
-
-    50%{
-
-        transform:translateX(4%) scale(1.08);
-
-        opacity:.55;
-
-    }
-
-    100%{
-
-        transform:translateX(-4%) scale(1);
-
-        opacity:.25;
-
-    }
-
-}
-
-/* ==========================================
-LIGHTNING
-========================================== */
-
-#lightning.flash{
-
-    animation:lightningFlash .45s ease;
-
-}
-
-@keyframes lightningFlash{
-
-    0%{
-
-        opacity:0;
-
-    }
-
-    15%{
-
-        opacity:.9;
-
-    }
-
-    30%{
-
-        opacity:.2;
-
-    }
-
-    45%{
-
-        opacity:.8;
-
-    }
-
-    100%{
-
-        opacity:0;
-
-    }
-
-}
-
-/* ==========================================
-WITCH SHADOW
-========================================== */
-
-#witchShadow.show{
-
-    animation:witchAppear 3s ease forwards;
-
-}
-
-@keyframes witchAppear{
-
-    0%{
-
-        opacity:0;
-
-        transform:
-
-        translateY(60px)
-
-        scale(.85);
-
-    }
-
-    100%{
-
-        opacity:.9;
-
-        transform:
-
-        translateY(0)
-
-        scale(1);
-
-    }
-
-}
-
-/* ==========================================
-BUTTON GLOW
-========================================== */
-
-#startBtn,
-#enterGame{
-
-    animation:buttonGlow 2.5s ease-in-out infinite;
-
-}
-
-@keyframes buttonGlow{
-
-    0%{
-
-        box-shadow:0 0 10px #7c3aed;
-
-    }
-
-    50%{
-
-        box-shadow:0 0 28px #c084fc;
-
-    }
-
-    100%{
-
-        box-shadow:0 0 10px #7c3aed;
-
-    }
-
-}
-
-/* ==========================================
-TITLE GLOW
-========================================== */
-
-.start-content h1,
-.overlay-content h1{
-
-    animation:titleGlow 3s ease-in-out infinite;
-
-}
-
-@keyframes titleGlow{
-
-    0%{
-
-        text-shadow:
-
-        0 0 15px orange;
-
-    }
-
-    50%{
-
-        text-shadow:
-
-        0 0 35px #ffb347;
-
-    }
-
-    100%{
-
-        text-shadow:
-
-        0 0 15px orange;
-
-    }
-
-}
-
-/* ==========================================
-VIDEO FADE
-========================================== */
-
-#introVideo{
-
-    animation:videoFade .8s ease;
-
-}
-
-@keyframes videoFade{
-
-    from{
-
-        opacity:0;
-
-    }
-
-    to{
-
-        opacity:1;
-
-    }
-
-}
-
-/* ==========================================
-MAGIC PARTICLES
-========================================== */
-
-.particle{
-
-    position:absolute;
-
-    width:6px;
-
-    height:6px;
-
-    border-radius:50%;
-
-    background:#c084fc;
-
-    box-shadow:
-
-    0 0 15px #c084fc;
-
-    animation:
-
-    particleFloat linear infinite;
-
-}
-
-@keyframes particleFloat{
-
-    0%{
-
-        transform:
-
-        translateY(100vh)
-
-        scale(.5);
-
-        opacity:0;
-
-    }
-
-    15%{
-
-        opacity:1;
-
-    }
-
-    100%{
-
-        transform:
-
-        translateY(-120vh)
-
-        scale(1.2);
-
-        opacity:0;
-
-    }
-
-}
-
-/* ==========================================
-RESPONSIVE
-========================================== */
-
-@media(max-width:768px){
-
-.start-content h1,
-.overlay-content h1{
-
-    font-size:42px;
-
+        0 0 12px rgba(255, 138, 0, 0.6),
+        0 0 40px rgba(255, 138, 0, 0.28);
 }
 
 .start-content h2,
-.overlay-content h2{
-
-    font-size:30px;
-
-}
-
-.start-content h3{
-
-    font-size:24px;
-
+.overlay-content h2 {
+    margin-top: 18px;
+    color: var(--purple-light);
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    line-height: 1.3;
+    text-shadow: 0 0 20px rgba(155, 77, 255, 0.35);
 }
 
 .start-content p,
-.overlay-content p{
-
-    font-size:18px;
-
+.overlay-content p {
+    max-width: 540px;
+    margin: 24px auto 30px;
+    color: var(--muted);
+    font-size: clamp(14px, 2vw, 17px);
+    line-height: 1.9;
 }
+
+/* =========================
+   BUTTONS
+========================= */
 
 #startBtn,
-#enterGame{
-
-    width:90%;
-
-    font-size:18px;
-
+#enterGame {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    padding: 16px 30px;
+    overflow: hidden;
+    border: 1px solid var(--orange);
+    border-radius: 10px;
+    background: linear-gradient(
+        135deg,
+        #ff8a00,
+        #ff5b00
+    );
+    color: #130805;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow:
+        0 0 20px rgba(255, 138, 0, 0.3),
+        0 5px 20px rgba(0, 0, 0, 0.3);
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        filter var(--transition);
 }
 
-#witchShadow{
-
-    width:220px;
-
-    right:5%;
-
+#startBtn::before,
+#enterGame::before {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: -50%;
+    width: 40%;
+    height: 300%;
+    transform: rotate(25deg);
+    background: rgba(255, 255, 255, 0.3);
+    transition: left 500ms ease;
 }
 
+#startBtn:hover::before,
+#enterGame:hover::before {
+    left: 130%;
+}
+
+#startBtn:hover,
+#enterGame:hover {
+    transform: translateY(-3px) scale(1.025);
+    filter: brightness(1.1);
+    box-shadow:
+        0 0 30px rgba(255, 138, 0, 0.55),
+        0 0 65px rgba(255, 138, 0, 0.15);
+}
+
+#startBtn:active,
+#enterGame:active {
+    transform: scale(0.98);
+}
+
+#startBtn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+}
+
+/* =========================
+   SKIP INTRO BUTTON
+========================= */
+
+#skipBtn {
+    position: fixed;
+    top: max(20px, env(safe-area-inset-top));
+    right: max(20px, env(safe-area-inset-right));
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 11px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 8px;
+    background: rgba(5, 3, 13, 0.78);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition:
+        opacity var(--transition),
+        visibility var(--transition),
+        transform var(--transition),
+        border-color var(--transition),
+        background var(--transition);
+}
+
+#skipBtn.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+#skipBtn:hover {
+    border-color: var(--orange);
+    background: rgba(255, 138, 0, 0.16);
+    box-shadow: 0 0 20px rgba(255, 138, 0, 0.15);
+}
+
+/* =========================
+   VIDEO OVERLAY
+========================= */
+
+#videoOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 30px 20px;
+    background:
+        radial-gradient(
+            ellipse at 50% 42%,
+            rgba(78, 23, 107, 0.38),
+            transparent 65%
+        ),
+        rgba(5, 3, 13, 0.65);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity 700ms ease,
+        visibility 700ms ease;
+}
+
+#videoOverlay[hidden] {
+    display: none !important;
+}
+
+#videoOverlay.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    animation: overlayAppear 800ms ease both;
+}
+
+.overlay-content {
+    width: min(100%, 760px);
+    padding: clamp(25px, 5vw, 58px);
+    text-align: center;
+    border: 1px solid rgba(155, 77, 255, 0.45);
+    border-radius: 24px;
+    background: rgba(5, 3, 13, 0.76);
+    box-shadow:
+        0 0 45px rgba(155, 77, 255, 0.15),
+        0 0 90px rgba(255, 138, 0, 0.07),
+        inset 0 0 40px rgba(155, 77, 255, 0.06);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+.overlay-content h1 {
+    color: var(--orange-light);
+}
+
+.overlay-content h2 {
+    color: var(--purple-light);
+}
+
+/* =========================
+   FOG LAYER
+========================= */
+
+#fogLayer {
+    position: fixed;
+    inset: -10%;
+    z-index: 3;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    background:
+        radial-gradient(
+            ellipse at 20% 80%,
+            rgba(142, 60, 205, 0.25),
+            transparent 45%
+        ),
+        radial-gradient(
+            ellipse at 80% 70%,
+            rgba(87, 43, 143, 0.23),
+            transparent 50%
+        ),
+        linear-gradient(
+            0deg,
+            rgba(94, 36, 145, 0.12),
+            transparent 65%
+        );
+    filter: blur(15px);
+    transition:
+        opacity 1.5s ease,
+        visibility 1.5s ease;
+}
+
+#fogLayer.active {
+    opacity: 1;
+    visibility: visible;
+    animation: fogDrift 18s ease-in-out infinite alternate;
+}
+
+#fogLayer::before,
+#fogLayer::after {
+    content: "";
+    position: absolute;
+    width: 150%;
+    height: 45%;
+    left: -25%;
+    border-radius: 50%;
+    filter: blur(35px);
+    background: rgba(130, 65, 180, 0.13);
+}
+
+#fogLayer::before {
+    bottom: 2%;
+    animation: fogWave 12s ease-in-out infinite alternate;
+}
+
+#fogLayer::after {
+    bottom: 15%;
+    opacity: 0.7;
+    animation: fogWave 17s ease-in-out infinite alternate-reverse;
+}
+
+/* =========================
+   MAGIC PARTICLES
+========================= */
+
+#magicParticles {
+    position: fixed;
+    inset: 0;
+    z-index: 4;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(255, 174, 71, 0.9) 0 1px,
+            transparent 2px
+        ),
+        radial-gradient(
+            circle,
+            rgba(192, 132, 252, 0.8) 0 1px,
+            transparent 2px
+        ),
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.6) 0 1px,
+            transparent 2px
+        );
+    background-size: 110px 130px, 170px 190px, 230px 210px;
+    background-position: 0 0, 45px 70px, 110px 30px;
+    transition:
+        opacity 1s ease,
+        visibility 1s ease;
+}
+
+#magicParticles.active {
+    opacity: 0.8;
+    visibility: visible;
+    animation: particlesFloat 18s linear infinite;
+}
+
+/* =========================
+   LIGHTNING FLASH
+========================= */
+
+#lightning {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    background: rgba(218, 195, 255, 0.85);
+    mix-blend-mode: screen;
+}
+
+#lightning.active {
+    visibility: visible;
+    animation: lightningFlash 900ms ease-out both;
+}
+
+/* =========================
+   OPTIONAL ACCESSIBLE MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes startAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes overlayAppear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fogDrift {
+    0% {
+        transform: translate3d(-2%, 0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate3d(2%, -2%, 0) scale(1.05);
+    }
+
+    100% {
+        transform: translate3d(-1%, 1%, 0) scale(1.02);
+    }
+}
+
+@keyframes fogWave {
+    0% {
+        transform: translateX(-5%) translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateX(4%) translateY(-8%) scale(1.08);
+    }
+
+    100% {
+        transform: translateX(-2%) translateY(3%) scale(1.03);
+    }
+}
+
+@keyframes particlesFloat {
+    from {
+        background-position: 0 0, 45px 70px, 110px 30px;
+    }
+
+    to {
+        background-position: 0 -450px, 45px -350px, 110px -550px;
+    }
+}
+
+@keyframes lightningFlash {
+    0% {
+        opacity: 0;
+    }
+
+    12% {
+        opacity: 0.9;
+    }
+
+    22% {
+        opacity: 0.05;
+    }
+
+    35% {
+        opacity: 0.65;
+    }
+
+    48% {
+        opacity: 0;
+    }
+
+    62% {
+        opacity: 0.3;
+    }
+
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 768px) {
+    .start-content,
+    .overlay-content {
+        padding: 32px 24px;
+        border-radius: 18px;
+    }
+
+    .festival-label,
+    .overlay-label {
+        letter-spacing: 0.18em;
+    }
+
+    #bgVideo {
+        object-position: center;
+    }
+
+    #skipBtn {
+        top: max(14px, env(safe-area-inset-top));
+        right: max(14px, env(safe-area-inset-right));
+        min-height: 40px;
+        padding: 10px 14px;
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 480px) {
+    #startScreen,
+    #videoOverlay {
+        padding: 18px 14px;
+    }
+
+    .start-content,
+    .overlay-content {
+        padding: 30px 19px;
+        border-radius: 16px;
+    }
+
+    .festival-label,
+    .overlay-label {
+        margin-bottom: 14px;
+        font-size: 9px;
+        letter-spacing: 0.14em;
+    }
+
+    .start-content h1,
+    .overlay-content h1 {
+        font-size: clamp(56px, 18vw, 84px);
+    }
+
+    .start-content h2,
+    .overlay-content h2 {
+        margin-top: 14px;
+        font-size: clamp(20px, 6vw, 27px);
+    }
+
+    .start-content p,
+    .overlay-content p {
+        margin: 18px auto 24px;
+        font-size: 14px;
+        line-height: 1.75;
+    }
+
+    #startBtn,
+    #enterGame {
+        width: 100%;
+        min-height: 52px;
+        padding: 15px 16px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+    }
+
+    #skipBtn {
+        top: max(12px, env(safe-area-inset-top));
+        right: max(12px, env(safe-area-inset-right));
+        font-size: 10px;
+    }
+}
+
+/* =========================
+   SHORT SCREENS
+========================= */
+
+@media (max-height: 600px) {
+    #startScreen,
+    #videoOverlay {
+        align-items: flex-start;
+    }
+
+    .start-content,
+    .overlay-content {
+        margin: auto 0;
+        padding: 24px;
+    }
+
+    .start-content h1,
+    .overlay-content h1 {
+        font-size: clamp(48px, 10vh, 76px);
+    }
+
+    .start-content h2,
+    .overlay-content h2 {
+        margin-top: 10px;
+    }
+
+    .start-content p,
+    .overlay-content p {
+        margin-top: 12px;
+        margin-bottom: 18px;
+        line-height: 1.6;
+    }
 }
