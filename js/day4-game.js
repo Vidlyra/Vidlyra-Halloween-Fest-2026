@@ -1,14 +1,9 @@
-/* ==========================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 4 — THE WITCH'S CURSE
-   Fixed Full JavaScript
-========================================================== */
-
 import { supabase } from "./supabase.js";
 
 "use strict";
 
 const Game = {
+    // Game state
     lanternsFound: 0,
     totalLanterns: 5,
 
@@ -27,18 +22,39 @@ const Game = {
     messageTimer: null,
     animationFrame: null,
     introTimer: null,
+    thunderTimer: null,
+
+    // Prevent duplicate initialization
+    initialized: false,
 
     /* ======================================================
        INITIALIZATION
     ====================================================== */
 
     async init() {
+        if (this.initialized) return;
+        this.initialized = true;
+
         this.cache();
         this.bindEvents();
 
+        if (!this.player) {
+            console.error("Day 4: #player element was not found.");
+            return;
+        }
+
+        if (this.lanterns.length !== this.totalLanterns) {
+            console.warn(
+                `Expected ${this.totalLanterns} lanterns, found ${this.lanterns.length}.`
+            );
+        }
+
         const allowed = await this.checkAccess();
 
-        if (!allowed) return;
+        if (!allowed) {
+            this.gameStarted = false;
+            return;
+        }
 
         this.createParticles();
         this.start();
@@ -46,12 +62,14 @@ const Game = {
     },
 
     /* ======================================================
-       CACHE DOM ELEMENTS
+       CACHE HTML ELEMENTS
     ====================================================== */
 
     cache() {
         this.player = document.getElementById("player");
-        this.lanterns = document.querySelectorAll(".lantern");
+        this.lanterns = Array.from(
+            document.querySelectorAll(".lantern")
+        );
 
         this.progress = document.getElementById("progressFill");
         this.counter = document.getElementById("lanternCounter");
@@ -85,8 +103,7 @@ const Game = {
         this.portalSound =
             document.getElementById("portalSound");
 
-        this.thunder =
-            document.getElementById("thunderSound");
+        this.thunder = document.getElementById("thunderSound");
 
         this.reward =
             document.getElementById("missionCompleteSound");
@@ -94,20 +111,11 @@ const Game = {
         this.particleContainer =
             document.getElementById("particleContainer");
 
-        this.restartBtn =
-            document.getElementById("restartBtn");
-
-        // The game expects exactly five lanterns.
-        if (this.lanterns.length !== this.totalLanterns) {
-            console.warn(
-                `Day 4 expects ${this.totalLanterns} lanterns, ` +
-                `but found ${this.lanterns.length}.`
-            );
-        }
+        this.restartBtn = document.getElementById("restartBtn");
     },
 
     /* ======================================================
-       SUPABASE ACCESS
+       SUPABASE ACCESS CHECK
     ====================================================== */
 
     async checkAccess() {
@@ -124,10 +132,7 @@ const Game = {
 
             this.user = user;
 
-            const {
-                data,
-                error
-            } = await supabase
+            const { data, error } = await supabase
                 .from("festival_progress")
                 .select("day3, day4")
                 .eq("user_id", user.id)
@@ -136,7 +141,6 @@ const Game = {
 
             if (error) {
                 console.error("Festival progress error:", error);
-
                 alert("Unable to load festival progress. Please try again.");
                 window.location.href = "map.html";
                 return false;
@@ -148,7 +152,6 @@ const Game = {
                 return false;
             }
 
-            // Day 3 must be completed first.
             if (data.day3 !== true) {
                 alert("🔒 Complete Day 3 before entering Day 4.");
                 window.location.href = "map.html";
@@ -158,15 +161,10 @@ const Game = {
             this.day4Completed = data.day4 === true;
 
             console.log("🧙 Day 4 access granted.");
-
-            if (this.day4Completed) {
-                console.log("✅ Day 4 was previously completed.");
-            }
-
             return true;
+
         } catch (error) {
             console.error("Day 4 access check failed:", error);
-
             alert("A connection error occurred. Please try again.");
             window.location.href = "map.html";
             return false;
@@ -178,21 +176,35 @@ const Game = {
     ====================================================== */
 
     bindEvents() {
-        this.lanterns.forEach((lantern) => {
-            lantern.addEventListener("click", () => {
+        // Click or tap to collect each lantern
+        this.lanterns.forEach((lantern, index) => {
+            lantern.style.cursor = "pointer";
+            lantern.style.pointerEvents = "auto";
+
+            lantern.addEventListener("click", (event) => {
+                event.stopPropagation();
+
+                console.log(
+                    `Lantern ${index + 1} clicked. Game started:`,
+                    this.gameStarted
+                );
+
                 this.collectLantern(lantern);
             });
         });
 
+        // Keyboard movement
         document.addEventListener("keydown", (event) => {
             const key = event.key;
 
             if (
-                key === "ArrowLeft" ||
-                key === "ArrowRight" ||
-                key === "ArrowUp" ||
-                key === "ArrowDown" ||
-                key === " "
+                [
+                    "ArrowLeft",
+                    "ArrowRight",
+                    "ArrowUp",
+                    "ArrowDown",
+                    " "
+                ].includes(key)
             ) {
                 event.preventDefault();
             }
@@ -208,6 +220,7 @@ const Game = {
             this.keys = {};
         });
 
+        // Continue to Day 5
         if (this.nextBtn) {
             this.nextBtn.addEventListener("click", () => {
                 if (!this.day4Completed) {
@@ -221,21 +234,20 @@ const Game = {
             });
         }
 
+        // Optional restart buttons
         if (this.restartBtn) {
             this.restartBtn.addEventListener("click", () => {
                 this.restartGame();
             });
         }
 
-        // Optional restart buttons can also use this ID.
-        const restartButtons =
-            document.querySelectorAll("[data-restart-game]");
-
-        restartButtons.forEach((button) => {
-            button.addEventListener("click", () => {
-                this.restartGame();
+        document
+            .querySelectorAll("[data-restart-game]")
+            .forEach((button) => {
+                button.addEventListener("click", () => {
+                    this.restartGame();
+                });
             });
-        });
     },
 
     /* ======================================================
@@ -246,7 +258,6 @@ const Game = {
         console.log("🎃 Day 4 — The Witch's Curse loaded.");
 
         this.gameStarted = true;
-
         this.updateProgress();
 
         if (this.bgMusic) {
@@ -271,10 +282,12 @@ const Game = {
 
         if (this.day4Completed) {
             this.showMessage(
-                "✅ Day 4 already completed! You may replay the mission."
+                "✨ You have completed Day 4 before. Find all five lanterns to replay!"
             );
         } else {
-            this.showMessage("Find all 5 Enchanted Lanterns.");
+            this.showMessage(
+                "🏮 Find and click all 5 Enchanted Lanterns!"
+            );
         }
 
         this.movePlayer();
@@ -287,8 +300,7 @@ const Game = {
     movePlayer() {
         const update = () => {
             if (!this.gameStarted) {
-                this.animationFrame =
-                    requestAnimationFrame(update);
+                this.animationFrame = requestAnimationFrame(update);
                 return;
             }
 
@@ -325,12 +337,12 @@ const Game = {
             }
 
             this.playerX = Math.max(
-                3,
-                Math.min(95, this.playerX)
+                2,
+                Math.min(94, this.playerX)
             );
 
             this.playerY = Math.max(
-                8,
+                5,
                 Math.min(82, this.playerY)
             );
 
@@ -339,8 +351,7 @@ const Game = {
                 this.player.style.bottom = `${this.playerY}%`;
             }
 
-            this.animationFrame =
-                requestAnimationFrame(update);
+            this.animationFrame = requestAnimationFrame(update);
         };
 
         if (this.animationFrame !== null) {
@@ -355,13 +366,13 @@ const Game = {
     ====================================================== */
 
     collectLantern(lantern) {
-    if (
-        !this.gameStarted ||
-        this.finalSequenceStarted ||
-        lantern.classList.contains("collected")
-    ) {
-        return;
-    }
+        if (
+            !this.gameStarted ||
+            this.finalSequenceStarted ||
+            lantern.classList.contains("collected")
+        ) {
+            return;
+        }
 
         lantern.classList.add("collected");
         lantern.style.pointerEvents = "none";
@@ -383,11 +394,375 @@ const Game = {
         lantern.style.opacity = "0";
 
         this.flashScreen();
-
         this.showMessage("🏮 Enchanted Lantern Lit!");
+
+        console.log(
+            `Lanterns collected: ${this.lanternsFound}/${this.totalLanterns}`
+        );
 
         if (this.lanternsFound >= this.totalLanterns) {
             this.gameStarted = false;
 
             setTimeout(() => {
                 this.beginFinalSequence();
+            }, 700);
+        }
+    },
+
+    /* ======================================================
+       UPDATE PROGRESS
+    ====================================================== */
+
+    updateProgress() {
+        const percentage =
+            (this.lanternsFound / this.totalLanterns) * 100;
+
+        if (this.progress) {
+            this.progress.style.width = `${percentage}%`;
+        }
+
+        if (this.counter) {
+            this.counter.textContent =
+                `🏮 Enchanted Lanterns: ${this.lanternsFound} / ${this.totalLanterns}`;
+        }
+    },
+
+    /* ======================================================
+       DIALOG MESSAGE
+    ====================================================== */
+
+    showMessage(message, duration = 2600) {
+        if (!this.dialog || !this.dialogBox) return;
+
+        this.dialog.textContent = message;
+        this.dialogBox.classList.add("show");
+
+        clearTimeout(this.messageTimer);
+
+        this.messageTimer = setTimeout(() => {
+            this.dialogBox?.classList.remove("show");
+        }, duration);
+    },
+
+    /* ======================================================
+       SCREEN FLASH
+    ====================================================== */
+
+    flashScreen() {
+        if (!this.flash) return;
+
+        this.flash.classList.add("active");
+
+        setTimeout(() => {
+            this.flash?.classList.remove("active");
+        }, 130);
+    },
+
+    /* ======================================================
+       FINAL SEQUENCE
+    ====================================================== */
+
+    async beginFinalSequence() {
+        if (this.finalSequenceStarted) return;
+
+        this.finalSequenceStarted = true;
+        this.gameStarted = false;
+
+        this.showMessage(
+            "✨ All five lanterns are lit! The Witch is awakening...",
+            4000
+        );
+
+        this.playSound(this.spellSound);
+
+        await this.wait(1000);
+
+        this.flashScreen();
+
+        if (this.witch) {
+            this.witch.classList.add("active");
+        }
+
+        this.playSound(this.witchAppear);
+
+        await this.wait(1800);
+
+        this.playSound(this.witchLaugh);
+
+        this.showMessage(
+            "🧙‍♀️ You have broken the Witch's spell!",
+            3500
+        );
+
+        if (this.portal) {
+            this.portal.classList.add("active");
+        }
+
+        this.playSound(this.portalSound);
+
+        await this.wait(1500);
+
+        await this.completeMission();
+    },
+
+    /* ======================================================
+       SAVE COMPLETION
+    ====================================================== */
+
+    async completeMission() {
+        if (this.completionSaving) return;
+
+        this.completionSaving = true;
+
+        try {
+            if (!this.user) {
+                throw new Error("No authenticated user found.");
+            }
+
+            const { data: existing, error: readError } = await supabase
+                .from("festival_progress")
+                .select("day3, day4")
+                .eq("user_id", this.user.id)
+                .eq("festival", "halloween_2026")
+                .maybeSingle();
+
+            if (readError) {
+                throw readError;
+            }
+
+            if (!existing || existing.day3 !== true) {
+                throw new Error(
+                    "Day 3 completion could not be verified."
+                );
+            }
+
+            // Preserve the user's existing progress fields.
+            const { error: saveError } = await supabase
+                .from("festival_progress")
+                .update({ day4: true })
+                .eq("user_id", this.user.id)
+                .eq("festival", "halloween_2026");
+
+            if (saveError) {
+                throw saveError;
+            }
+
+            this.day4Completed = true;
+
+            console.log("✅ Day 4 completion saved.");
+
+        } catch (error) {
+            console.error("Could not save Day 4 completion:", error);
+
+            this.showMessage(
+                "All lanterns are lit! Progress saving failed. Check your connection or try again.",
+                5000
+            );
+
+            this.completionSaving = false;
+            return;
+        }
+
+        this.completionSaving = false;
+
+        this.playSound(this.reward);
+
+        if (this.missionComplete) {
+            this.missionComplete.classList.add("show");
+            this.missionComplete.setAttribute("aria-hidden", "false");
+        }
+
+        this.showMessage(
+            "🎉 Mission complete! The Witch's Curse is broken.",
+            5000
+        );
+    },
+
+    /* ======================================================
+       RESTART GAME
+    ====================================================== */
+
+    restartGame() {
+        clearTimeout(this.messageTimer);
+        clearTimeout(this.introTimer);
+
+        this.lanternsFound = 0;
+        this.playerX = 8;
+        this.playerY = 12;
+
+        this.finalSequenceStarted = false;
+        this.completionSaving = false;
+        this.gameStarted = true;
+
+        this.keys = {};
+
+        this.lanterns.forEach((lantern) => {
+            lantern.classList.remove("collected");
+            lantern.style.opacity = "1";
+            lantern.style.pointerEvents = "auto";
+            lantern.style.transform = "";
+        });
+
+        if (this.witch) {
+            this.witch.classList.remove("active");
+        }
+
+        if (this.portal) {
+            this.portal.classList.remove("active");
+        }
+
+        if (this.missionComplete) {
+            this.missionComplete.classList.remove("show");
+            this.missionComplete.setAttribute("aria-hidden", "true");
+        }
+
+        if (this.intro) {
+            this.intro.classList.add("hide");
+        }
+
+        if (this.player) {
+            this.player.style.left = `${this.playerX}%`;
+            this.player.style.bottom = `${this.playerY}%`;
+        }
+
+        this.updateProgress();
+        this.showMessage("🏮 Find all five enchanted lanterns!");
+
+        this.movePlayer();
+    },
+
+    /* ======================================================
+       SOUND HELPER
+    ====================================================== */
+
+    playSound(audio) {
+        if (!audio) return;
+
+        try {
+            if (audio === this.bgMusic || audio === this.cauldronSound) {
+                // Keep looping ambience playing if already active.
+            } else {
+                audio.currentTime = 0;
+            }
+
+            const promise = audio.play();
+
+            if (promise && typeof promise.catch === "function") {
+                promise.catch((error) => {
+                    console.warn(
+                        `Audio playback blocked for "${audio.id}".`,
+                        error.message
+                    );
+                });
+            }
+        } catch (error) {
+            console.warn("Audio playback error:", error);
+        }
+    },
+
+    /* ======================================================
+       THUNDER EFFECT
+    ====================================================== */
+
+    startThunder() {
+        const triggerThunder = () => {
+            if (!this.gameStarted) {
+                this.thunderTimer = setTimeout(
+                    triggerThunder,
+                    5000
+                );
+                return;
+            }
+
+            if (this.thunder && Math.random() > 0.55) {
+                this.playSound(this.thunder);
+
+                const lightning =
+                    document.getElementById("lightning");
+
+                if (lightning) {
+                    lightning.style.opacity = "0.75";
+
+                    setTimeout(() => {
+                        lightning.style.opacity = "0";
+                    }, 100);
+
+                    setTimeout(() => {
+                        lightning.style.opacity = "0.4";
+                    }, 180);
+
+                    setTimeout(() => {
+                        lightning.style.opacity = "0";
+                    }, 260);
+                }
+            }
+
+            this.thunderTimer = setTimeout(
+                triggerThunder,
+                9000 + Math.random() * 10000
+            );
+        };
+
+        clearTimeout(this.thunderTimer);
+
+        this.thunderTimer = setTimeout(
+            triggerThunder,
+            5000
+        );
+    },
+
+    /* ======================================================
+       ATMOSPHERIC PARTICLES
+    ====================================================== */
+
+    createParticles() {
+        if (!this.particleContainer) return;
+
+        this.particleContainer.replaceChildren();
+
+        for (let i = 0; i < 35; i++) {
+            const particle = document.createElement("span");
+
+            particle.className = "day4-particle";
+
+            particle.style.position = "absolute";
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.width = `${2 + Math.random() * 4}px`;
+            particle.style.height = particle.style.width;
+            particle.style.borderRadius = "50%";
+            particle.style.background = "#ffb347";
+            particle.style.boxShadow = "0 0 8px #ff8a00";
+            particle.style.opacity = `${0.25 + Math.random() * 0.65}`;
+            particle.style.animation =
+                `day4ParticleFloat ${4 + Math.random() * 8}s ease-in-out infinite alternate`;
+
+            this.particleContainer.appendChild(particle);
+        }
+    },
+
+    /* ======================================================
+       WAIT HELPER
+    ====================================================== */
+
+    wait(milliseconds) {
+        return new Promise((resolve) => {
+            setTimeout(resolve, milliseconds);
+        });
+    }
+};
+
+/* ==========================================================
+   START AFTER HTML IS READY
+========================================================== */
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+        Game.init();
+    }, { once: true });
+} else {
+    Game.init();
+}
+
+/* Optional debugging access */
+window.VidlyraDay4 = Game;
