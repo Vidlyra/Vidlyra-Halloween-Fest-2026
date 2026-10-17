@@ -1,284 +1,152 @@
 import { supabase } from "./supabase.js";
 
-/* ============================================================
-   CONFIGURATION
-   ============================================================ */
-
-const CONFIG = {
-  festival: "halloween_2026",
-
-  loginPage: "login.html",
-  mapPage: "map.html",
-  gamePage: "day5-game.html",
-
-  thunderTime: 8.5,
-  whisperAtEnd: true,
-
-  musicVolume: 0.3,
-  thunderVolume: 0.7,
-  whisperVolume: 0.55,
-
-  loadingDuration: 1600,
-  fadeDuration: 1000
-};
-
-/* ============================================================
-   DAY 5 CONTROLLER
-   ============================================================ */
+"use strict";
 
 const Day5 = {
-  el: {},
-
+  user: null,
   started: false,
   finished: false,
   enteringGame: false,
   thunderPlayed: false,
   whisperPlayed: false,
-  accessGranted: false,
 
-  loadingTimer: null,
-  animationFrame: null,
+  /* ==========================================================
+     CACHE HTML ELEMENTS
+     ========================================================== */
 
-  /* ----------------------------------------------------------
-     INITIALIZATION
-     ---------------------------------------------------------- */
+  cache() {
+    const get = id => document.getElementById(id);
+
+    this.loadingScreen = get("loadingScreen");
+    this.loadingFill = get("loadingFill");
+
+    this.video = get("introVideo");
+    this.overlay = get("overlay");
+    this.lightning = get("lightningFlash");
+    this.fade = get("fadeScreen");
+
+    this.title = get("titleContainer");
+    this.mission = get("missionPreview");
+    this.subtitle = get("subtitleContainer");
+    this.storySubtitle = get("storySubtitle");
+
+    this.skip = get("skipButton");
+    this.progress = get("videoFill");
+
+    this.endOverlay = get("endOverlay");
+    this.enterButton = get("enterButton");
+
+    this.startOverlay = get("startOverlay");
+    this.startButton = get("startButton");
+
+    this.bgMusic = get("bgMusic");
+    this.thunder = get("thunder");
+    this.ghostWhisper = get("ghostWhisper");
+
+    if (!this.video) {
+      console.error("❌ Missing #introVideo in Day 5 HTML.");
+    }
+
+    if (!this.startButton) {
+      console.error("❌ Missing #startButton in Day 5 HTML.");
+    }
+
+    if (!this.enterButton) {
+      console.error("❌ Missing #enterButton in Day 5 HTML.");
+    }
+  },
+
+  /* ==========================================================
+     INITIALIZE
+     ========================================================== */
 
   async init() {
-    this.cacheElements();
-    this.prepareInitialState();
+    this.cache();
+    this.prepareUI();
     this.bindEvents();
 
-    console.log("🎃 VIDLYRA HALLOWEEN FEST 2026 — DAY 5");
-
+    this.configureAudio();
     await this.loadingAnimation();
 
     const allowed = await this.checkAccess();
 
-    if (!allowed) {
-      return;
-    }
-
-    this.accessGranted = true;
+    if (!allowed) return;
 
     this.showStartScreen();
 
-    console.log("👻 Day 5 cinematic ready.");
+    console.log(
+      "🎃 VIDLYRA HALLOWEEN FEST 2026 — DAY 5 READY"
+    );
   },
 
-  /* ----------------------------------------------------------
-     ELEMENT REFERENCES
-     ---------------------------------------------------------- */
-
-  cacheElements() {
-    const ids = [
-      "loadingScreen",
-      "loadingFill",
-      "startOverlay",
-      "startButton",
-      "videoContainer",
-      "introVideo",
-      "overlay",
-      "lightningFlash",
-      "fadeScreen",
-      "titleContainer",
-      "missionPreview",
-      "subtitleContainer",
-      "storySubtitle",
-      "skipButton",
-      "videoProgress",
-      "videoFill",
-      "endOverlay",
-      "enterButton",
-      "bgMusic",
-      "thunder",
-      "ghostWhisper"
-    ];
-
-    for (const id of ids) {
-      this.el[id] = document.getElementById(id);
+  prepareUI() {
+    if (this.startOverlay) {
+      this.startOverlay.style.display = "none";
+      this.startOverlay.style.opacity = "0";
+      this.startOverlay.style.visibility = "hidden";
+      this.startOverlay.style.pointerEvents = "none";
     }
 
-    const missing = ids.filter(id => !this.el[id]);
+    if (this.endOverlay) {
+      this.endOverlay.classList.remove("show");
+    }
 
-    if (missing.length) {
-      console.error(
-        "❌ Missing HTML elements:",
-        missing.join(", ")
-      );
+    if (this.title) {
+      this.title.classList.remove("show");
+    }
+
+    if (this.mission) {
+      this.mission.classList.remove("show");
+    }
+
+    if (this.subtitle) {
+      this.subtitle.style.display = "none";
+    }
+
+    if (this.skip) {
+      this.skip.style.display = "none";
+    }
+
+    const progressBar = document.getElementById("videoProgress");
+
+    if (progressBar) {
+      progressBar.style.display = "none";
+    }
+
+    if (this.progress) {
+      this.progress.style.width = "0%";
+    }
+
+    if (this.fade) {
+      this.fade.style.opacity = "0";
+      this.fade.classList.remove("active");
+    }
+
+    if (this.video) {
+      this.video.pause();
+      this.video.muted = true;
+      this.video.playsInline = true;
     }
   },
-
-  /* ----------------------------------------------------------
-     INITIAL SCREEN STATE
-     ---------------------------------------------------------- */
-
-  prepareInitialState() {
-    const {
-      loadingScreen,
-      loadingFill,
-      startOverlay,
-      videoContainer,
-      introVideo,
-      titleContainer,
-      missionPreview,
-      subtitleContainer,
-      storySubtitle,
-      skipButton,
-      videoProgress,
-      endOverlay,
-      fadeScreen
-    } = this.el;
-
-    if (loadingScreen) {
-      loadingScreen.style.display = "grid";
-      loadingScreen.style.opacity = "1";
-      loadingScreen.style.visibility = "visible";
-    }
-
-    if (loadingFill) {
-      loadingFill.style.width = "0%";
-    }
-
-    if (startOverlay) {
-      startOverlay.style.display = "none";
-      startOverlay.style.opacity = "0";
-      startOverlay.style.visibility = "hidden";
-      startOverlay.style.pointerEvents = "none";
-    }
-
-    if (videoContainer) {
-      videoContainer.style.display = "block";
-    }
-
-    if (introVideo) {
-      introVideo.muted = true;
-      introVideo.playsInline = true;
-      introVideo.preload = "auto";
-    }
-
-    if (titleContainer) {
-      titleContainer.classList.remove("show");
-    }
-
-    if (missionPreview) {
-      missionPreview.classList.remove("show");
-    }
-
-    if (subtitleContainer) {
-      subtitleContainer.style.display = "none";
-    }
-
-    if (storySubtitle) {
-      storySubtitle.textContent = "";
-    }
-
-    if (skipButton) {
-      skipButton.style.display = "none";
-    }
-
-    if (videoProgress) {
-      videoProgress.style.display = "none";
-    }
-
-    if (endOverlay) {
-      endOverlay.classList.remove("show");
-    }
-
-    if (fadeScreen) {
-      fadeScreen.style.opacity = "0";
-    }
-
-    this.configureAudio();
-  },
-
-  /* ----------------------------------------------------------
-     AUDIO CONFIGURATION
-     Do not play audio here. Browsers require user interaction.
-     ---------------------------------------------------------- */
 
   configureAudio() {
-    const { bgMusic, thunder, ghostWhisper } = this.el;
-
-    if (bgMusic) {
-      bgMusic.volume = CONFIG.musicVolume;
-      bgMusic.loop = true;
-      bgMusic.preload = "auto";
+    if (this.bgMusic) {
+      this.bgMusic.volume = 0.25;
+      this.bgMusic.loop = true;
     }
 
-    if (thunder) {
-      thunder.volume = CONFIG.thunderVolume;
-      thunder.preload = "auto";
+    if (this.thunder) {
+      this.thunder.volume = 0.7;
     }
 
-    if (ghostWhisper) {
-      ghostWhisper.volume = CONFIG.whisperVolume;
-      ghostWhisper.preload = "auto";
+    if (this.ghostWhisper) {
+      this.ghostWhisper.volume = 0.35;
     }
   },
 
-  /* ----------------------------------------------------------
-     LOADING ANIMATION
-     ---------------------------------------------------------- */
-
-  async loadingAnimation() {
-    const { loadingScreen, loadingFill, introVideo } = this.el;
-
-    if (loadingFill) {
-      loadingFill.style.width = "15%";
-    }
-
-    if (introVideo) {
-      try {
-        introVideo.load();
-      } catch (error) {
-        console.warn("Video preload warning:", error);
-      }
-    }
-
-    await new Promise(resolve => {
-      let progress = 15;
-      const step = 5;
-
-      const timer = setInterval(() => {
-        progress = Math.min(progress + step, 90);
-
-        if (loadingFill) {
-          loadingFill.style.width = `${progress}%`;
-        }
-
-        if (progress >= 90) {
-          clearInterval(timer);
-          resolve();
-        }
-      }, 60);
-    });
-
-    if (introVideo && introVideo.readyState >= 1) {
-      if (loadingFill) {
-        loadingFill.style.width = "100%";
-      }
-    }
-
-    await this.delay(CONFIG.loadingDuration);
-
-    if (loadingFill) {
-      loadingFill.style.width = "100%";
-    }
-
-    if (loadingScreen) {
-      loadingScreen.style.opacity = "0";
-      loadingScreen.style.visibility = "hidden";
-
-      await this.delay(850);
-
-      loadingScreen.style.display = "none";
-    }
-  },
-
-  /* ----------------------------------------------------------
-     SUPABASE ACCESS CHECK
-     Requires a logged-in user and completed Day 4.
-     ---------------------------------------------------------- */
+  /* ==========================================================
+     SUPABASE — LOGIN AND DAY 4 ACCESS
+     ========================================================== */
 
   async checkAccess() {
     try {
@@ -288,176 +156,501 @@ const Day5 = {
       } = await supabase.auth.getUser();
 
       if (authError || !user) {
-        console.warn("🔒 Login required.");
-
-        window.location.replace(CONFIG.loginPage);
+        window.location.replace("login.html");
         return false;
       }
 
-      const { data: progress, error } = await supabase
+      this.user = user;
+
+      const { data, error } = await supabase
         .from("festival_progress")
-        .select("day4")
+        .select("day4, day5")
         .eq("user_id", user.id)
-        .eq("festival", CONFIG.festival)
+        .eq("festival", "halloween_2026")
         .maybeSingle();
 
       if (error) {
-        console.error("❌ Could not check festival progress:", error);
+        console.error("❌ Supabase progress error:", error);
 
-        this.showAccessError(
-          "Unable to verify your festival progress. Please refresh and try again."
+        this.showError(
+          "Unable to check festival progress. Please refresh and try again."
         );
 
         return false;
       }
 
-      if (!progress || progress.day4 !== true) {
-        console.warn("🔒 Complete Day 4 before entering Day 5.");
+      if (!data) {
+        this.showError(
+          "Festival progress was not found for your account."
+        );
 
-        window.location.replace(CONFIG.mapPage);
         return false;
       }
 
-      console.log("✅ Day 4 completed. Day 5 access granted.");
+      if (data.day4 !== true) {
+        alert("🔒 Complete Day 4 before entering Day 5.");
+        window.location.replace("map.html");
+        return false;
+      }
+
+      console.log("👻 Day 5 access granted.");
 
       return true;
     } catch (error) {
-      console.error("❌ Access check failed:", error);
+      console.error("❌ Day 5 access check failed:", error);
 
-      this.showAccessError(
-        "Could not verify access. Check your connection and reload the page."
+      this.showError(
+        "Connection error while checking access. Please reload the page."
       );
 
       return false;
     }
   },
 
-  /* ----------------------------------------------------------
-     ACCESS ERROR MESSAGE
-     ---------------------------------------------------------- */
+  showError(message) {
+    if (this.loadingScreen) {
+      this.loadingScreen.style.display = "grid";
+      this.loadingScreen.style.opacity = "1";
+      this.loadingScreen.style.visibility = "visible";
 
-  showAccessError(message) {
-    const { loadingScreen } = this.el;
-
-    if (loadingScreen) {
-      loadingScreen.style.display = "grid";
-      loadingScreen.style.opacity = "1";
-      loadingScreen.style.visibility = "visible";
-
-      const label = loadingScreen.querySelector(".loading-label");
+      const label = this.loadingScreen.querySelector(".loading-label");
 
       if (label) {
         label.textContent = message;
-        label.style.maxWidth = "320px";
-        label.style.marginInline = "auto";
+        label.style.whiteSpace = "normal";
         label.style.lineHeight = "1.8";
-        label.style.color = "#ffb347";
       }
+    } else {
+      alert(message);
     }
   },
 
-  /* ----------------------------------------------------------
-     START SCREEN
-     ---------------------------------------------------------- */
+  /* ==========================================================
+     LOADING ANIMATION
+     ========================================================== */
 
-  showStartScreen() {
-    const { startOverlay } = this.el;
+  async loadingAnimation() {
+    const screen = this.loadingScreen;
+    const fill = this.loadingFill;
 
-    if (!startOverlay) {
-      console.error("❌ startOverlay was not found.");
-      return;
+    if (screen) {
+      screen.style.display = "grid";
+      screen.style.opacity = "1";
+      screen.style.visibility = "visible";
     }
 
-    startOverlay.style.display = "grid";
+    if (fill) {
+      fill.style.width = "0%";
+    }
+
+    const video = this.video;
+
+    if (video) {
+      try {
+        video.load();
+      } catch (error) {
+        console.warn("Video preload warning:", error);
+      }
+    }
+
+    const start = Date.now();
+    const duration = 1400;
+
+    await new Promise(resolve => {
+      const tick = () => {
+        const elapsed = Date.now() - start;
+        const percentage = Math.min(
+          100,
+          (elapsed / duration) * 100
+        );
+
+        if (fill) {
+          fill.style.width = `${percentage}%`;
+        }
+
+        if (percentage >= 100) {
+          resolve();
+        } else {
+          requestAnimationFrame(tick);
+        }
+      };
+
+      requestAnimationFrame(tick);
+    });
+
+    if (screen) {
+      screen.style.opacity = "0";
+      screen.style.visibility = "hidden";
+
+      await this.delay(850);
+
+      screen.style.display = "none";
+    }
+  },
+
+  /* ==========================================================
+     SHOW START SCREEN
+     ========================================================== */
+
+  showStartScreen() {
+    if (!this.startOverlay) return;
+
+    this.startOverlay.style.display = "grid";
 
     requestAnimationFrame(() => {
-      startOverlay.style.opacity = "1";
-      startOverlay.style.visibility = "visible";
-      startOverlay.style.pointerEvents = "auto";
+      this.startOverlay.style.opacity = "1";
+      this.startOverlay.style.visibility = "visible";
+      this.startOverlay.style.pointerEvents = "auto";
     });
   },
 
-  /* ----------------------------------------------------------
-     EVENT BINDINGS
-     ---------------------------------------------------------- */
+  /* ==========================================================
+     EVENTS
+     ========================================================== */
 
   bindEvents() {
-    const {
-      startButton,
-      skipButton,
-      enterButton,
-      introVideo,
-      lightningFlash
-    } = this.el;
-
-    startButton?.addEventListener("click", () => {
+    this.startButton?.addEventListener("click", () => {
       this.startExperience();
     });
 
-    skipButton?.addEventListener("click", () => {
+    this.skip?.addEventListener("click", () => {
       this.finishVideo();
     });
 
-    enterButton?.addEventListener("click", () => {
+    this.enterButton?.addEventListener("click", () => {
       this.enterGame();
     });
 
-    introVideo?.addEventListener("loadedmetadata", () => {
-      console.log(
-        `🎬 Day 5 cinematic loaded: ${introVideo.videoWidth} x ${introVideo.videoHeight}`
-      );
-    });
-
-    introVideo?.addEventListener("timeupdate", () => {
+    this.video?.addEventListener("timeupdate", () => {
       this.updateProgress();
-      this.updateCinematicEffects();
+      this.updateTimeline();
       this.updateSubtitles();
     });
 
-    introVideo?.addEventListener("ended", () => {
+    this.video?.addEventListener("ended", () => {
       this.finishVideo();
     });
 
-    introVideo?.addEventListener("error", () => {
-      console.error(
-        "❌ Intro video failed to load:",
-        introVideo.currentSrc
+    this.video?.addEventListener("loadedmetadata", () => {
+      console.log(
+        `🎬 Day 5 video loaded: ${this.video.videoWidth} × ${this.video.videoHeight}`
       );
     });
 
-    lightningFlash?.addEventListener("animationend", () => {
-      lightningFlash.classList.remove("active");
+    this.video?.addEventListener("error", () => {
+      console.error(
+        "❌ Could not load video:",
+        this.video.currentSrc,
+        this.video.error
+      );
+
+      this.showError(
+        "The Day 5 video could not load. Check assets/video/day5-intro.mp4."
+      );
     });
 
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden && this.el.bgMusic) {
-        this.el.bgMusic.pause();
-      } else if (
-        !document.hidden &&
-        this.started &&
-        !this.finished &&
-        this.el.bgMusic
-      ) {
-        this.safePlay(this.el.bgMusic, "background music");
-      }
+    this.lightning?.addEventListener("animationend", () => {
+      this.lightning.classList.remove("active");
     });
   },
 
-  /* ----------------------------------------------------------
-     START CINEMATIC
-     All audio playback begins after the button click.
-     ---------------------------------------------------------- */
+  /* ==========================================================
+     START EXPERIENCE
+     Audio is initiated only after the user's click.
+     ========================================================== */
 
   async startExperience() {
-    if (this.started || !this.accessGranted) {
-      return;
-    }
+    if (this.started || !this.video) return;
 
     this.started = true;
 
-    const {
-      startOverlay,
-      introVideo,
-      bgMusic,
-      skipButton,
-      video
+    if (this.startButton) {
+      this.startButton.disabled = true;
+    }
+
+    if (this.startOverlay) {
+      this.startOverlay.style.opacity = "0";
+      this.startOverlay.style.visibility = "hidden";
+      this.startOverlay.style.pointerEvents = "none";
+
+      await this.delay(450);
+
+      this.startOverlay.style.display = "none";
+    }
+
+    if (this.video) {
+      this.video.currentTime = 0;
+      this.video.muted = true;
+    }
+
+    /*
+     * Initiate audio playback inside the user's click flow.
+     */
+    const musicPromise = this.playAudio(this.bgMusic, "music");
+    const videoPromise = this.video.play();
+
+    try {
+      await videoPromise;
+    } catch (error) {
+      console.error("❌ Video playback failed:", error);
+
+      this.started = false;
+
+      if (this.startOverlay) {
+        this.startOverlay.style.display = "grid";
+        this.startOverlay.style.opacity = "1";
+        this.startOverlay.style.visibility = "visible";
+        this.startOverlay.style.pointerEvents = "auto";
+      }
+
+      if (this.startButton) {
+        this.startButton.disabled = false;
+        this.startButton.textContent = "RETRY EXPERIENCE";
+      }
+
+      return;
+    }
+
+    await musicPromise;
+
+    const progressBar = document.getElementById("videoProgress");
+
+    if (progressBar) {
+      progressBar.style.display = "block";
+    }
+
+    if (this.skip) {
+      this.skip.style.display = "block";
+    }
+
+    if (this.subtitle) {
+      this.subtitle.style.display = "flex";
+    }
+
+    console.log("▶️ Day 5 cinematic playing.");
+  },
+
+  async playAudio(audio, name) {
+    if (!audio) {
+      console.warn(`Audio element not found: ${name}`);
+      return false;
+    }
+
+    try {
+      const result = audio.play();
+
+      if (result && typeof result.then === "function") {
+        await result;
+      }
+
+      return true;
+    } catch (error) {
+      console.warn(`Audio "${name}" could not play:`, error);
+      return false;
+    }
+  },
+
+  /* ==========================================================
+     TIMELINE EFFECTS
+     ========================================================== */
+
+  updateTimeline() {
+    if (!this.video || !this.started || this.finished) return;
+
+    const time = this.video.currentTime;
+
+    if (time >= 2 && time < 8) {
+      this.title?.classList.add("show");
+    } else {
+      this.title?.classList.remove("show");
+    }
+
+    if (time >= 12) {
+      this.mission?.classList.add("show");
+    } else {
+      this.mission?.classList.remove("show");
+    }
+
+    /*
+     * Thunder and lightning play only once per cinematic.
+     */
+    if (time >= 8.5 && !this.thunderPlayed) {
+      this.thunderPlayed = true;
+      this.playThunder();
+    }
+  },
+
+  async playThunder() {
+    if (this.finished || !this.started) return;
+
+    if (this.lightning) {
+      this.lightning.classList.remove("active");
+
+      // Force a reflow so the animation can restart.
+      void this.lightning.offsetWidth;
+
+      this.lightning.classList.add("active");
+    }
+
+    if (this.thunder) {
+      this.thunder.currentTime = 0;
+      await this.playAudio(this.thunder, "thunder");
+    }
+  },
+
+  /* ==========================================================
+     SUBTITLES
+     Adjust timings to match the actual video.
+     ========================================================== */
+
+  updateSubtitles() {
+    if (!this.video || !this.storySubtitle) return;
+
+    const time = this.video.currentTime;
+
+    const captions = [
+      [0, 4, "When the final light fades, the spirit world awakens..."],
+      [4, 9, "Seven ancient lanterns guard the boundary between worlds."],
+      [9, 14, "Something ancient is coming for them."],
+      [14, 20, "The Ghost King has awakened."],
+      [20, 27, "Find the seven Spirit Lanterns before darkness consumes everything."]
+    ];
+
+    const current = captions.find(
+      ([start, end]) => time >= start && time < end
+    );
+
+    this.storySubtitle.textContent = current ? current[2] : "";
+  },
+
+  /* ==========================================================
+     VIDEO PROGRESS
+     ========================================================== */
+
+  updateProgress() {
+    if (
+      !this.video ||
+      !this.progress ||
+      !Number.isFinite(this.video.duration) ||
+      this.video.duration <= 0
+    ) {
+      return;
+    }
+
+    const percent = Math.min(
+      100,
+      (this.video.currentTime / this.video.duration) * 100
+    );
+
+    this.progress.style.width = `${percent}%`;
+  },
+
+  /* ==========================================================
+     FINISH INTRO OR SKIP
+     This does NOT mark Day 5 complete.
+     ========================================================== */
+
+  finishVideo() {
+    if (this.finished || !this.started) return;
+
+    this.finished = true;
+
+    if (this.video) {
+      this.video.pause();
+    }
+
+    if (this.skip) {
+      this.skip.style.display = "none";
+    }
+
+    if (this.title) {
+      this.title.classList.remove("show");
+    }
+
+    if (this.mission) {
+      this.mission.classList.remove("show");
+    }
+
+    if (this.subtitle) {
+      this.subtitle.style.display = "none";
+    }
+
+    if (this.progress) {
+      this.progress.style.width = "100%";
+    }
+
+    if (this.bgMusic) {
+      this.bgMusic.volume = 0.12;
+    }
+
+    if (this.endOverlay) {
+      this.endOverlay.classList.add("show");
+    }
+
+    if (this.ghostWhisper && !this.whisperPlayed) {
+      this.whisperPlayed = true;
+      this.ghostWhisper.currentTime = 0;
+      this.playAudio(this.ghostWhisper, "ghost whisper");
+    }
+
+    console.log("🎬 Cinematic finished. Ready to enter Day 5 game.");
+  },
+
+  /* ==========================================================
+     ENTER DAY 5 GAME
+     ========================================================== */
+
+  async enterGame() {
+    if (this.enteringGame || !this.finished) return;
+
+    this.enteringGame = true;
+
+    if (this.enterButton) {
+      this.enterButton.disabled = true;
+      this.enterButton.textContent = "ENTERING THE SPIRIT WORLD...";
+    }
+
+    this.bgMusic?.pause();
+    this.thunder?.pause();
+    this.ghostWhisper?.pause();
+
+    if (this.fade) {
+      this.fade.style.opacity = "1";
+      this.fade.classList.add("active");
+    }
+
+    await this.delay(900);
+
+    /*
+     * This is the playable Day 5 game page.
+     * Change only if your actual filename is different.
+     */
+    window.location.href = "day5-epic-game.html";
+  },
+
+  /* ==========================================================
+     UTILITIES
+     ========================================================== */
+
+  delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+};
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+
+function bootDay5() {
+  Day5.init().catch(error => {
+    console.error("❌ Day 5 initialization failed:", error);
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", bootDay5, {
+    once: true
+  });
+} else {
+  bootDay5();
+}
