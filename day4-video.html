@@ -1,202 +1,358 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="theme-color" content="#05030d">
+    <meta name="description" content="VIDLYRA Halloween Fest 2026 — Day 4: The Witch's Curse">
 
-    <title>
-        VIDLYRA HALLOWEEN FEST 2026 | DAY 4
-    </title>
+    <title>VIDLYRA HALLOWEEN FEST 2026 | DAY 4</title>
 
-    <link
-        rel="stylesheet"
-        href="css/day4-video.css"
-    >
+    <link rel="stylesheet" href="css/day4-video.css">
 
+    <style>
+        /* ===== VIDEO BACKGROUND ===== */
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: #05030d;
+        }
+
+        #bgVideo {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            object-position: center;
+            background: #05030d;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Keep cinematic effects above the video,
+           but below the start and intro screens. */
+
+        #lightning,
+        #fogLayer,
+        #magicParticles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        #lightning {
+            z-index: 2;
+        }
+
+        #fogLayer {
+            z-index: 3;
+        }
+
+        #magicParticles {
+            z-index: 4;
+        }
+
+        #videoOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+        }
+
+        #startScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+        }
+
+        #skipBtn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 30;
+        }
+
+        /* Loading / playback error indicator */
+
+        #videoStatus {
+            position: fixed;
+            left: 50%;
+            bottom: 22px;
+            transform: translateX(-50%);
+            z-index: 40;
+            max-width: calc(100% - 40px);
+            padding: 10px 16px;
+            border: 1px solid rgba(255, 138, 0, .55);
+            border-radius: 8px;
+            background: rgba(5, 7, 13, .88);
+            color: #fff;
+            font: 13px/1.5 Arial, sans-serif;
+            text-align: center;
+        }
+
+        #videoStatus[hidden] {
+            display: none;
+        }
+
+        /* Do not let the video cover the content. */
+        #startScreen,
+        #videoOverlay {
+            box-sizing: border-box;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #lightning,
+            #fogLayer,
+            #magicParticles {
+                animation-duration: 0.01ms !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- ==========================================
-START SCREEN
-========================================== -->
+    <!-- ===== BACKGROUND INTRO VIDEO ===== -->
 
-<div id="startScreen">
+    <video
+        id="bgVideo"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+    >
+        <source src="assets/video/day4.mp4" type="video/mp4">
+        Your browser does not support HTML video.
+    </video>
 
-    <div class="start-content">
+    <!-- ===== START SCREEN ===== -->
 
-        <div class="festival-label">
-            VIDLYRA HALLOWEEN FEST 2026
+    <div id="startScreen">
+        <div class="start-content">
+
+            <div class="festival-label">
+                VIDLYRA HALLOWEEN FEST 2026
+            </div>
+
+            <h1>DAY 4</h1>
+
+            <h2>The Witch's Curse</h2>
+
+            <p>
+                Five enchanted lanterns are hidden
+                throughout the forbidden forest.
+                Only their light can reveal the Witch...
+            </p>
+
+            <button id="startBtn" type="button">
+                ▶ Start Experience
+            </button>
+
         </div>
-
-        <h1>
-            DAY 4
-        </h1>
-
-        <h2>
-            The Witch's Curse
-        </h2>
-
-        <p>
-            Five enchanted lanterns are hidden
-            throughout the forbidden forest.
-            Only their light can reveal the Witch...
-        </p>
-
-        <button id="startBtn">
-            ▶ Start Experience
-        </button>
-
     </div>
 
-</div>
+    <!-- ===== SKIP INTRO ===== -->
 
+    <button id="skipBtn" type="button">
+        Skip Intro
+    </button>
 
-<!-- ==========================================
-INTRO VIDEO
-========================================== -->
+    <!-- ===== INTRO OVERLAY ===== -->
 
-<video
-    id="bgVideo"
-    autoplay
-    muted
-    loop
-    playsinline
->
-    <source src="assets/video/day4.mp4" type="video/mp4">
-</video>
+    <div id="videoOverlay" hidden>
+        <div class="overlay-content">
 
-<!-- ==========================================
-SKIP BUTTON
-========================================== -->
+            <div class="overlay-label">
+                VIDLYRA HALLOWEEN FEST 2026
+            </div>
 
-<button
-    id="skipBtn"
-    type="button"
->
+            <h1>DAY 4</h1>
 
-    Skip Intro
+            <h2>The Witch's Curse</h2>
 
-</button>
+            <p>
+                Find the five enchanted lanterns
+                and break the Witch's spell.
+            </p>
 
+            <button id="enterGame" type="button">
+                Enter The Forest
+            </button>
 
-<!-- ==========================================
-VIDEO OVERLAY
-========================================== -->
-
-<div id="videoOverlay">
-
-    <div class="overlay-content">
-
-        <div class="overlay-label">
-            VIDLYRA HALLOWEEN FEST 2026
         </div>
-
-        <h1>
-            DAY 4
-        </h1>
-
-        <h2>
-            The Witch's Curse
-        </h2>
-
-        <p>
-            Find the five enchanted lanterns
-            and break the Witch's spell.
-        </p>
-
-        <button
-            id="enterGame"
-            type="button"
-        >
-            Enter The Forest
-        </button>
-
     </div>
 
-</div>
+    <!-- ===== LIGHTNING / ATMOSPHERE ===== -->
 
+    <div id="lightning"></div>
+    <div id="fogLayer"></div>
+    <div id="magicParticles"></div>
 
-<!-- ==========================================
-LIGHTNING
-========================================== -->
+    <!-- ===== AUDIO ===== -->
 
-<div id="lightning"></div>
-
-
-<!-- ==========================================
-PURPLE FOG
-========================================== -->
-
-<div id="fogLayer"></div>
-
-
-<!-- ==========================================
-MAGIC PARTICLES
-========================================== -->
-
-<div id="magicParticles"></div>
-
-
-<!-- ==========================================
-AUDIO
-========================================== -->
-
-<audio
-    id="bgMusic"
-    loop
-    preload="auto"
->
-
-    <source
-        src="assets/witch-forest.mp3"
-        type="audio/mpeg"
+    <audio
+        id="bgMusic"
+        loop
+        preload="auto"
     >
+        <source src="assets/witch-forest.mp3" type="audio/mpeg">
+    </audio>
 
-</audio>
+    <audio id="thunderSound" preload="auto">
+        <source src="assets/thunder.mp3" type="audio/mpeg">
+    </audio>
 
+    <audio id="witchLaugh" preload="auto">
+        <source src="assets/witch-laugh.mp3" type="audio/mpeg">
+    </audio>
 
-<audio
-    id="thunderSound"
-    preload="auto"
->
+    <!-- ===== VIDEO STATUS ===== -->
 
-    <source
-        src="assets/thunder.mp3"
-        type="audio/mpeg"
-    >
+    <div id="videoStatus" role="status" aria-live="polite" hidden></div>
 
-</audio>
+    <!-- ===== VIDEO PAGE LOGIC ===== -->
 
+    <script>
+        (() => {
+            const video = document.getElementById("bgVideo");
+            const startScreen = document.getElementById("startScreen");
+            const startBtn = document.getElementById("startBtn");
+            const skipBtn = document.getElementById("skipBtn");
+            const overlay = document.getElementById("videoOverlay");
+            const enterGame = document.getElementById("enterGame");
+            const music = document.getElementById("bgMusic");
+            const status = document.getElementById("videoStatus");
 
-<audio
-    id="witchLaugh"
-    preload="auto"
->
+            let experienceStarted = false;
+            let gameOpened = false;
 
-    <source
-        src="assets/witch-laugh.mp3"
-        type="audio/mpeg"
-    >
+            function showStatus(message) {
+                status.textContent = message;
+                status.hidden = false;
+            }
 
-</audio>
+            function hideStatus() {
+                status.hidden = true;
+                status.textContent = "";
+            }
 
+            async function playBackgroundVideo() {
+                try {
+                    await video.play();
+                    hideStatus();
+                } catch (error) {
+                    console.warn("Background video could not autoplay:", error);
+                    showStatus(
+                        "Video could not start automatically. Press Start Experience to retry."
+                    );
+                }
+            }
 
-<!-- ==========================================
-JAVASCRIPT
-========================================== -->
+            async function startExperience() {
+                experienceStarted = true;
+                startScreen.style.display = "none";
 
-<script
-    type="module"
-    src="js/day4-video.js"
-></script>
+                // Audio playback is attempted after the user's click.
+                try {
+                    music.volume = 0.35;
+                    await music.play();
+                } catch (error) {
+                    console.warn("Background music could not play:", error);
+                }
+
+                // Retry the video after the user's interaction.
+                await playBackgroundVideo();
+            }
+
+            function showIntroOverlay() {
+                if (gameOpened) return;
+
+                overlay.hidden = false;
+                skipBtn.style.display = "none";
+            }
+
+            function openGame() {
+                if (gameOpened) return;
+
+                gameOpened = true;
+                video.pause();
+                overlay.hidden = true;
+                skipBtn.style.display = "none";
+
+                // Keep the audio running if the game uses the same audio element.
+                // Change this path only if your game file has a different name.
+                window.location.href = "day4-game.html";
+            }
+
+            startBtn.addEventListener("click", async () => {
+                if (!experienceStarted) {
+                    await startExperience();
+                }
+            });
+
+            skipBtn.addEventListener("click", () => {
+                showIntroOverlay();
+            });
+
+            enterGame.addEventListener("click", openGame);
+
+            video.addEventListener("loadeddata", () => {
+                console.log(
+                    "Video loaded:",
+                    video.currentSrc,
+                    "Dimensions:",
+                    video.videoWidth,
+                    "x",
+                    video.videoHeight
+                );
+                hideStatus();
+            });
+
+            video.addEventListener("canplay", () => {
+                console.log("Background video is ready to play.");
+            });
+
+            video.addEventListener("error", () => {
+                const error = video.error;
+
+                console.error("Video loading error:", {
+                    source: video.currentSrc,
+                    code: error ? error.code : null,
+                    message: error ? error.message : null
+                });
+
+                showStatus(
+                    "Video failed to load. Check assets/video/day4.mp4 and use an H.264 MP4 video."
+                );
+            });
+
+            video.addEventListener("stalled", () => {
+                console.warn("Video loading has stalled.");
+            });
+
+            video.addEventListener("ended", () => {
+                showIntroOverlay();
+            });
+
+            // Attempt muted autoplay; the Start button retries if needed.
+            playBackgroundVideo();
+
+            console.log("VIDLYRA Day 4 video page initialized.");
+            console.log("Expected video path: assets/video/day4.mp4");
+        })();
+    </script>
+
+    <!-- Keep your existing game/video JavaScript file. -->
+    <script type="module" src="js/day4-video.js"></script>
 
 </body>
-
 </html>
