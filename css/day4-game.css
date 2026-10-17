@@ -292,7 +292,27 @@ CAULDRON
     z-index:25;
 
 }
+/* Ensure lanterns remain clickable */
+.lantern {
+    position: absolute;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 60;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-drag: none;
+}
 
+/* Keep decorative effects from blocking game interactions */
+#particleContainer,
+.fog,
+.tree,
+.web,
+.mushroom,
+#flash,
+#lightning {
+    pointer-events: none;
+}
 /* ==========================================
 WITCH
 ========================================== */
