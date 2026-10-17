@@ -355,14 +355,13 @@ const Game = {
     ====================================================== */
 
     collectLantern(lantern) {
-        if (
-            !this.gameStarted ||
-            this.finalSequenceStarted ||
-            this.day4Completed ||
-            lantern.classList.contains("collected")
-        ) {
-            return;
-        }
+    if (
+        !this.gameStarted ||
+        this.finalSequenceStarted ||
+        lantern.classList.contains("collected")
+    ) {
+        return;
+    }
 
         lantern.classList.add("collected");
         lantern.style.pointerEvents = "none";
