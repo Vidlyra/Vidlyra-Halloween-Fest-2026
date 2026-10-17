@@ -1,476 +1,463 @@
 import { supabase } from "./supabase.js";
 
-"use strict";
+/* ============================================================
+   CONFIGURATION
+   ============================================================ */
 
-const Day5 = {
-    user: null,
-    started: false,
-    finished: false,
-    accessGranted: false,
-    lightningTriggered: false,
-    loadingTimer: null,
+const CONFIG = {
+  festival: "halloween_2026",
 
-    /* ======================================================
-       CACHE ELEMENTS
-    ====================================================== */
+  loginPage: "login.html",
+  mapPage: "map.html",
+  gamePage: "day5-game.html",
 
-    cache() {
-        this.loadingScreen = document.getElementById("loadingScreen");
-        this.loadingFill = document.getElementById("loadingFill");
+  thunderTime: 8.5,
+  whisperAtEnd: true,
 
-        this.video = document.getElementById("introVideo");
-        this.overlay = document.getElementById("overlay");
-        this.lightning = document.getElementById("lightningFlash");
-        this.fade = document.getElementById("fadeScreen");
+  musicVolume: 0.3,
+  thunderVolume: 0.7,
+  whisperVolume: 0.55,
 
-        this.title = document.getElementById("titleContainer");
-        this.mission = document.getElementById("missionPreview");
-        this.subtitle = document.getElementById("subtitleContainer");
-
-        this.skip = document.getElementById("skipButton");
-        this.progress = document.getElementById("videoFill");
-
-        this.endOverlay = document.getElementById("endOverlay");
-        this.enterButton = document.getElementById("enterButton");
-
-        this.startOverlay = document.getElementById("startOverlay");
-        this.startButton = document.getElementById("startButton");
-
-        this.bgMusic = document.getElementById("bgMusic");
-        this.thunder = document.getElementById("thunder");
-        this.ghostWhisper = document.getElementById("ghostWhisper");
-    },
-
-    /* ======================================================
-       AUTHENTICATION + DAY 4 ACCESS
-    ====================================================== */
-
-    async checkAccess() {
-        try {
-            const {
-                data: { user },
-                error: authError
-            } = await supabase.auth.getUser();
-
-            if (authError || !user) {
-                window.location.href = "login.html";
-                return false;
-            }
-
-            this.user = user;
-
-            const { data, error } = await supabase
-                .from("festival_progress")
-                .select("day4, day5")
-                .eq("user_id", user.id)
-                .eq("festival", "halloween_2026")
-                .maybeSingle();
-
-            if (error) {
-                console.error("Day 5 progress error:", error);
-                alert("Unable to load festival progress. Please try again.");
-                window.location.href = "map.html";
-                return false;
-            }
-
-            if (!data) {
-                alert("Festival progress was not found for your account.");
-                window.location.href = "map.html";
-                return false;
-            }
-
-            if (data.day4 !== true) {
-                alert("🔒 Complete Day 4 before entering Day 5.");
-                window.location.href = "map.html";
-                return false;
-            }
-
-            this.accessGranted = true;
-
-            console.log("👻 Day 5 video access granted.");
-            return true;
-
-        } catch (error) {
-            console.error("Day 5 access check failed:", error);
-
-            alert("A connection error occurred. Please try again.");
-            window.location.href = "map.html";
-            return false;
-        }
-    },
-
-    /* ======================================================
-       EVENTS
-    ====================================================== */
-
-    bindEvents() {
-        if (this.startButton) {
-            this.startButton.addEventListener("click", () => {
-                this.startExperience();
-            });
-        }
-
-        if (this.skip) {
-            this.skip.addEventListener("click", () => {
-                this.finishVideo();
-            });
-        }
-
-        if (this.enterButton) {
-            this.enterButton.addEventListener("click", () => {
-                this.enterGame();
-            });
-        }
-
-        if (this.video) {
-            this.video.addEventListener("timeupdate", () => {
-                this.updateProgress();
-            });
-
-            this.video.addEventListener("ended", () => {
-                this.finishVideo();
-            });
-
-            this.video.addEventListener("error", () => {
-                console.error(
-                    "Day 5 video failed to load:",
-                    this.video.error
-                );
-
-                this.showMessage(
-                    "The cinematic video could not load. You can skip to continue."
-                );
-            });
-
-            this.video.addEventListener("loadedmetadata", () => {
-                console.log(
-                    "Day 5 cinematic loaded:",
-                    this.video.videoWidth,
-                    "x",
-                    this.video.videoHeight
-                );
-            });
-        }
-    },
-
-    /* ======================================================
-       START EXPERIENCE
-    ====================================================== */
-
-    async startExperience() {
-        if (this.started || !this.accessGranted) return;
-
-        this.started = true;
-
-        if (this.startButton) {
-            this.startButton.disabled = true;
-        }
-
-        if (this.startOverlay) {
-            this.startOverlay.classList.add("hide");
-        }
-
-        this.playAudio();
-
-        if (this.video) {
-            try {
-                await this.video.play();
-            } catch (error) {
-                console.error("Video playback failed:", error);
-
-                this.started = false;
-
-                if (this.startButton) {
-                    this.startButton.disabled = false;
-                }
-
-                if (this.startOverlay) {
-                    this.startOverlay.classList.remove("hide");
-                }
-
-                this.showMessage(
-                    "Video playback was blocked. Press Start to try again."
-                );
-
-                return;
-            }
-        } else {
-            console.error("Missing video element: #introVideo");
-
-            this.started = false;
-
-            if (this.startButton) {
-                this.startButton.disabled = false;
-            }
-
-            if (this.startOverlay) {
-                this.startOverlay.classList.remove("hide");
-            }
-
-            return;
-        }
-
-        if (this.loadingScreen) {
-            this.loadingScreen.classList.add("hide");
-        }
-
-        this.showCinematicUI();
-        console.log("🎬 Day 5 cinematic started.");
-    },
-
-    /* ======================================================
-       AUDIO
-    ====================================================== */
-
-    playAudio() {
-        if (!this.bgMusic) return;
-
-        this.bgMusic.loop = true;
-        this.bgMusic.volume = 0.25;
-
-        this.safePlay(this.bgMusic);
-    },
-
-    safePlay(audio) {
-        if (!audio) return;
-
-        const result = audio.play();
-
-        if (result && typeof result.catch === "function") {
-            result.catch((error) => {
-                console.warn(
-                    `Audio "${audio.id}" could not play:`,
-                    error.message
-                );
-            });
-        }
-    },
-
-    /* ======================================================
-       CINEMATIC UI
-    ====================================================== */
-
-    showCinematicUI() {
-        this.title?.classList.add("show");
-        this.mission?.classList.add("show");
-        this.subtitle?.classList.add("show");
-        this.skip?.classList.add("show");
-    },
-
-    /* ======================================================
-       VIDEO PROGRESS
-    ====================================================== */
-
-    updateProgress() {
-        if (!this.video || !this.progress) return;
-
-        const duration = this.video.duration;
-
-        if (!Number.isFinite(duration) || duration <= 0) return;
-
-        const percent = Math.min(
-            100,
-            (this.video.currentTime / duration) * 100
-        );
-
-        this.progress.style.width = `${percent}%`;
-
-        // Trigger lightning once when the video passes 8 seconds.
-        if (
-            this.video.currentTime >= 8 &&
-            !this.lightningTriggered
-        ) {
-            this.lightningTriggered = true;
-            this.lightningFlash();
-        }
-    },
-
-    /* ======================================================
-       LIGHTNING
-    ====================================================== */
-
-    lightningFlash() {
-        if (this.lightning) {
-            this.lightning.classList.add("active");
-
-            setTimeout(() => {
-                this.lightning?.classList.remove("active");
-            }, 250);
-        }
-
-        if (this.thunder) {
-            this.thunder.currentTime = 0;
-            this.safePlay(this.thunder);
-        }
-    },
-
-    /* ======================================================
-       FINISH VIDEO
-    ====================================================== */
-
-    finishVideo() {
-        if (this.finished) return;
-
-        this.finished = true;
-
-        if (this.video) {
-            this.video.pause();
-        }
-
-        this.skip?.classList.remove("show");
-
-        if (this.progress) {
-            this.progress.style.width = "100%";
-        }
-
-        if (this.bgMusic) {
-            this.bgMusic.volume = 0.12;
-        }
-
-        this.showEndOverlay();
-
-        console.log("Day 5 cinematic finished.");
-    },
-
-    /* ======================================================
-       END SCREEN
-    ====================================================== */
-
-    showEndOverlay() {
-        if (this.endOverlay) {
-            this.endOverlay.classList.add("show");
-        }
-
-        if (this.ghostWhisper) {
-            this.ghostWhisper.volume = 0.35;
-            this.safePlay(this.ghostWhisper);
-        }
-    },
-
-    /* ======================================================
-       ENTER DAY 5 GAME
-    ====================================================== */
-
-    enterGame() {
-        if (!this.accessGranted) return;
-
-        if (this.enterButton) {
-            this.enterButton.disabled = true;
-        }
-
-        if (this.fade) {
-            this.fade.classList.add("active");
-        }
-
-        if (this.video) {
-            this.video.pause();
-        }
-
-        if (this.bgMusic) {
-            this.bgMusic.pause();
-        }
-
-        if (this.thunder) {
-            this.thunder.pause();
-        }
-
-        if (this.ghostWhisper) {
-            this.ghostWhisper.pause();
-        }
-
-        setTimeout(() => {
-            window.location.href = "day5-game.html";
-        }, 900);
-    },
-
-    /* ======================================================
-       SMALL MESSAGE HELPER
-    ====================================================== */
-
-    showMessage(message) {
-        console.warn(message);
-
-        // Use an existing message element if your HTML has one.
-        const messageElement = document.getElementById("videoMessage");
-
-        if (messageElement) {
-            messageElement.textContent = message;
-            messageElement.classList.add("show");
-        }
-    },
-
-    /* ======================================================
-       INITIALIZE
-    ====================================================== */
-
-    async init() {
-        this.cache();
-        this.bindEvents();
-
-        // Show a loading animation if the element exists.
-        this.loadingAnimation();
-
-        const allowed = await this.checkAccess();
-
-        if (!allowed) return;
-
-        // The cinematic starts when the player presses Start.
-        // No duplicate overlay or automatic video playback.
-        if (this.startOverlay) {
-            this.startOverlay.classList.remove("hide");
-        }
-
-        if (this.startButton) {
-            this.startButton.disabled = false;
-        }
-
-        console.log(
-            "🎃 VIDLYRA HALLOWEEN FEST 2026 — DAY 5 VIDEO READY"
-        );
-    },
-
-    /* ======================================================
-       LOADING BAR
-    ====================================================== */
-
-    loadingAnimation() {
-        if (!this.loadingFill) return;
-
-        let progress = 0;
-
-        const update = () => {
-            if (progress >= 100) {
-                this.loadingFill.style.width = "100%";
-                return;
-            }
-
-            progress = Math.min(
-                100,
-                progress + Math.random() * 8
-            );
-
-            this.loadingFill.style.width = `${progress}%`;
-
-            this.loadingTimer = setTimeout(update, 120);
-        };
-
-        update();
-    }
+  loadingDuration: 1600,
+  fadeDuration: 1000
 };
 
-/* ==========================================================
-   INITIALIZE ONCE
-========================================================== */
+/* ============================================================
+   DAY 5 CONTROLLER
+   ============================================================ */
 
-if (document.readyState === "loading") {
-    document.addEventListener(
-        "DOMContentLoaded",
-        () => Day5.init(),
-        { once: true }
-    );
-} else {
-    Day5.init();
-}
+const Day5 = {
+  el: {},
 
-// Optional debugging in browser console.
-window.VidlyraDay5Video = Day5;
+  started: false,
+  finished: false,
+  enteringGame: false,
+  thunderPlayed: false,
+  whisperPlayed: false,
+  accessGranted: false,
+
+  loadingTimer: null,
+  animationFrame: null,
+
+  /* ----------------------------------------------------------
+     INITIALIZATION
+     ---------------------------------------------------------- */
+
+  async init() {
+    this.cacheElements();
+    this.prepareInitialState();
+    this.bindEvents();
+
+    console.log("🎃 VIDLYRA HALLOWEEN FEST 2026 — DAY 5");
+
+    await this.loadingAnimation();
+
+    const allowed = await this.checkAccess();
+
+    if (!allowed) {
+      return;
+    }
+
+    this.accessGranted = true;
+
+    this.showStartScreen();
+
+    console.log("👻 Day 5 cinematic ready.");
+  },
+
+  /* ----------------------------------------------------------
+     ELEMENT REFERENCES
+     ---------------------------------------------------------- */
+
+  cacheElements() {
+    const ids = [
+      "loadingScreen",
+      "loadingFill",
+      "startOverlay",
+      "startButton",
+      "videoContainer",
+      "introVideo",
+      "overlay",
+      "lightningFlash",
+      "fadeScreen",
+      "titleContainer",
+      "missionPreview",
+      "subtitleContainer",
+      "storySubtitle",
+      "skipButton",
+      "videoProgress",
+      "videoFill",
+      "endOverlay",
+      "enterButton",
+      "bgMusic",
+      "thunder",
+      "ghostWhisper"
+    ];
+
+    for (const id of ids) {
+      this.el[id] = document.getElementById(id);
+    }
+
+    const missing = ids.filter(id => !this.el[id]);
+
+    if (missing.length) {
+      console.error(
+        "❌ Missing HTML elements:",
+        missing.join(", ")
+      );
+    }
+  },
+
+  /* ----------------------------------------------------------
+     INITIAL SCREEN STATE
+     ---------------------------------------------------------- */
+
+  prepareInitialState() {
+    const {
+      loadingScreen,
+      loadingFill,
+      startOverlay,
+      videoContainer,
+      introVideo,
+      titleContainer,
+      missionPreview,
+      subtitleContainer,
+      storySubtitle,
+      skipButton,
+      videoProgress,
+      endOverlay,
+      fadeScreen
+    } = this.el;
+
+    if (loadingScreen) {
+      loadingScreen.style.display = "grid";
+      loadingScreen.style.opacity = "1";
+      loadingScreen.style.visibility = "visible";
+    }
+
+    if (loadingFill) {
+      loadingFill.style.width = "0%";
+    }
+
+    if (startOverlay) {
+      startOverlay.style.display = "none";
+      startOverlay.style.opacity = "0";
+      startOverlay.style.visibility = "hidden";
+      startOverlay.style.pointerEvents = "none";
+    }
+
+    if (videoContainer) {
+      videoContainer.style.display = "block";
+    }
+
+    if (introVideo) {
+      introVideo.muted = true;
+      introVideo.playsInline = true;
+      introVideo.preload = "auto";
+    }
+
+    if (titleContainer) {
+      titleContainer.classList.remove("show");
+    }
+
+    if (missionPreview) {
+      missionPreview.classList.remove("show");
+    }
+
+    if (subtitleContainer) {
+      subtitleContainer.style.display = "none";
+    }
+
+    if (storySubtitle) {
+      storySubtitle.textContent = "";
+    }
+
+    if (skipButton) {
+      skipButton.style.display = "none";
+    }
+
+    if (videoProgress) {
+      videoProgress.style.display = "none";
+    }
+
+    if (endOverlay) {
+      endOverlay.classList.remove("show");
+    }
+
+    if (fadeScreen) {
+      fadeScreen.style.opacity = "0";
+    }
+
+    this.configureAudio();
+  },
+
+  /* ----------------------------------------------------------
+     AUDIO CONFIGURATION
+     Do not play audio here. Browsers require user interaction.
+     ---------------------------------------------------------- */
+
+  configureAudio() {
+    const { bgMusic, thunder, ghostWhisper } = this.el;
+
+    if (bgMusic) {
+      bgMusic.volume = CONFIG.musicVolume;
+      bgMusic.loop = true;
+      bgMusic.preload = "auto";
+    }
+
+    if (thunder) {
+      thunder.volume = CONFIG.thunderVolume;
+      thunder.preload = "auto";
+    }
+
+    if (ghostWhisper) {
+      ghostWhisper.volume = CONFIG.whisperVolume;
+      ghostWhisper.preload = "auto";
+    }
+  },
+
+  /* ----------------------------------------------------------
+     LOADING ANIMATION
+     ---------------------------------------------------------- */
+
+  async loadingAnimation() {
+    const { loadingScreen, loadingFill, introVideo } = this.el;
+
+    if (loadingFill) {
+      loadingFill.style.width = "15%";
+    }
+
+    if (introVideo) {
+      try {
+        introVideo.load();
+      } catch (error) {
+        console.warn("Video preload warning:", error);
+      }
+    }
+
+    await new Promise(resolve => {
+      let progress = 15;
+      const step = 5;
+
+      const timer = setInterval(() => {
+        progress = Math.min(progress + step, 90);
+
+        if (loadingFill) {
+          loadingFill.style.width = `${progress}%`;
+        }
+
+        if (progress >= 90) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, 60);
+    });
+
+    if (introVideo && introVideo.readyState >= 1) {
+      if (loadingFill) {
+        loadingFill.style.width = "100%";
+      }
+    }
+
+    await this.delay(CONFIG.loadingDuration);
+
+    if (loadingFill) {
+      loadingFill.style.width = "100%";
+    }
+
+    if (loadingScreen) {
+      loadingScreen.style.opacity = "0";
+      loadingScreen.style.visibility = "hidden";
+
+      await this.delay(850);
+
+      loadingScreen.style.display = "none";
+    }
+  },
+
+  /* ----------------------------------------------------------
+     SUPABASE ACCESS CHECK
+     Requires a logged-in user and completed Day 4.
+     ---------------------------------------------------------- */
+
+  async checkAccess() {
+    try {
+      const {
+        data: { user },
+        error: authError
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        console.warn("🔒 Login required.");
+
+        window.location.replace(CONFIG.loginPage);
+        return false;
+      }
+
+      const { data: progress, error } = await supabase
+        .from("festival_progress")
+        .select("day4")
+        .eq("user_id", user.id)
+        .eq("festival", CONFIG.festival)
+        .maybeSingle();
+
+      if (error) {
+        console.error("❌ Could not check festival progress:", error);
+
+        this.showAccessError(
+          "Unable to verify your festival progress. Please refresh and try again."
+        );
+
+        return false;
+      }
+
+      if (!progress || progress.day4 !== true) {
+        console.warn("🔒 Complete Day 4 before entering Day 5.");
+
+        window.location.replace(CONFIG.mapPage);
+        return false;
+      }
+
+      console.log("✅ Day 4 completed. Day 5 access granted.");
+
+      return true;
+    } catch (error) {
+      console.error("❌ Access check failed:", error);
+
+      this.showAccessError(
+        "Could not verify access. Check your connection and reload the page."
+      );
+
+      return false;
+    }
+  },
+
+  /* ----------------------------------------------------------
+     ACCESS ERROR MESSAGE
+     ---------------------------------------------------------- */
+
+  showAccessError(message) {
+    const { loadingScreen } = this.el;
+
+    if (loadingScreen) {
+      loadingScreen.style.display = "grid";
+      loadingScreen.style.opacity = "1";
+      loadingScreen.style.visibility = "visible";
+
+      const label = loadingScreen.querySelector(".loading-label");
+
+      if (label) {
+        label.textContent = message;
+        label.style.maxWidth = "320px";
+        label.style.marginInline = "auto";
+        label.style.lineHeight = "1.8";
+        label.style.color = "#ffb347";
+      }
+    }
+  },
+
+  /* ----------------------------------------------------------
+     START SCREEN
+     ---------------------------------------------------------- */
+
+  showStartScreen() {
+    const { startOverlay } = this.el;
+
+    if (!startOverlay) {
+      console.error("❌ startOverlay was not found.");
+      return;
+    }
+
+    startOverlay.style.display = "grid";
+
+    requestAnimationFrame(() => {
+      startOverlay.style.opacity = "1";
+      startOverlay.style.visibility = "visible";
+      startOverlay.style.pointerEvents = "auto";
+    });
+  },
+
+  /* ----------------------------------------------------------
+     EVENT BINDINGS
+     ---------------------------------------------------------- */
+
+  bindEvents() {
+    const {
+      startButton,
+      skipButton,
+      enterButton,
+      introVideo,
+      lightningFlash
+    } = this.el;
+
+    startButton?.addEventListener("click", () => {
+      this.startExperience();
+    });
+
+    skipButton?.addEventListener("click", () => {
+      this.finishVideo();
+    });
+
+    enterButton?.addEventListener("click", () => {
+      this.enterGame();
+    });
+
+    introVideo?.addEventListener("loadedmetadata", () => {
+      console.log(
+        `🎬 Day 5 cinematic loaded: ${introVideo.videoWidth} x ${introVideo.videoHeight}`
+      );
+    });
+
+    introVideo?.addEventListener("timeupdate", () => {
+      this.updateProgress();
+      this.updateCinematicEffects();
+      this.updateSubtitles();
+    });
+
+    introVideo?.addEventListener("ended", () => {
+      this.finishVideo();
+    });
+
+    introVideo?.addEventListener("error", () => {
+      console.error(
+        "❌ Intro video failed to load:",
+        introVideo.currentSrc
+      );
+    });
+
+    lightningFlash?.addEventListener("animationend", () => {
+      lightningFlash.classList.remove("active");
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && this.el.bgMusic) {
+        this.el.bgMusic.pause();
+      } else if (
+        !document.hidden &&
+        this.started &&
+        !this.finished &&
+        this.el.bgMusic
+      ) {
+        this.safePlay(this.el.bgMusic, "background music");
+      }
+    });
+  },
+
+  /* ----------------------------------------------------------
+     START CINEMATIC
+     All audio playback begins after the button click.
+     ---------------------------------------------------------- */
+
+  async startExperience() {
+    if (this.started || !this.accessGranted) {
+      return;
+    }
+
+    this.started = true;
+
+    const {
+      startOverlay,
+      introVideo,
+      bgMusic,
+      skipButton,
+      video
