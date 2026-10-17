@@ -2,7 +2,7 @@
 /* ===========================================================
    VIDLYRA HALLOWEEN FEST 2026
    DAY 2 - THE HAUNTED WELL
-   Supabase Progress Integration
+   Supabase + Crystal Click Fix
 =========================================================== */
 
 import { supabase } from "./supabase.js";
@@ -10,6 +10,7 @@ import { supabase } from "./supabase.js";
 "use strict";
 
 const Game = {
+    // Game state
     runesFound: 0,
     totalRunes: 3,
 
@@ -20,6 +21,7 @@ const Game = {
 
     gameStarted: false,
     canMove: false,
+    crystalEnabled: false,
 
     playerX: 15,
     playerY: 12,
@@ -27,21 +29,29 @@ const Game = {
 
     keys: {},
     dialogTimer: null,
+    gameLoopStarted: false,
 
+    // DOM elements
     cache() {
         this.player = document.getElementById("player");
         this.runes = document.querySelectorAll(".rune");
         this.progress = document.getElementById("progressFill");
         this.counter = document.getElementById("runeCounter");
+
         this.dialogBox = document.getElementById("dialogBox");
         this.dialog = document.getElementById("dialogText");
         this.intro = document.getElementById("introScreen");
         this.flash = document.getElementById("flash");
+
         this.ghost = document.querySelector(".ghost");
         this.crystal = document.querySelector(".crystal");
-        this.missionComplete = document.getElementById("missionComplete");
+
+        this.missionComplete =
+            document.getElementById("missionComplete");
+
         this.nextButton = document.getElementById("nextBtn");
 
+        // Audio elements
         this.bgMusic = document.getElementById("bgMusic");
         this.ghostWhisper = document.getElementById("ghostWhisper");
         this.wellRumble = document.getElementById("wellRumble");
@@ -50,8 +60,7 @@ const Game = {
         this.collectSound = document.getElementById("collectSound");
     },
 
-    /* ================= ACCESS & PROGRESS ================= */
-
+    // Check login and Day 1 access
     async checkFestivalAccess() {
         try {
             const {
@@ -74,18 +83,16 @@ const Game = {
                 .maybeSingle();
 
             if (error) {
-                console.error("Festival progress read error:", error);
-                this.showMessage("Unable to load your festival progress.");
+                console.error("Progress read error:", error);
+                this.showMessage("Unable to load festival progress.");
                 return false;
             }
 
             if (!data) {
-                console.error("No festival progress row found for:", user.id);
-                this.showMessage("Festival progress not found. Please contact the festival administrator.");
+                this.showMessage("Festival progress record not found.");
                 return false;
             }
 
-            // Day 2 requires Day 1 completion.
             if (data.day1 !== true) {
                 alert("🔒 Complete Day 1 first!");
                 window.location.replace("map.html");
@@ -95,7 +102,7 @@ const Game = {
             this.day2Finished = data.day2 === true;
             this.supabaseReady = true;
 
-            console.log("🎃 Day 2 access granted", {
+            console.log("Day 2 access granted:", {
                 userId: user.id,
                 day1: data.day1,
                 day2: data.day2
@@ -103,12 +110,13 @@ const Game = {
 
             return true;
         } catch (error) {
-            console.error("Festival access check failed:", error);
-            this.showMessage("Connection error. Please refresh and try again.");
+            console.error("Access check failed:", error);
+            this.showMessage("Connection error. Please refresh.");
             return false;
         }
     },
 
+    // Initialize
     async init() {
         this.cache();
         this.bindEvents();
@@ -120,15 +128,10 @@ const Game = {
             return;
         }
 
-        if (this.day2Finished) {
-            this.showMessage("🎃 You have already completed Day 2!");
-        }
-
         this.startIntro();
     },
 
-    /* ================= EVENTS ================= */
-
+    // Keyboard and button events
     bindEvents() {
         window.addEventListener("keydown", (event) => {
             this.keys[event.key.toLowerCase()] = true;
@@ -151,20 +154,20 @@ const Game = {
         }
     },
 
-    /* ================= INTRO ================= */
-
+    // Intro screen
     startIntro() {
-        console.log("Day 2 Loaded");
         this.showMessage("Find the three Ancient Runes...");
 
         setTimeout(() => {
             if (this.intro) {
                 this.intro.classList.add("hide");
             }
+
             this.startGame();
         }, 5000);
     },
 
+    // Start game
     startGame() {
         this.gameStarted = true;
         this.canMove = !this.day2Finished;
@@ -175,6 +178,7 @@ const Game = {
         }
 
         if (this.day2Finished) {
+            this.showMessage("🎃 Day 2 is already complete!");
             this.showMissionComplete();
             return;
         }
@@ -182,8 +186,7 @@ const Game = {
         this.gameLoop();
     },
 
-    /* ================= GAME LOOP ================= */
-
+    // Game animation loop
     gameLoop() {
         if (!this.gameStarted) return;
 
@@ -192,6 +195,7 @@ const Game = {
         requestAnimationFrame(() => this.gameLoop());
     },
 
+    // Player movement
     updatePlayer() {
         if (!this.canMove) return;
 
@@ -220,12 +224,10 @@ const Game = {
         }
     },
 
-    /* ================= DIALOG ================= */
-
+    // Dialog
     showMessage(message) {
         if (!this.dialogBox || !this.dialog) return;
 
-        // Use textContent rather than innerHTML for messages.
         this.dialog.textContent = message;
         this.dialogBox.classList.add("show");
 
@@ -236,21 +238,36 @@ const Game = {
         }, 3000);
     },
 
-    /* ================= COLLECT RUNES ================= */
+    // Audio helper
+    playSound(audio) {
+        if (!audio) return;
 
+        try {
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
+        } catch (error) {
+            console.warn("Audio playback unavailable:", error);
+        }
+    },
+
+    // Collect a rune
     collectRune(rune) {
-        if (!this.canMove || rune.classList.contains("found")) return;
+        if (!this.canMove || rune.classList.contains("found")) {
+            return;
+        }
 
         rune.classList.add("found");
         rune.style.opacity = "0";
         rune.style.pointerEvents = "none";
 
-        this.runesFound++;
-
-        const percent = (this.runesFound / this.totalRunes) * 100;
+        this.runesFound = Math.min(
+            this.runesFound + 1,
+            this.totalRunes
+        );
 
         if (this.progress) {
-            this.progress.style.width = percent + "%";
+            this.progress.style.width =
+                (this.runesFound / this.totalRunes * 100) + "%";
         }
 
         if (this.counter) {
@@ -261,35 +278,21 @@ const Game = {
         this.playSound(this.collectSound);
         this.playSound(this.magicSound);
 
-        switch (this.runesFound) {
-            case 1:
-                this.showMessage("The first rune has awakened...");
-                break;
+        if (this.runesFound === 1) {
+            this.showMessage("The first rune has awakened...");
+        } else if (this.runesFound === 2) {
+            this.showMessage("A strange energy surrounds the well...");
+        } else if (this.runesFound === 3) {
+            this.showMessage("The Haunted Well is awakening...");
 
-            case 2:
-                this.showMessage("A strange energy surrounds the well...");
-                break;
+            // Prevent collecting anything else during the well event.
+            this.canMove = false;
 
-            case 3:
-                this.showMessage("The Haunted Well is awakening...");
-                setTimeout(() => this.awakenWell(), 1500);
-                break;
+            setTimeout(() => this.awakenWell(), 1500);
         }
     },
 
-    /* ================= SOUND ================= */
-
-    playSound(audio) {
-        if (!audio) return;
-
-        audio.currentTime = 0;
-        audio.play().catch((error) => {
-            console.debug("Audio playback unavailable:", error.message);
-        });
-    },
-
-    /* ================= WELL EVENT ================= */
-
+    // Well animation and ghost event
     awakenWell() {
         this.canMove = false;
 
@@ -321,29 +324,75 @@ const Game = {
                 this.crystal.classList.add("active");
             }
 
-            this.showMessage("Touch the Magic Crystal...");
+            this.showMessage("✨ Touch the Magic Crystal!");
+
             this.enableCrystal();
         }, 3000);
     },
 
-    /* ================= CRYSTAL ================= */
-
+    // Enable crystal interaction
     enableCrystal() {
         if (!this.crystal) {
+            console.error(
+                'Crystal element ".crystal" was not found in day2-game.html'
+            );
+
             this.showMessage("Magic Crystal is missing from the game page.");
-            console.error("Missing .crystal element in day2-game.html");
             return;
         }
 
-        this.crystal.addEventListener("click", () => {
+        this.crystalEnabled = true;
+
+        this.crystal.style.pointerEvents = "auto";
+        this.crystal.style.cursor = "pointer";
+        this.crystal.style.touchAction = "manipulation";
+
+        // Keep the original position style where possible.
+        this.crystal.style.zIndex = "100";
+
+        // Add the handler only once.
+        if (this.crystal.dataset.clickBound === "true") {
+            return;
+        }
+
+        this.crystal.dataset.clickBound = "true";
+
+        this.crystal.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            console.log("✨ Magic Crystal clicked!");
+
             this.collectCrystal();
-        }, { once: true });
+        });
+
+        // Mobile touchscreen support
+        this.crystal.addEventListener("touchend", (event) => {
+            if (!this.crystalEnabled) return;
+
+            event.preventDefault();
+            this.collectCrystal();
+        }, { passive: false });
+
+        console.log("✨ Crystal interaction enabled");
     },
 
+    // Collect the crystal
     collectCrystal() {
-        if (!this.canMove || this.savingProgress || this.day2Finished) return;
+        // IMPORTANT:
+        // Player movement is disabled during the well event.
+        // Do not check canMove here.
+        if (
+            !this.crystalEnabled ||
+            this.day2Finished ||
+            this.savingProgress
+        ) {
+            return;
+        }
 
+        this.crystalEnabled = false;
         this.canMove = false;
+
         this.playSound(this.rewardSound);
 
         if (this.flash) {
@@ -358,19 +407,21 @@ const Game = {
 
         setTimeout(() => {
             this.finishDay();
-        }, 1500);
+        }, 1000);
     },
 
-    /* ================= MISSION COMPLETE ================= */
-
+    // Show completion panel
     showMissionComplete() {
         if (this.missionComplete) {
             this.missionComplete.classList.add("show");
+        } else {
+            console.error(
+                'Element "#missionComplete" was not found in day2-game.html'
+            );
         }
     },
 
-    /* ================= SUPABASE SAVE ================= */
-
+    // Save completion to Supabase
     async finishDay() {
         if (this.day2Finished) {
             this.showMissionComplete();
@@ -386,17 +437,16 @@ const Game = {
 
         this.savingProgress = true;
         this.canMove = false;
-        this.showMessage("Saving your festival progress...");
+        this.showMessage("Saving your progress...");
 
         try {
-            // Verify the current session before writing progress.
             const {
                 data: { user },
                 error: authError
             } = await supabase.auth.getUser();
 
             if (authError || !user || user.id !== this.user.id) {
-                throw new Error("Your login session expired. Please log in again.");
+                throw new Error("Login session expired. Please log in again.");
             }
 
             const { data, error } = await supabase
@@ -411,10 +461,9 @@ const Game = {
                 throw error;
             }
 
-            // Prevent showing success if no row was updated.
             if (!data || data.day2 !== true) {
                 throw new Error(
-                    "No progress row was updated. Check the user row and RLS policies."
+                    "No progress row updated. Check the user's progress row and RLS."
                 );
             }
 
@@ -422,44 +471,42 @@ const Game = {
 
             try {
                 localStorage.setItem("vidlyra_day2_complete", "true");
-                localStorage.setItem("vidlyra_day2_runes", String(this.runesFound));
+                localStorage.setItem(
+                    "vidlyra_day2_runes",
+                    String(this.runesFound)
+                );
             } catch (storageError) {
-                console.warn("Local backup could not be saved:", storageError);
+                console.warn("Local backup unavailable:", storageError);
             }
 
-            console.log("✅ Day 2 progress saved to Supabase:", data);
+            console.log("✅ Day 2 completion saved:", data);
 
             this.showMessage("🎃 Day 2 Complete! Progress saved.");
-            setTimeout(() => this.showMissionComplete(), 1200);
+
+            setTimeout(() => {
+                this.showMissionComplete();
+            }, 1000);
 
         } catch (error) {
-            console.error("DAY 2 SUPABASE SAVE ERROR:", error);
+            console.error("DAY 2 SAVE ERROR:", error);
 
             this.showMessage(
-                "⚠️ Progress could not be saved. Check your connection and try again."
+                "⚠️ Progress could not be saved. Tap the crystal to retry."
             );
 
-            // Allow a retry without recollecting the crystal.
-            this.canMove = false;
+            // Allow retrying the save without replaying the entire event.
+            this.crystalEnabled = true;
 
-            if (this.missionComplete) {
-                const retryButton = document.getElementById("retrySaveBtn");
-
-                if (retryButton) {
-                    retryButton.onclick = () => this.finishDay();
-                } else {
-                    console.error(
-                        "Add a button with id='retrySaveBtn' to retry saving progress."
-                    );
-                }
+            if (this.crystal) {
+                this.crystal.style.pointerEvents = "auto";
             }
+
         } finally {
             this.savingProgress = false;
         }
     },
 
-    /* ================= MOBILE TOUCH ================= */
-
+    // Mobile movement controls
     enableTouchControls() {
         let startX = 0;
         let startY = 0;
@@ -488,23 +535,22 @@ const Game = {
         }, { passive: true });
     },
 
-    /* ================= RESET / HOME ================= */
-
+    // Restart game
     restart() {
         window.location.reload();
     },
 
+    // Return to festival map
     home() {
         window.location.href = "map.html";
     }
 };
 
-/* ================= START GAME ================= */
-
+// Start the game after the HTML is ready.
 document.addEventListener("DOMContentLoaded", async () => {
     await Game.init();
     Game.enableTouchControls();
 });
 
-// Keep the existing inline HTML buttons compatible if they call Game methods.
+// Preserve compatibility with HTML onclick handlers.
 window.Game = Game;
