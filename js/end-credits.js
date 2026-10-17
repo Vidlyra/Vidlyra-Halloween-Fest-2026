@@ -416,19 +416,36 @@ music.addEventListener("durationchange", () => {
    FINISH
 ========================================================= */
 
+/* =========================================================
+   FINISH CREDITS — CINEMATIC FADE OUT + MAP REDIRECT
+========================================================= */
+
 function finishCredits() {
     if (finished) return;
 
     finished = true;
 
+    // Stop the animation loop.
     stopAnimation();
 
+    // Move all credit tracks to their final position.
     const duration = getDuration();
 
     updateScrollPosition(duration);
     updateTimeline(duration);
 
+    // Stop the background music.
+    music.pause();
+
+    // Trigger the cinematic fade-out CSS animation.
     cinema.classList.add("finished");
+
+    // Redirect to the festival map after the fade completes.
+    const FADE_DURATION = 2200;
+
+    setTimeout(() => {
+        window.location.replace("map.html");
+    }, FADE_DURATION);
 }
 
 /* =========================================================
