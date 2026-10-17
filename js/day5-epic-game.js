@@ -422,51 +422,157 @@ async function bootGame() {
 
 /* -------------------- LANTERNS -------------------- */
 
-function initializeLanterns() {
-  lanterns.length = 0;
 
-  const positions = [
-    [800, 1550],
-    [1400, 800],
-    [2050, 1450],
-    [2650, 650],
-    [3200, 1550],
-    [3800, 850],
-    [4350, 1350]
-  ];
+/* =========================================================
+   FIXED LANTERN COLLECTION — DAY 5
+========================================================= */
 
-  positions.forEach(([x, y], index) => {
-    const element = $(`lantern${index + 1}`);
+function initLanterns() {
+    LANTERNS.length = 0;
 
-    if (!element) return;
+    const elements = Array.from(
+        document.querySelectorAll("#lanternLayer .lantern")
+    );
 
-    const lantern = {
-      id: index + 1,
-      x,
-      y,
-      collected: false,
-      element,
-      mini: $(`miniLantern${index + 1}`)
-    };
+    elements.forEach((element, index) => {
+        const angle =
+            (index / Math.max(1, elements.length)) *
+            Math.PI * 2;
 
-    Object.assign(element.style, {
-      left: `${x}px`,
-      top: `${y}px`,
-      display: "flex"
+        const radius = 1100;
+
+        const x = clamp(
+            2500 + Math.cos(angle) * radius,
+            200,
+            CONFIG.WORLD_WIDTH - 200
+        );
+
+        const y = clamp(
+            1200 + Math.sin(angle) * radius * 0.55,
+            200,
+            CONFIG.WORLD_HEIGHT - 200
+        );
+
+        element.style.position = "absolute";
+        element.style.left = `${x}px`;
+        element.style.top = `${y}px`;
+        element.style.pointerEvents = "auto";
+        element.style.cursor = "pointer";
+        element.style.zIndex = "20";
+
+        const data = {
+            id: index + 1,
+            element,
+            x,
+            y,
+            lit: false,
+            inRange: false
+        };
+
+        LANTERNS.push(data);
+
+        // Mouse and touchscreen collection.
+        element.addEventListener("click", () => {
+            if (data.lit) return;
+            lightLantern(data);
+        });
+
+        element.addEventListener("touchend", (event) => {
+            event.preventDefault();
+            if (data.lit) return;
+            lightLantern(data);
+        }, { passive: false });
     });
 
-    element.onclick = () => {
-      if (!state.running || state.paused) return;
+    updateLanternCounter();
 
-      if (distance(state.x, state.y, x, y) <= 190) {
-        collectLantern(lantern);
-      } else {
-        notify("Move closer to the Spirit Lantern.");
-      }
-    };
+    console.log(
+        `[Day 5] ${LANTERNS.length} lanterns initialized`
+    );
+}
 
-    lanterns.push(lantern);
-  });
+
+/* =========================================================
+   PROXIMITY COLLECTION
+   Walk near a lantern to collect it automatically.
+========================================================= */
+
+function updateLanternProximity() {
+    let nearestLantern = null;
+    let nearestDistance = Infinity;
+
+    LANTERNS.forEach((lantern) => {
+        if (lantern.lit) return;
+
+        const distance = distanceBetween(
+            PLAYER.x,
+            PLAYER.y,
+            lantern.x,
+            lantern.y
+        );
+
+        lantern.inRange = distance <= 300;
+
+        lantern.element.classList.toggle(
+            "inRange",
+            lantern.inRange
+        );
+
+        if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestLantern = lantern;
+        }
+
+        // Generous pickup range to account for sprite size.
+        if (distance <= 220) {
+            lightLantern(lantern);
+        }
+    });
+
+    if (interactionPrompt) {
+        if (nearestLantern && nearestDistance <= 300) {
+            interactionPrompt.style.display = "flex";
+            interactionPrompt.textContent =
+                "WALK CLOSER OR PRESS F TO COLLECT";
+        } else {
+            interactionPrompt.style.display = "none";
+        }
+    }
+}
+
+
+/* =========================================================
+   INTERACT KEY / MOBILE BUTTON
+========================================================= */
+
+function tryInteract() {
+    if (!GAME.running || GAME.paused || GAME.gameOver) return;
+
+    let nearestLantern = null;
+    let nearestDistance = Infinity;
+
+    LANTERNS.forEach((lantern) => {
+        if (lantern.lit) return;
+
+        const distance = distanceBetween(
+            PLAYER.x,
+            PLAYER.y,
+            lantern.x,
+            lantern.y
+        );
+
+        if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestLantern = lantern;
+        }
+    });
+
+    if (nearestLantern && nearestDistance <= 400) {
+        lightLantern(nearestLantern);
+        return;
+    }
+
+    showNotification("MOVE CLOSER TO A SPIRIT LANTERN");
 }
 
 function collectLantern(lantern) {
