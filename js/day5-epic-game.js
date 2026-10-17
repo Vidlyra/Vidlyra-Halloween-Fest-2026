@@ -1,2681 +1,773 @@
-
 import { supabase } from "./supabase.js";
-"use strict";
 
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => document.querySelectorAll(selector);
+/* VIDLYRA HALLOWEEN FEST 2026 - DAY 5 - fixed build */
 
-function on(element, event, handler, options) {
-    if (element) element.addEventListener(event, handler, options);
+const $ = (s) => document.querySelector(s);
+const on = (el, ev, fn, opt) => { if (el) el.addEventListener(ev, fn, opt); };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rand = (a, b) => Math.random() * (b - a) + a;
+const dist = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
+const pad6 = (n) => String(n).padStart(6, "0");
+
+function safePlay(a) {
+    if (!a) return;
+    try { a.currentTime = 0; const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
 }
 
-function safePlay(audio) {
-    if (!audio) return;
-    try {
-        audio.currentTime = 0;
-        const promise = audio.play();
-        if (promise && promise.catch) promise.catch(() => {});
-    } catch (error) {}
-}
+/* ---------- DOM ---------- */
+const E = {};
+[
+    "loadingScreen", "loadingFill", "loadingPercent", "loadingMessage", "gameWorld", "gameRoot",
+    "player", "playerContainer", "slashEffect", "dashTrail", "healthFill", "spiritFill", "healthText",
+    "spiritText", "lanternCounter", "scoreCounter", "missionPopup", "mission1", "mission2", "mission3",
+    "ghostKing", "bossHUD", "bossHealthFill", "bossIntroScreen", "bossWarning", "ghostKingSprite",
+    "pauseMenu", "resumeButton", "restartButton", "openSettingsButton", "exitGameButton", "settingsPanel",
+    "closeSettingsButton", "musicSlider", "effectsSlider", "brightnessSlider", "screenShakeToggle",
+    "mobileControls", "joystickBase", "joystickStick", "attackButton", "dashButton", "skillButton",
+    "interactButton", "pauseButton", "victoryScreen", "continueButton", "gameOverScreen", "retryGameButton",
+    "quitEventButton", "notificationContainer", "interactionPrompt", "playerX", "playerY", "aliveGhosts",
+    "activeLanterns", "day6Portal", "portalSound", "lightningLayer", "miniPlayer", "miniBoss", "miniMapFrame",
+    "compassNeedle", "bgMusic", "ambientWind", "ghostAttack", "lanternLight", "swordSlash", "heroDash",
+    "bossRoar", "lightningSound", "victorySound", "gameOverSound", "damageOverlay", "healOverlay",
+    "statSpirit", "ghostKillCount", "muteButton", "saveIndicator", "rainCanvasFront", "inventoryPanel",
+    "closeInventory"
+].forEach((id) => { E[id] = document.getElementById(id); });
 
-const loadingScreen = $("#loadingScreen");
-const loadingFill = $("#loadingFill");
-const loadingPercent = $("#loadingPercent");
-const loadingMessage = $("#loadingMessage");
-const loadingText = $("#loadingText");
-const gameWorld = $("#gameWorld");
-const player = $("#player");
-const playerContainer = $("#playerContainer");
-const slashEffect = $("#slashEffect");
-const dashTrailEl = $("#dashTrail");
-const healthFill = $("#healthFill");
-const spiritFill = $("#spiritFill");
-const healthText = $("#healthText");
-const spiritText = $("#spiritText");
-const lanternCounter = $("#lanternCounter");
-const scoreCounter = $("#scoreCounter");
-const missionPopup = $("#missionPopup");
-const mission1 = $("#mission1");
-const mission2 = $("#mission2");
-const mission3 = $("#mission3");
-const bossEl = $("#ghostKing");
-const bossHUD = $("#bossHUD");
-const bossHealthFill = $("#bossHealthFill");
-const bossIntroScreen = $("#bossIntroScreen");
-const bossWarning = $("#bossWarning");
-const ghostKingSprite = $("#ghostKingSprite");
-const inventoryPanel = $("#inventoryPanel");
-const closeInventory = $("#closeInventory");
-const pauseMenu = $("#pauseMenu");
-const resumeButton = $("#resumeButton");
-const restartButton = $("#restartButton");
-const openSettingsButton = $("#openSettingsButton");
-const exitGameButton = $("#exitGameButton");
-const settingsPanel = $("#settingsPanel");
-const closeSettingsButton = $("#closeSettingsButton");
-const musicSlider = $("#musicSlider");
-const effectsSlider = $("#effectsSlider");
-const screenShakeToggle = $("#screenShakeToggle");
-const mobileControls = $("#mobileControls");
-const joystickBase = $("#joystickBase");
-const joystickStick = $("#joystickStick");
-const attackButton = $("#attackButton");
-const dashButton = $("#dashButton");
-const skillButton = $("#skillButton");
-const interactButton = $("#interactButton");
-const pauseButton = $("#pauseButton");
-const victoryScreen = $("#victoryScreen");
-const continueButton = $("#continueButton");
-const gameOverScreen = $("#gameOverScreen");
-const retryGameButton = $("#retryGameButton");
-const quitEventButton = $("#quitEventButton");
-const notificationContainer = $("#notificationContainer");
-const interactionPrompt = $("#interactionPrompt");
-const fpsValue = $("#fpsValue");
-const playerXLabel = $("#playerX");
-const playerYLabel = $("#playerY");
-const aliveGhostsLabel = $("#aliveGhosts");
-const activeLanternsLabel = $("#activeLanterns");
-const day6Portal = $("#day6Portal");
-const portalSound = $("#portalSound");
-const lightningLayer = $("#lightningLayer");
-const miniPlayerEl = $("#miniPlayer");
-const miniBossEl = $("#miniBoss");
-const miniMapFrame = $("#miniMapFrame");
-const compassNeedle = $("#compassNeedle");
-const bgMusic = $("#bgMusic");
-const ambientWind = $("#ambientWind");
-const ghostAttackSound = $("#ghostAttack");
-const lanternSound = $("#lanternLight");
-const swordSlashSound = $("#swordSlash");
-const heroDashSound = $("#heroDash");
-const bossRoarSound = $("#bossRoar");
-const lightningSound = $("#lightningSound");
-const victorySound = $("#victorySound");
-const gameOverSound = $("#gameOverSound");
-
+/* ---------- STATE ---------- */
 const CONFIG = {
-    PLAYER_SPEED: 6,
-    DASH_SPEED: 16,
-    ATTACK_DAMAGE: 25,
-    MAX_HEALTH: 100,
-    MAX_SPIRIT: 100,
-    MAX_STAMINA: 100,
-    TOTAL_LANTERNS: 7,
-    WORLD_WIDTH: 5000,
-    WORLD_HEIGHT: 2200,
-    CAMERA_SMOOTH: 0.10,
-    LANTERN_HINT_RADIUS: 220,
-    LANTERN_PICKUP_RADIUS: 130,
-    PORTAL_HINT_RADIUS: 220,
-    PORTAL_ENTER_RADIUS: 90,
-    NEXT_LEVEL_URL: "day6-video.html"
+    PLAYER_SPEED: 6, DASH_SPEED: 16, ATTACK_DAMAGE: 25, MAX_HEALTH: 100, MAX_SPIRIT: 100, MAX_STAMINA: 100,
+    TOTAL_LANTERNS: 7, WORLD_WIDTH: 5000, WORLD_HEIGHT: 2200, CAMERA_SMOOTH: 0.12,
+    LANTERN_HINT: 320, LANTERN_PICKUP: 200, NEXT_LEVEL_URL: "day6-video.html",
+    FESTIVAL: "halloween_2026"
 };
-
-const GAME = {
-    running: false,
-    paused: false,
-    loading: true,
-    victory: false,
-    gameOver: false,
-    mobile: false,
-    score: 0,
-    lanterns: 0,
-    kills: 0
-};
-
+const GAME = { running: false, paused: false, victory: false, gameOver: false, mobile: false, score: 0, lanterns: 0, kills: 0, muted: false };
 const PLAYER = {
-    x: 500,
-    y: 1600,
-    health: CONFIG.MAX_HEALTH,
-    maxHealth: CONFIG.MAX_HEALTH,
-    spirit: CONFIG.MAX_SPIRIT,
-    maxSpirit: CONFIG.MAX_SPIRIT,
-    stamina: CONFIG.MAX_STAMINA,
-    maxStamina: CONFIG.MAX_STAMINA,
-    runSpeed: CONFIG.PLAYER_SPEED,
-    dashSpeed: CONFIG.DASH_SPEED,
-    facing: 1,
-    moving: false,
-    attacking: false,
-    invincible: false,
-    velocityX: 0,
-    velocityY: 0,
-    state: "idle"
+    x: 500, y: 1600, health: 100, maxHealth: 100, spirit: 100, maxSpirit: 100, stamina: 100, maxStamina: 100,
+    facing: 1, vx: 0, vy: 0, attacking: false, invincible: false
 };
+const INPUT = { left: false, right: false, up: false, down: false };
+const FX = { effects: 0.9, shake: true, shakePower: 0, shakeUntil: 0 };
+const PORTAL = { active: false, entered: false, x: 0, y: 0 };
+const DASH = { active: false, duration: 200, cooldown: 700, speed: CONFIG.DASH_SPEED, timer: 0, cd: 0, dx: 0, dy: 0 };
+const ATTACK = { combo: 0, cooldown: false, range: 150, damage: CONFIG.ATTACK_DAMAGE };
+const SKILL = { cooldown: 10000, timer: 0, cost: 30, damage: 50 };
+const BOSS = { active: false, intro: false, defeated: false, phase: 1, health: 1000, maxHealth: 1000, damage: 18, speed: 2.4, attackCooldown: 1800, attackTimer: 900, x: 2500, y: 900 };
+const JOY = { active: false, id: null, cx: 0, cy: 0, dx: 0, dy: 0, radius: 55 };
+const CAM = { x: 0, y: 0, w: innerWidth, h: innerHeight };
+const GHOSTS = [], LANTERNS = [];
+const GHOST_AI = { detect: 480, attack: 95, cooldown: 1400 };
+const ACCESS = { user: null, checked: false, completed: false, saving: false };
+const ENGINE = { last: 0, frames: 0, timer: 0 };
 
-const INPUT = {
-    left: false,
-    right: false,
-    up: false,
-    down: false,
-    attack: false,
-    dash: false,
-    skill: false
-};
+const pcx = () => PLAYER.x;           // player body centre
+const pcy = () => PLAYER.y - 80;
 
-const AUDIOSETTINGS = {
-    effects: 0.9,
-    screenShake: true
-};
+/* ---------- UI FIX: fixed-position UI must NOT live inside the transformed #gameWorld ---------- */
+function hoistUI() {
+    [
+        "hud", "missionPanel", "missionPopup", "bossHUD", "notificationContainer", "interactionPrompt",
+        "inventoryPanel", "questPanel", "dialogueContainer", "miniMap", "compass", "playerStats", "saveIndicator",
+        "mobileControls", "audioControls", "debugPanel", "touchBlocker", "bossIntroScreen", "bossWarning",
+        "cutsceneOverlay", "levelCompleteBanner", "popupNotification", "screenFlash", "damageOverlay",
+        "healOverlay", "lightningOverlay", "screenDarkness", "vignetteEffect", "rainCanvasFront",
+        "victoryScreen", "gameOverScreen", "pauseMenu", "settingsPanel"
+    ].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el && el.parentElement !== document.body) document.body.appendChild(el);
+    });
+    ["playerLevelBox", "xpBar", "objectiveTracker", "gameTimer", "fpsCounter", "bossTriggerZone", "dialogueContainer"]
+        .forEach((id) => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
 
-const PORTAL = {
-    active: false,
-    entered: false,
-    x: 0,
-    y: 0
-};
-
-const DASH = {
-    active: false,
-    duration: 200,
-    cooldown: 700,
-    speed: CONFIG.DASH_SPEED,
-    timer: 0,
-    cooldownTimer: 0,
-    directionX: 0,
-    directionY: 0
-};
-
-const ATTACK = {
-    combo: 0,
-    cooldown: false,
-    duration: 250,
-    damage: CONFIG.ATTACK_DAMAGE,
-    range: 140,
-    lastAttack: 0
-};
-
-const SKILL = {
-    cooldown: 10000,
-    timer: 0,
-    spiritCost: 30,
-    damage: 50
-};
-
-const BOSS = {
-    active: false,
-    intro: false,
-    defeated: false,
-    phase: 1,
-    health: 1000,
-    maxHealth: 1000,
-    damage: 18,
-    speed: 2.2,
-    attackCooldown: 1800,
-    attackTimer: 0,
-    x: 2500,
-    y: 900
-};
-
-const JOYSTICK = {
-    active: false,
-    startX: 0,
-    startY: 0,
-    dx: 0,
-    dy: 0,
-    radius: 55
-};
-
-const CAMERA = {
-    x: 0,
-    y: 0,
-    targetX: 0,
-    targetY: 0,
-    smooth: CONFIG.CAMERA_SMOOTH,
-    width: window.innerWidth,
-    height: window.innerHeight
-};
-
-const GHOSTS = [];
-const LANTERNS = [];
-
-const ENGINE = {
-    lastTime: 0,
-    frame: 0,
-    fpsTimer: 0,
-    fps: 0
-};
-
-function clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
-}
-
-function random(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
-function distanceBetween(x1, y1, x2, y2) {
-    return Math.hypot(x2 - x1, y2 - y1);
+    const nc = E.notificationContainer;
+    if (nc) Object.assign(nc.style, { position: "fixed", top: "90px", left: "50%", transform: "translateX(-50%)", zIndex: "13000", pointerEvents: "none", display: "flex", flexDirection: "column", alignItems: "center" });
+    const ip = E.interactionPrompt;
+    if (ip) Object.assign(ip.style, { position: "fixed", bottom: "250px", left: "50%", transform: "translateX(-50%)", zIndex: "1300", padding: "10px 20px", borderRadius: "30px", background: "rgba(0,0,0,.8)", border: "1px solid rgba(255,255,255,.15)", gap: "8px", alignItems: "center", fontWeight: "700", display: "none", pointerEvents: "none" });
+    if (E.mobileControls) E.mobileControls.style.pointerEvents = "none";
+    if (E.damageOverlay) E.damageOverlay.style.transition = "opacity .35s";
+    if (E.healOverlay) E.healOverlay.style.transition = "opacity .35s";
+    ["victoryScreen", "gameOverScreen", "pauseMenu", "settingsPanel"].forEach((id) => {
+        const el = E[id]; if (!el) return;
+        el.style.position = "fixed"; el.style.inset = "0"; el.style.zIndex = "100000"; el.style.display = "none";
+    });
+    if (E.gameRoot) { E.gameRoot.style.height = "100dvh"; }
+    if (E.miniMapFrame) {
+        document.querySelectorAll(".miniLantern").forEach((d) => { d.style.transform = "translate(-50%,-50%)"; });
+        if (E.miniBoss) E.miniBoss.style.transform = "translate(-50%,-50%)";
+    }
 }
 
 function detectDevice() {
-    const touch =
-        "ontouchstart" in window ||
-        navigator.maxTouchPoints > 0;
-
-    GAME.mobile =
-        touch &&
-        window.innerWidth <= 992;
-
-    if (mobileControls) {
-        mobileControls.style.display =
-            GAME.mobile ? "flex" : "none";
-    }
+    const touch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    GAME.mobile = touch && innerWidth <= 992;
+    if (E.mobileControls) E.mobileControls.style.display = GAME.mobile ? "flex" : "none";
 }
 
-function fixGameOverlays() {
-    const overlays = [
-        victoryScreen,
-        gameOverScreen,
-        pauseMenu,
-        settingsPanel
-    ];
-
-    overlays.forEach((overlay) => {
-        if (!overlay) return;
-
-        if (overlay.parentElement !== document.body) {
-            document.body.appendChild(overlay);
-        }
-
-        overlay.style.position = "fixed";
-        overlay.style.inset = "0";
-        overlay.style.zIndex = "100000";
-    });
-
-    if (victoryScreen) {
-        victoryScreen.style.display = "none";
-        victoryScreen.style.pointerEvents = "none";
-    }
-
-    if (gameOverScreen) {
-        gameOverScreen.style.display = "none";
-        gameOverScreen.style.pointerEvents = "none";
-    }
-
-    if (pauseMenu) pauseMenu.style.display = "none";
-    if (settingsPanel) settingsPanel.style.display = "none";
-}
-
-function setAudioVolume(audio, volume) {
-    if (!audio) return;
-    audio.volume = clamp(volume, 0, 1);
-}
-
-const loadingMessages = [
-    "Entering the cemetery...",
-    "Summoning spirits...",
-    "Lighting cursed lanterns...",
-    "Awakening the Ghost King...",
-    "Preparing your sword...",
-    "Loading haunted world..."
-];
+/* ---------- LOADING ---------- */
+const MESSAGES = ["Entering the cemetery...", "Summoning spirits...", "Lighting cursed lanterns...", "Awakening the Ghost King...", "Preparing your sword...", "Loading haunted world..."];
 
 function startLoading() {
-    let progress = 0;
-
-    const timer = setInterval(() => {
-        progress += random(5, 11);
-        progress = Math.min(100, progress);
-
-        if (loadingFill) loadingFill.style.width = progress + "%";
-        if (loadingPercent) loadingPercent.textContent = Math.floor(progress) + "%";
-        if (loadingText) loadingText.textContent = Math.floor(progress) + "%";
-
-        if (loadingMessage) {
-            const index = Math.min(
-                loadingMessages.length - 1,
-                Math.floor(progress / 100 * loadingMessages.length)
-            );
-
-            loadingMessage.textContent = loadingMessages[index];
-        }
-
-        if (progress >= 100) {
-            clearInterval(timer);
-            setTimeout(finishLoading, 500);
-        }
+    let p = 0;
+    const t = setInterval(() => {
+        p = Math.min(100, p + rand(5, 11));
+        if (E.loadingFill) E.loadingFill.style.width = p + "%";
+        if (E.loadingPercent) E.loadingPercent.textContent = Math.floor(p) + "%";
+        if (E.loadingMessage) E.loadingMessage.textContent = MESSAGES[Math.min(MESSAGES.length - 1, Math.floor(p / 100 * MESSAGES.length))];
+        if (p >= 100) { clearInterval(t); setTimeout(finishLoading, 400); }
     }, 130);
 }
 
 function finishLoading() {
-    GAME.loading = false;
     GAME.running = true;
-
-    if (loadingScreen) {
-        loadingScreen.style.opacity = "0";
-        loadingScreen.style.pointerEvents = "none";
-
-        setTimeout(() => {
-            loadingScreen.style.display = "none";
-        }, 600);
-    }
-
-    if (missionPopup) {
-        missionPopup.style.opacity = "1";
-
-        setTimeout(() => {
-            missionPopup.style.opacity = "0";
-        }, 3500);
-    }
-
-    setAudioVolume(bgMusic, 0.5);
-    setAudioVolume(ambientWind, 0.3);
-    safePlay(bgMusic);
-    safePlay(ambientWind);
+    const ls = E.loadingScreen;
+    if (ls) { ls.style.opacity = "0"; ls.style.pointerEvents = "none"; setTimeout(() => { ls.style.display = "none"; }, 600); }
+    if (E.missionPopup) { E.missionPopup.style.opacity = "1"; setTimeout(() => { E.missionPopup.style.opacity = "0"; }, 3500); }
+    setVol(E.bgMusic, 0.5); setVol(E.ambientWind, 0.3);
+    safePlay(E.bgMusic); safePlay(E.ambientWind);
 }
 
-window.addEventListener("keydown", (event) => {
-    if (event.repeat) return;
+function setVol(a, v) { if (a) a.volume = clamp(v, 0, 1); }
 
-    switch (event.code) {
-        case "ArrowLeft":
-        case "KeyA":
-            INPUT.left = true;
-            break;
-
-        case "ArrowRight":
-        case "KeyD":
-            INPUT.right = true;
-            break;
-
-        case "ArrowUp":
-        case "KeyW":
-            INPUT.up = true;
-            break;
-
-        case "ArrowDown":
-        case "KeyS":
-            INPUT.down = true;
-            break;
-
-        case "Space":
-            event.preventDefault();
-            startAttack();
-            break;
-
-        case "ShiftLeft":
-        case "ShiftRight":
-            startDash();
-            break;
-
-        case "KeyE":
-            castSpiritSkill();
-            break;
-
-        case "KeyF":
-            tryInteract();
-            break;
-
-        case "Escape":
-            togglePause();
-            break;
+/* ---------- INPUT ---------- */
+addEventListener("keydown", (e) => {
+    if (e.repeat) return;
+    switch (e.code) {
+        case "ArrowLeft": case "KeyA": INPUT.left = true; break;
+        case "ArrowRight": case "KeyD": INPUT.right = true; break;
+        case "ArrowUp": case "KeyW": INPUT.up = true; break;
+        case "ArrowDown": case "KeyS": INPUT.down = true; break;
+        case "Space": e.preventDefault(); startAttack(); break;
+        case "ShiftLeft": case "ShiftRight": startDash(); break;
+        case "KeyE": castSpiritSkill(); break;
+        case "KeyF": tryInteract(); break;
+        case "KeyI": if (E.inventoryPanel) E.inventoryPanel.classList.toggle("active"); break;
+        case "Escape": case "KeyP": togglePause(); break;
     }
 });
-
-window.addEventListener("keyup", (event) => {
-    switch (event.code) {
-        case "ArrowLeft":
-        case "KeyA":
-            INPUT.left = false;
-            break;
-
-        case "ArrowRight":
-        case "KeyD":
-            INPUT.right = false;
-            break;
-
-        case "ArrowUp":
-        case "KeyW":
-            INPUT.up = false;
-            break;
-
-        case "ArrowDown":
-        case "KeyS":
-            INPUT.down = false;
-            break;
+addEventListener("keyup", (e) => {
+    switch (e.code) {
+        case "ArrowLeft": case "KeyA": INPUT.left = false; break;
+        case "ArrowRight": case "KeyD": INPUT.right = false; break;
+        case "ArrowUp": case "KeyW": INPUT.up = false; break;
+        case "ArrowDown": case "KeyS": INPUT.down = false; break;
     }
 });
+addEventListener("blur", () => { INPUT.left = INPUT.right = INPUT.up = INPUT.down = false; });
 
-function joystickPoint(event) {
-    const touch = event.touches ? event.touches[0] : event;
-
-    return {
-        x: touch.clientX,
-        y: touch.clientY
-    };
+/* joystick (pointer events: works for touch and mouse, anchored to base centre) */
+function joyMove(e) {
+    if (!JOY.active || e.pointerId !== JOY.id) return;
+    let dx = e.clientX - JOY.cx, dy = e.clientY - JOY.cy;
+    const len = Math.hypot(dx, dy);
+    if (len > JOY.radius) { dx = dx / len * JOY.radius; dy = dy / len * JOY.radius; }
+    JOY.dx = dx; JOY.dy = dy;
+    if (E.joystickStick) E.joystickStick.style.transform = `translate(-50%,-50%) translate(${dx}px,${dy}px)`;
 }
-
-on(joystickBase, "touchstart", (event) => {
-    event.preventDefault();
-
-    const point = joystickPoint(event);
-
-    JOYSTICK.active = true;
-    JOYSTICK.startX = point.x;
-    JOYSTICK.startY = point.y;
-}, { passive: false });
-
-on(joystickBase, "touchmove", (event) => {
-    event.preventDefault();
-
-    if (!JOYSTICK.active) return;
-
-    const point = joystickPoint(event);
-
-    let dx = point.x - JOYSTICK.startX;
-    let dy = point.y - JOYSTICK.startY;
-
-    const length = Math.hypot(dx, dy);
-
-    if (length > JOYSTICK.radius) {
-        const angle = Math.atan2(dy, dx);
-        dx = Math.cos(angle) * JOYSTICK.radius;
-        dy = Math.sin(angle) * JOYSTICK.radius;
-    }
-
-    JOYSTICK.dx = dx;
-    JOYSTICK.dy = dy;
-
-    if (joystickStick) {
-        joystickStick.style.transform =
-            `translate(-50%,-50%) translate(${dx}px,${dy}px)`;
-    }
-}, { passive: false });
-
-function resetJoystick() {
-    JOYSTICK.active = false;
-    JOYSTICK.dx = 0;
-    JOYSTICK.dy = 0;
-
-    if (joystickStick) {
-        joystickStick.style.transform = "translate(-50%,-50%)";
-    }
+function joyEnd(e) {
+    if (e && e.pointerId !== JOY.id) return;
+    JOY.active = false; JOY.id = null; JOY.dx = JOY.dy = 0;
+    if (E.joystickStick) E.joystickStick.style.transform = "translate(-50%,-50%)";
 }
+on(E.joystickBase, "pointerdown", (e) => {
+    e.preventDefault();
+    const r = E.joystickBase.getBoundingClientRect();
+    JOY.active = true; JOY.id = e.pointerId; JOY.cx = r.left + r.width / 2; JOY.cy = r.top + r.height / 2;
+    try { E.joystickBase.setPointerCapture(e.pointerId); } catch (_) {}
+    joyMove(e);
+});
+on(E.joystickBase, "pointermove", joyMove);
+on(E.joystickBase, "pointerup", joyEnd);
+on(E.joystickBase, "pointercancel", joyEnd);
 
-on(joystickBase, "touchend", resetJoystick);
-on(joystickBase, "touchcancel", resetJoystick);
+const btn = (el, fn) => on(el, "pointerdown", (e) => { e.preventDefault(); fn(); });
+btn(E.attackButton, startAttack);
+btn(E.dashButton, startDash);
+btn(E.skillButton, castSpiritSkill);
+btn(E.interactButton, tryInteract);
+btn(E.pauseButton, togglePause);
 
-on(attackButton, "touchstart", (event) => {
-    event.preventDefault();
-    startAttack();
-}, { passive: false });
-
-on(dashButton, "touchstart", (event) => {
-    event.preventDefault();
-    startDash();
-}, { passive: false });
-
-on(skillButton, "touchstart", (event) => {
-    event.preventDefault();
-    castSpiritSkill();
-}, { passive: false });
-
-on(interactButton, "touchstart", (event) => {
-    event.preventDefault();
-    tryInteract();
-}, { passive: false });
-
-on(pauseButton, "touchstart", (event) => {
-    event.preventDefault();
-    togglePause();
-}, { passive: false });
-
+/* ---------- MENUS ---------- */
 function togglePause() {
-    if (GAME.gameOver || GAME.victory) return;
-
+    if (GAME.gameOver || GAME.victory || !GAME.running && !GAME.paused) return;
     GAME.paused = !GAME.paused;
-
-    if (pauseMenu) {
-        pauseMenu.style.display = GAME.paused ? "flex" : "none";
-    }
+    if (E.pauseMenu) E.pauseMenu.style.display = GAME.paused ? "flex" : "none";
+    if (!GAME.paused && E.settingsPanel) E.settingsPanel.style.display = "none";
 }
-
-on(resumeButton, "click", () => {
-    GAME.paused = false;
-
-    if (pauseMenu) pauseMenu.style.display = "none";
+on(E.resumeButton, "click", () => { GAME.paused = false; E.pauseMenu.style.display = "none"; });
+on(E.restartButton, "click", () => location.reload());
+on(E.exitGameButton, "click", () => { location.href = "index.html"; });
+on(E.openSettingsButton, "click", () => { E.settingsPanel.style.display = "flex"; });
+on(E.closeSettingsButton, "click", () => { E.settingsPanel.style.display = "none"; });
+on(E.musicSlider, "input", (e) => {
+    const v = e.target.value / 100;
+    setVol(E.bgMusic, v); setVol(E.ambientWind, v * 0.6);
 });
-
-on(restartButton, "click", () => {
-    window.location.reload();
+on(E.effectsSlider, "input", (e) => { FX.effects = e.target.value / 100; });
+on(E.brightnessSlider, "input", (e) => { if (E.gameRoot) E.gameRoot.style.filter = `brightness(${e.target.value}%)`; });
+on(E.screenShakeToggle, "change", (e) => { FX.shake = e.target.checked; });
+on(E.closeInventory, "click", () => E.inventoryPanel.classList.remove("active"));
+on(E.muteButton, "click", () => {
+    GAME.muted = !GAME.muted;
+    document.querySelectorAll("audio").forEach((a) => { a.muted = GAME.muted; });
+    E.muteButton.textContent = GAME.muted ? "🔇" : "🔊";
 });
+addEventListener("resize", () => { CAM.w = innerWidth; CAM.h = innerHeight; detectDevice(); sizeRain(); });
 
-on(exitGameButton, "click", () => {
-    window.location.href = "index.html";
-});
-
-on(openSettingsButton, "click", () => {
-    if (settingsPanel) settingsPanel.style.display = "flex";
-});
-
-on(closeSettingsButton, "click", () => {
-    if (settingsPanel) settingsPanel.style.display = "none";
-});
-
-on(musicSlider, "input", (event) => {
-    setAudioVolume(bgMusic, event.target.value / 100);
-});
-
-on(effectsSlider, "input", (event) => {
-    AUDIOSETTINGS.effects = event.target.value / 100;
-});
-
-on(screenShakeToggle, "change", (event) => {
-    AUDIOSETTINGS.screenShake = event.target.checked;
-});
-
-on(closeInventory, "click", () => {
-    if (inventoryPanel) inventoryPanel.classList.remove("active");
-});
-
+/* ---------- PLAYER ---------- */
 function applyMovement() {
-    PLAYER.velocityX = 0;
-    PLAYER.velocityY = 0;
-
-    if (INPUT.left) PLAYER.velocityX--;
-    if (INPUT.right) PLAYER.velocityX++;
-    if (INPUT.up) PLAYER.velocityY--;
-    if (INPUT.down) PLAYER.velocityY++;
-
-    if (JOYSTICK.active) {
-        PLAYER.velocityX += JOYSTICK.dx / JOYSTICK.radius;
-        PLAYER.velocityY += JOYSTICK.dy / JOYSTICK.radius;
-    }
-
-    if (PLAYER.velocityX !== 0 || PLAYER.velocityY !== 0) {
-        const length = Math.hypot(PLAYER.velocityX, PLAYER.velocityY);
-
-        PLAYER.velocityX /= length;
-        PLAYER.velocityY /= length;
-
-        const speed = DASH.active ? DASH.speed : PLAYER.runSpeed;
-
-        PLAYER.x += PLAYER.velocityX * speed;
-        PLAYER.y += PLAYER.velocityY * speed;
-
-        PLAYER.x = clamp(PLAYER.x, 60, CONFIG.WORLD_WIDTH - 60);
-        PLAYER.y = clamp(PLAYER.y, 60, CONFIG.WORLD_HEIGHT - 60);
-
-        if (PLAYER.velocityX < -0.1) PLAYER.facing = -1;
-        if (PLAYER.velocityX > 0.1) PLAYER.facing = 1;
-
-        PLAYER.moving = true;
-        PLAYER.state = DASH.active ? "dash" : "walk";
-    } else {
-        PLAYER.moving = false;
-        if (!PLAYER.attacking) PLAYER.state = "idle";
-    }
+    let vx = 0, vy = 0;
+    if (INPUT.left) vx--; if (INPUT.right) vx++; if (INPUT.up) vy--; if (INPUT.down) vy++;
+    if (JOY.active) { vx += JOY.dx / JOY.radius; vy += JOY.dy / JOY.radius; }
+    const len = Math.hypot(vx, vy);
+    if (len > 0.05) {
+        const k = Math.min(1, len) / len;
+        vx *= k; vy *= k;
+        PLAYER.x += vx * CONFIG.PLAYER_SPEED;
+        PLAYER.y += vy * CONFIG.PLAYER_SPEED;
+        if (vx < -0.1) PLAYER.facing = -1; else if (vx > 0.1) PLAYER.facing = 1;
+        PLAYER.vx = vx; PLAYER.vy = vy;
+    } else { PLAYER.vx = 0; PLAYER.vy = 0; }
+    PLAYER.x = clamp(PLAYER.x, 60, CONFIG.WORLD_WIDTH - 60);
+    PLAYER.y = clamp(PLAYER.y, 260, CONFIG.WORLD_HEIGHT - 60);
 }
 
 function renderPlayer() {
-    const element = playerContainer || player;
-    if (!element) return;
-
-    element.style.left = PLAYER.x + "px";
-    element.style.top = PLAYER.y + "px";
-    element.style.transform = `translate(-50%,-100%) scaleX(${PLAYER.facing})`;
+    const el = E.playerContainer; if (!el) return;
+    el.style.left = PLAYER.x + "px";
+    el.style.top = PLAYER.y + "px";
+    el.style.transform = `translate(-50%,-100%) scaleX(${PLAYER.facing})`;
 }
 
-function updatePlayerHUD() {
-    const health = Math.round(PLAYER.health);
-    const spirit = Math.round(PLAYER.spirit);
-
-    if (healthFill) healthFill.style.width = health + "%";
-    if (spiritFill) spiritFill.style.width = spirit + "%";
-
-    if (healthText) healthText.textContent = `${health} / ${PLAYER.maxHealth}`;
-    if (spiritText) spiritText.textContent = `${spirit} / ${PLAYER.maxSpirit}`;
-}
-
-function regeneratePlayer(delta) {
-    PLAYER.health = clamp(PLAYER.health + 0.002 * delta, 0, PLAYER.maxHealth);
-    PLAYER.spirit = clamp(PLAYER.spirit + 0.01 * delta, 0, PLAYER.maxSpirit);
-    PLAYER.stamina = clamp(PLAYER.stamina + 0.03 * delta, 0, PLAYER.maxStamina);
-}
-
-function updateCamera() {
-    CAMERA.targetX = PLAYER.x - CAMERA.width / 2;
-    CAMERA.targetY = PLAYER.y - CAMERA.height / 2;
-
-    CAMERA.x += (CAMERA.targetX - CAMERA.x) * CAMERA.smooth;
-    CAMERA.y += (CAMERA.targetY - CAMERA.y) * CAMERA.smooth;
-
-    CAMERA.x = clamp(CAMERA.x, 0, Math.max(0, CONFIG.WORLD_WIDTH - CAMERA.width));
-    CAMERA.y = clamp(CAMERA.y, 0, Math.max(0, CONFIG.WORLD_HEIGHT - CAMERA.height));
-
-    if (gameWorld) {
-        gameWorld.style.transform =
-            `translate(${-CAMERA.x}px,${-CAMERA.y}px)`;
+function updateHUD() {
+    const h = Math.max(0, Math.round(PLAYER.health)), s = Math.round(PLAYER.spirit);
+    if (E.healthFill) {
+        E.healthFill.style.width = (h / PLAYER.maxHealth * 100) + "%";
+        E.healthFill.style.background = h <= 30 ? "linear-gradient(90deg,#ff0000,#ff5555)" : "";
     }
+    if (E.spiritFill) E.spiritFill.style.width = (s / PLAYER.maxSpirit * 100) + "%";
+    if (E.healthText) E.healthText.textContent = `${h} / ${PLAYER.maxHealth}`;
+    if (E.spiritText) E.spiritText.textContent = `${s} / ${PLAYER.maxSpirit}`;
+    if (E.statSpirit) E.statSpirit.textContent = s;
+    if (E.ghostKillCount) E.ghostKillCount.textContent = GAME.kills;
 }
 
-function cameraShake(power = 10, duration = 300) {
-    if (!AUDIOSETTINGS.screenShake || !gameWorld) return;
-
-    const start = performance.now();
-
-    function shake(time) {
-        const elapsed = time - start;
-
-        if (elapsed >= duration) {
-            gameWorld.style.transform =
-                `translate(${-CAMERA.x}px,${-CAMERA.y}px)`;
-            return;
-        }
-
-        const offsetX = (Math.random() - 0.5) * power;
-        const offsetY = (Math.random() - 0.5) * power;
-
-        gameWorld.style.transform =
-            `translate(${-CAMERA.x + offsetX}px,${-CAMERA.y + offsetY}px)`;
-
-        requestAnimationFrame(shake);
-    }
-
-    requestAnimationFrame(shake);
+function setScore(add) {
+    GAME.score += add;
+    if (E.scoreCounter) E.scoreCounter.textContent = pad6(GAME.score);
 }
 
-window.addEventListener("resize", () => {
-    CAMERA.width = window.innerWidth;
-    CAMERA.height = window.innerHeight;
-    detectDevice();
-});
-
-function triggerSlashEffect() {
-    if (!slashEffect) return;
-
-    slashEffect.classList.remove("play");
-    void slashEffect.offsetWidth;
-    slashEffect.classList.add("play");
+function regenerate(dt) {
+    PLAYER.health = clamp(PLAYER.health + 0.002 * dt, 0, PLAYER.maxHealth);
+    PLAYER.spirit = clamp(PLAYER.spirit + 0.01 * dt, 0, PLAYER.maxSpirit);
+    PLAYER.stamina = clamp(PLAYER.stamina + 0.03 * dt, 0, PLAYER.maxStamina);
 }
 
-function triggerDashTrail() {
-    if (!dashTrailEl) return;
-
-    dashTrailEl.classList.remove("play");
-    void dashTrailEl.offsetWidth;
-    dashTrailEl.classList.add("play");
+function hurtPlayer(amount, shakePower) {
+    if (PLAYER.invincible || GAME.gameOver || GAME.victory) return;
+    PLAYER.health = Math.max(0, PLAYER.health - amount);
+    safePlay(E.ghostAttack);
+    shake(shakePower, 200);
+    if (E.player) { E.player.classList.add("hurt"); setTimeout(() => E.player.classList.remove("hurt"), 250); }
+    if (E.damageOverlay) { E.damageOverlay.style.opacity = "1"; setTimeout(() => { E.damageOverlay.style.opacity = "0"; }, 120); }
+    updateHUD();
+    if (PLAYER.health <= 0) playerDie();
 }
 
-            speed;
-        PLAYER.y +=
-            PLAYER.velocityY *
-            speed;
-        PLAYER.x =
-            clamp(
-                PLAYER.x,
-                60,
-                CONFIG.WORLD_WIDTH - 60
-            );
-        PLAYER.y =
-            clamp(
-                PLAYER.y,
-                60,
-                CONFIG.WORLD_HEIGHT - 60
-            );
-        if (PLAYER.velocityX < -0.1) {
-            PLAYER.facing = -1;
-        }
-        if (PLAYER.velocityX > 0.1) {
-            PLAYER.facing = 1;
-        }
-        PLAYER.moving = true;
-        PLAYER.state =
-            DASH.active ?
-            "dash" :
-            "walk";
-    } else {
-        PLAYER.moving = false;
-        if (!PLAYER.attacking) {
-            PLAYER.state = "idle";
-        }
-    }
+/* ---------- CAMERA (shake is an offset, so it never fights the follow camera) ---------- */
+function shake(power, ms) {
+    if (!FX.shake) return;
+    FX.shakePower = power; FX.shakeUntil = performance.now() + ms;
 }
-function renderPlayer() {
-    const element =
-        playerContainer ||
-        player;
-    if (!element) return;
-    element.style.left =
-        PLAYER.x + "px";
-    element.style.top =
-        PLAYER.y + "px";
-    element.style.transform =
-        `translate(-50%,-100%)
-         scaleX(${PLAYER.facing})`;
+function updateCamera(snap) {
+    const tx = PLAYER.x - CAM.w / 2, ty = PLAYER.y - 80 - CAM.h / 2;
+    const k = snap ? 1 : CONFIG.CAMERA_SMOOTH;
+    CAM.x += (tx - CAM.x) * k; CAM.y += (ty - CAM.y) * k;
+    CAM.x = clamp(CAM.x, 0, Math.max(0, CONFIG.WORLD_WIDTH - CAM.w));
+    CAM.y = clamp(CAM.y, 0, Math.max(0, CONFIG.WORLD_HEIGHT - CAM.h));
+    let ox = 0, oy = 0;
+    if (performance.now() < FX.shakeUntil) { ox = (Math.random() - .5) * FX.shakePower; oy = (Math.random() - .5) * FX.shakePower; }
+    if (E.gameWorld) E.gameWorld.style.transform = `translate(${-CAM.x + ox}px,${-CAM.y + oy}px)`;
 }
-function updatePlayerHUD() {
-    const health =
-        Math.round(PLAYER.health);
-    const spirit =
-        Math.round(PLAYER.spirit);
-    if (healthFill) {
-        healthFill.style.width =
-            health + "%";
-    }
-    if (spiritFill) {
-        spiritFill.style.width =
-            spirit + "%";
-    }
-    if (healthText) {
-        healthText.textContent =
-            `${health} / ${PLAYER.maxHealth}`;
-    }
-    if (spiritText) {
-        spiritText.textContent =
-            `${spirit} / ${PLAYER.maxSpirit}`;
-    }
-}
-function regeneratePlayer(delta) {
-    PLAYER.health =
-        clamp(
-            PLAYER.health +
-            0.002 * delta,
-            0,
-            PLAYER.maxHealth
-        );
-    PLAYER.spirit =
-        clamp(
-            PLAYER.spirit +
-            0.01 * delta,
-            0,
-            PLAYER.maxSpirit
-        );
-    PLAYER.stamina =
-        clamp(
-            PLAYER.stamina +
-            0.03 * delta,
-            0,
-            PLAYER.maxStamina
-        );
-}
-function updateCamera() {
-    CAMERA.targetX =
-        PLAYER.x -
-        CAMERA.width / 2;
-    CAMERA.targetY =
-        PLAYER.y -
-        CAMERA.height / 2;
-    CAMERA.x +=
-        (
-            CAMERA.targetX -
-            CAMERA.x
-        ) *
-        CAMERA.smooth;
-    CAMERA.y +=
-        (
-            CAMERA.targetY -
-            CAMERA.y
-        ) *
-        CAMERA.smooth;
-    CAMERA.x =
-        clamp(
-            CAMERA.x,
-            0,
-            Math.max(
-                0,
-                CONFIG.WORLD_WIDTH -
-                CAMERA.width
-            )
-        );
-    CAMERA.y =
-        clamp(
-            CAMERA.y,
-            0,
-            Math.max(
-                0,
-                CONFIG.WORLD_HEIGHT -
-                CAMERA.height
-            )
-        );
-    if (gameWorld) {
-        gameWorld.style.transform =
-            `translate(
-                ${-CAMERA.x}px,
-                ${-CAMERA.y}px
-            )`;
-    }
-}
-function cameraShake(
-    power = 10,
-    duration = 300
-) {
-    if (
-        !AUDIOSETTINGS.screenShake ||
-        !gameWorld
-    ) {
-        return;
-    }
-    const start =
-        performance.now();
-    function shake(time) {
-        const elapsed =
-            time - start;
-        if (elapsed >= duration) {
-            gameWorld.style.transform =
-                `translate(
-                    ${-CAMERA.x}px,
-                    ${-CAMERA.y}px
-                )`;
-            return;
-        }
-        const offsetX =
-            (Math.random() - 0.5) *
-            power;
-        const offsetY =
-            (Math.random() - 0.5) *
-            power;
-        gameWorld.style.transform =
-            `translate(
-                ${-CAMERA.x + offsetX}px,
-                ${-CAMERA.y + offsetY}px
-            )`;
-        requestAnimationFrame(shake);
-    }
-    requestAnimationFrame(shake);
-}
-window.addEventListener(
-    "resize",
-    () => {
-        CAMERA.width =
-            window.innerWidth;
-        CAMERA.height =
-            window.innerHeight;
-        detectDevice();
-    }
-);
-function triggerSlashEffect() {
-    if (!slashEffect) return;
-    slashEffect.classList.remove(
-        "play"
-    );
-    void slashEffect.offsetWidth;
-    slashEffect.classList.add(
-        "play"
-    );
-}
-function triggerDashTrail() {
-    if (!dashTrailEl) return;
-    dashTrailEl.classList.remove(
-        "play"
-    );
-    void dashTrailEl.offsetWidth;
-    dashTrailEl.classList.add(
-        "play"
-    );
-}
+
+/* ---------- COMBAT ---------- */
+function retrigger(el, cls) { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+
 function startAttack() {
-    if (!GAME.running) return;
-    if (GAME.paused) return;
-    if (GAME.gameOver) return;
-    if (GAME.victory) return;
-    if (ATTACK.cooldown) return;
-    ATTACK.cooldown = true;
-    PLAYER.attacking = true;
-    PLAYER.state = "attack";
-    ATTACK.combo =
-        (ATTACK.combo % 3) + 1;
-    ATTACK.lastAttack =
-        performance.now();
-    safePlay(swordSlashSound);
-    triggerSlashEffect();
-    if (player) {
-        player.classList.remove(
-            "attack1",
-            "attack2",
-            "attack3"
-        );
-        void player.offsetWidth;
-        player.classList.add(
-            "attack" +
-            ATTACK.combo
-        );
+    if (!GAME.running || GAME.paused || GAME.gameOver || GAME.victory || ATTACK.cooldown) return;
+    ATTACK.cooldown = true; PLAYER.attacking = true;
+    ATTACK.combo = (ATTACK.combo % 3) + 1;
+    safePlay(E.swordSlash);
+    retrigger(E.slashEffect, "play");
+    if (E.player) { E.player.classList.remove("attack1", "attack2", "attack3"); void E.player.offsetWidth; E.player.classList.add("attack" + ATTACK.combo); }
+    damageGhosts(ATTACK.damage, swordBox());
+    if (BOSS.active) {
+        const reach = ATTACK.range + 110;
+        if (dist(pcx(), pcy(), BOSS.x, BOSS.y) <= reach) hurtBoss(ATTACK.damage);
     }
-    damageGhosts();
-    damageBossIfInRange();
-    setTimeout(() => {
-        PLAYER.attacking = false;
-    }, ATTACK.duration);
-    setTimeout(() => {
-        ATTACK.cooldown = false;
-    }, 200);
+    setTimeout(() => { PLAYER.attacking = false; }, 250);
+    setTimeout(() => { ATTACK.cooldown = false; }, 280);
 }
-function getSwordHitbox() {
-    const box = {
-        x: PLAYER.x,
-        y: PLAYER.y - 80,
-        width: ATTACK.range,
-        height: 160
-    };
-    if (PLAYER.facing > 0) {
-        box.x += 40;
-    } else {
-        box.x -=
-            ATTACK.range + 40;
-    }
-    return box;
-}
-function rectCollision(a, b) {
-    return (
-        a.x <
-        b.x + b.width &&
-        a.x + a.width >
-        b.x &&
-        a.y <
-        b.y + b.height &&
-        a.y + a.height >
-        b.y
-    );
-}
-function initGhosts() {
-    const elements =
-        Array.from(
-            document.querySelectorAll(
-                ".ghost"
-            )
-        );
-    elements.forEach(
-        (element, index) => {
-            const angle =
-                (
-                    index /
-                    Math.max(
-                        1,
-                        elements.length
-                    )
-                ) *
-                Math.PI *
-                2;
-            const radius =
-                650 +
-                random(
-                    -150,
-                    250
-                );
-            const x =
-                clamp(
-                    2500 +
-                    Math.cos(angle) *
-                    radius,
-                    200,
-                    CONFIG.WORLD_WIDTH -
-                    200
-                );
-            const y =
-                clamp(
-                    1200 +
-                    Math.sin(angle) *
-                    radius *
-                    0.6,
-                    200,
-                    CONFIG.WORLD_HEIGHT -
-                    200
-                );
-            element.style.position =
-                "absolute";
-            element.style.left =
-                x + "px";
-            element.style.top =
-                y + "px";
-            element.style.display =
-                "flex";
-            GHOSTS.push({
-                id: index,
-                element: element,
-                alive: true,
-                health: 100,
-                maxHealth: 100,
-                damage: 8,
-                speed:
-                    random(
-                        1.4,
-                        2.2
-                    ),
-                x: x,
-                y: y,
-                state: "wander",
-                velocityX: 0,
-                velocityY: 0,
-                attackTimer: 0,
-                floatOffset:
-                    random(
-                        0,
-                        1000
-                    ),
-                lastHit: 0
-            });
-        }
-    );
-    updateGhostCounter();
-}
-function updateGhostCounter() {
-    if (!aliveGhostsLabel) return;
-    aliveGhostsLabel.textContent =
-        GHOSTS.filter(
-            ghost => ghost.alive
-        ).length;
-}
-const GHOST_AI = {
-    detectRange: 420,
-    attackRange: 90,
-    attackCooldown: 1400
-};
-function updateGhostAI(delta) {
-    GHOSTS.forEach(
-        (ghost) => {
-            if (!ghost.alive) return;
-            const dx =
-                PLAYER.x -
-                ghost.x;
-            const dy =
-                PLAYER.y -
-                ghost.y;
-            const distance =
-                Math.hypot(
-                    dx,
-                    dy
-                );
-            if (
-                distance <
-                GHOST_AI.attackRange
-            ) {
-                ghost.state =
-                    "attack";
-                ghost.velocityX = 0;
-                ghost.velocityY = 0;
-            } else if (
-                distance <
-                GHOST_AI.detectRange
-            ) {
-                ghost.state =
-                    "chase";
-                ghost.velocityX =
-                    (dx / distance) *
-                    ghost.speed;
-                ghost.velocityY =
-                    (dy / distance) *
-                    ghost.speed;
-            } else {
-                ghost.state =
-                    "wander";
-                if (
-                    Math.random() <
-                    0.01
-                ) {
-                    const angle =
-                        Math.random() *
-                        Math.PI *
-                        2;
-                    ghost.velocityX =
-                        Math.cos(angle) *
-                        0.6;
-                    ghost.velocityY =
-                        Math.sin(angle) *
-                        0.6;
-                }
-            }
-            ghost.x =
-                clamp(
-                    ghost.x +
-                    ghost.velocityX,
-                    60,
-                    CONFIG.WORLD_WIDTH -
-                    60
-                );
-            ghost.y =
-                clamp(
-                    ghost.y +
-                    ghost.velocityY,
-                    60,
-                    CONFIG.WORLD_HEIGHT -
-                    60
-                );
-            const floatY =
-                Math.sin(
-                    performance.now() *
-                    0.002 +
-                    ghost.floatOffset
-                ) * 8;
-            ghost.element.style.left =
-                ghost.x + "px";
-            ghost.element.style.top =
-                (
-                    ghost.y +
-                    floatY
-                ) + "px";
-            ghost.element.style.transform =
-                PLAYER.x >
-                ghost.x
-                ? "scaleX(1)"
-                : "scaleX(-1)";
-            if (
-                ghost.state ===
-                "attack"
-            ) {
-                ghost.attackTimer -=
-                    delta;
-                if (
-                    ghost.attackTimer <= 0
-                ) {
-                    ghost.attackTimer =
-                        GHOST_AI.attackCooldown;
-                    ghostAttacksPlayer(
-                        ghost
-                    );
-                }
-            }
-        }
-    );
-}
-function damageGhosts() {
-    const sword =
-        getSwordHitbox();
-    GHOSTS.forEach(
-        (ghost) => {
-            if (!ghost.alive) return;
-            const enemy = {
-                x:
-                    ghost.x - 45,
-                y:
-                    ghost.y - 60,
-                width: 90,
-                height: 120
-            };
-            if (
-                !rectCollision(
-                    sword,
-                    enemy
-                )
-            ) {
-                return;
-            }
-            if (
-                performance.now() -
-                ghost.lastHit <
-                250
-            ) {
-                return;
-            }
-            ghost.lastHit =
-                performance.now();
-            ghost.health -=
-                ATTACK.damage;
-            updateGhostHealthBar(
-                ghost
-            );
-            cameraShake(
-                5,
-                120
-            );
-            if (
-                ghost.health <= 0
-            ) {
-                killGhost(
-                    ghost
-                );
-            }
-        }
-    );
-}
-function updateGhostHealthBar(
-    ghost
-) {
-    const fill =
-        ghost.element.querySelector(
-            ".enemyHealthFill"
-        );
-    if (!fill) return;
-    fill.style.width =
-        Math.max(
-            0,
-            (
-                ghost.health /
-                ghost.maxHealth
-            ) * 100
-        ) + "%";
-}
-function killGhost(ghost) {
-    if (!ghost.alive) return;
-    ghost.alive = false;
-    GAME.kills++;
-    GAME.score += 250;
-    if (scoreCounter) {
-        scoreCounter.textContent =
-            GAME.score
-                .toString()
-                .padStart(
-                    6,
-                    "0"
-                );
-    }
-    ghost.element.style.transition =
-        "opacity .5s, transform .5s";
-    ghost.element.style.opacity =
-        "0";
-    setTimeout(() => {
-        ghost.element.style.display =
-            "none";
-    }, 500);
-    updateGhostCounter();
-    showNotification(
-        "+250 SCORE"
-    );
-    checkGhostsCleared();
-}
-function ghostAttacksPlayer(ghost) {
-    if (PLAYER.invincible) return;
-    PLAYER.health =
-        Math.max(
-            0,
-            PLAYER.health -
-            ghost.damage
-        );
-    safePlay(
-        ghostAttackSound
-    );
-    cameraShake(
-        8,
-        180
-    );
-    if (player) {
-        player.classList.add(
-            "hurt"
-        );
-        setTimeout(() => {
-            player.classList.remove(
-                "hurt"
-            );
-        }, 250);
-    }
-    if (
-        PLAYER.health <= 0
-    ) {
-        playerDie();
-    }
-}
-function checkGhostsCleared() {
-    const cleared =
-        GHOSTS.every(
-            ghost =>
-                !ghost.alive
-        );
-    if (!cleared) return;
-    if (mission2) {
-        mission2.style.textDecoration =
-            "line-through";
-    }
-    showNotification(
-        "ALL GHOSTS DEFEATED!"
-    );
-    maybeSpawnBoss();
-}
-function initLanterns() {
-    LANTERNS.length = 0;
-    const elements = Array.from(
-        document.querySelectorAll("#lanternLayer .lantern")
-    ).slice(0, CONFIG.TOTAL_LANTERNS);
-    elements.forEach((element, index) => {
-        const angle = (index / Math.max(1, elements.length)) * Math.PI * 2;
-        const radius = 1100;
-        const x = clamp(2500 + Math.cos(angle) * radius, 200, CONFIG.WORLD_WIDTH - 200);
-        const y = clamp(1200 + Math.sin(angle) * radius * 0.55, 200, CONFIG.WORLD_HEIGHT - 200);
-        element.style.position = "absolute";
-        element.style.left = `${x}px`;
-        element.style.top = `${y}px`;
-        element.style.pointerEvents = "auto";
-        element.style.cursor = "pointer";
-        element.style.display = "flex";
-        element.style.zIndex = "20";
-        const data = { id: index + 1, element, x, y, lit: false, inRange: false };
-        LANTERNS.push(data);
-        on(element, "click", (event) => {
-            event.preventDefault();
-            if (!data.lit) lightLantern(data);
-        });
-        on(element, "touchend", (event) => {
-            event.preventDefault();
-            if (!data.lit) lightLantern(data);
-        }, { passive: false });
-    });
-    if (elements.length !== CONFIG.TOTAL_LANTERNS) {
-        console.warn(`[Day 5] Expected ${CONFIG.TOTAL_LANTERNS} lanterns, found ${elements.length}. Check #lanternLayer and #lantern1…#lantern7.`);
-    }
-    updateLanternCounter();
-}
-function updateLanternCounter() {
-    if (lanternCounter) {
-        lanternCounter.textContent =
-            `${GAME.lanterns} / ${CONFIG.TOTAL_LANTERNS}`;
-    }
-    if (activeLanternsLabel) {
-        activeLanternsLabel.textContent =
-            GAME.lanterns;
-    }
-}
-function lightLantern(data) {
-    if (data.lit) return;
-    data.lit = true;
-    data.inRange = false;
-    data.element.classList.remove(
 
-        "inRange"
-    );
-    data.element.classList.add(
-        "collected"
-    );
-    GAME.lanterns++;
-    GAME.score += 100;
-    updateLanternCounter();
-    if (scoreCounter) {
-        scoreCounter.textContent =
-            GAME.score
-                .toString()
-                .padStart(
-                    6,
-                    "0"
-                );
-    }
-    safePlay(
-        lanternSound
-    );
-    showNotification(
-        "SPIRIT LANTERN RESTORED!"
-    );
-    setTimeout(() => {
-        data.element.style.display =
-            "none";
-    }, 550);
-    if (
-        GAME.lanterns >=
-        CONFIG.TOTAL_LANTERNS
-    ) {
-        if (mission1) {
-            mission1.style.textDecoration =
-                "line-through";
+function swordBox() {
+    const b = { x: PLAYER.x, y: PLAYER.y - 170, w: ATTACK.range, h: 180 };
+    b.x += PLAYER.facing > 0 ? -20 : -(ATTACK.range - 20);
+    return b;
+}
+const hit = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+/* ---------- GHOSTS ---------- */
+function initGhosts() {
+    GHOSTS.length = 0;
+    const els = Array.from(document.querySelectorAll(".ghost"));
+    els.forEach((el, i) => {
+        const a = i / Math.max(1, els.length) * Math.PI * 2, r = 650 + rand(-150, 250);
+        const x = clamp(2500 + Math.cos(a) * r, 200, CONFIG.WORLD_WIDTH - 200);
+        const y = clamp(1200 + Math.sin(a) * r * 0.6, 350, CONFIG.WORLD_HEIGHT - 200);
+        Object.assign(el.style, { position: "absolute", left: x + "px", top: y + "px", display: "flex", animation: "none", transform: "translate(-50%,-50%)" });
+        GHOSTS.push({ el, img: el.querySelector("img"), fill: el.querySelector(".enemyHealthFill"), alive: true, health: 100, maxHealth: 100, damage: 8, speed: rand(1.4, 2.2), x, y, vx: 0, vy: 0, state: "wander", attackTimer: 600, float: rand(0, 1000), lastHit: 0 });
+    });
+    updateGhostCounter();
+}
+const updateGhostCounter = () => { if (E.aliveGhosts) E.aliveGhosts.textContent = GHOSTS.filter((g) => g.alive).length; };
+
+function updateGhosts(dt) {
+    const now = performance.now();
+    GHOSTS.forEach((g) => {
+        if (!g.alive) return;
+        const dx = pcx() - g.x, dy = pcy() - g.y, d = Math.hypot(dx, dy);
+        if (d < GHOST_AI.attack) { g.state = "attack"; g.vx = g.vy = 0; }
+        else if (d < GHOST_AI.detect) { g.state = "chase"; g.vx = dx / d * g.speed; g.vy = dy / d * g.speed; }
+        else {
+            g.state = "wander";
+            if (Math.random() < 0.01) { const a = Math.random() * Math.PI * 2; g.vx = Math.cos(a) * 0.6; g.vy = Math.sin(a) * 0.6; }
         }
-        showNotification(
-            "ALL LANTERNS RESTORED!"
-        );
+        g.x = clamp(g.x + g.vx, 60, CONFIG.WORLD_WIDTH - 60);
+        g.y = clamp(g.y + g.vy, 300, CONFIG.WORLD_HEIGHT - 60);
+        g.el.style.left = g.x + "px";
+        g.el.style.top = (g.y + Math.sin(now * 0.002 + g.float) * 8) + "px";
+        if (g.img) g.img.style.transform = pcx() > g.x ? "scaleX(1)" : "scaleX(-1)";
+        if (g.state === "attack") {
+            g.attackTimer -= dt;
+            if (g.attackTimer <= 0) { g.attackTimer = GHOST_AI.cooldown; hurtPlayer(g.damage, 8); }
+        }
+    });
+}
+
+function damageGhosts(amount, box) {
+    const now = performance.now();
+    GHOSTS.forEach((g) => {
+        if (!g.alive) return;
+        if (!hit(box, { x: g.x - 50, y: g.y - 70, w: 100, h: 140 })) return;
+        if (now - g.lastHit < 200) return;
+        g.lastHit = now;
+        harmGhost(g, amount);
+    });
+    shake(5, 120);
+}
+function harmGhost(g, amount) {
+    g.health -= amount;
+    if (g.fill) g.fill.style.width = Math.max(0, g.health / g.maxHealth * 100) + "%";
+    if (g.health <= 0) killGhost(g);
+}
+function killGhost(g) {
+    if (!g.alive) return;
+    g.alive = false; GAME.kills++; setScore(250);
+    g.el.style.transition = "opacity .5s"; g.el.style.opacity = "0";
+    setTimeout(() => { g.el.style.display = "none"; }, 500);
+    updateGhostCounter(); updateHUD();
+    notify("+250 SCORE");
+    if (GHOSTS.every((x) => !x.alive)) {
+        if (E.mission2) E.mission2.style.textDecoration = "line-through";
+        notify("ALL GHOSTS DEFEATED!");
         maybeSpawnBoss();
     }
 }
-function updateLanternProximity() {
-    let nearest = null;
-    let nearestDistance = Infinity;
-    LANTERNS.forEach((lantern) => {
-        if (lantern.lit) return;
-        const distance = distanceBetween(PLAYER.x, PLAYER.y, lantern.x, lantern.y);
-        const inRange = distance <= 320;
-        lantern.inRange = inRange;
-        lantern.element.classList.toggle("inRange", inRange);
-        if (distance < nearestDistance) {
-            nearestDistance = distance;
-            nearest = lantern;
-        }
-        if (distance <= 240) lightLantern(lantern);
+
+/* ---------- LANTERNS ---------- */
+function initLanterns() {
+    LANTERNS.length = 0;
+    Array.from(document.querySelectorAll("#lanternLayer .lantern")).slice(0, CONFIG.TOTAL_LANTERNS).forEach((el, i, arr) => {
+        const a = i / Math.max(1, arr.length) * Math.PI * 2;
+        const x = clamp(2500 + Math.cos(a) * 1100, 200, CONFIG.WORLD_WIDTH - 200);
+        const y = clamp(1200 + Math.sin(a) * 1100 * 0.55, 350, CONFIG.WORLD_HEIGHT - 200);
+        Object.assign(el.style, { position: "absolute", left: x + "px", top: y + "px", display: "flex", transform: "translate(-50%,-50%)", cursor: "pointer", zIndex: "20" });
+        const data = { id: i + 1, el, x, y, lit: false };
+        LANTERNS.push(data);
+        on(el, "pointerdown", (e) => { e.preventDefault(); if (dist(pcx(), pcy(), x, y) <= CONFIG.LANTERN_HINT * 1.5) lightLantern(data); });
     });
-    if (interactionPrompt) {
-        if (nearest && nearestDistance <= 320) {
-            interactionPrompt.style.display = "flex";
-            interactionPrompt.textContent = "WALK CLOSER OR PRESS F TO COLLECT LANTERN";
-        } else if (!GAME.victory) {
-            interactionPrompt.style.display = "none";
-        }
+    updateLanternCounter();
+}
+function updateLanternCounter() {
+    if (E.lanternCounter) E.lanternCounter.textContent = `${GAME.lanterns} / ${CONFIG.TOTAL_LANTERNS}`;
+    if (E.activeLanterns) E.activeLanterns.textContent = GAME.lanterns;
+}
+function lightLantern(l) {
+    if (l.lit) return;
+    l.lit = true;
+    l.el.classList.remove("inRange"); l.el.classList.add("collected");
+    GAME.lanterns++; setScore(100); updateLanternCounter();
+    PLAYER.spirit = clamp(PLAYER.spirit + 15, 0, PLAYER.maxSpirit);
+    PLAYER.health = clamp(PLAYER.health + 10, 0, PLAYER.maxHealth);
+    if (E.healOverlay) { E.healOverlay.style.opacity = "1"; setTimeout(() => { E.healOverlay.style.opacity = "0"; }, 150); }
+    safePlay(E.lanternLight);
+    notify("SPIRIT LANTERN RESTORED!");
+    setTimeout(() => { l.el.style.display = "none"; }, 550);
+    if (GAME.lanterns >= CONFIG.TOTAL_LANTERNS) {
+        if (E.mission1) E.mission1.style.textDecoration = "line-through";
+        notify("ALL LANTERNS RESTORED!");
+        maybeSpawnBoss();
+    }
+}
+function updateLanterns() {
+    let near = Infinity;
+    LANTERNS.forEach((l) => {
+        if (l.lit) return;
+        const d = dist(pcx(), pcy(), l.x, l.y);
+        near = Math.min(near, d);
+        l.el.classList.toggle("inRange", d <= CONFIG.LANTERN_HINT);
+        if (d <= CONFIG.LANTERN_PICKUP) lightLantern(l);
+    });
+    const ip = E.interactionPrompt;
+    if (ip && !PORTAL.active) {
+        if (near <= CONFIG.LANTERN_HINT) { ip.style.display = "flex"; ip.textContent = "WALK CLOSER OR PRESS F TO COLLECT LANTERN"; }
+        else ip.style.display = "none";
     }
 }
 function tryInteract() {
     if (!GAME.running || GAME.paused || GAME.gameOver) return;
-    let nearestLantern = null;
-    let nearestDistance = Infinity;
-    LANTERNS.forEach((item) => {
-        if (item.lit) return;
-        const distance = distanceBetween(PLAYER.x, PLAYER.y, item.x, item.y);
-        if (distance < nearestDistance) {
-            nearestDistance = distance;
-            nearestLantern = item;
-        }
-    });
-    if (nearestLantern && nearestDistance <= 420) {
-        lightLantern(nearestLantern);
-        return;
-    }
-    if (PORTAL.active && !PORTAL.entered) {
-        const distance = distanceBetween(PLAYER.x, PLAYER.y, PORTAL.x, PORTAL.y);
-        if (distance <= CONFIG.PORTAL_ENTER_RADIUS) {
-            goToDay6();
-            return;
-        }
-    }
-    showNotification("MOVE CLOSER TO A LANTERN OR PORTAL");
+    let best = null, bd = Infinity;
+    LANTERNS.forEach((l) => { if (l.lit) return; const d = dist(pcx(), pcy(), l.x, l.y); if (d < bd) { bd = d; best = l; } });
+    if (best && bd <= 420) return lightLantern(best);
+    if (PORTAL.active && !PORTAL.entered && dist(pcx(), pcy(), PORTAL.x, PORTAL.y) <= 160) return goToDay6();
+    notify("MOVE CLOSER TO A LANTERN");
 }
+
+/* ---------- BOSS ---------- */
 function maybeSpawnBoss() {
-    if (BOSS.active) return;
-    if (BOSS.defeated) return;
-    if (
-        GAME.lanterns <
-        CONFIG.TOTAL_LANTERNS
-    ) {
-        return;
-    }
-    if (
-        GHOSTS.some(
-            ghost =>
-                ghost.alive
-        )
-    ) {
-        return;
-    }
-    activateGhostKing();
+    if (BOSS.active || BOSS.defeated) return;
+    if (GAME.lanterns < CONFIG.TOTAL_LANTERNS || GHOSTS.some((g) => g.alive)) return;
+    activateBoss();
 }
-function activateGhostKing() {
-    BOSS.active = true;
-    BOSS.intro = true;
-    BOSS.defeated = false;
-    BOSS.health =
-        BOSS.maxHealth;
-    BOSS.phase = 1;
-    BOSS.x = 2500;
-    BOSS.y = 900;
-    if (bossEl) {
-        bossEl.style.display =
-            "flex";
-        bossEl.style.opacity =
-            "1";
-        bossEl.style.left =
-            BOSS.x + "px";
-        bossEl.style.top =
-            BOSS.y + "px";
-    }
-    if (bossHUD) {
-        bossHUD.style.display =
-            "block";
-    }
-    if (bossHealthFill) {
-        bossHealthFill.style.width =
-            "100%";
-    }
-    if (bossWarning) {
-        bossWarning.style.display =
-            "flex";
-        setTimeout(() => {
-            bossWarning.style.display =
-                "none";
-        }, 2200);
-    }
-    if (bossIntroScreen) {
-        bossIntroScreen.style.display =
-            "flex";
-        setTimeout(() => {
-            bossIntroScreen.style.display =
-                "none";
-        }, 2600);
-    }
-    safePlay(
-        bossRoarSound
-    );
-    cameraShake(
-        20,
-        900
-    );
-    showNotification(
-        "THE GHOST KING AWAKENS!"
-    );
-    setTimeout(() => {
-        BOSS.intro = false;
-    }, 2800);
+function activateBoss() {
+    Object.assign(BOSS, { active: true, intro: true, defeated: false, health: BOSS.maxHealth, phase: 1, x: 2500, y: 1000 });
+    if (E.ghostKing) Object.assign(E.ghostKing.style, { display: "flex", opacity: "1", left: BOSS.x + "px", top: BOSS.y + "px", transform: "translate(-50%,-50%)" });
+    if (E.bossHUD) E.bossHUD.style.display = "block";
+    if (E.bossHealthFill) E.bossHealthFill.style.width = "100%";
+    if (E.bossWarning) { E.bossWarning.style.display = "flex"; setTimeout(() => { E.bossWarning.style.display = "none"; }, 2200); }
+    if (E.bossIntroScreen) { E.bossIntroScreen.style.display = "flex"; setTimeout(() => { E.bossIntroScreen.style.display = "none"; }, 2600); }
+    safePlay(E.bossRoar); shake(20, 900); notify("THE GHOST KING AWAKENS!");
+    setTimeout(() => { BOSS.intro = false; }, 2800);
 }
-function updateBoss(delta) {
-    if (!BOSS.active) return;
-    if (BOSS.intro) return;
-    if (BOSS.defeated) return;
-    const dx =
-        PLAYER.x -
-        BOSS.x;
-    const dy =
-        PLAYER.y -
-        BOSS.y;
-    const distance =
-        Math.hypot(
-            dx,
-            dy
-        );
-    if (distance > 180) {
-        const angle =
-            Math.atan2(
-                dy,
-                dx
-            );
-        BOSS.x +=
-            Math.cos(angle) *
-            BOSS.speed;
-        BOSS.y +=
-            Math.sin(angle) *
-            BOSS.speed;
-    } else {
-        BOSS.attackTimer -=
-            delta;
-        if (
-            BOSS.attackTimer <= 0
-        ) {
-            BOSS.attackTimer =
-                BOSS.attackCooldown;
-            bossHitPlayer();
-        }
+function updateBoss(dt) {
+    if (!BOSS.active || BOSS.intro || BOSS.defeated) return;
+    const dx = pcx() - BOSS.x, dy = pcy() - BOSS.y, d = Math.hypot(dx, dy);
+    if (d > 190) { BOSS.x += dx / d * BOSS.speed; BOSS.y += dy / d * BOSS.speed; }
+    else {
+        BOSS.attackTimer -= dt;
+        if (BOSS.attackTimer <= 0) { BOSS.attackTimer = BOSS.attackCooldown; safePlay(E.bossRoar); hurtPlayer(BOSS.damage, 14); }
     }
-    if (bossEl) {
-        bossEl.style.left =
-            BOSS.x + "px";
-        bossEl.style.top =
-            BOSS.y + "px";
-        bossEl.style.transform =
-            dx > 0
-            ? "scaleX(1)"
-            : "scaleX(-1)";
+    if (E.ghostKing) {
+        E.ghostKing.style.left = BOSS.x + "px"; E.ghostKing.style.top = BOSS.y + "px";
+        E.ghostKing.style.transform = `translate(-50%,-50%) scaleX(${dx > 0 ? 1 : -1})`;
     }
 }
-function bossHitPlayer() {
-    if (PLAYER.invincible) return;
-    PLAYER.health =
-        Math.max(
-            0,
-            PLAYER.health -
-            BOSS.damage
-        );
-    safePlay(
-        bossRoarSound
-    );
-    cameraShake(
-        14,
-        220
-    );
-    if (player) {
-        player.classList.add(
-            "hurt"
-        );
-        setTimeout(() => {
-            player.classList.remove(
-                "hurt"
-            );
-        }, 250);
-    }
-    if (
-        PLAYER.health <= 0
-    ) {
-        playerDie();
-    }
-}
-function damageBossIfInRange() {
-    if (!BOSS.active) return;
-    if (BOSS.intro) return;
-    if (BOSS.defeated) return;
-    const distance =
-        distanceBetween(
-            PLAYER.x,
-            PLAYER.y,
-            BOSS.x,
-            BOSS.y
-        );
-    if (
-        distance >
-        ATTACK.range + 80
-    ) {
-        return;
-    }
-    BOSS.health =
-        Math.max(
-            0,
-            BOSS.health -
-            ATTACK.damage
-        );
-    if (bossHealthFill) {
-        bossHealthFill.style.width =
-            (
-                BOSS.health /
-                BOSS.maxHealth *
-                100
-            ) + "%";
-    }
-    cameraShake(
-        6,
-        120
-    );
-    if (ghostKingSprite) {
-        ghostKingSprite.classList.remove(
-            "hit"
-        );
-        void ghostKingSprite.offsetWidth;
-        ghostKingSprite.classList.add(
-            "hit"
-        );
-    }
-    if (
-        BOSS.phase === 1 &&
-        BOSS.health < 650
-    ) {
-        BOSS.phase = 2;
-        BOSS.speed += 0.6;
-        BOSS.damage += 4;
-        BOSS.attackCooldown =
-            1500;
-        showNotification(
-            "THE GHOST KING GROWS STRONGER!"
-        );
-    }
-    if (
-        BOSS.phase === 2 &&
-        BOSS.health < 300
-    ) {
-        BOSS.phase = 3;
-        BOSS.speed += 0.6;
-        BOSS.damage += 6;
-        BOSS.attackCooldown =
-            1100;
-        cameraShake(
-            16,
-            400
-        );
-        showNotification(
-            "GHOST KING — RAGE MODE!"
-        );
-    }
-    if (
-        BOSS.health <= 0
-    ) {
-        bossDefeated();
-    }
+function hurtBoss(amount) {
+    if (!BOSS.active || BOSS.intro || BOSS.defeated) return;
+    BOSS.health = Math.max(0, BOSS.health - amount);
+    if (E.bossHealthFill) E.bossHealthFill.style.width = (BOSS.health / BOSS.maxHealth * 100) + "%";
+    shake(6, 120); retrigger(E.ghostKingSprite, "hit");
+    if (BOSS.phase === 1 && BOSS.health < 650) { BOSS.phase = 2; BOSS.speed += 0.6; BOSS.damage += 4; BOSS.attackCooldown = 1500; notify("THE GHOST KING GROWS STRONGER!"); }
+    if (BOSS.phase === 2 && BOSS.health < 300) { BOSS.phase = 3; BOSS.speed += 0.6; BOSS.damage += 6; BOSS.attackCooldown = 1100; shake(16, 400); notify("GHOST KING — RAGE MODE!"); }
+    if (BOSS.health <= 0) bossDefeated();
 }
 function bossDefeated() {
     if (BOSS.defeated) return;
-    BOSS.defeated = true;
-    BOSS.active = false;
-    BOSS.intro = false;
-    GAME.score += 5000;
-    if (mission3) {
-        mission3.style.textDecoration =
-            "line-through";
-    }
-    if (scoreCounter) {
-        scoreCounter.textContent =
-            GAME.score
-                .toString()
-                .padStart(
-                    6,
-                    "0"
-                );
-    }
-    cameraShake(
-        24,
-        700
-    );
-    safePlay(
-        bossRoarSound
-    );
-    if (bossEl) {
-        bossEl.style.transition =
-            "opacity .8s ease, transform .8s ease";
-        bossEl.style.opacity =
-            "0";
-        bossEl.style.transform =
-            "translateY(-50px) scale(1.2)";
-        setTimeout(() => {
-            bossEl.style.display =
-                "none";
-        }, 800);
-    }
-    if (bossHUD) {
-        bossHUD.style.display =
-            "none";
-    }
-    showNotification(
-        "THE GHOST KING HAS FALLEN!"
-    );
-    setTimeout(() => {
-        activatePortal(
-            BOSS.x,
-            BOSS.y
-        );
-    }, 1000);
-    setTimeout(() => {
-        winGame();
-    }, 2200);
+    BOSS.defeated = true; BOSS.active = false;
+    setScore(5000);
+    if (E.mission3) E.mission3.style.textDecoration = "line-through";
+    shake(24, 700); safePlay(E.bossRoar);
+    if (E.ghostKing) { E.ghostKing.style.transition = "opacity .8s"; E.ghostKing.style.opacity = "0"; setTimeout(() => { E.ghostKing.style.display = "none"; }, 800); }
+    if (E.bossHUD) E.bossHUD.style.display = "none";
+    notify("THE GHOST KING HAS FALLEN!");
+    activatePortal(BOSS.x, BOSS.y);
+    setTimeout(winGame, 2000);
 }
-function activatePortal(x, y) {
-    if (PORTAL.active) return;
-    PORTAL.active = true;
-    PORTAL.entered = false;
-    PORTAL.x = x;
-    PORTAL.y = y;
-    if (!day6Portal) return;
-    day6Portal.style.display =
-        "flex";
-    day6Portal.style.position =
-        "absolute";
-    day6Portal.style.left =
-        x + "px";
-    day6Portal.style.top =
-        y + "px";
-    day6Portal.style.opacity =
-        "0";
-    day6Portal.style.pointerEvents =
-        "auto";
-    day6Portal.style.transform =
-        "translate(-50%,-60%) scale(.2)";
-    day6Portal.style.transition =
-        "opacity .8s ease, transform .8s ease";
-    requestAnimationFrame(() => {
-        day6Portal.style.opacity =
-            "1";
-        day6Portal.style.transform =
-            "translate(-50%,-60%) scale(1)";
-    });
-    safePlay(
-        portalSound
-    );
-    showNotification(
-        "PORTAL TO DAY 6 HAS OPENED!"
-    );
-    setTimeout(() => {
-        showNotification(
-            "PRESS F OR CONTINUE"
-        );
-    }, 1200);
-}
-function updatePortalProximity() {
-    if (!PORTAL.active) return;
-    if (PORTAL.entered) return;
-    const distance =
-        distanceBetween(
-            PLAYER.x,
-            PLAYER.y,
-            PORTAL.x,
-            PORTAL.y
-        );
-    const inRange =
-        distance <=
-        CONFIG.PORTAL_HINT_RADIUS;
-    if (day6Portal) {
-        day6Portal.classList.toggle(
-            "inRange",
-            inRange
-        );
-    }
-    if (
-        interactionPrompt &&
-        inRange &&
-        GAME.victory
-    ) {
-        interactionPrompt.style.display =
-            "flex";
-        interactionPrompt.textContent =
-            "PRESS F TO ENTER DAY 6";
-    }
-}
-function goToDay6() {
-    if (!DAY5_ACCESS.completed) {
-        showNotification("SAVE DAY 5 PROGRESS BEFORE CONTINUING");
-        return;
-    }
-    if (PORTAL.entered) return;
-    PORTAL.entered = true;
-    GAME.running = false;
-    GAME.paused = false;
-    safePlay(
-        portalSound
-    );
-    if (victoryScreen) {
-        victoryScreen.style.display =
-            "none";
-        victoryScreen.style.pointerEvents =
-            "none";
-    }
-    if (day6Portal) {
-        day6Portal.style.pointerEvents =
-            "none";
-        day6Portal.style.opacity =
-            "0";
-    }
-    let transition =
-        document.getElementById(
-            "day6Transition"
-        );
-    if (!transition) {
-        transition =
-            document.createElement(
-                "div"
-            );
-        transition.id =
-            "day6Transition";
-        transition.style.position =
-            "fixed";
-        transition.style.inset =
-            "0";
-        transition.style.background =
-            "#000";
-        transition.style.zIndex =
-            "999999";
-        transition.style.opacity =
-            "0";
-        transition.style.transition =
-            "opacity 1s ease";
-        transition.style.pointerEvents =
-            "all";
-        document.body.appendChild(
-            transition
-        );
-    }
-    requestAnimationFrame(() => {
-        transition.style.opacity =
-            "1";
-    });
-    setTimeout(() => {
-        window.location.href =
-            CONFIG.NEXT_LEVEL_URL;
-    }, 1100);
-}
-on(
-    day6Portal,
-    "click",
-    (event) => {
-        event.preventDefault();
-        if (GAME.victory) {
-            goToDay6();
-        } else {
-            showNotification(
-                "DEFEAT THE GHOST KING FIRST!"
-            );
-        }
-    }
-);
-on(
-    day6Portal,
-    "touchstart",
-    (event) => {
-        event.preventDefault();
-        if (GAME.victory) {
-            goToDay6();
-        } else {
-            showNotification(
-                "DEFEAT THE GHOST KING FIRST!"
-            );
-        }
-    },
-    { passive: false }
-);
-on(
-    continueButton,
-    "click",
-    async (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        if (!DAY5_ACCESS.completed) {
-            const saved = await saveDay5Completion();
-            if (saved) await winGame(true);
-            return;
-        }
-        goToDay6();
-    }
-);
-on(
-    continueButton,
-    "touchstart",
-    async (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        if (!DAY5_ACCESS.completed) {
-            const saved = await saveDay5Completion();
-            if (saved) await winGame(true);
-            return;
-        }
-        goToDay6();
-    },
-    { passive: false }
-);
-function updateSkill(delta) {
-    if (SKILL.timer > 0) {
-        SKILL.timer -= delta;
-    }
-}
+
+/* ---------- SKILL / DASH ---------- */
 function castSpiritSkill() {
-    if (!GAME.running) return;
-    if (GAME.paused) return;
-    if (SKILL.timer > 0) return;
-    if (
-        PLAYER.spirit <
-        SKILL.spiritCost
-    ) {
-        showNotification(
-            "NOT ENOUGH SPIRIT"
-        );
-        return;
-    }
-    PLAYER.spirit -=
-        SKILL.spiritCost;
-    SKILL.timer =
-        SKILL.cooldown;
-    if (player) {
-        player.classList.add(
-            "skillCast"
-        );
-        setTimeout(() => {
-            player.classList.remove(
-                "skillCast"
-            );
-        }, 700);
-    }
-    GHOSTS.forEach(
-        (ghost) => {
-            if (!ghost.alive) return;
-            const distance =
-                distanceBetween(
-                    PLAYER.x,
-                    PLAYER.y,
-                    ghost.x,
-                    ghost.y
-                );
-            if (distance > 260) return;
-            ghost.health -=
-                SKILL.damage;
-            updateGhostHealthBar(
-                ghost
-            );
-            if (
-                ghost.health <= 0
-            ) {
-                killGhost(
-                    ghost
-                );
-            }
-        }
-    );
-    if (
-        BOSS.active &&
-        !BOSS.defeated
-    ) {
-        const distance =
-            distanceBetween(
-                PLAYER.x,
-                PLAYER.y,
-                BOSS.x,
-                BOSS.y
-            );
-        if (distance < 260) {
-            damageBossIfInRange();
-        }
-    }
-    cameraShake(
-        10,
-        200
-    );
-    showNotification(
-        "SPIRIT BURST!"
-    );
+    if (!GAME.running || GAME.paused || SKILL.timer > 0) return;
+    if (PLAYER.spirit < SKILL.cost) return notify("NOT ENOUGH SPIRIT");
+    PLAYER.spirit -= SKILL.cost; SKILL.timer = SKILL.cooldown;
+    GHOSTS.forEach((g) => { if (g.alive && dist(pcx(), pcy(), g.x, g.y) <= 280) harmGhost(g, SKILL.damage); });
+    if (BOSS.active && dist(pcx(), pcy(), BOSS.x, BOSS.y) <= 320) hurtBoss(SKILL.damage);
+    shake(10, 200); notify("SPIRIT BURST!");
 }
 function startDash() {
-    if (!GAME.running) return;
-    if (GAME.paused) return;
-    if (DASH.active) return;
-    if (
-        DASH.cooldownTimer > 0
-    ) {
-        return;
-
-    }
-    if (
-        PLAYER.stamina < 20
-    ) {
-        return;
-    }
-    let dx =
-        PLAYER.velocityX;
-    let dy =
-        PLAYER.velocityY;
-    if (
-        dx === 0 &&
-        dy === 0
-    ) {
-        dx =
-            PLAYER.facing;
-        dy = 0;
-    }
-    const length =
-        Math.hypot(
-            dx,
-            dy
-        );
-    if (length === 0) return;
-    DASH.directionX =
-        dx / length;
-    DASH.directionY =
-        dy / length;
-    DASH.active = true;
-    DASH.timer =
-        DASH.duration;
-    DASH.cooldownTimer =
-        DASH.cooldown;
-    PLAYER.invincible = true;
-    PLAYER.stamina -= 20;
-    safePlay(
-        heroDashSound
-    );
-    triggerDashTrail();
-    if (player) {
-        player.classList.add(
-            "dash"
-        );
-    }
+    if (!GAME.running || GAME.paused || DASH.active || DASH.cd > 0 || PLAYER.stamina < 20) return;
+    let dx = PLAYER.vx, dy = PLAYER.vy;
+    if (!dx && !dy) { dx = PLAYER.facing; dy = 0; }
+    const l = Math.hypot(dx, dy);
+    DASH.dx = dx / l; DASH.dy = dy / l;
+    DASH.active = true; DASH.timer = DASH.duration; DASH.cd = DASH.cooldown;
+    PLAYER.invincible = true; PLAYER.stamina -= 20;
+    safePlay(E.heroDash); retrigger(E.dashTrail, "play");
+    if (E.player) E.player.classList.add("dash");
 }
-function updateDash(delta) {
-    if (
-        DASH.cooldownTimer > 0
-    ) {
-        DASH.cooldownTimer -=
-            delta;
-    }
+function updateDash(dt) {
+    if (DASH.cd > 0) DASH.cd -= dt;
+    if (SKILL.timer > 0) SKILL.timer -= dt;
     if (!DASH.active) return;
-    DASH.timer -=
-        delta;
-    PLAYER.x +=
-        DASH.directionX *
-        DASH.speed;
-    PLAYER.y +=
-        DASH.directionY *
-        DASH.speed;
-    PLAYER.x =
-        clamp(
-            PLAYER.x,
-            60,
-            CONFIG.WORLD_WIDTH -
-            60
-        );
-    PLAYER.y =
-        clamp(
-            PLAYER.y,
-            60,
-            CONFIG.WORLD_HEIGHT -
-            60
-        );
-    if (DASH.timer <= 0) {
-        DASH.active = false;
-        PLAYER.invincible = false;
-        if (player) {
-            player.classList.remove(
-                "dash"
-            );
-        }
-    }
+    DASH.timer -= dt;
+    PLAYER.x = clamp(PLAYER.x + DASH.dx * DASH.speed, 60, CONFIG.WORLD_WIDTH - 60);
+    PLAYER.y = clamp(PLAYER.y + DASH.dy * DASH.speed, 260, CONFIG.WORLD_HEIGHT - 60);
+    if (DASH.timer <= 0) { DASH.active = false; PLAYER.invincible = false; if (E.player) E.player.classList.remove("dash"); }
 }
-function showNotification(text) {
-    if (!notificationContainer) return;
-    const notification =
-        document.createElement(
-            "div"
-        );
-    notification.className =
-        "notification";
-    notification.textContent =
-        text;
-    notificationContainer.appendChild(
-        notification
-    );
-    setTimeout(() => {
-        notification.remove();
-    }, 1800);
+
+/* ---------- PORTAL / END ---------- */
+function activatePortal(x, y) {
+    if (PORTAL.active) return;
+    Object.assign(PORTAL, { active: true, entered: false, x, y });
+    const p = E.day6Portal; if (!p) return;
+    Object.assign(p.style, { display: "flex", position: "absolute", left: x + "px", top: y + "px", opacity: "0", pointerEvents: "auto", transform: "translate(-50%,-60%) scale(.2)", transition: "opacity .8s, transform .8s" });
+    requestAnimationFrame(() => { p.style.opacity = "1"; p.style.transform = "translate(-50%,-60%) scale(1)"; });
+    safePlay(E.portalSound);
 }
-async function winGame(saveAlreadyConfirmed = false) {
-    if (GAME.victory && DAY5_ACCESS.completed) return;
-    GAME.running = false;
-    GAME.paused = false;
-    const saved = saveAlreadyConfirmed || await saveDay5Completion();
-    if (!saved) {
-        if (victoryScreen) {
-            if (victoryScreen.parentElement !== document.body) document.body.appendChild(victoryScreen);
-            victoryScreen.style.position = "fixed";
-            victoryScreen.style.inset = "0";
-            victoryScreen.style.zIndex = "100000";
-            victoryScreen.style.display = "flex";
-            victoryScreen.style.pointerEvents = "auto";
-        }
-        if (continueButton) {
-            continueButton.disabled = false;
-            continueButton.style.display = "flex";
-            continueButton.textContent = "RETRY SAVE";
-        }
+function updatePortal() {
+    if (!PORTAL.active || PORTAL.entered || !E.day6Portal) return;
+    const near = dist(pcx(), pcy(), PORTAL.x, PORTAL.y) <= 220;
+    E.day6Portal.classList.toggle("inRange", near);
+}
+function goToDay6() {
+    if (!ACCESS.completed) return notify("SAVE DAY 5 PROGRESS BEFORE CONTINUING");
+    if (PORTAL.entered) return;
+    PORTAL.entered = true; GAME.running = false;
+    safePlay(E.portalSound);
+    if (E.victoryScreen) E.victoryScreen.style.display = "none";
+    const t = document.createElement("div");
+    Object.assign(t.style, { position: "fixed", inset: "0", background: "#000", zIndex: "999999", opacity: "0", transition: "opacity 1s", pointerEvents: "all" });
+    document.body.appendChild(t);
+    requestAnimationFrame(() => { t.style.opacity = "1"; });
+    setTimeout(() => { location.href = CONFIG.NEXT_LEVEL_URL; }, 1100);
+}
+on(E.day6Portal, "pointerdown", (e) => { e.preventDefault(); if (BOSS.defeated) goToDay6(); else notify("DEFEAT THE GHOST KING FIRST!"); });
+
+async function onContinue(e) {
+    e.preventDefault(); e.stopPropagation();
+    if (!ACCESS.completed) { if (await saveDay5Completion()) await winGame(true); return; }
+    goToDay6();
+}
+on(E.continueButton, "click", onContinue);
+
+function showOverlay(el) {
+    if (!el) return;
+    Object.assign(el.style, { position: "fixed", inset: "0", zIndex: "100000", display: "flex", pointerEvents: "auto" });
+}
+async function winGame(saved) {
+    if (GAME.victory) return;
+    GAME.running = false; GAME.paused = false;
+    if (!saved && !(await saveDay5Completion())) {
+        showOverlay(E.victoryScreen);
+        if (E.continueButton) { E.continueButton.disabled = false; E.continueButton.textContent = "RETRY SAVE"; }
         return;
     }
     GAME.victory = true;
-    GAME.running = false;
-    GAME.paused = false;
-    safePlay(
-        victorySound
-    );
-    if (victoryScreen) {
-        if (
-            victoryScreen.parentElement !==
-            document.body
-        ) {
-            document.body.appendChild(
-                victoryScreen
-            );
-        }
-        victoryScreen.style.position =
-            "fixed";
-        victoryScreen.style.inset =
-            "0";
-        victoryScreen.style.zIndex =
-            "100000";
-        victoryScreen.style.display =
-            "flex";
-        victoryScreen.style.pointerEvents =
-            "auto";
-        victoryScreen.style.opacity =
-            "0";
-        victoryScreen.style.transition =
-            "opacity .6s ease";
-        requestAnimationFrame(() => {
-            victoryScreen.style.opacity =
-                "1";
-        });
-    }
-    if (continueButton) {
-        continueButton.style.display =
-            "flex";
-        continueButton.style.pointerEvents =
-            "auto";
-        continueButton.disabled =
-            false;
-    }
-    showNotification(
-        "DAY 5 COMPLETE!"
-    );
+    safePlay(E.victorySound);
+    showOverlay(E.victoryScreen);
+    if (E.continueButton) { E.continueButton.disabled = false; E.continueButton.textContent = "CONTINUE TO DAY 6"; }
+    notify("DAY 5 COMPLETE!");
 }
 function playerDie() {
     if (GAME.gameOver) return;
-    GAME.gameOver = true;
-    GAME.running = false;
-    safePlay(
-        gameOverSound
-    );
-    if (gameOverScreen) {
-        if (
-            gameOverScreen.parentElement !==
-            document.body
-        ) {
-            document.body.appendChild(
-                gameOverScreen
-            );
-        }
-        gameOverScreen.style.position =
-            "fixed";
-        gameOverScreen.style.inset =
-            "0";
-        gameOverScreen.style.zIndex =
-            "100000";
-        gameOverScreen.style.display =
-            "flex";
-        gameOverScreen.style.pointerEvents =
-            "auto";
-    }
+    GAME.gameOver = true; GAME.running = false;
+    safePlay(E.gameOverSound);
+    showOverlay(E.gameOverScreen);
 }
-on(
-    retryGameButton,
-    "click",
-    () => {
-        window.location.reload();
-    }
-);
-on(
-    quitEventButton,
-    "click",
-    () => {
-        window.location.href =
-            "index.html";
-    }
-);
-function worldToMiniMap(x, y) {
-    const width =
-        miniMapFrame ?
-        miniMapFrame.clientWidth ||
-        200 :
-        200;
-    const height =
-        miniMapFrame ?
-        miniMapFrame.clientHeight ||
-        200 :
-        200;
-    return {
-        left:
-            (
-                x /
-                CONFIG.WORLD_WIDTH
-            ) *
-            width,
-        top:
-            (
-                y /
-                CONFIG.WORLD_HEIGHT
-            ) *
-            height
-    };
+on(E.retryGameButton, "click", () => location.reload());
+on(E.quitEventButton, "click", () => { location.href = "index.html"; });
+
+function notify(text) {
+    if (!E.notificationContainer) return;
+    const n = document.createElement("div");
+    n.className = "notification"; n.textContent = text;
+    E.notificationContainer.appendChild(n);
+    while (E.notificationContainer.children.length > 4) E.notificationContainer.firstChild.remove();
+    setTimeout(() => n.remove(), 1800);
+}
+
+/* ---------- MINIMAP + COMPASS ---------- */
+function toMini(x, y) {
+    const w = E.miniMapFrame.clientWidth || 200, h = E.miniMapFrame.clientHeight || 200;
+    return { l: x / CONFIG.WORLD_WIDTH * w, t: y / CONFIG.WORLD_HEIGHT * h };
 }
 function updateMiniMap() {
-    if (!miniMapFrame) return;
-    if (miniPlayerEl) {
-        const position =
-            worldToMiniMap(
-                PLAYER.x,
-                PLAYER.y
-            );
-        miniPlayerEl.style.left =
-            position.left + "px";
-        miniPlayerEl.style.top =
-            position.top + "px";
+    if (!E.miniMapFrame) return;
+    if (E.miniPlayer) { const p = toMini(PLAYER.x, PLAYER.y); E.miniPlayer.style.left = p.l + "px"; E.miniPlayer.style.top = p.t + "px"; }
+    LANTERNS.forEach((l, i) => {
+        const dot = document.getElementById("miniLantern" + (i + 1)); if (!dot) return;
+        const p = toMini(l.x, l.y);
+        dot.style.left = p.l + "px"; dot.style.top = p.t + "px"; dot.style.opacity = l.lit ? "0" : "0.9";
+    });
+    if (E.miniBoss) {
+        if (BOSS.active && !BOSS.defeated) { const p = toMini(BOSS.x, BOSS.y); Object.assign(E.miniBoss.style, { display: "block", left: p.l + "px", top: p.t + "px" }); }
+        else E.miniBoss.style.display = "none";
     }
-    LANTERNS.forEach(
-        (lantern, index) => {
-            const dot =
-                document.getElementById(
-                    "miniLantern" +
-                    (index + 1)
-                );
-            if (!dot) return;
-            const position =
-                worldToMiniMap(
-                    lantern.x,
-                    lantern.y
-                );
-            dot.style.position =
-                "absolute";
-            dot.style.left =
-                position.left + "px";
-            dot.style.top =
-                position.top + "px";
-            dot.style.opacity =
-                lantern.lit
-                ? "0"
-                : "0.8";
-        }
-    );
-    if (miniBossEl) {
-        if (
-            BOSS.active &&
-            !BOSS.defeated
-        ) {
-            const position =
-                worldToMiniMap(
-                    BOSS.x,
-                    BOSS.y
-                );
-            miniBossEl.style.display =
-                "block";
-            miniBossEl.style.left =
-                position.left + "px";
-            miniBossEl.style.top =
-                position.top + "px";
-        } else {
-            miniBossEl.style.display =
-                "none";
-        }
-    }
-}
-function nearestUnlitLantern() {
-    let nearest = null;
-    let nearestDistance =
-        Infinity;
-    LANTERNS.forEach(
-        (lantern) => {
-            if (lantern.lit) return;
-            const distance =
-                distanceBetween(
-                    PLAYER.x,
-                    PLAYER.y,
-                    lantern.x,
-                    lantern.y
-                );
-            if (
-                distance <
-                nearestDistance
-            ) {
-                nearestDistance =
-                    distance;
-                nearest =
-                    lantern;
-            }
-        }
-    );
-    return nearest;
 }
 function updateCompass() {
-    if (!compassNeedle) return;
-    let target =
-        nearestUnlitLantern();
-    if (
-        !target &&
-        BOSS.active &&
-        !BOSS.defeated
-    ) {
-        target = BOSS;
-    }
-    if (!target) {
-        compassNeedle.style.transform =
-            "rotate(0deg)";
-        return;
-    }
-    const dx =
-        target.x -
-        PLAYER.x;
-    const dy =
-        target.y -
-        PLAYER.y;
-    const angle =
-        Math.atan2(
-            dy,
-            dx
-        ) *
-        180 /
-        Math.PI +
-        90;
-    compassNeedle.style.transform =
-        `rotate(${angle}deg)`;
+    if (!E.compassNeedle) return;
+    let target = null, bd = Infinity;
+    LANTERNS.forEach((l) => { if (l.lit) return; const d = dist(PLAYER.x, PLAYER.y, l.x, l.y); if (d < bd) { bd = d; target = l; } });
+    if (!target && BOSS.active) target = BOSS;
+    if (!target && PORTAL.active) target = PORTAL;
+    if (!target) return;
+    const a = Math.atan2(target.y - PLAYER.y, target.x - PLAYER.x) * 180 / Math.PI + 90;
+    E.compassNeedle.style.transform = `rotate(${a}deg)`;
 }
-function spawnAmbientBats() {
-    const layer =
-        $("#batLayer");
-    if (!layer) return;
-    const count =
-        GAME.mobile ?
-        6 :
-        14;
-    for (
-        let i = 0;
-        i < count;
-        i++
-    ) {
-        const bat =
-            document.createElement(
-                "div"
-            );
-        bat.className =
-            "bat";
-        bat.style.top =
-            random(
-                50,
-                500
-            ) + "px";
-        bat.style.animationDuration =
-            random(
-                10,
-                18
-            ) + "s";
-        bat.style.animationDelay =
-            random(
-                0,
-                8
-            ) + "s";
-        layer.appendChild(
-            bat
-        );
+
+/* ---------- AMBIENT ---------- */
+function spawnBats() {
+    const layer = $("#batLayer"); if (!layer) return;
+    for (let i = 0; i < (GAME.mobile ? 6 : 14); i++) {
+        const b = document.createElement("div");
+        b.className = "bat"; b.style.top = rand(50, 500) + "px";
+        b.style.animationDuration = rand(10, 18) + "s"; b.style.animationDelay = rand(0, 8) + "s";
+        layer.appendChild(b);
     }
 }
 function scheduleLightning() {
-    if (!lightningLayer) return;
-    const delay =
-        random(
-            6000,
-            14000
-        );
+    const l = E.lightningLayer; if (!l) return;
     setTimeout(() => {
-        lightningLayer.style.transition =
-            "opacity .1s";
-        lightningLayer.style.opacity =
-            "0.9";
-        safePlay(
-            lightningSound
-        );
-        setTimeout(() => {
-            lightningLayer.style.opacity =
-                "0";
-        }, 150);
+        l.style.transition = "opacity .1s"; l.style.opacity = "0.9"; safePlay(E.lightningSound);
+        setTimeout(() => { l.style.opacity = "0"; }, 150);
         scheduleLightning();
-    }, delay);
+    }, rand(6000, 14000));
 }
-function updateFPS(delta) {
-    ENGINE.frame++;
-    ENGINE.fpsTimer +=
-        delta;
-    if (
-        ENGINE.fpsTimer >=
-        1000
-    ) {
-        ENGINE.fps =
-            ENGINE.frame;
-        ENGINE.frame = 0;
-        ENGINE.fpsTimer = 0;
-        if (fpsValue) {
-            fpsValue.textContent =
-                ENGINE.fps;
-        }
-    }
+const RAIN = { drops: [], ctx: null };
+function sizeRain() {
+    const c = E.rainCanvasFront; if (!c) return;
+    c.width = innerWidth; c.height = innerHeight;
 }
+function initRain() {
+    const c = E.rainCanvasFront; if (!c) return;
+    Object.assign(c.style, { position: "fixed", inset: "0", width: "100%", height: "100%", pointerEvents: "none", zIndex: "40" });
+    sizeRain(); RAIN.ctx = c.getContext("2d");
+    const n = GAME.mobile ? 60 : 130;
+    for (let i = 0; i < n; i++) RAIN.drops.push({ x: rand(0, innerWidth), y: rand(0, innerHeight), l: rand(10, 22), s: rand(14, 24) });
+}
+function drawRain() {
+    const c = RAIN.ctx; if (!c) return;
+    c.clearRect(0, 0, E.rainCanvasFront.width, E.rainCanvasFront.height);
+    c.strokeStyle = "rgba(170,200,255,.35)"; c.lineWidth = 1; c.beginPath();
+    RAIN.drops.forEach((d) => {
+        c.moveTo(d.x, d.y); c.lineTo(d.x - 3, d.y + d.l);
+        d.y += d.s; d.x -= 1.5;
+        if (d.y > innerHeight) { d.y = -20; d.x = rand(0, innerWidth + 50); }
+    });
+    c.stroke();
+}
+
+/* ---------- MAIN LOOP ---------- */
 function gameLoop(time) {
-    const delta =
-        Math.min(
-            50,
-            time -
-            ENGINE.lastTime ||
-            16
-        );
-    ENGINE.lastTime =
-        time;
-    if (
-        GAME.running &&
-        !GAME.paused
-    ) {
-        applyMovement();
-        updateDash(delta);
-        updateSkill(delta);
-        regeneratePlayer(delta);
-        updateGhostAI(delta);
-        updateBoss(delta);
-        updateLanternProximity();
-        updatePortalProximity();
-        updateCamera();
-        renderPlayer();
-        updatePlayerHUD();
-        updateMiniMap();
-        updateCompass();
-    } else {
-        updatePlayerHUD();
+    const dt = Math.min(50, time - ENGINE.last || 16);
+    ENGINE.last = time;
+    if (GAME.running && !GAME.paused) {
+        applyMovement(); updateDash(dt); regenerate(dt);
+        updateGhosts(dt); updateBoss(dt); updateLanterns(); updatePortal();
+        updateCamera(false); renderPlayer(); updateMiniMap(); updateCompass();
     }
-    if (playerXLabel) {
-        playerXLabel.textContent =
-            Math.round(
-                PLAYER.x
-            );
-    }
-    if (playerYLabel) {
-        playerYLabel.textContent =
-            Math.round(
-                PLAYER.y
-            );
-    }
-    updateFPS(delta);
-    requestAnimationFrame(
-        gameLoop
-    );
+    updateHUD(); drawRain();
+    if (E.playerX) E.playerX.textContent = Math.round(PLAYER.x);
+    if (E.playerY) E.playerY.textContent = Math.round(PLAYER.y);
+    requestAnimationFrame(gameLoop);
 }
-const DAY5_ACCESS = {
-    user: null,
-    progress: null,
-    checked: false,
-    completed: false,
-    saving: false
-};
+
+/* ---------- SUPABASE ---------- */
 function showAccessBlock(message) {
-    const existing = document.getElementById("day5AccessBlock");
-    if (existing) existing.remove();
+    const old = document.getElementById("day5AccessBlock"); if (old) old.remove();
     const panel = document.createElement("div");
     panel.id = "day5AccessBlock";
     panel.style.cssText = "position:fixed;inset:0;z-index:200000;background:#05070d;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-align:center;font-family:system-ui,sans-serif;gap:14px";
-    const heading = document.createElement("h1");
-    heading.textContent = "DAY 5 LOCKED";
-    heading.style.cssText = "color:#ff8a00;margin:0";
-    const detail = document.createElement("p");
-    detail.textContent = message;
-    detail.style.cssText = "max-width:600px;line-height:1.6";
-    const retry = document.createElement("button");
-    retry.textContent = "RETRY CHECK";
-    retry.style.cssText = "padding:12px 22px;border:0;border-radius:8px;background:#ff8a00;color:#05070d;font-weight:800;cursor:pointer";
-    retry.addEventListener("click", () => window.location.reload());
-    panel.append(heading, detail, retry);
+    const h = document.createElement("h1"); h.textContent = "DAY 5 LOCKED"; h.style.cssText = "color:#ff8a00;margin:0";
+    const p = document.createElement("p"); p.textContent = message; p.style.cssText = "max-width:600px;line-height:1.6";
+    const b = document.createElement("button"); b.textContent = "RETRY CHECK";
+    b.style.cssText = "padding:12px 22px;border:0;border-radius:8px;background:#ff8a00;color:#05070d;font-weight:800;cursor:pointer";
+    b.addEventListener("click", () => location.reload());
+    const back = document.createElement("button"); back.textContent = "BACK TO MAP";
+    back.style.cssText = "padding:10px 20px;border:1px solid #ff8a00;border-radius:8px;background:transparent;color:#ff8a00;font-weight:700;cursor:pointer";
+    back.addEventListener("click", () => { location.href = "index.html"; });
+    panel.append(h, p, b, back);
     document.body.appendChild(panel);
+    if (E.loadingScreen) E.loadingScreen.style.display = "none";
 }
+
 async function verifyDay5Access() {
     try {
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError) throw sessionError;
-        const user = sessionData?.session?.user;
-        if (!user) {
-            showAccessBlock("Please sign in first. Day 5 requires an authenticated festival account and Day 4 completion.");
-            return false;
-        }
+        const { data: sd, error: se } = await supabase.auth.getSession();
+        if (se) throw se;
+        const user = sd?.session?.user;
+        if (!user) { showAccessBlock("Please sign in first. Day 5 requires an authenticated festival account and Day 4 completion."); return false; }
         const { data: progress, error } = await supabase
             .from("festival_progress")
             .select("user_id, festival, day4, day5")
             .eq("user_id", user.id)
-            .eq("festival", "halloween_2026")
+            .eq("festival", CONFIG.FESTIVAL)
             .maybeSingle();
         if (error) throw error;
-        if (!progress || progress.day4 !== true) {
-            showAccessBlock("Complete Day 4 first. Day 5 access is checked against your own festival_progress row.");
-            return false;
-        }
-        DAY5_ACCESS.user = user;
-        DAY5_ACCESS.progress = progress;
-        DAY5_ACCESS.checked = true;
-        DAY5_ACCESS.completed = progress.day5 === true;
+        if (!progress || progress.day4 !== true) { showAccessBlock("Complete Day 4 first. Day 5 access is checked against your own festival_progress row."); return false; }
+        ACCESS.user = user; ACCESS.checked = true; ACCESS.completed = progress.day5 === true;
         return true;
-    } catch (error) {
-        console.error("Day 5 Supabase access check failed:", error);
+    } catch (err) {
+        console.error("Day 5 Supabase access check failed:", err);
         showAccessBlock("Could not verify your festival progress. Check your connection and Supabase RLS policies, then retry.");
         return false;
     }
 }
+
 async function saveDay5Completion() {
-    if (DAY5_ACCESS.saving) return false;
-    if (!DAY5_ACCESS.checked || !DAY5_ACCESS.user) {
-        showNotification("SIGN IN AND VERIFY ACCESS BEFORE SAVING");
-        return false;
-    }
-    if (GAME.lanterns < CONFIG.TOTAL_LANTERNS) {
-        showNotification("RESTORE ALL 7 LANTERNS FIRST");
-        return false;
-    }
-    if (GHOSTS.some((ghost) => ghost.alive)) {
-        showNotification("DEFEAT ALL CEMETERY GHOSTS FIRST");
-        return false;
-    }
-    if (!BOSS.defeated) {
-        showNotification("DEFEAT THE GHOST KING FIRST");
-        return false;
-    }
-    DAY5_ACCESS.saving = true;
-    if (continueButton) {
-        continueButton.disabled = true;
-        continueButton.textContent = "SAVING PROGRESS…";
-    }
+    if (ACCESS.saving) return false;
+    if (ACCESS.completed) return true;
+    if (!ACCESS.checked || !ACCESS.user) { notify("SIGN IN AND VERIFY ACCESS BEFORE SAVING"); return false; }
+    if (GAME.lanterns < CONFIG.TOTAL_LANTERNS || GHOSTS.some((g) => g.alive) || !BOSS.defeated) { notify("FINISH ALL OBJECTIVES FIRST"); return false; }
+    ACCESS.saving = true;
+    if (E.continueButton) { E.continueButton.disabled = true; E.continueButton.textContent = "SAVING PROGRESS…"; }
     try {
         const { data, error } = await supabase
             .from("festival_progress")
             .update({ day5: true })
-            .eq("user_id", DAY5_ACCESS.user.id)
-            .eq("festival", "halloween_2026")
+            .eq("user_id", ACCESS.user.id)
+            .eq("festival", CONFIG.FESTIVAL)
             .eq("day4", true)
             .select("user_id, festival, day4, day5");
         if (error) throw error;
-        if (!Array.isArray(data) || data.length !== 1 || data[0].day5 !== true) {
-            throw new Error("Supabase did not confirm the Day 5 update. Check UPDATE and SELECT RLS policies.");
-        }
-        DAY5_ACCESS.progress = data[0];
-        DAY5_ACCESS.completed = true;
-        try {
-            localStorage.setItem("day5Complete", "true");
-            localStorage.setItem("day5Score", String(GAME.score));
-        } catch (_) {}
-        if (continueButton) {
-            continueButton.disabled = false;
-            continueButton.textContent = "CONTINUE TO DAY 6";
-        }
+        if (!Array.isArray(data) || data.length !== 1 || data[0].day5 !== true) throw new Error("Supabase did not confirm the Day 5 update. Check UPDATE and SELECT RLS policies.");
+        ACCESS.completed = true;
+        try { localStorage.setItem("day5Complete", "true"); localStorage.setItem("day5Score", String(GAME.score)); } catch (_) {}
+        if (E.saveIndicator) { E.saveIndicator.style.opacity = "1"; setTimeout(() => { E.saveIndicator.style.opacity = "0"; }, 1800); }
         return true;
-    } catch (error) {
-        console.error("Day 5 completion save failed:", error);
-        showNotification("SAVE FAILED — PRESS RETRY SAVE");
-        if (continueButton) {
-            continueButton.disabled = false;
-            continueButton.textContent = "RETRY SAVE";
-            continueButton.style.display = "flex";
-        }
+    } catch (err) {
+        console.error("Day 5 completion save failed:", err);
+        notify("SAVE FAILED — PRESS RETRY SAVE");
+        if (E.continueButton) { E.continueButton.disabled = false; E.continueButton.textContent = "RETRY SAVE"; }
         return false;
     } finally {
-        DAY5_ACCESS.saving = false;
+        ACCESS.saving = false;
     }
 }
+
+/* ---------- INIT ---------- */
 async function initializeGame() {
-    const accessGranted = await verifyDay5Access();
-    if (!accessGranted) return;
-    fixGameOverlays();
+    hoistUI();
+    if (E.loadingMessage) E.loadingMessage.textContent = "Verifying your progress...";
+    if (!(await verifyDay5Access())) return;
     detectDevice();
-    initGhosts();
-    initLanterns();
-    spawnAmbientBats();
-    scheduleLightning();
-    if (lanternCounter) {
-        lanternCounter.textContent =
-            `0 / ${CONFIG.TOTAL_LANTERNS}`;
-    }
-    if (scoreCounter) {
-        scoreCounter.textContent =
-            "000000";
-    }
-    if (interactionPrompt) {
-        interactionPrompt.style.display =
-            "none";
-    }
-    if (victoryScreen) {
-        victoryScreen.style.display =
-            "none";
-    }
-    if (gameOverScreen) {
-        gameOverScreen.style.display =
-            "none";
-    }
-    if (bossHUD) {
-        bossHUD.style.display =
-            "none";
-    }
-    if (bossEl) {
-        bossEl.style.display =
-            "none";
-    }
-    ENGINE.lastTime =
-        performance.now();
+    initGhosts(); initLanterns(); spawnBats(); scheduleLightning(); initRain();
+    if (E.bossHUD) E.bossHUD.style.display = "none";
+    if (E.ghostKing) E.ghostKing.style.display = "none";
+    if (E.interactionPrompt) E.interactionPrompt.style.display = "none";
+    CAM.x = PLAYER.x - CAM.w / 2; CAM.y = PLAYER.y - CAM.h / 2;
+    renderPlayer(); updateCamera(true); updateHUD();
+    ENGINE.last = performance.now();
     startLoading();
-    requestAnimationFrame(
-        gameLoop
-    );
+    requestAnimationFrame(gameLoop);
 }
-if (
-    document.readyState ===
-    "loading"
-) {
-    window.addEventListener(
-        "DOMContentLoaded",
-        initializeGame,
-        {
-            once: true
-        }
-    );
-} else {
-    initializeGame();
-}
+
+if (document.readyState === "loading") addEventListener("DOMContentLoaded", initializeGame, { once: true });
+else initializeGame();
