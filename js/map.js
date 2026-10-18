@@ -10,7 +10,7 @@ const EVENT_AVATAR_URL =
   'https://vidlyra.github.io/Creator-Portal/assets/event-avatars/Vidlyra_EventAvatar_HalloweenFest2026_LimitedEdition.png';
 
 const POSTER_PATH =
-  'assets/poster/Vidlyra%20halloween%20fest%202026.png';
+  'assets/posters/Vidlyra%20halloween%20fest%202026.png';
 
 const SHARE_MESSAGE =
   '🎃 I completed VIDLYRA Halloween Fest 2026! Seven chapters. Seven mysteries. I crossed beyond the veil—your turn! #VidlyraHalloweenFest2026';
@@ -20,14 +20,19 @@ const VidlyraMap = {
   userId: null,
   toastTimer: null,
   slideIndex: 0,
+  rewardsOpen: false,
   isLoading: false,
   isClaimingAvatar: false,
   isSharing: false,
+  previousBodyOverflow: '',
+  previousFocus: null,
 
   async init() {
     this.createEmbers();
     this.bindEvents();
     this.bindCarousel();
+    this.bindImageErrors();
+
     await this.loadProgress();
 
     window.addEventListener('pageshow', () => {
@@ -35,13 +40,19 @@ const VidlyraMap = {
     });
 
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) this.loadProgress();
+      if (!document.hidden) {
+        this.loadProgress();
+      }
     });
 
     supabase.auth.onAuthStateChange(() => {
       window.setTimeout(() => this.loadProgress(), 0);
     });
   },
+
+  /* ===============================================
+     BACKGROUND
+  =============================================== */
 
   createEmbers() {
     const container = document.getElementById('embers');
@@ -52,33 +63,55 @@ const VidlyraMap = {
 
     for (let i = 0; i < count; i++) {
       const ember = document.createElement('span');
+
       ember.className = 'ember';
       ember.setAttribute('aria-hidden', 'true');
       ember.style.left = `${Math.random() * 100}%`;
+
       ember.style.setProperty(
         '--duration',
         `${8 + Math.random() * 12}s`
       );
+
       ember.style.setProperty(
         '--delay',
         `${-Math.random() * 18}s`
       );
+
       ember.style.setProperty(
         '--drift',
         `${Math.round(Math.random() * 100 - 50)}px`
       );
 
       const size = 2 + Math.random() * 2;
+
       ember.style.width = `${size}px`;
       ember.style.height = `${size}px`;
+
       fragment.appendChild(ember);
     }
 
     container.appendChild(fragment);
   },
 
+  bindImageErrors() {
+    document.querySelectorAll(
+      '#rewardAvatarPreview, #festivalPosterPreview, .story-poster-frame img'
+    ).forEach(image => {
+      image.addEventListener('error', () => {
+        console.error('Reward image could not be loaded:', image.src);
+        image.dataset.loadFailed = 'true';
+        image.alt = `${image.alt} — image file could not be loaded`;
+      });
+    });
+  },
+
+  /* ===============================================
+     EVENTS
+  =============================================== */
+
   bindEvents() {
-    // Preserve the existing chapter lock/unlock behaviour.
+    // Chapter access control.
     document.querySelectorAll('.chapter .chapter-button').forEach(button => {
       button.addEventListener('click', event => {
         const chapter = button.closest('.chapter');
@@ -86,6 +119,7 @@ const VidlyraMap = {
 
         if (chapter.classList.contains('is-locked')) {
           event.preventDefault();
+
           this.showToast(
             '🔒 Complete the previous chapter to unlock this destination.'
           );
@@ -93,38 +127,74 @@ const VidlyraMap = {
       });
     });
 
-    const finaleLink = document.getElementById('finaleLink');
+    // Finale access control.
+    document.getElementById('finaleLink')?.addEventListener(
+      'click',
+      event => {
+        if (!this.isFestivalComplete()) {
+          event.preventDefault();
 
-    finaleLink?.addEventListener('click', event => {
-      if (!this.isFestivalComplete()) {
-        event.preventDefault();
-        this.showToast(
-          'Complete all seven chapters before entering the finale.'
-        );
+          this.showToast(
+            'Complete all seven chapters before entering the finale.'
+          );
+        }
+      }
+    );
+
+    // Open and close the rewards popup.
+    document.getElementById('openRewardsBtn')?.addEventListener(
+      'click',
+      () => this.openRewards()
+    );
+
+    document.getElementById('closeRewardsBtn')?.addEventListener(
+      'click',
+      () => this.closeRewards()
+    );
+
+    const modal = document.getElementById('festivalRewardCarousel');
+
+    modal?.addEventListener('click', event => {
+      if (event.target === modal) {
+        this.closeRewards();
       }
     });
 
-    document
-      .getElementById('claimAvatarBtn')
-      ?.addEventListener('click', () => this.claimEventAvatar());
+    document.addEventListener('keydown', event => {
+      if (!this.rewardsOpen) return;
 
-    document
-      .getElementById('shareFestivalBtn')
-      ?.addEventListener('click', () => this.shareFestival());
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        this.closeRewards();
+      }
+    });
+
+    // Avatar claim and festival sharing.
+    document.getElementById('claimAvatarBtn')?.addEventListener(
+      'click',
+      () => this.claimEventAvatar()
+    );
+
+    document.getElementById('shareFestivalBtn')?.addEventListener(
+      'click',
+      () => this.shareFestival()
+    );
   },
 
-  bindCarousel() {
-    document
-      .getElementById('rewardPrevBtn')
-      ?.addEventListener('click', () => {
-        this.setSlide(this.slideIndex - 1);
-      });
+  /* ===============================================
+     SIX-SLIDE CAROUSEL
+  =============================================== */
 
-    document
-      .getElementById('rewardNextBtn')
-      ?.addEventListener('click', () => {
-        this.setSlide(this.slideIndex + 1);
-      });
+  bindCarousel() {
+    document.getElementById('rewardPrevBtn')?.addEventListener(
+      'click',
+      () => this.setSlide(this.slideIndex - 1)
+    );
+
+    document.getElementById('rewardNextBtn')?.addEventListener(
+      'click',
+      () => this.setSlide(this.slideIndex + 1)
+    );
 
     document.querySelectorAll('[data-reward-dot]').forEach(dot => {
       dot.addEventListener('click', () => {
@@ -135,7 +205,6 @@ const VidlyraMap = {
     const viewport = document.getElementById('rewardViewport');
     if (!viewport) return;
 
-    // Keyboard navigation while the carousel has focus.
     viewport.addEventListener('keydown', event => {
       if (event.key === 'ArrowRight') {
         event.preventDefault();
@@ -148,16 +217,16 @@ const VidlyraMap = {
       }
     });
 
-    // Touch swipe support for mobile.
-    let touchStartX = 0;
-    let touchStartY = 0;
+    // Touch swipe support.
+    let startX = 0;
+    let startY = 0;
 
     viewport.addEventListener(
       'touchstart',
       event => {
         const touch = event.changedTouches[0];
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
+        startX = touch.clientX;
+        startY = touch.clientY;
       },
       { passive: true }
     );
@@ -166,16 +235,17 @@ const VidlyraMap = {
       'touchend',
       event => {
         const touch = event.changedTouches[0];
-        const deltaX = touch.clientX - touchStartX;
-        const deltaY = touch.clientY - touchStartY;
+        const deltaX = touch.clientX - startX;
+        const deltaY = touch.clientY - startY;
 
-        // Do not treat vertical page scrolling as a carousel swipe.
-        if (Math.abs(deltaX) < 45 || Math.abs(deltaX) < Math.abs(deltaY)) {
-          return;
-        }
+        // Ignore normal vertical page scrolling.
+        if (Math.abs(deltaX) < 45) return;
+        if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
 
         this.setSlide(
-          deltaX < 0 ? this.slideIndex + 1 : this.slideIndex - 1
+          deltaX < 0
+            ? this.slideIndex + 1
+            : this.slideIndex - 1
         );
       },
       { passive: true }
@@ -189,25 +259,42 @@ const VidlyraMap = {
     const counter = document.getElementById('rewardSlideCounter');
     const status = document.getElementById('rewardCarouselStatus');
 
-    const slides = [...document.querySelectorAll('[data-reward-slide]')];
-    const dots = [...document.querySelectorAll('[data-reward-dot]')];
+    const slides = [
+      ...document.querySelectorAll('[data-reward-slide]')
+    ];
+
+    const dots = [
+      ...document.querySelectorAll('[data-reward-dot]')
+    ];
 
     if (!track || slides.length === 0) return;
 
-    this.slideIndex = (index + slides.length) % slides.length;
+    this.slideIndex =
+      ((index % slides.length) + slides.length) % slides.length;
 
     track.style.transform =
       `translateX(-${this.slideIndex * 100}%)`;
 
-    slides.forEach((slide, slideIndex) => {
-      slide.setAttribute(
-        'aria-hidden',
-        String(slideIndex !== this.slideIndex)
-      );
+    const slideNames = [
+      'Scare performance rank',
+      'VIDLYRA Halloween wishes',
+      'Limited-edition event avatar',
+      'Ghost of My Only Love announcement',
+      'Shariing Man announcement',
+      'Share festival poster'
+    ];
+
+    slides.forEach((slide, position) => {
+      const active = position === this.slideIndex;
+
+      slide.setAttribute('aria-hidden', String(!active));
+
+      // Keep links and buttons in inactive slides out of keyboard navigation.
+      slide.inert = !active;
     });
 
-    dots.forEach((dot, dotIndex) => {
-      if (dotIndex === this.slideIndex) {
+    dots.forEach((dot, position) => {
+      if (position === this.slideIndex) {
         dot.setAttribute('aria-current', 'true');
       } else {
         dot.removeAttribute('aria-current');
@@ -221,25 +308,84 @@ const VidlyraMap = {
     }
 
     if (status) {
-      const slideNames = [
-        'Scare performance rank',
-        'VIDLYRA Halloween wishes',
-        'Limited-edition event avatar',
-        'Ghost of My Only Love invitation',
-        'Sharing Man announcement',
-        'Festival poster sharing'
-      ];
-
-      status.textContent = slideNames[this.slideIndex] || 'Festival reward';
+      status.textContent = slideNames[this.slideIndex];
     }
   },
 
+  /* ===============================================
+     OPEN / CLOSE REWARD POPUP
+  =============================================== */
+
+  openRewards() {
+    if (!this.userId) {
+      this.showToast(
+        'Please log in to load your festival rewards.'
+      );
+      return;
+    }
+
+    if (!this.isFestivalComplete()) {
+      this.showToast(
+        '🔒 Complete all seven chapters to unlock the reward popup.'
+      );
+      return;
+    }
+
+    const modal = document.getElementById('festivalRewardCarousel');
+    const shell = modal?.querySelector('.reward-shell');
+    const closeButton = document.getElementById('closeRewardsBtn');
+
+    if (!modal || !shell) return;
+
+    this.previousFocus = document.activeElement;
+    this.previousBodyOverflow = document.body.style.overflow;
+    this.rewardsOpen = true;
+
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+
+    document.body.style.overflow = 'hidden';
+
+    this.setSlide(this.slideIndex);
+
+    window.requestAnimationFrame(() => {
+      closeButton?.focus();
+    });
+  },
+
+  closeRewards() {
+    const modal = document.getElementById('festivalRewardCarousel');
+
+    if (!modal || !this.rewardsOpen) return;
+
+    this.rewardsOpen = false;
+
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+
+    document.body.style.overflow = this.previousBodyOverflow;
+
+    if (this.previousFocus instanceof HTMLElement) {
+      this.previousFocus.focus();
+    } else {
+      document.getElementById('openRewardsBtn')?.focus();
+    }
+  },
+
+  /* ===============================================
+     SUPABASE PROGRESS
+  =============================================== */
+
   async loadProgress() {
     if (this.isLoading) return;
+
     this.isLoading = true;
 
     const status = document.getElementById('syncStatus');
-    if (status) status.textContent = 'Syncing your adventure...';
+
+    if (status) {
+      status.textContent = 'Syncing your adventure...';
+    }
 
     try {
       const {
@@ -254,6 +400,11 @@ const VidlyraMap = {
       if (!user) {
         this.userId = null;
         this.progress = null;
+
+        if (this.rewardsOpen) {
+          this.closeRewards();
+        }
+
         this.render();
 
         if (status) {
@@ -278,7 +429,7 @@ const VidlyraMap = {
       if (error) throw error;
 
       if (!data) {
-        // The map does not silently create or reset festival progress.
+        // Do not create or reset a progress row from the map.
         this.progress = {
           day1: false,
           day2: false,
@@ -290,24 +441,38 @@ const VidlyraMap = {
           avatar_claimed: false
         };
 
+        if (this.rewardsOpen) {
+          this.closeRewards();
+        }
+
         this.render();
 
         if (status) {
           status.textContent =
-            'No progress record found. Your festival progress needs to be initialized.';
+            'No festival progress record was found for this account.';
         }
 
         return;
       }
 
       this.progress = data;
+
+      if (this.rewardsOpen && !this.isFestivalComplete()) {
+        this.closeRewards();
+      }
+
       this.render();
 
       if (status) {
-        status.textContent = '✓ Progress synced with the festival realm.';
+        status.textContent =
+          '✓ Progress synced with the festival realm.';
       }
     } catch (error) {
       console.error('Unable to load festival progress:', error);
+
+      if (this.rewardsOpen) {
+        this.closeRewards();
+      }
 
       this.progress = null;
       this.render();
@@ -326,31 +491,34 @@ const VidlyraMap = {
   },
 
   isUnlocked(day) {
-    if (day === 1) return true;
-    return this.isCompleted(day - 1);
+    return day === 1 || this.isCompleted(day - 1);
   },
 
   isFestivalComplete() {
-    return Array.from(
-      { length: TOTAL_DAYS },
-      (_, index) => index + 1
-    ).every(day => this.isCompleted(day));
+    for (let day = 1; day <= TOTAL_DAYS; day++) {
+      if (!this.isCompleted(day)) return false;
+    }
+
+    return true;
   },
 
-  formatScore(value) {
-    if (value === null || value === undefined) return 'Not recorded';
+  /* ===============================================
+     SCORE / PERFORMANCE RANK
+  =============================================== */
 
-    return new Intl.NumberFormat('en-IN', {
-      maximumFractionDigits: 0
-    }).format(value);
-  },
-
-  getRecordedScore(key, day) {
-    // Scores are read only for chapters the signed-in user completed.
+  getRecordedScore(scoreKey, completionKey, day) {
+    // A browser score alone is insufficient unless Supabase
+    // also confirms that this chapter is complete.
     if (!this.isCompleted(day)) return null;
 
     try {
-      const raw = window.localStorage.getItem(key);
+      // These exact keys are saved by the supplied game controllers.
+      if (localStorage.getItem(completionKey) !== 'true') {
+        return null;
+      }
+
+      const raw = localStorage.getItem(scoreKey);
+
       if (raw === null || raw.trim() === '') return null;
 
       const value = Number(raw);
@@ -359,14 +527,38 @@ const VidlyraMap = {
 
       return value;
     } catch (error) {
-      console.warn(`Unable to read ${key} from browser storage.`, error);
+      console.warn(`Unable to read score ${scoreKey}:`, error);
       return null;
     }
   },
 
+  formatScore(value) {
+    if (value === null || value === undefined) {
+      return 'Not recorded';
+    }
+
+    return new Intl.NumberFormat('en-IN', {
+      maximumFractionDigits: 0
+    }).format(value);
+  },
+
   renderPerformanceRank() {
-    const day5Score = this.getRecordedScore('day5Score', 5);
-    const day6Score = this.getRecordedScore('day6Score', 6);
+    const completedCount = Array.from(
+      { length: TOTAL_DAYS },
+      (_, index) => index + 1
+    ).filter(day => this.isCompleted(day)).length;
+
+    const day5Score = this.getRecordedScore(
+      'day5Score',
+      'day5Complete',
+      5
+    );
+
+    const day6Score = this.getRecordedScore(
+      'day6Score',
+      'day6Complete',
+      6
+    );
 
     const day5El = document.getElementById('day5ScoreMetric');
     const day6El = document.getElementById('day6ScoreMetric');
@@ -376,107 +568,97 @@ const VidlyraMap = {
     const completionEl = document.getElementById('rankCompletion');
     const footnoteEl = document.getElementById('rankFootnote');
 
-    if (day5El) day5El.textContent = this.formatScore(day5Score);
-    if (day6El) day6El.textContent = this.formatScore(day6Score);
-
     if (completionEl) {
-      const completedCount = Array.from(
-        { length: TOTAL_DAYS },
-        (_, index) => index + 1
-      ).filter(day => this.isCompleted(day)).length;
-
-      completionEl.textContent = `${completedCount} / ${TOTAL_DAYS}`;
+      completionEl.textContent =
+        `${completedCount} / ${TOTAL_DAYS}`;
     }
 
-    const hasDay5 = day5Score !== null;
-    const hasDay6 = day6Score !== null;
+    if (day5El) {
+      day5El.textContent = this.formatScore(day5Score);
+    }
 
-    if (hasDay5 && hasDay6) {
-      const totalScore = day5Score + day6Score;
+    if (day6El) {
+      day6El.textContent = this.formatScore(day6Score);
+    }
 
-      if (totalEl) totalEl.textContent = this.formatScore(totalScore);
+    // All-seven-day completion is the rank basis.
+    // We do not invent numerical rank thresholds.
+    if (rankEl) {
+      rankEl.textContent = 'VEIL CONQUEROR';
+    }
 
-      /*
-       * These are display-only rank bands for the recorded Day 5 + Day 6
-       * score total. They do not change the game score or claim to be a
-       * global leaderboard.
-       */
-      let rankName;
-      let rankDescription;
+    if (descriptionEl) {
+      descriptionEl.textContent =
+        'You completed all seven festival chapters. Your verified completion rank is VEIL CONQUEROR.';
+    }
 
-      if (totalScore >= 25000) {
-        rankName = 'S-RANK · VEIL BREAKER';
-        rankDescription =
-          'Elite performance! Your recorded Day 5 and Day 6 scores place you in the highest display tier.';
-      } else if (totalScore >= 16000) {
-        rankName = 'A-RANK · PHANTOM HUNTER';
-        rankDescription =
-          'Powerful performance! Your recorded scores place you in the Phantom Hunter tier.';
-      } else if (totalScore >= 8000) {
-        rankName = 'B-RANK · GRAVE GUARDIAN';
-        rankDescription =
-          'A strong run through the haunted realm. Your recorded scores place you in the Grave Guardian tier.';
-      } else {
-        rankName = 'C-RANK · SHADOW SEEKER';
-        rankDescription =
-          'You crossed the veil and completed the festival. Your available recorded scores place you in the Shadow Seeker tier.';
+    if (day5Score !== null && day6Score !== null) {
+      if (totalEl) {
+        totalEl.textContent = this.formatScore(day5Score + day6Score);
       }
-
-      if (rankEl) rankEl.textContent = rankName;
-      if (descriptionEl) descriptionEl.textContent = rankDescription;
-
-      if (footnoteEl) {
-        footnoteEl.textContent =
-          'Score tier uses the saved Day 5 and Day 6 scores available in this browser. Chapter completion is verified through Supabase. This is a personal tier, not a global leaderboard.';
-      }
-    } else {
-      const availableScores = [];
-
-      if (hasDay5) availableScores.push(day5Score);
-      if (hasDay6) availableScores.push(day6Score);
+    } else if (day5Score !== null || day6Score !== null) {
+      const availableScore = day5Score ?? day6Score;
 
       if (totalEl) {
-        totalEl.textContent = availableScores.length
-          ? `${this.formatScore(availableScores[0])} · PARTIAL`
-          : 'Not recorded';
+        totalEl.textContent =
+          `${this.formatScore(availableScore)} · PARTIAL`;
       }
+    } else if (totalEl) {
+      totalEl.textContent = 'Not recorded';
+    }
 
-      if (rankEl) rankEl.textContent = 'PHANTOM CHAMPION';
-      if (descriptionEl) {
-        descriptionEl.textContent =
-          'You completed all seven chapters. A complete persistent score history is not available, so your rank is based on festival completion.';
-      }
-
-      if (footnoteEl) {
-        footnoteEl.textContent =
-          'Only Day 5 and Day 6 write scores to browser storage in the supplied game controllers. Other day scores are not available as persistent score records here; no missing score has been invented.';
-      }
+    if (footnoteEl) {
+      footnoteEl.textContent =
+        'Rank is based on verified 7/7 chapter completion. Day 5 and Day 6 scores are shown only when their existing browser records are available. Other supplied game controllers do not provide comparable persistent score records here. These scores are not a global leaderboard.';
     }
   },
+
+  /* ===============================================
+     RENDER MAP + REWARD STATUS
+  =============================================== */
 
   renderRewardCarousel() {
     const section = document.getElementById('festivalRewardCarousel');
     const rewardStatus = document.getElementById('rewardStatus');
     const claimButton = document.getElementById('claimAvatarBtn');
     const claimStatus = document.getElementById('claimAvatarStatus');
+    const mapRewardHint = document.getElementById('mapRewardHint');
 
     const complete = this.isFestivalComplete();
 
-    if (section) section.hidden = !complete;
+    // Keep the modal closed until the map reward button is clicked.
+    // If it is already open, leave it open while progress stays complete.
+    if (section && !this.rewardsOpen) {
+      section.hidden = true;
+      section.setAttribute('aria-hidden', 'true');
+    }
+
+    if (mapRewardHint) {
+      if (!this.userId) {
+        mapRewardHint.textContent =
+          'Log in to sync your festival progress.';
+      } else if (!complete) {
+        mapRewardHint.textContent =
+          'Complete all seven chapters to unlock your rewards.';
+      } else {
+        mapRewardHint.textContent =
+          'All seven chapters completed. Your rewards are ready!';
+      }
+    }
 
     if (rewardStatus) {
       if (!this.userId) {
         rewardStatus.textContent =
-          'Log in to sync your progress and unlock the festival reward.';
+          'Log in to sync your progress and unlock festival rewards.';
       } else if (!complete) {
         rewardStatus.textContent =
-          'Complete all seven chapters to unlock your reward carousel.';
+          'Complete all seven chapters to become eligible for your festival reward.';
       } else if (this.progress?.avatar_claimed === true) {
         rewardStatus.textContent =
           'Festival complete! Your event avatar reward is recorded as claimed.';
       } else {
         rewardStatus.textContent =
-          'Festival complete! Your limited-edition avatar is ready to claim.';
+          'Festival complete! Your limited-edition event avatar is ready to claim.';
       }
     }
 
@@ -487,21 +669,25 @@ const VidlyraMap = {
           'Your reward is recorded as claimed. You can apply it to your profile again.';
       } else {
         claimButton.textContent = 'CLAIM EVENT AVATAR';
-        claimStatus.textContent =
-          complete
-            ? 'Festival completed. You are eligible to claim this avatar.'
-            : 'Complete all seven chapters to claim this avatar.';
+        claimStatus.textContent = complete
+          ? 'Festival completed. You are eligible to claim this avatar.'
+          : 'Complete all seven chapters to claim this avatar.';
       }
 
       claimButton.disabled =
         !complete || !this.userId || this.isClaimingAvatar;
     }
 
-    if (complete) this.renderPerformanceRank();
+    if (complete) {
+      this.renderPerformanceRank();
+    }
   },
 
   render() {
-    const chapters = document.querySelectorAll('.chapter[data-day]');
+    const chapters = document.querySelectorAll(
+      '.chapter[data-day]'
+    );
+
     let completedCount = 0;
 
     chapters.forEach(chapter => {
@@ -511,7 +697,10 @@ const VidlyraMap = {
 
       chapter.classList.toggle('is-completed', completed);
       chapter.classList.toggle('is-locked', !unlocked);
-      chapter.classList.toggle('is-current', unlocked && !completed);
+      chapter.classList.toggle(
+        'is-current',
+        unlocked && !completed
+      );
 
       const state = chapter.querySelector('.chapter-state');
       const button = chapter.querySelector('.chapter-button');
@@ -525,7 +714,11 @@ const VidlyraMap = {
       }
 
       if (button) {
-        button.setAttribute('aria-disabled', String(!unlocked));
+        button.setAttribute(
+          'aria-disabled',
+          String(!unlocked)
+        );
+
         button.textContent = completed
           ? 'REPLAY ↗'
           : unlocked
@@ -538,7 +731,9 @@ const VidlyraMap = {
       if (completed) completedCount++;
     });
 
-    const percent = Math.round((completedCount / TOTAL_DAYS) * 100);
+    const percent = Math.round(
+      (completedCount / TOTAL_DAYS) * 100
+    );
 
     const countEl = document.getElementById('completedCount');
     const percentEl = document.getElementById('percentCount');
@@ -547,19 +742,28 @@ const VidlyraMap = {
     const progressBar = document.getElementById('progressBar');
 
     if (countEl) {
-      countEl.textContent = String(completedCount).padStart(2, '0');
+      countEl.textContent =
+        String(completedCount).padStart(2, '0');
     }
 
-    if (percentEl) percentEl.textContent = `${percent}%`;
+    if (percentEl) {
+      percentEl.textContent = `${percent}%`;
+    }
 
     if (progressText) {
-      progressText.textContent = `${completedCount} / ${TOTAL_DAYS}`;
+      progressText.textContent =
+        `${completedCount} / ${TOTAL_DAYS}`;
     }
 
-    if (progressFill) progressFill.style.width = `${percent}%`;
+    if (progressFill) {
+      progressFill.style.width = `${percent}%`;
+    }
 
     if (progressBar) {
-      progressBar.setAttribute('aria-valuenow', String(completedCount));
+      progressBar.setAttribute(
+        'aria-valuenow',
+        String(completedCount)
+      );
     }
 
     const finale = document.getElementById('finaleCard');
@@ -569,7 +773,11 @@ const VidlyraMap = {
     finale?.classList.toggle('is-locked', !complete);
 
     if (finaleLink) {
-      finaleLink.setAttribute('aria-disabled', String(!complete));
+      finaleLink.setAttribute(
+        'aria-disabled',
+        String(!complete)
+      );
+
       finaleLink.textContent = complete
         ? 'WATCH FINALE ↗'
         : 'COMPLETE ALL CHAPTERS 🔒';
@@ -578,16 +786,24 @@ const VidlyraMap = {
     this.renderRewardCarousel();
   },
 
+  /* ===============================================
+     CLAIM EVENT AVATAR
+  =============================================== */
+
   async claimEventAvatar() {
     if (this.isClaimingAvatar) return;
 
     if (!this.userId) {
-      this.showToast('Please log in before claiming your event avatar.');
+      this.showToast(
+        'Please log in before claiming your event avatar.'
+      );
       return;
     }
 
     if (!this.isFestivalComplete()) {
-      this.showToast('Complete all seven chapters before claiming the avatar.');
+      this.showToast(
+        'Complete all seven chapters before claiming the avatar.'
+      );
       return;
     }
 
@@ -601,13 +817,13 @@ const VidlyraMap = {
       button.textContent = 'APPLYING AVATAR...';
     }
 
-    if (status) status.textContent = 'Updating your creator profile...';
+    if (status) {
+      status.textContent =
+        'Updating your creator profile...';
+    }
 
     try {
-      /*
-       * Apply the event avatar to the signed-in user's profile.
-       * This uses the existing profiles.user_id and profiles.avatar_url fields.
-       */
+      // Apply the event avatar to the signed-in user's profile.
       const {
         data: profile,
         error: profileError
@@ -628,9 +844,7 @@ const VidlyraMap = {
         );
       }
 
-      /*
-       * Record the reward as claimed only after the profile update succeeds.
-       */
+      // Mark the reward claimed only after the profile update succeeds.
       const {
         data: reward,
         error: rewardError
@@ -646,13 +860,13 @@ const VidlyraMap = {
 
       if (rewardError) {
         throw new Error(
-          'The avatar was applied to your profile, but the claim status could not be saved. Please try again.'
+          'The avatar was applied, but the reward claim status could not be saved. Please try again.'
         );
       }
 
       if (!reward || reward.avatar_claimed !== true) {
         throw new Error(
-          'The avatar was applied to your profile, but the claim status could not be verified. Please try again.'
+          'The avatar was applied, but the reward claim status could not be verified.'
         );
       }
 
@@ -663,33 +877,52 @@ const VidlyraMap = {
           '✓ Limited-edition event avatar applied to your creator profile!';
       }
 
-      this.showToast('🎃 Event avatar applied successfully!');
+      this.showToast(
+        '🎃 Event avatar applied successfully!'
+      );
+
       this.render();
     } catch (error) {
       console.error('Event avatar claim failed:', error);
 
-      if (status) status.textContent = error.message
-        || 'Unable to claim the avatar. Check your connection and Supabase permissions.';
+      if (status) {
+        status.textContent =
+          error.message ||
+          'Unable to claim the avatar. Check your connection and Supabase permissions.';
+      }
 
-      this.showToast('Avatar update failed. Check the reward status for details.');
+      this.showToast(
+        'Avatar update failed. Check the reward status for details.'
+      );
     } finally {
       this.isClaimingAvatar = false;
 
       if (button) {
-        button.disabled = !this.isFestivalComplete() || !this.userId;
-        button.textContent = this.progress?.avatar_claimed === true
-          ? 'APPLY CLAIMED AVATAR'
-          : 'CLAIM EVENT AVATAR';
+        button.disabled =
+          !this.isFestivalComplete() || !this.userId;
+
+        button.textContent =
+          this.progress?.avatar_claimed === true
+            ? 'APPLY CLAIMED AVATAR'
+            : 'CLAIM EVENT AVATAR';
       }
     }
   },
+
+  /* ===============================================
+     SHARE FESTIVAL + POSTER
+  =============================================== */
 
   async shareFestival() {
     if (this.isSharing) return;
 
     const button = document.getElementById('shareFestivalBtn');
     const status = document.getElementById('shareStatus');
-    const posterUrl = new URL(POSTER_PATH, document.baseURI).href;
+
+    const posterUrl = new URL(
+      POSTER_PATH,
+      document.baseURI
+    ).href;
 
     this.isSharing = true;
 
@@ -699,53 +932,67 @@ const VidlyraMap = {
     }
 
     if (status) {
-      status.textContent = 'Preparing the festival message and poster...';
+      status.textContent =
+        'Preparing the festival message and poster...';
     }
 
     try {
-      // Try to attach the real poster to the native share sheet.
+      // Prefer attaching the real poster to the native share sheet.
       if (navigator.share) {
+        let posterFile = null;
+
         try {
-          const response = await fetch(posterUrl, { cache: 'no-cache' });
+          const response = await fetch(
+            posterUrl,
+            { cache: 'no-cache' }
+          );
 
           if (response.ok) {
             const blob = await response.blob();
 
-            const posterFile = new File(
+            posterFile = new File(
               [blob],
               'Vidlyra_Halloween_Fest_2026.png',
               { type: blob.type || 'image/png' }
             );
-
-            if (
-              navigator.canShare &&
-              navigator.canShare({ files: [posterFile] })
-            ) {
-              await navigator.share({
-                title: 'VIDLYRA Halloween Fest 2026',
-                text: SHARE_MESSAGE,
-                url: FESTIVAL_URL,
-                files: [posterFile]
-              });
-
-              if (status) {
-                status.textContent = 'Festival share opened with the poster attached.';
-              }
-
-              return;
-            }
           }
         } catch (error) {
-          // A cancelled share should not trigger a second share attempt.
-          if (error?.name === 'AbortError') {
-            if (status) status.textContent = 'Sharing cancelled.';
-            return;
-          }
-
           console.warn(
-            'Poster attachment is not available; trying link sharing.',
+            'Could not fetch poster for attachment:',
             error
           );
+        }
+
+        if (
+          posterFile &&
+          navigator.canShare &&
+          navigator.canShare({ files: [posterFile] })
+        ) {
+          try {
+            await navigator.share({
+              title: 'VIDLYRA Halloween Fest 2026',
+              text: SHARE_MESSAGE,
+              url: FESTIVAL_URL,
+              files: [posterFile]
+            });
+
+            if (status) {
+              status.textContent =
+                'Festival share opened with the poster attached.';
+            }
+
+            return;
+          } catch (error) {
+            if (error?.name === 'AbortError') {
+              if (status) status.textContent = 'Sharing cancelled.';
+              return;
+            }
+
+            console.warn(
+              'Poster attachment failed; trying link share:',
+              error
+            );
+          }
         }
 
         try {
@@ -757,7 +1004,7 @@ const VidlyraMap = {
 
           if (status) {
             status.textContent =
-              'Festival link shared. This browser could not attach the poster.';
+              'Festival shared. This browser did not attach the poster.';
           }
 
           return;
@@ -767,32 +1014,36 @@ const VidlyraMap = {
             return;
           }
 
-          console.warn('Native sharing unavailable.', error);
+          console.warn('Link sharing failed:', error);
         }
       }
 
-      // Browser fallback: copy the message, festival link, and poster link.
-      const copyText =
-        `${SHARE_MESSAGE}\n\n${FESTIVAL_URL}\n\nFestival poster: ${posterUrl}`;
+      // Desktop/browser fallback.
+      const textToCopy =
+        `${SHARE_MESSAGE}\n\n` +
+        `${FESTIVAL_URL}\n\n` +
+        `Festival poster: ${posterUrl}`;
 
       if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(copyText);
+        await navigator.clipboard.writeText(textToCopy);
 
         if (status) {
           status.textContent =
             'Share message and poster link copied. Paste them into your favourite app.';
         }
 
-        this.showToast('Festival share message copied!');
+        this.showToast(
+          'Festival share message copied!'
+        );
       } else {
         window.prompt(
-          'Copy this festival share message:',
-          copyText
+          'Copy your festival share message:',
+          textToCopy
         );
 
         if (status) {
           status.textContent =
-            'Copy the message above and share it with your friends.';
+            'Copy the message and share it with your friends.';
         }
       }
     } catch (error) {
@@ -800,7 +1051,7 @@ const VidlyraMap = {
 
       if (status) {
         status.textContent =
-          'Sharing was unavailable. Open the festival link and share the poster manually.';
+          'Sharing was unavailable. You can share the festival link and poster manually.';
       }
     } finally {
       this.isSharing = false;
@@ -812,6 +1063,10 @@ const VidlyraMap = {
     }
   },
 
+  /* ===============================================
+     TOAST
+  =============================================== */
+
   showToast(message) {
     const toast = document.getElementById('toast');
     if (!toast) return;
@@ -819,7 +1074,9 @@ const VidlyraMap = {
     toast.textContent = message;
     toast.classList.add('visible');
 
-    if (this.toastTimer) clearTimeout(this.toastTimer);
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+    }
 
     this.toastTimer = setTimeout(() => {
       toast.classList.remove('visible');
