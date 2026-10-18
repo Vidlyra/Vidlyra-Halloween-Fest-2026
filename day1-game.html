@@ -1,0 +1,430 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>The Haunted Survival | Vidlyra Halloween Fest</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080812;color:#fff;font-family:system-ui,Arial,sans-serif;touch-action:none}
+canvas{display:block;width:100%;height:100%}
+#hud{position:fixed;inset:0;pointer-events:none}
+.panel{background:#10101ddd;border:1px solid #75476f;border-radius:12px;padding:10px 13px;box-shadow:0 0 18px #0008}
+#status{position:absolute;top:12px;left:12px;font-size:13px;line-height:1.8}
+#mission{position:absolute;top:12px;right:12px;max-width:220px;font-size:12px;text-align:right}
+#message{position:absolute;top:24%;left:50%;transform:translateX(-50%);width:max-content;max-width:90%;text-align:center;font-weight:700;text-shadow:0 2px 8px #000;background:#100e19e8;border:1px solid #95639d;padding:12px 18px;border-radius:12px;display:none}
+#controls{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:space-between;align-items:end;padding:0 14px;gap:8px;pointer-events:none}
+.group{display:flex;gap:8px;align-items:end}
+.control{pointer-events:auto;touch-action:none;border:1px solid #b68ec4;background:#211a36e8;color:#fff;border-radius:16px;width:57px;height:57px;font-size:22px;font-weight:800;user-select:none;-webkit-user-select:none;display:grid;place-items:center;box-shadow:0 4px 0 #09070e}
+.control:active,.control.on{background:#75458b;transform:translateY(2px);box-shadow:0 2px 0 #09070e}
+.control.small{width:49px;height:49px;font-size:15px}
+#start,#puzzle,#ending{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:#070710ed;z-index:5;text-align:center}
+.card{width:min(520px,100%);padding:25px;border:1px solid #875594;border-radius:20px;background:linear-gradient(145deg,#21142b,#0b0b16);box-shadow:0 0 50px #5b236355}
+h1{font-size:clamp(25px,6vw,43px);line-height:1.1;margin:8px 0 14px;color:#e5b8ff}
+p{line-height:1.6;color:#ddd}
+.action{border:0;border-radius:10px;background:#a653bc;color:white;font-weight:800;padding:13px 18px;font-size:15px;margin:5px;cursor:pointer}
+.action:active{transform:scale(.97)}
+.runes{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+#ending{display:none}
+#puzzle{display:none;z-index:7}
+#maphint{position:absolute;bottom:95px;left:50%;transform:translateX(-50%);font-size:11px;color:#ddd;white-space:nowrap;text-shadow:0 2px 5px #000}
+@media(min-width:800px){#controls{padding:0 24px}.control{opacity:.82}.control:hover{opacity:1}#status,#mission{font-size:14px}}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div id="status" class="panel">
+    ❤️ Health: <span id="health">100</span>%<br>
+    🔎 Clues: <span id="clues">0</span>/3<br>
+    🔑 Key: <span id="key">No</span><br>
+    ⚔️ Enemies defeated: <span id="kills">0</span>
+  </div>
+  <div id="mission" class="panel">DAY 1: THE HAUNTED SURVIVAL<br><span id="objective">Find the tragedy clues (0/3)</span><br>Map: M</div>
+  <div id="message"></div>
+  <div id="maphint">Move · Jump · Fight or escape · Find the key</div>
+  <div id="controls">
+    <div class="group">
+      <button class="control" data-hold="left" aria-label="Move left">◀</button>
+      <button class="control" data-hold="right" aria-label="Move right">▶</button>
+    </div>
+    <div class="group">
+      <button class="control small" data-action="interact">E<br><span style="font-size:9px">USE</span></button>
+      <button class="control small" data-action="attack">⚔<br><span style="font-size:9px">HIT</span></button>
+      <button class="control" data-action="jump">⬆</button>
+    </div>
+  </div>
+</div>
+
+<div id="start">
+  <div class="card">
+    <div style="font-size:44px">🎃 👻 🔑</div>
+    <h1>THE HAUNTED<br>SURVIVAL</h1>
+    <p><b>VIDLYRA HALLOWEEN FEST · DAY 1</b></p>
+    <p>Enter the cursed village. Find three clues, survive the creatures, recover the lost key and unlock the Forbidden Gate.</p>
+    <p style="font-size:13px">Laptop: A/D or arrows · Space: jump · J: attack · E: interact · M: map<br>Mobile: use the on-screen buttons.</p>
+    <button class="action" id="startBtn">ENTER THE NIGHT</button>
+  </div>
+</div>
+
+<div id="puzzle">
+  <div class="card">
+    <div style="font-size:38px">🚪</div>
+    <h1>THE FORBIDDEN GATE</h1>
+    <p>Ancient inscription: <b>MOON → FLAME → EYE</b></p>
+    <p>Tap the symbols in the correct order.</p>
+    <div class="runes">
+      <button class="action rune" data-rune="moon">🌙 MOON</button>
+      <button class="action rune" data-rune="flame">🔥 FLAME</button>
+      <button class="action rune" data-rune="eye">👁️ EYE</button>
+    </div>
+    <p id="runeStatus">Sequence: _ _ _</p>
+    <button class="action" id="closePuzzle">CANCEL</button>
+  </div>
+</div>
+
+<div id="ending">
+  <div class="card">
+    <div style="font-size:48px">🌕 🚪 ✨</div>
+    <h1>THE GATE IS OPEN!</h1>
+    <p>You survived the cursed village, uncovered the tragedy and found the ancient key.</p>
+    <p><b>DAY 1 COMPLETE</b></p>
+    <p>The darkness beyond the gate whispers a new name…</p>
+    <p style="color:#d5a6ff"><b>DAY 2: THE HAUNTED WELL — COMING NEXT</b></p>
+    <button class="action" id="restart">PLAY AGAIN</button>
+    <button class="action" id="backBtn">CLOSE GAME</button>
+  </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+const $=id=>document.getElementById(id);
+const WORLD=3100, GROUND=465;
+let scale=1, viewW=960, viewH=540, camera=0;
+let started=false, ended=false, puzzleOpen=false, mapOpen=false;
+let health=100, clues=0, hasKey=false, kills=0, tick=0, lastTime=0;
+let messageTimer=0, attackTimer=0, hurtTimer=0;
+const keys={left:false,right:false};
+const just={jump:false,attack:false,interact:false};
+const player={x:70,y:GROUND-48,w:30,h:48,vx:0,vy:0,onGround:false,face:1,invul:0};
+const platforms=[
+{x:280,y:385,w:125,h:18},{x:485,y:330,w:115,h:18},
+{x:755,y:400,w:145,h:18},{x:1050,y:355,w:150,h:18},
+{x:1370,y:390,w:125,h:18},{x:1620,y:325,w:150,h:18},
+{x:1940,y:385,w:150,h:18},{x:2210,y:345,w:135,h:18},
+{x:2500,y:390,w:160,h:18}
+];
+const clueItems=[
+{x:360,y:GROUND-35,found:false,title:"A torn letter"},
+{x:1120,y:GROUND-35,found:false,title:"A broken pendant"},
+{x:1790,y:GROUND-35,found:false,title:"A blood-stained diary"}
+];
+const keyItem={x:2240,y:GROUND-28,found:false};
+const gate={x:2860,y:GROUND-118,w:70,h:118};
+const enemies=[
+{x:650,y:GROUND-40,w:31,h:40,min:560,max:800,dir:1,alive:true,hp:2,speed:45},
+{x:1280,y:GROUND-40,w:31,h:40,min:1200,max:1460,dir:-1,alive:true,hp:2,speed:55},
+{x:2010,y:GROUND-42,w:36,h:42,min:1920,max:2180,dir:1,alive:true,hp:3,speed:68}
+];
+const particles=[];
+let runeSeq=[];
+const correct=["moon","flame","eye"];
+function resize(){
+ const dpr=Math.min(window.devicePixelRatio||1,2);
+ canvas.width=Math.floor(innerWidth*dpr);
+ canvas.height=Math.floor(innerHeight*dpr);
+ canvas.style.width=innerWidth+"px";
+ canvas.style.height=innerHeight+"px";
+ scale=innerHeight/540;
+ viewW=innerWidth/scale;
+ viewH=540;
+ ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
+}
+window.addEventListener("resize",resize);resize();
+function say(text,seconds=2.5){
+ $("message").textContent=text;
+ $("message").style.display="block";
+ messageTimer=seconds;
+}
+function updateHud(){
+ $("health").textContent=Math.max(0,Math.ceil(health));
+ $("clues").textContent=clues;
+ $("key").textContent=hasKey?"Yes":"No";
+ $("kills").textContent=kills;
+ $("objective").textContent=clues<3?`Find the tragedy clues (${clues}/3)`:!hasKey?"Find the lost key": "Unlock the Forbidden Gate";
+}
+function start(){
+  if(health<=0){
+    location.reload();
+    return;
+  }
+  started=true;
+  $("start").style.display="none";
+  say("Find the clues. Don't trust the shadows.",3);
+}
+$("startBtn").addEventListener("click",start);
+function near(a,b,d=65){return Math.abs((a.x+a.w/2)-(b.x+b.w/2))<d && Math.abs((a.y+a.h/2)-(b.y+b.h/2))<95;}
+function interact(){
+ if(!started||ended||puzzleOpen)return;
+ for(const c of clueItems){
+  if(!c.found && Math.abs(player.x-c.x)<60){
+   c.found=true;clues++;updateHud();
+   say(c.title+" discovered. The village remembers…",3);
+   burst(c.x,GROUND-28,"#c89cff",15);
+   if(clues===3)say("All clues found! A hidden key has appeared in the ruins.",3.5);
+   return;
+  }
+ }
+ if(clues===3&&!hasKey&&Math.abs(player.x-keyItem.x)<65){
+  hasKey=true;keyItem.found=true;updateHud();
+  say("Ancient key collected. Reach the Forbidden Gate!",3);
+  burst(keyItem.x,GROUND-25,"#ffd36e",22);return;
+ }
+ if(Math.abs(player.x-gate.x)<100){
+  if(!hasKey){say("The gate is sealed. Find all clues and recover the key.");return;}
+  puzzleOpen=true;runeSeq=[];$("puzzle").style.display="flex";$("runeStatus").textContent="Sequence: _ _ _";
+  return;
+ }
+ say("Nothing to interact with here. Search for glowing clues.",1.8);
+}
+function attack(){
+ if(!started||ended||puzzleOpen||attackTimer>0)return;
+ attackTimer=.32;
+ let hit=false;
+ for(const e of enemies){
+  if(!e.alive)continue;
+  const dx=(e.x-player.x)*player.face;
+  if(dx>-8&&dx<66&&Math.abs(e.y-player.y)<65){
+   e.hp--;hit=true;burst(e.x+e.w/2,e.y+12,"#d15bff",9);
+   if(e.hp<=0){e.alive=false;kills++;say("Creature defeated!",1.3);}
+   else say("Hit! Keep fighting or escape!",1.1);
+  }
+ }
+ if(!hit)say("Attack!",.5);
+ updateHud();
+}
+function burst(x,y,color,n){
+ for(let i=0;i<n;i++)particles.push({x,y,vx:(Math.random()-.5)*170,vy:(Math.random()-.8)*150,life:.35+Math.random()*.5,color});
+}
+function damage(amount){
+ if(player.invul>0)return;
+ health-=amount;player.invul=1.1;hurtTimer=.22;
+ burst(player.x+15,player.y+20,"#ff526d",10);
+ if(health<=0){
+  health=0;updateHud();say("You were lost to the darkness…",3);
+  setTimeout(()=>{if(!ended){started=false;$("start").style.display="flex";$("start").querySelector("h1").innerHTML="TRY AGAIN";}},1200);
+ }else say("You've been hit! Escape or strike back.",1.2);
+ updateHud();
+}
+function jump(){if(started&&!ended&&!puzzleOpen&&player.onGround){player.vy=-440;player.onGround=false;}}
+function setAction(action){
+ if(action==="jump")jump();
+ if(action==="attack")attack();
+ if(action==="interact")interact();
+}
+window.addEventListener("keydown",e=>{
+ const k=e.key.toLowerCase();
+ if(["arrowleft","arrowright"," ","arrowup"].includes(k))e.preventDefault();
+ if(k==="a"||k==="arrowleft")keys.left=true;
+ if(k==="d"||k==="arrowright")keys.right=true;
+ if((k===" "||k==="arrowup"||k==="w")&&!e.repeat)jump();
+ if(k==="j"&&!e.repeat)attack();
+ if(k==="e"&&!e.repeat)interact();
+ if(k==="m"&&!e.repeat){mapOpen=!mapOpen;say(mapOpen?"Map opened":"Map closed",1);}
+ if(k==="escape"&&puzzleOpen)closePuzzle();
+});
+window.addEventListener("keyup",e=>{
+ const k=e.key.toLowerCase();
+ if(k==="a"||k==="arrowleft")keys.left=false;
+ if(k==="d"||k==="arrowright")keys.right=false;
+});
+document.querySelectorAll("[data-hold]").forEach(b=>{
+ const k=b.dataset.hold;
+ const down=e=>{e.preventDefault();keys[k]=true;b.classList.add("on");};
+ const up=e=>{e.preventDefault();keys[k]=false;b.classList.remove("on");};
+ b.addEventListener("pointerdown",down);
+ ["pointerup","pointercancel","pointerleave"].forEach(ev=>b.addEventListener(ev,up));
+});
+document.querySelectorAll("[data-action]").forEach(b=>{
+ b.addEventListener("pointerdown",e=>{e.preventDefault();setAction(b.dataset.action);});
+});
+function closePuzzle(){puzzleOpen=false;$("puzzle").style.display="none";}
+$("closePuzzle").addEventListener("click",closePuzzle);
+document.querySelectorAll(".rune").forEach(b=>b.addEventListener("click",()=>{
+ if(!puzzleOpen)return;
+ runeSeq.push(b.dataset.rune);
+ const correctSoFar=runeSeq.every((v,i)=>v===correct[i]);
+ $("runeStatus").textContent="Sequence: "+runeSeq.map(v=>({moon:"🌙",flame:"🔥",eye:"👁️"}[v])).join(" ");
+ if(!correctSoFar){
+  runeSeq=[];$("runeStatus").textContent="Wrong sequence! Try again: _ _ _";
+  return;
+ }
+ if(runeSeq.length===3){
+  closePuzzle();ended=true;$("ending").style.display="flex";
+  say("The Forbidden Gate opens!",4);updateHud();
+ }
+}));
+$("restart").addEventListener("click",()=>location.reload());
+$("backBtn").addEventListener("click",()=>{
+ $("ending").style.display="none";say("You may close this tab to return to the festival.",3);
+});
+function update(dt){
+ tick+=dt;
+ if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)$("message").style.display="none";}
+ attackTimer=Math.max(0,attackTimer-dt);
+ hurtTimer=Math.max(0,hurtTimer-dt);
+ player.invul=Math.max(0,player.invul-dt);
+ if(!started||ended||puzzleOpen)return;
+ const speed=keys.left&&keys.right?0:keys.left?-1:keys.right?1:0;
+ player.vx=speed*190;
+ if(speed)player.face=speed;
+ player.x=Math.max(0,Math.min(WORLD-player.w,player.x+player.vx*dt));
+ const oldBottom=player.y+player.h;
+ player.vy=Math.min(700,player.vy+1050*dt);
+ player.y+=player.vy*dt;player.onGround=false;
+ if(player.y+player.h>=GROUND){player.y=GROUND-player.h;player.vy=0;player.onGround=true;}
+ for(const p of platforms){
+  if(player.x+player.w>p.x&&player.x<p.x+p.w&&oldBottom<=p.y+8&&player.y+player.h>=p.y&&player.vy>=0){
+   player.y=p.y-player.h;player.vy=0;player.onGround=true;
+  }
+ }
+ for(const e of enemies){
+  if(!e.alive)continue;
+  e.x+=e.dir*e.speed*dt;
+  if(e.x<e.min||e.x>e.max)e.dir*=-1;
+  const overlap=player.x<e.x+e.w&&player.x+player.w>e.x&&player.y<e.y+e.h&&player.y+player.h>e.y;
+  if(overlap)damage(22);
+ }
+ for(let i=particles.length-1;i>=0;i--){
+  const p=particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=220*dt;p.life-=dt;
+  if(p.life<=0)particles.splice(i,1);
+ }
+ camera=Math.max(0,Math.min(WORLD-viewW,player.x-viewW*.38));
+ updateHud();
+}
+function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h);}
+function text(s,x,y,size=14,color="#fff",align="left"){
+ ctx.font=`bold ${size}px system-ui,Arial`;ctx.textAlign=align;ctx.fillStyle=color;ctx.fillText(s,x,y);
+}
+function draw(){
+ ctx.clearRect(0,0,viewW,540);
+ const sky=ctx.createLinearGradient(0,0,0,540);
+ sky.addColorStop(0,"#080a20");sky.addColorStop(.65,"#24132f");sky.addColorStop(1,"#090910");
+ ctx.fillStyle=sky;ctx.fillRect(0,0,viewW,540);
+ // moon and stars
+ ctx.fillStyle="#d7d0f0";ctx.beginPath();ctx.arc(viewW*.78,83,30,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle="#8b80b5";ctx.beginPath();ctx.arc(viewW*.78+12,74,27,0,Math.PI*2);ctx.fill();
+ for(let i=0;i<45;i++){
+  const x=((i*173-camera*.13)%(viewW+30)+viewW+30)%(viewW+30);
+  const y=22+(i*47)%210;
+  rect(x,y,2,2,"#b8b5e4");
+ }
+ ctx.save();ctx.translate(-camera,0);
+ // distant haunted silhouettes
+ for(let x=-100;x<WORLD;x+=260){
+  rect(x+20,280,130,185,"#10101f");
+  rect(x+40,250,90,45,"#10101f");
+  for(let w=0;w<3;w++)rect(x+40+w*35,320,12,22,"#30213e");
+  rect(x+155,350,70,115,"#151123");
+  ctx.fillStyle="#0d0c19";ctx.beginPath();ctx.moveTo(x+5,282);ctx.lineTo(x+80,220);ctx.lineTo(x+155,282);ctx.fill();
+ }
+ // ground
+ rect(0,GROUND,WORLD,75,"#181521");
+ rect(0,GROUND,WORLD,5,"#685071");
+ for(let x=0;x<WORLD;x+=55){rect(x,GROUND+22,26,3,"#292438");rect(x+18,GROUND+46,19,2,"#292438");}
+ // platforms
+ for(const p of platforms){
+  rect(p.x,p.y,p.w,p.h,"#30253e");rect(p.x,p.y,p.w,4,"#9874a6");
+  for(let x=p.x+10;x<p.x+p.w;x+=28)rect(x,p.y+8,9,3,"#50405d");
+ }
+ // zone markers
+ text("HAUNTED VILLAGE",80,160,15,"#bda6d9");
+ text("THE CURSED FOREST",780,160,15,"#bda6d9");
+ text("THE TRAGEDY",1530,160,15,"#bda6d9");
+ text("FORBIDDEN GATE",2670,160,15,"#dcb8ff");
+ // clue items
+ for(const c of clueItems){
+  if(c.found)continue;
+  const bob=Math.sin(tick*3+c.x)*4;
+  ctx.shadowBlur=18;ctx.shadowColor="#c778ff";rect(c.x-9,GROUND-32+bob,18,18,"#b77cff");ctx.shadowBlur=0;
+  text("!",c.x,GROUND-37+bob,15,"#fff","center");
+  text("CLUE",c.x,GROUND-49+bob,10,"#e8cbff","center");
+ }
+ // key
+ if(clues===3&&!keyItem.found){
+  const bob=Math.sin(tick*4)*5;
+  ctx.shadowBlur=20;ctx.shadowColor="#ffce66";ctx.strokeStyle="#ffdc75";ctx.lineWidth=5;
+  ctx.beginPath();ctx.arc(keyItem.x,GROUND-35+bob,10,0,Math.PI*2);ctx.stroke();
+  rect(keyItem.x-3,GROUND-25+bob,6,22,"#ffdc75");rect(keyItem.x+2,GROUND-14+bob,8,4,"#ffdc75");ctx.shadowBlur=0;
+  text("KEY",keyItem.x,GROUND-60+bob,11,"#ffe9a0","center");
+ }
+ // gate
+ rect(gate.x,gate.y,gate.w,gate.h,"#30263f");rect(gate.x+8,gate.y+8,gate.w-16,gate.h-8,"#12101e");
+ for(let x=gate.x+14;x<gate.x+gate.w-8;x+=13)rect(x,gate.y+12,4,gate.h-12,"#74577f");
+ rect(gate.x+gate.w/2-3,gate.y+5,6,gate.h-5,"#b28bce");
+ text(hasKey?"PRESS E":"SEALED",gate.x+gate.w/2,gate.y-12,12,hasKey?"#e5c1ff":"#9e92a9","center");
+ // enemies
+ for(const e of enemies){
+  if(!e.alive)continue;
+  rect(e.x+4,e.y+10,e.w-8,e.h-10,"#351a39");
+  ctx.fillStyle="#5d2863";ctx.beginPath();ctx.arc(e.x+e.w/2,e.y+11,13,Math.PI,0);ctx.fill();
+  rect(e.x+7,e.y+12,5,4,"#ff466e");rect(e.x+20,e.y+12,5,4,"#ff466e");
+  rect(e.x+6,e.y+e.h-4,7,7,"#100d19");rect(e.x+e.w-13,e.y+e.h-4,7,7,"#100d19");
+  text("♥".repeat(e.hp),e.x+e.w/2,e.y-8,10,"#ff6886","center");
+ }
+ // player shadow
+ ctx.fillStyle="#08070c88";ctx.beginPath();ctx.ellipse(player.x+15,GROUND+1,22,5,0,0,Math.PI*2);ctx.fill();
+ // player blink on damage
+ if(player.invul<=0||Math.floor(tick*15)%2===0){
+  const px=player.x,py=player.y;
+  rect(px+5,py+16,20,25,"#4e79b8");
+  rect(px+8,py+2,16,17,"#e3b79a");
+  rect(px+6,py,18,7,"#292032");
+  rect(px+8,py+43,6,5,"#b2a0d0");rect(px+19,py+43,6,5,"#b2a0d0");
+  rect(px+4,py+20,5,18,"#e3b79a");rect(px+23,py+20,5,18,"#e3b79a");
+  rect(player.face===1?px+18:px+8,py+8,3,3,"#171321");
+  if(attackTimer>0){
+   ctx.strokeStyle="#d9c7ff";ctx.lineWidth=4;
+   ctx.beginPath();ctx.arc(px+15+player.face*14,py+25,24,-.9,.9);ctx.stroke();
+  }
+ }
+ // interact prompts
+ const nearClue=clueItems.some(c=>!c.found&&Math.abs(player.x-c.x)<65);
+ const nearKey=clues===3&&!hasKey&&Math.abs(player.x-keyItem.x)<65;
+ const nearGate=Math.abs(player.x-gate.x)<100;
+ if(nearClue||nearKey||nearGate)text("PRESS E / USE",player.x+15,player.y-15,12,"#fff","center");
+ // particles
+ for(const p of particles){ctx.globalAlpha=Math.max(0,p.life*2);rect(p.x,p.y,4,4,p.color);ctx.globalAlpha=1;}
+ // fog
+ for(let i=0;i<5;i++){
+  ctx.globalAlpha=.04;
+  ctx.fillStyle="#c4b0dc";ctx.beginPath();ctx.ellipse((tick*18+i*210-camera*.35)%(WORLD+200),440+i%3*12,130,16,0,0,Math.PI*2);ctx.fill();
+ }
+ ctx.globalAlpha=1;
+ if(mapOpen){
+  rect(camera+viewW/2-180,90,360,230,"#100d1eef");
+  ctx.strokeStyle="#bd8ad1";ctx.strokeRect(camera+viewW/2-180,90,360,230);
+  text("TRAGEDY MAP",camera+viewW/2,122,19,"#e7c1ff","center");
+  const mx=camera+viewW/2-150;
+  rect(mx,180,300,4,"#6c5479");
+  const pts=[{x:0,t:"VILLAGE"},{x:90,t:"FOREST"},{x:190,t:"RUINS"},{x:290,t:"GATE"}];
+  pts.forEach((p,i)=>{ctx.fillStyle=i===0||clues>=i?"#e5b5ff":"#63536b";ctx.beginPath();ctx.arc(mx+p.x,182,7,0,Math.PI*2);ctx.fill();text(p.t,mx+p.x,205,9,"#fff","center");});
+  text("Clues: "+clues+"/3  |  Key: "+(hasKey?"YES":"NO"),camera+viewW/2,255,14,"#fff","center");
+  text("Press M to close",camera+viewW/2,292,11,"#c9b7d6","center");
+ }
+ ctx.restore();
+}
+function loop(now){
+ const dt=Math.min(.033,(now-lastTime)/1000||0);lastTime=now;
+ update(dt);draw();requestAnimationFrame(loop);
+}
+updateHud();requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
