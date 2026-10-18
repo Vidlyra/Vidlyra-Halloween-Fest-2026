@@ -1888,7 +1888,7 @@ html, body {
 
 /* ---------- enemy variants (all use the Ghost art) ---------- */
 
-.ghost { animation: none; will-change: left, top; }
+.ghost { animation: none; will-change: transform; left: 0; top: 0; }
 
 .g-wisp img {
     filter: hue-rotate(160deg) saturate(1.5) brightness(1.2) drop-shadow(0 0 14px rgba(80, 220, 255, .9));
@@ -2231,3 +2231,27 @@ body.touch .g-revenant img { filter: hue-rotate(-40deg) saturate(1.8) brightness
 @media (prefers-reduced-motion: reduce) {
     #cloudLayer, #fogBack, #fogMiddle, #fogFront, #moonLayer img { animation: none; }
 }
+
+
+/* ======================================================
+   PHONE FLICKER FIXES
+====================================================== */
+
+/* the player is now positioned with transform — the old 0.12s transition made it
+   lag and shake every frame */
+#playerContainer {
+    left: 0;
+    top: 0;
+    transition: none;
+    will-change: transform;
+}
+
+#ghostKing { will-change: transform; }
+
+body.touch #lightningLayer { mix-blend-mode: normal; }
+body.touch #starLayer { animation: none; }
+body.touch #fogFront { display: none; }
+body.touch #castleLayer img { animation: none; filter: none; }
+body.touch #ghostKingSprite { filter: drop-shadow(0 0 18px crimson); }
+body.touch #playerSprite { filter: drop-shadow(0 0 6px rgba(0, 0, 0, .7)); }
+body.touch .lanternGlow { animation: none; }
