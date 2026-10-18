@@ -1,99 +1,1452 @@
-/* DAY 2 - animations, joystick, enemies, mobile layout (loads after day2-game.css) */
+/* ======================================================
+   VIDLYRA HALLOWEEN FEST 2026
+   DAY 2 - THE HAUNTED WELL
+====================================================== */
 
-html, body { height: 100dvh; touch-action: none; -webkit-user-select: none; overscroll-behavior: none; }
-#gameWorld { touch-action: none; }
-#player { transition: none !important; transform: translateX(-50%); }
-#playerShadow { transition: none; transform: translateX(-50%); }
-#player.hurt { animation: hurtBlink .25s steps(2) infinite; }
+/* ==========================================
+RESET
+========================================== */
 
-/* Enemies */
-#enemyLayer { position: absolute; inset: 0; z-index: 150; pointer-events: none; overflow: hidden; }
-.enemy {
-    position: absolute; left: 0; top: 0; width: 48px; height: 48px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2.2rem; pointer-events: auto; cursor: crosshair;
-    filter: drop-shadow(0 0 10px #3edcff); will-change: transform;
-}
-.enemy.hit { filter: drop-shadow(0 0 14px #fff) brightness(2); }
-.banishRing {
-    position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px;
-    border: 3px solid #3edcff; border-radius: 50%; box-shadow: 0 0 20px #3edcff;
-    animation: ring .6s ease-out forwards;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* HUD */
-#hud {
-    position: fixed; top: 76px; right: 16px; z-index: 600;
-    display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
-    padding: 8px 14px; border-radius: 16px; font-size: 18px;
-    background: rgba(0,0,0,.55); border: 1px solid rgba(0,220,255,.45);
-}
-#pauseBtn {
-    position: fixed; top: 16px; right: 16px; z-index: 600; width: 44px; height: 44px;
-    border-radius: 50%; border: 1px solid rgba(0,220,255,.6);
-    background: rgba(0,0,0,.6); color: #fff; font-size: 18px; cursor: pointer;
+html,
+body{
+
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+    background:#000;
+
 }
 
-/* Joystick + action button (touch devices only) */
-#joystick, #attackBtn { display: none; }
-body.touch #joystick {
-    display: block; position: fixed; left: max(24px, env(safe-area-inset-left)); bottom: max(24px, env(safe-area-inset-bottom));
-    width: 130px; height: 130px; border-radius: 50%; z-index: 800; touch-action: none;
-    background: radial-gradient(circle, rgba(62,220,255,.18), rgba(0,0,0,.4));
-    border: 2px solid rgba(62,220,255,.55);
-}
-#stick {
-    position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px;
-    border-radius: 50%; background: radial-gradient(circle at 35% 30%, #aaf3ff, #00bfff);
-    box-shadow: 0 0 18px #3edcff; pointer-events: none;
-}
-body.touch #attackBtn {
-    display: block; position: fixed; right: max(24px, env(safe-area-inset-right)); bottom: max(34px, env(safe-area-inset-bottom));
-    width: 84px; height: 84px; border-radius: 50%; z-index: 800; font-size: 34px; color: #fff;
-    background: radial-gradient(circle, #1fb6e8, #06506b); border: 2px solid #3edcff;
-    box-shadow: 0 0 20px rgba(62,220,255,.6); touch-action: manipulation;
-}
-#attackBtn.cooldown { opacity: .4; }
+/* ==========================================
+ROOT COLORS
+========================================== */
 
-/* Mobile layout: keep panels clear of joystick/buttons */
-@media (max-width: 768px), (max-height: 520px) {
-    #objective { top: 10px; padding: 8px 14px; font-size: 13px; width: 78%; text-align: center; }
-    .mission-panel { left: 10px; top: 64px; bottom: auto; width: 170px; padding: 10px; border-radius: 14px; }
-    .mission-panel p { display: none; }
-    .mission-panel h3 { font-size: 13px; margin-bottom: 0; }
-    .progress { margin-top: 8px; height: 8px; }
-    .runeCounter { margin-top: 8px; font-size: 12px; }
-    #hud { top: 64px; right: 10px; font-size: 15px; padding: 6px 10px; }
-    #pauseBtn { top: 10px; right: 10px; width: 38px; height: 38px; }
-    #dialogBox { bottom: 170px; width: 90%; text-align: center; padding: 12px 18px; font-size: 14px; }
-    #interactionPrompt { display: none; }
-    .intro-content h1 { font-size: 44px; }
-    .intro-content h2 { font-size: 26px; }
-    .intro-content p { font-size: 17px; padding: 0 16px; }
-    #missionComplete h2 { font-size: 32px; text-align: center; }
-    #missionComplete p { font-size: 16px; text-align: center; padding: 0 16px; }
-    #objective, .mission-panel { max-width: 100%; }
+:root{
+
+    --cyan:#3edcff;
+    --blue:#00bfff;
+    --dark:#07111b;
+    --panel:rgba(0,0,0,.55);
+    --white:#ffffff;
+
 }
 
-/* Effects */
-body.shake { animation: shake .6s ease 2; }
-.rune:not(.found) { animation: runeGlow 1.6s ease-in-out infinite; }
-.ghost.active { animation: ghostFloat 3s ease-in-out infinite; }
-.crystal.active { animation: crystalPulse 1.5s ease-in-out infinite; }
-.fire { animation: flicker 1.2s ease-in-out infinite; }
+/* ==========================================
+BODY
+========================================== */
 
-@keyframes shake {
-    0%,100% { transform: translate(0,0); }
-    20% { transform: translate(-6px,4px); } 40% { transform: translate(6px,-4px); }
-    60% { transform: translate(-4px,-3px); } 80% { transform: translate(4px,3px); }
+body{
+
+    position:relative;
+
+    color:white;
+
+    user-select:none;
+
+    overflow:hidden;
+
 }
-@keyframes hurtBlink { 0% { opacity: 1; } 100% { opacity: .25; } }
-@keyframes ring { to { width: 300px; height: 300px; margin: -150px 0 0 -150px; opacity: 0; } }
-@keyframes runeGlow {
-    0%,100% { filter: drop-shadow(0 0 6px #3edcff); } 50% { filter: drop-shadow(0 0 18px #7ff); }
+
+/* ==========================================
+GAME WORLD
+========================================== */
+
+#gameWorld{
+
+    position:relative;
+
+    width:100%;
+
+    height:100%;
+
+    overflow:hidden;
+
 }
-@keyframes ghostFloat { 0%,100% { margin-bottom: 0; } 50% { margin-bottom: 18px; } }
-@keyframes crystalPulse {
-    0%,100% { filter: drop-shadow(0 0 10px #3edcff); } 50% { filter: drop-shadow(0 0 28px #fff); }
+
+/* ==========================================
+BACKGROUND
+========================================== */
+
+.background{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+    url("../assets/images/background 1.png")
+
+    center center;
+
+    background-size:cover;
+
+    background-repeat:no-repeat;
+
+    z-index:1;
+
 }
-@keyframes flicker { 0%,100% { opacity: .9; } 50% { opacity: 1; } 70% { opacity: .75; } }
+
+.background-layer{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+    url("../assets/images/background 2.png")
+
+    center center;
+
+    background-size:cover;
+
+    background-repeat:no-repeat;
+
+    opacity:.35;
+
+    z-index:2;
+
+}
+
+/* ==========================================
+CASTLE
+========================================== */
+
+.castle{
+
+    position:absolute;
+
+    top:2%;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:36vw;
+
+    min-width:260px;
+
+    max-width:650px;
+
+    z-index:5;
+
+    pointer-events:none;
+
+}
+
+/* ==========================================
+FOG
+========================================== */
+
+.fog{
+
+    position:absolute;
+
+    width:180%;
+
+    pointer-events:none;
+
+}
+
+.fog-back{
+
+    bottom:18%;
+
+    opacity:.25;
+
+    z-index:6;
+
+}
+
+.fog-front{
+
+    bottom:0;
+
+    opacity:.45;
+
+    z-index:20;
+
+}
+
+/* ==========================================
+STONE CIRCLE
+========================================== */
+
+.stone-circle{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:14%;
+
+    transform:translateX(-50%);
+
+    width:520px;
+
+    z-index:8;
+
+}
+
+/* ==========================================
+HAUNTED WELL
+========================================== */
+
+.well{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:18%;
+
+    transform:translateX(-50%);
+
+    width:230px;
+
+    z-index:10;
+
+}
+
+/* ==========================================
+WATER RIPPLE
+========================================== */
+
+.ripple{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:27%;
+
+    transform:translateX(-50%);
+
+    width:120px;
+
+    z-index:11;
+
+}
+
+/* ==========================================
+BLUE FIRE
+========================================== */
+
+.fire{
+
+    position:absolute;
+
+    width:90px;
+
+    z-index:12;
+
+}
+
+.fire-left{
+
+    left:34%;
+
+    bottom:20%;
+
+}
+
+.fire-right{
+
+    right:34%;
+
+    bottom:20%;
+
+}
+
+/* ==========================================
+CANDLES
+========================================== */
+
+.candle{
+
+    position:absolute;
+
+    width:70px;
+
+    z-index:12;
+
+}
+
+.candle-left{
+
+    left:28%;
+
+    bottom:19%;
+
+}
+
+.candle-right{
+
+    right:28%;
+
+    bottom:19%;
+
+}
+
+/* ==========================================
+SKULLS
+========================================== */
+
+.skull{
+
+    position:absolute;
+
+    width:55px;
+
+    z-index:11;
+
+}
+
+.skull-left{
+
+    left:39%;
+
+    bottom:15%;
+
+}
+
+.skull-right{
+
+    right:39%;
+
+    bottom:15%;
+
+}
+
+/* ==========================================
+PUMPKIN
+========================================== */
+
+.pumpkin{
+
+    position:absolute;
+
+    left:12%;
+
+    bottom:8%;
+
+    width:130px;
+
+    z-index:8;
+
+}
+
+/* ==========================================
+WITCH
+========================================== */
+
+.witch{
+
+    position:absolute;
+
+    right:12%;
+
+    bottom:10%;
+
+    width:130px;
+
+    z-index:8;
+
+}
+/* ======================================================
+PLAYER
+====================================================== */
+
+#player{
+
+    position:absolute;
+
+    left:15%;
+
+    bottom:12%;
+
+    width:70px;
+
+    height:70px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:3.8rem;
+
+    z-index:100;
+
+    transition:
+    left .3s linear,
+    bottom .3s linear;
+
+    cursor:default;
+
+}
+
+#playerShadow{
+
+    position:absolute;
+
+    width:55px;
+
+    height:18px;
+
+    background:rgba(0,0,0,.45);
+
+    border-radius:50%;
+
+    filter:blur(5px);
+
+    left:15%;
+
+    bottom:9.5%;
+
+    z-index:50;
+
+}
+
+/* ======================================================
+OBJECTIVE
+====================================================== */
+
+#objective{
+
+    position:absolute;
+
+    top:20px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    padding:15px 35px;
+
+    border-radius:40px;
+
+    background:rgba(0,0,0,.6);
+
+    border:1px solid rgba(0,220,255,.5);
+
+    backdrop-filter:blur(8px);
+
+    color:#fff;
+
+    font-size:18px;
+
+    z-index:300;
+
+}
+
+/* ======================================================
+INTERACTION
+====================================================== */
+
+#interactionPrompt{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:32%;
+
+    transform:translateX(-50%);
+
+    padding:12px 24px;
+
+    border-radius:30px;
+
+    background:rgba(0,0,0,.75);
+
+    color:#3edcff;
+
+    opacity:0;
+
+    transition:.3s;
+
+    z-index:250;
+
+}
+
+#interactionPrompt.show{
+
+    opacity:1;
+
+}
+
+/* ======================================================
+RUNES
+====================================================== */
+
+.rune{
+
+    position:absolute;
+
+    width:70px;
+
+    cursor:pointer;
+
+    z-index:120;
+
+    transition:
+    transform .35s,
+    opacity .35s;
+
+}
+
+.rune:hover{
+
+    transform:scale(1.15);
+
+}
+
+.rune.found{
+
+    opacity:0;
+
+    transform:scale(0);
+
+    pointer-events:none;
+
+}
+
+.rune1{
+
+    left:30%;
+
+    bottom:24%;
+
+}
+
+.rune2{
+
+    right:30%;
+
+    bottom:24%;
+
+}
+
+.rune3{
+
+    left:50%;
+
+    bottom:7%;
+
+    transform:translateX(-50%);
+
+}
+
+/* ======================================================
+GHOST
+====================================================== */
+
+.ghost{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:35%;
+
+    transform:translateX(-50%);
+
+    width:180px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    z-index:180;
+
+    transition:2s;
+
+}
+
+.ghost.active{
+
+    opacity:1;
+
+}
+
+/* ======================================================
+CRYSTAL
+====================================================== */
+
+.crystal{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:30%;
+
+    transform:translate(-50%,60px);
+
+    width:110px;
+
+    opacity:0;
+
+    cursor:pointer;
+
+    z-index:181;
+
+    transition:2s;
+
+}
+
+.crystal.active{
+
+    opacity:1;
+
+    transform:translate(-50%,0);
+
+}
+
+/* ======================================================
+MISSION PANEL
+====================================================== */
+
+.mission-panel{
+
+    position:absolute;
+
+    left:30px;
+
+    bottom:30px;
+
+    width:340px;
+
+    padding:22px;
+
+    border-radius:20px;
+
+    background:rgba(0,0,0,.55);
+
+    border:1px solid rgba(0,220,255,.45);
+
+    backdrop-filter:blur(8px);
+
+    color:white;
+
+    z-index:500;
+
+}
+
+.mission-panel h3{
+
+    color:#3edcff;
+
+    margin-bottom:10px;
+
+}
+
+.progress{
+
+    width:100%;
+
+    height:12px;
+
+    margin-top:20px;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    background:#1b1b1b;
+
+}
+
+.progress-fill{
+
+    width:0%;
+
+    height:100%;
+
+    background:linear-gradient(
+
+        90deg,
+
+        cyan,
+
+        #00bfff
+
+    );
+
+    transition:.4s;
+
+}
+
+.runeCounter{
+
+    margin-top:18px;
+
+    color:#9fefff;
+
+    font-size:17px;
+
+}
+
+/* ======================================================
+DIALOG
+====================================================== */
+
+#dialogBox{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:40px;
+
+    transform:translateX(-50%);
+
+    padding:18px 30px;
+
+    border-radius:40px;
+
+    background:rgba(0,0,0,.82);
+
+    color:#fff;
+
+    opacity:0;
+
+    transition:.4s;
+
+    z-index:900;
+
+}
+
+#dialogBox.show{
+
+    opacity:1;
+
+}
+
+/* ======================================================
+MISSION COMPLETE
+====================================================== */
+
+#missionComplete{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.88);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.7s;
+
+    z-index:5000;
+
+}
+
+#missionComplete.show{
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+#missionComplete h2{
+
+    color:#4fdcff;
+
+    font-size:52px;
+
+}
+
+#missionComplete p{
+
+    margin:20px 0;
+
+    font-size:22px;
+
+    color:white;
+
+}
+
+#nextBtn{
+
+    padding:18px 45px;
+
+    border:none;
+
+    border-radius:40px;
+
+    background:#00bfff;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    transition:.3s;
+
+}
+
+#nextBtn:hover{
+
+    transform:scale(1.05);
+
+}
+
+/* ======================================================
+PAUSE MENU
+====================================================== */
+
+#pauseMenu{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.85);
+
+    z-index:6000;
+
+}
+
+#pauseMenu button{
+
+    width:240px;
+
+    padding:16px;
+
+    margin:12px;
+
+    border:none;
+
+    border-radius:35px;
+
+    background:#00bfff;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+}
+
+/* ======================================================
+LOADING
+====================================================== */
+
+#loadingOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-direction:column;
+
+    background:#000;
+
+    color:white;
+
+    z-index:7000;
+
+}
+
+.loaderCircle{
+
+    width:70px;
+
+    height:70px;
+
+    border:6px solid rgba(255,255,255,.2);
+
+    border-top:6px solid cyan;
+
+    border-radius:50%;
+
+}
+/* ======================================================
+DAY 2 INTRO
+====================================================== */
+
+#introScreen{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.88);
+
+    backdrop-filter:blur(8px);
+
+    z-index:9999;
+
+    transition:1.5s;
+
+}
+
+#introScreen.hide{
+
+    opacity:0;
+
+    visibility:hidden;
+
+}
+
+.intro-content{
+
+    text-align:center;
+
+    animation:introFade 4s ease;
+
+}
+
+.intro-content h1{
+
+    font-size:72px;
+
+    color:#4fdcff;
+
+    text-shadow:0 0 30px cyan;
+
+    letter-spacing:4px;
+
+}
+
+.intro-content h2{
+
+    margin-top:20px;
+
+    color:white;
+
+    font-size:38px;
+
+}
+
+.intro-content p{
+
+    margin-top:30px;
+
+    font-size:24px;
+
+    color:#d9f8ff;
+
+    font-style:italic;
+
+}
+
+/* ======================================================
+DAY COMPLETE
+====================================================== */
+
+#dayComplete{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.92);
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:1s;
+
+    z-index:9998;
+
+}
+
+#dayComplete.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+#dayComplete h1{
+
+    font-size:64px;
+
+    color:#4fdcff;
+
+    text-shadow:0 0 30px cyan;
+
+}
+
+#dayComplete h2{
+
+    margin-top:20px;
+
+    font-size:34px;
+
+    color:#fff;
+
+}
+
+#dayComplete p{
+
+    width:700px;
+
+    max-width:90%;
+
+    margin-top:25px;
+
+    line-height:1.7;
+
+    text-align:center;
+
+    color:#d8d8d8;
+
+}
+
+#continueDay3{
+
+    margin-top:40px;
+
+    padding:18px 50px;
+
+    border:none;
+
+    border-radius:40px;
+
+    background:#00bfff;
+
+    color:white;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+#continueDay3:hover{
+
+    transform:scale(1.05);
+
+}
+
+/* ======================================================
+FADE SCREEN
+====================================================== */
+
+#fadeScreen{
+
+    position:fixed;
+
+    inset:0;
+
+    background:#000;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:1s;
+
+    z-index:99999;
+
+}
+
+#fadeScreen.active{
+
+    opacity:1;
+
+}
+
+/* ======================================================
+SCREEN GLOW
+====================================================== */
+
+#screenGlow{
+
+    position:fixed;
+
+    inset:0;
+
+    pointer-events:none;
+
+    background:
+
+    radial-gradient(
+
+        circle,
+
+        rgba(0,255,255,.12),
+
+        transparent 70%
+
+    );
+
+    opacity:.45;
+
+    z-index:3;
+
+}
+
+/* ======================================================
+PARTICLES
+====================================================== */
+
+#particles{
+
+    position:fixed;
+
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:4;
+
+}
+
+/* ======================================================
+AMBIENT PARTICLES
+====================================================== */
+
+#ambientParticles{
+
+    position:fixed;
+
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:4;
+
+}
+
+/* ======================================================
+FLASH
+====================================================== */
+
+#flash{
+
+    position:fixed;
+
+    inset:0;
+
+    background:white;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    z-index:99999;
+
+}
+
+#flash.active{
+
+    animation:flash .45s ease;
+
+}
+
+/* ======================================================
+KEYFRAMES
+====================================================== */
+
+@keyframes introFade{
+
+    0%{
+
+        opacity:0;
+
+        transform:translateY(25px);
+
+    }
+
+    30%{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+    80%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
+
+@keyframes flash{
+
+    0%{
+
+        opacity:0;
+
+    }
+
+    40%{
+
+        opacity:.9;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+    }
+
+}
+
+@keyframes loaderSpin{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+.loaderCircle{
+
+    animation:loaderSpin 1s linear infinite;
+
+}
+
+/* ======================================================
+TABLET
+====================================================== */
+
+@media (max-width:1024px){
+
+.castle{
+
+    width:55vw;
+
+}
+
+.well{
+
+    width:190px;
+
+}
+
+.stone-circle{
+
+    width:420px;
+
+}
+
+.mission-panel{
+
+    width:300px;
+
+}
+
+}
+
+/* ======================================================
+MOBILE
+====================================================== */
+
+@media (max-width:768px){
+
+.castle{
+
+    width:80vw;
+
+}
+
+.stone-circle{
+
+    width:320px;
+
+}
+
+.well{
+
+    width:150px;
+
+}
+
+.fire{
+
+    width:60px;
+
+}
+
+.candle{
+
+    width:45px;
+
+}
+
+.skull{
+
+    width:38px;
+
+}
+
+.rune{
+
+    width:50px;
+
+}
+
+.ghost{
+
+    width:120px;
+
+}
+
+.crystal{
+
+    width:80px;
+
+}
+
+#player{
+
+    font-size:2.8rem;
+
+}
+
+#objective{
+
+    width:90%;
+
+    font-size:15px;
+
+}
+
+.mission-panel{
+
+    left:10px;
+
+    bottom:10px;
+
+    width:95%;
+
+}
+
+#dialogBox{
+
+    width:92%;
+
+    bottom:20px;
+
+}
+
+#dayComplete h1{
+
+    font-size:40px;
+
+}
+
+#dayComplete h2{
+
+    font-size:24px;
+
+}
+
+}
+
+/* ======================================================
+UTILITY
+====================================================== */
+
+.hidden{
+
+    display:none !important;
+
+}
+
+.invisible{
+
+    opacity:0 !important;
+
+}
+
+.visible{
+
+    opacity:1 !important;
+
+}
+
+.noPointer{
+
+    pointer-events:none;
+
+}
+
+.clickable{
+
+    cursor:pointer;
+
+}
