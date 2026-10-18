@@ -1,4 +1,1764 @@
 /*======================================================
+VIDLYRA HALLOWEEN FEST 2026
+DAY 5 - THE HAUNTED CEMETERY
+PART 1
+RESET + VARIABLES + LOADING
+======================================================*/
+
+*,
+*::before,
+*::after{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html{
+width:100%;
+height:100%;
+scroll-behavior:smooth;
+}
+
+body{
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:"Poppins",sans-serif;
+background:#040404;
+color:#ffffff;
+user-select:none;
+touch-action:none;
+-webkit-user-select:none;
+-webkit-tap-highlight-color:transparent;
+}
+
+:root{
+--bg:#050505;
+--panel:#111111;
+--panel2:#181818;
+--red:#ff3030;
+--blood:#920000;
+--gold:#ffd966;
+--blue:#3ebdff;
+--cyan:#66ffff;
+--green:#2ecc71;
+--purple:#965bff;
+--white:#ffffff;
+--fog:rgba(255,255,255,.06);
+--shadow:0 0 15px rgba(0,0,0,.6);
+--glow-red:0 0 20px rgba(255,0,0,.7);
+--glow-blue:0 0 25px rgba(0,170,255,.8);
+--transition:.35s ease;
+}
+
+#gameRoot{
+position:relative;
+width:100vw;
+height:100vh;
+overflow:hidden;
+background:#000;
+}
+
+#camera{
+position:absolute;
+width:100%;
+height:100%;
+overflow:hidden;
+}
+
+#gameWorld{
+position:absolute;
+width:5000px;
+height:2200px;
+left:0;
+top:0;
+transform-origin:center;
+}
+
+#loadingScreen{
+position:fixed;
+inset:0;
+z-index:99999;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(180deg,#000,#070707,#000);
+overflow:hidden;
+transition:opacity .5s ease;
+}
+
+.loadingBackground{
+position:absolute;
+inset:0;
+background:radial-gradient(circle at center, rgba(255,0,0,.12), transparent 65%);
+animation:pulseBG 4s infinite;
+}
+
+.loadingFog{
+position:absolute;
+inset:-20%;
+background:url("../assets/images/day5/fog.png") repeat;
+opacity:.25;
+animation:loadingFogMove 18s linear infinite;
+filter:blur(5px);
+}
+
+.loadingContent{
+position:relative;
+z-index:20;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:18px;
+padding:50px;
+width:min(95%,650px);
+border-radius:24px;
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(8px);
+border:1px solid rgba(255,255,255,.08);
+box-shadow:0 0 40px rgba(0,0,0,.8);
+}
+
+#loadingLogo{
+width:170px;
+max-width:60vw;
+animation:floatLogo 4s ease-in-out infinite;
+}
+
+.loadingContent h1{
+font-family:"Cinzel",serif;
+font-size:clamp(26px,5vw,42px);
+text-align:center;
+letter-spacing:3px;
+color:#fff;
+text-shadow:0 0 20px crimson;
+}
+
+.loadingContent h2{
+font-family:"Cinzel",serif;
+font-size:clamp(18px,4vw,28px);
+color:#ffcf66;
+}
+
+.loadingContent h3{
+font-family:"Cinzel",serif;
+font-size:clamp(15px,3.5vw,22px);
+color:#dddddd;
+letter-spacing:2px;
+text-align:center;
+}
+
+#loadingMessage{
+font-size:clamp(13px,2.5vw,17px);
+opacity:.92;
+text-align:center;
+}
+
+.loadingBar{
+position:relative;
+width:100%;
+height:20px;
+overflow:hidden;
+border-radius:40px;
+background:#1b1b1b;
+border:1px solid rgba(255,255,255,.08);
+}
+
+#loadingFill{
+position:absolute;
+left:0;
+top:0;
+height:100%;
+width:0%;
+border-radius:40px;
+background:linear-gradient(90deg,#ff4d4d,#ffb347,#fff07a);
+box-shadow:0 0 20px crimson;
+transition:width .25s linear;
+}
+
+#loadingPercent{
+font-size:20px;
+font-weight:700;
+color:#ffffff;
+}
+
+@keyframes pulseBG{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+@keyframes loadingFogMove{from{transform:translateX(0);}to{transform:translateX(-600px);}}
+@keyframes floatLogo{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+
+/*======================================================
+PART 2
+WORLD • SKY • MOON • WEATHER • PARALLAX
+======================================================*/
+
+#skyLayer{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+background:linear-gradient(180deg,#05070d 0%,#0d1018 35%,#131313 70%,#050505 100%);
+overflow:hidden;
+z-index:1;
+}
+
+#moonLayer{
+position:absolute;
+top:100px;
+right:250px;
+width:260px;
+height:260px;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:5;
+pointer-events:none;
+}
+
+#moonLayer img{
+width:100%;
+height:100%;
+object-fit:contain;
+filter:drop-shadow(0 0 30px rgba(255,40,40,.8)) drop-shadow(0 0 60px rgba(255,0,0,.5));
+animation:moonFloat 8s ease-in-out infinite, moonGlow 4s ease-in-out infinite;
+}
+
+#starLayer{
+position:absolute;
+inset:0;
+background-image:radial-gradient(circle,#ffffff 1px,transparent 2px);
+background-size:140px 140px;
+opacity:.35;
+animation:starTwinkle 5s linear infinite;
+z-index:2;
+}
+
+#cloudLayer{
+position:absolute;
+inset:0;
+background:url("../assets/images/day5/clouds.png") repeat-x;
+background-size:cover;
+opacity:.25;
+animation:cloudMove 90s linear infinite;
+z-index:4;
+}
+
+#lightningLayer{
+position:absolute;
+inset:0;
+pointer-events:none;
+opacity:0;
+background:rgba(255,255,255,.95);
+mix-blend-mode:screen;
+z-index:50;
+}
+
+#rainCanvas{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+pointer-events:none;
+z-index:30;
+}
+
+#fogBack{
+position:absolute;
+left:-10%;
+bottom:0;
+width:130%;
+height:45%;
+background:url("../assets/images/day5/fog.png") repeat-x;
+background-size:contain;
+opacity:.18;
+filter:blur(6px);
+animation:fogBackMove 65s linear infinite;
+z-index:20;
+}
+
+#fogMiddle{
+position:absolute;
+left:-15%;
+bottom:0;
+width:140%;
+height:55%;
+background:url("../assets/images/day5/fog.png") repeat-x;
+background-size:contain;
+opacity:.30;
+filter:blur(4px);
+animation:fogMiddleMove 42s linear infinite;
+z-index:25;
+}
+
+#fogFront{
+position:absolute;
+left:-20%;
+bottom:0;
+width:150%;
+height:70%;
+background:url("../assets/images/day5/fog.png") repeat-x;
+background-size:cover;
+opacity:.40;
+filter:blur(2px);
+animation:fogFrontMove 25s linear infinite;
+z-index:90;
+pointer-events:none;
+}
+
+#particleLayer{
+position:absolute;
+inset:0;
+pointer-events:none;
+z-index:35;
+overflow:hidden;
+}
+
+#cemeteryBackground{
+position:absolute;
+left:0;
+bottom:0;
+width:100%;
+height:100%;
+z-index:10;
+pointer-events:none;
+}
+
+#cemeteryBackground img{
+position:absolute;
+bottom:0;
+left:0;
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+#castleLayer{
+position:absolute;
+bottom:420px;
+right:600px;
+width:520px;
+z-index:14;
+pointer-events:none;
+}
+
+#castleLayer img{
+width:100%;
+display:block;
+filter:drop-shadow(0 0 35px rgba(0,0,0,.9));
+animation:castleFloat 7s ease-in-out infinite;
+}
+
+#treeLayer{
+position:absolute;
+left:0;
+bottom:180px;
+width:100%;
+z-index:15;
+pointer-events:none;
+}
+
+#treeLayer img{width:100%;display:block;}
+
+#graveLayer{
+position:absolute;
+left:0;
+bottom:110px;
+width:100%;
+z-index:18;
+pointer-events:none;
+}
+
+#graveLayer img{width:100%;display:block;}
+
+#groundLayer{
+position:absolute;
+left:0;
+bottom:0;
+width:100%;
+z-index:19;
+}
+
+#groundLayer img{width:100%;display:block;}
+
+@keyframes moonFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+@keyframes moonGlow{0%,100%{filter:drop-shadow(0 0 25px rgba(255,40,40,.8));}50%{filter:drop-shadow(0 0 55px rgba(255,0,0,1));}}
+@keyframes starTwinkle{0%,100%{opacity:.25;}50%{opacity:.45;}}
+@keyframes cloudMove{from{background-position:0 0;}to{background-position:-4000px 0;}}
+@keyframes fogBackMove{from{transform:translateX(0);}to{transform:translateX(-500px);}}
+@keyframes fogMiddleMove{from{transform:translateX(0);}to{transform:translateX(-800px);}}
+@keyframes fogFrontMove{from{transform:translateX(0);}to{transform:translateX(-1200px);}}
+@keyframes castleFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+/*======================================================
+PART 3
+PLAYER • HUD • MISSION • BOSS UI
+======================================================*/
+
+#playerContainer{
+position:absolute;
+left:500px;
+top:1600px;
+width:140px;
+height:200px;
+z-index:300;
+pointer-events:none;
+transition:transform .12s linear;
+}
+
+#playerShadow{
+position:absolute;
+left:50%;
+bottom:8px;
+width:90px;
+height:22px;
+transform:translateX(-50%);
+background:rgba(0,0,0,.55);
+filter:blur(10px);
+border-radius:50%;
+}
+
+#player{
+position:absolute;
+left:50%;
+bottom:0;
+width:110px;
+height:170px;
+transform:translateX(-50%);
+display:flex;
+justify-content:center;
+align-items:flex-end;
+}
+
+#playerSprite{
+width:100%;
+height:auto;
+display:block;
+pointer-events:none;
+filter:drop-shadow(0 0 18px rgba(0,0,0,.7));
+}
+
+#playerSword{
+position:absolute;
+right:-8px;
+bottom:62px;
+width:75px;
+transform-origin:20% 80%;
+transition:transform .12s ease;
+}
+
+#playerSword img{width:100%;display:block;pointer-events:none;}
+
+#slashEffect{
+position:absolute;
+left:50%;
+top:50%;
+width:170px;
+height:170px;
+transform:translate(-50%,-50%) scale(1);
+border-radius:50%;
+opacity:0;
+background:radial-gradient(circle, rgba(255,255,255,.95), rgba(255,40,40,.5), transparent 70%);
+pointer-events:none;
+}
+
+#dashTrail{
+position:absolute;
+left:50%;
+bottom:25px;
+width:120px;
+height:120px;
+transform:translateX(-50%);
+opacity:0;
+background:radial-gradient(circle, rgba(90,220,255,.8), transparent 75%);
+filter:blur(8px);
+pointer-events:none;
+}
+
+#hud{
+position:fixed;
+top:18px;
+left:18px;
+display:flex;
+flex-wrap:wrap;
+gap:14px;
+z-index:1000;
+max-width:calc(100vw - 36px);
+}
+
+.hudCard{
+width:220px;
+padding:12px;
+background:rgba(8,8,8,.72);
+border:1px solid rgba(255,255,255,.08);
+border-radius:14px;
+backdrop-filter:blur(10px);
+box-shadow:0 10px 25px rgba(0,0,0,.45);
+}
+
+.hudTitle{
+font-size:12px;
+font-weight:700;
+letter-spacing:2px;
+color:#ffd966;
+margin-bottom:8px;
+}
+
+.hudBar{
+position:relative;
+width:100%;
+height:14px;
+overflow:hidden;
+border-radius:30px;
+background:#202020;
+}
+
+#healthFill,
+#spiritFill{
+position:absolute;
+left:0;
+top:0;
+height:100%;
+width:100%;
+border-radius:30px;
+transition:width .25s linear;
+}
+
+#healthFill{
+background:linear-gradient(90deg,#ff4444,#ff7777);
+box-shadow:0 0 12px crimson;
+}
+
+#spiritFill{
+background:linear-gradient(90deg,#33b5ff,#88ffff);
+box-shadow:0 0 14px cyan;
+}
+
+#healthText,
+#spiritText,
+#lanternCounter,
+#scoreCounter{
+margin-top:8px;
+font-size:15px;
+font-weight:600;
+letter-spacing:1px;
+}
+
+#missionPanel{
+position:fixed;
+top:22px;
+right:22px;
+width:320px;
+padding:20px;
+border-radius:18px;
+background:rgba(8,8,8,.75);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.08);
+box-shadow:0 10px 25px rgba(0,0,0,.5);
+z-index:1000;
+}
+
+#missionPanel h2{
+font-family:"Cinzel",serif;
+font-size:24px;
+margin-bottom:14px;
+color:#ffd966;
+}
+
+#missionPanel ul{list-style:none;}
+
+#missionPanel li{
+padding:10px 0;
+font-size:15px;
+border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+#missionPopup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+padding:25px 40px;
+border-radius:20px;
+background:rgba(0,0,0,.82);
+border:2px solid crimson;
+font-family:"Cinzel",serif;
+font-size:clamp(18px,4vw,30px);
+letter-spacing:2px;
+color:#ffffff;
+opacity:0;
+pointer-events:none;
+z-index:2000;
+transition:opacity .4s ease;
+max-width:90vw;
+text-align:center;
+}
+
+#bossHUD{
+position:fixed;
+top:22px;
+left:50%;
+transform:translateX(-50%);
+width:min(900px,85vw);
+display:none;
+z-index:1500;
+}
+
+#bossName{
+text-align:center;
+font-family:"Cinzel",serif;
+font-size:clamp(20px,4vw,34px);
+font-weight:700;
+letter-spacing:3px;
+color:#ff5555;
+text-shadow:0 0 15px crimson;
+margin-bottom:12px;
+}
+
+#bossHealthBar{
+position:relative;
+width:100%;
+height:26px;
+overflow:hidden;
+border-radius:40px;
+background:#1d1d1d;
+border:2px solid rgba(255,255,255,.12);
+}
+
+#bossHealthFill{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:100%;
+border-radius:40px;
+background:linear-gradient(90deg,#b00000,#ff4444);
+box-shadow:0 0 18px crimson;
+transition:width .2s linear;
+}
+
+/*======================================================
+PART 4
+ENEMIES • BOSS • LANTERNS • OBJECTS
+======================================================*/
+
+#enemyLayer{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:100%;
+z-index:250;
+pointer-events:none;
+}
+
+.ghost{
+position:absolute;
+width:110px;
+height:140px;
+display:flex;
+justify-content:center;
+align-items:center;
+animation:ghostFloat 3s ease-in-out infinite;
+transition:opacity .3s ease;
+}
+
+.ghost img{
+width:100%;
+pointer-events:none;
+filter:drop-shadow(0 0 18px rgba(180,255,255,.9));
+}
+
+.enemyHealth{
+position:absolute;
+top:-18px;
+left:50%;
+transform:translateX(-50%);
+width:80px;
+height:8px;
+border-radius:20px;
+overflow:hidden;
+background:#222;
+}
+
+.enemyHealthFill{
+width:100%;
+height:100%;
+background:linear-gradient(90deg,#ff4444,#ff9999);
+transition:width .2s linear;
+}
+
+#ghostKing{
+position:absolute;
+width:320px;
+height:420px;
+display:none;
+justify-content:center;
+align-items:flex-end;
+z-index:500;
+}
+
+#ghostKingSprite{
+width:100%;
+pointer-events:none;
+filter:drop-shadow(0 0 40px crimson);
+animation:bossFloat 4s ease-in-out infinite;
+}
+
+#bossAura{
+position:absolute;
+width:420px;
+height:420px;
+border-radius:50%;
+background:radial-gradient(circle, rgba(255,0,0,.45), transparent 70%);
+animation:bossAuraPulse 2.5s infinite;
+z-index:-1;
+}
+
+#bossShadow{
+position:absolute;
+bottom:15px;
+width:180px;
+height:30px;
+background:rgba(0,0,0,.7);
+border-radius:50%;
+filter:blur(12px);
+}
+
+#lanternLayer{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:100%;
+z-index:210;
+}
+
+.lantern{
+position:absolute;
+width:70px;
+height:90px;
+display:flex;
+justify-content:center;
+align-items:center;
+cursor:pointer;
+transition:transform .25s ease;
+pointer-events:auto;
+}
+
+.lantern:hover{transform:scale(1.08);}
+
+.lantern img{width:100%;display:block;}
+
+.lanternGlow{
+position:absolute;
+width:100px;
+height:100px;
+border-radius:50%;
+background:radial-gradient(circle, rgba(255,220,120,.8), transparent 70%);
+animation:lanternGlow 2.2s infinite;
+z-index:-1;
+}
+
+#objectLayer{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:100%;
+z-index:180;
+}
+
+.grave{
+position:absolute;
+width:120px;
+height:150px;
+background-size:contain;
+background-repeat:no-repeat;
+background-position:center bottom;
+}
+
+.deadTree{
+position:absolute;
+width:260px;
+height:420px;
+background-size:contain;
+background-repeat:no-repeat;
+background-position:center bottom;
+pointer-events:none;
+}
+
+.rock{
+position:absolute;
+width:90px;
+height:70px;
+background-size:contain;
+background-repeat:no-repeat;
+}
+
+.skull{
+position:absolute;
+width:45px;
+height:45px;
+animation:skullGlow 3s infinite;
+}
+
+.candle{
+position:absolute;
+width:28px;
+height:42px;
+animation:candleFlicker .35s infinite alternate;
+}
+
+#hiddenChest{
+position:absolute;
+width:120px;
+height:100px;
+cursor:pointer;
+transition:transform .3s ease;
+}
+
+#hiddenChest:hover{transform:scale(1.08);}
+#hiddenChest img{width:100%;display:block;}
+
+#batLayer,
+#crowLayer,
+#fireflyLayer,
+#spiritParticleLayer{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:100%;
+pointer-events:none;
+}
+
+.bat{
+position:absolute;
+width:34px;
+height:20px;
+background:radial-gradient(circle, rgba(20,20,20,.9), transparent 75%);
+opacity:.85;
+animation-name:batFly;
+animation-timing-function:linear;
+animation-iteration-count:infinite;
+}
+
+@keyframes batFly{
+from{transform:translateX(-100px) translateY(0);}
+50%{transform:translateX(2600px) translateY(-40px);}
+to{transform:translateX(5200px) translateY(0);}
+}
+
+@keyframes ghostFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+@keyframes bossFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+@keyframes bossAuraPulse{0%,100%{transform:scale(1);opacity:.6;}50%{transform:scale(1.12);opacity:1;}}
+@keyframes lanternGlow{0%,100%{transform:scale(1);opacity:.8;}50%{transform:scale(1.18);opacity:1;}}
+@keyframes skullGlow{0%,100%{opacity:.4;}50%{opacity:1;}}
+@keyframes candleFlicker{from{transform:rotate(-2deg);filter:brightness(.9);}to{transform:rotate(2deg);filter:brightness(1.2);}}
+
+/*======================================================
+PART 5
+INVENTORY • QUEST • DIALOGUE • MINIMAP • PLAYER STATS
+======================================================*/
+
+#inventoryPanel{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(.9);
+width:min(90vw,700px);
+padding:30px;
+border-radius:20px;
+background:rgba(8,8,8,.94);
+border:2px solid rgba(255,255,255,.08);
+backdrop-filter:blur(14px);
+display:none;
+z-index:4000;
+box-shadow:0 25px 60px rgba(0,0,0,.8);
+}
+
+#inventoryPanel.active{
+display:block;
+animation:panelOpen .35s ease forwards;
+}
+
+.panelHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.panelHeader h2{
+font-size:clamp(22px,4vw,32px);
+font-family:"Cinzel",serif;
+color:#ffd966;
+letter-spacing:2px;
+}
+
+#closeInventory{
+width:42px;
+height:42px;
+border:none;
+border-radius:50%;
+background:#b10000;
+color:#fff;
+cursor:pointer;
+font-size:18px;
+transition:.25s;
+}
+
+#closeInventory:hover{transform:rotate(90deg);background:#ff2f2f;}
+
+#inventoryGrid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+}
+
+.inventorySlot{
+aspect-ratio:1;
+border-radius:14px;
+background:#181818;
+border:2px solid rgba(255,255,255,.05);
+display:flex;
+justify-content:center;
+align-items:center;
+transition:.25s;
+}
+
+.inventorySlot:hover{
+border-color:#ffd966;
+transform:translateY(-4px);
+box-shadow:0 0 15px rgba(255,217,102,.35);
+}
+
+#questPanel{
+position:fixed;
+left:20px;
+bottom:20px;
+width:300px;
+padding:20px;
+border-radius:18px;
+background:rgba(0,0,0,.78);
+backdrop-filter:blur(10px);
+z-index:1200;
+max-width:calc(100vw - 40px);
+}
+
+#questPanel h2{
+font-size:24px;
+margin-bottom:16px;
+color:#ffd966;
+font-family:"Cinzel",serif;
+}
+
+.questItem{
+padding:10px 0;
+font-size:15px;
+border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.questItem.completed{color:#54ff8b;}
+.questItem.active{color:#66d9ff;font-weight:700;}
+
+#dialogueContainer{
+position:fixed;
+left:50%;
+bottom:20px;
+transform:translateX(-50%);
+width:min(900px,92vw);
+display:none;
+align-items:flex-end;
+gap:18px;
+z-index:5000;
+}
+
+#portrait{width:180px;flex-shrink:0;}
+#portrait img{width:100%;display:block;}
+
+#dialoguePanel{
+flex:1;
+padding:24px;
+border-radius:18px;
+background:rgba(0,0,0,.88);
+border:2px solid rgba(255,255,255,.08);
+}
+
+#speakerName{
+font-size:20px;
+font-weight:700;
+color:#ffd966;
+margin-bottom:10px;
+letter-spacing:2px;
+}
+
+#dialogueText{
+font-size:18px;
+line-height:1.7;
+color:#eee;
+min-height:90px;
+}
+
+#nextDialogue{
+margin-top:18px;
+padding:10px 26px;
+border:none;
+border-radius:10px;
+background:#b30000;
+color:#fff;
+font-weight:700;
+cursor:pointer;
+transition:.25s;
+}
+
+#nextDialogue:hover{background:#ff4040;}
+
+#miniMap{
+position:fixed;
+right:20px;
+bottom:20px;
+width:220px;
+height:220px;
+padding:10px;
+border-radius:20px;
+background:rgba(0,0,0,.8);
+backdrop-filter:blur(10px);
+z-index:1200;
+}
+
+#miniMapFrame{
+position:relative;
+width:100%;
+height:100%;
+border-radius:12px;
+overflow:hidden;
+background:#101010;
+border:2px solid rgba(255,255,255,.06);
+}
+
+#miniPlayer{
+position:absolute;
+width:10px;
+height:10px;
+border-radius:50%;
+background:#00ff66;
+box-shadow:0 0 10px #00ff66;
+left:50%;top:50%;
+transform:translate(-50%,-50%);
+}
+
+.miniLantern{
+position:absolute;
+width:8px;
+height:8px;
+border-radius:50%;
+background:#ffd966;
+transition:opacity .3s ease, transform .3s ease;
+}
+
+#miniBoss{
+position:absolute;
+width:14px;
+height:14px;
+border-radius:50%;
+background:#ff3030;
+box-shadow:0 0 12px crimson;
+}
+
+#compass{
+position:fixed;
+top:130px;
+right:30px;
+width:90px;
+height:90px;
+border-radius:50%;
+border:2px solid rgba(255,255,255,.1);
+background:rgba(0,0,0,.7);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:1200;
+}
+
+#compassNeedle{
+position:absolute;
+width:4px;
+height:34px;
+background:#ff4444;
+transform-origin:bottom;
+border-radius:10px;
+transition:transform .18s ease-out;
+}
+
+#northLabel{
+position:absolute;
+top:6px;
+font-size:13px;
+font-weight:700;
+color:#ffd966;
+}
+
+#playerStats{
+position:fixed;
+right:20px;
+top:260px;
+width:260px;
+padding:18px;
+border-radius:18px;
+background:rgba(0,0,0,.8);
+backdrop-filter:blur(10px);
+display:block;
+z-index:1200;
+}
+
+#playerStats h2{font-size:24px;margin-bottom:16px;color:#ffd966;}
+
+.statRow{
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+#saveIndicator{
+position:fixed;
+top:90px;
+left:50%;
+transform:translateX(-50%);
+padding:10px 22px;
+background:#1d7f2e;
+border-radius:30px;
+color:#fff;
+font-weight:700;
+opacity:0;
+z-index:6000;
+}
+
+#cutsceneOverlay{
+position:fixed;
+inset:0;
+background:#000;
+opacity:0;
+pointer-events:none;
+z-index:9000;
+}
+
+@keyframes panelOpen{
+from{opacity:0;transform:translate(-50%,-50%) scale(.85);}
+to{opacity:1;transform:translate(-50%,-50%) scale(1);}
+}
+
+/*======================================================
+PART 6
+MOBILE CONTROLS • PAUSE MENU • SETTINGS • DEBUG
+======================================================*/
+
+#mobileControls{
+position:fixed;
+left:0;
+bottom:0;
+width:100%;
+height:230px;
+display:none;
+justify-content:space-between;
+align-items:flex-end;
+padding:20px;
+z-index:5000;
+}
+
+#leftControls{
+width:200px;
+height:200px;
+display:flex;
+justify-content:center;
+align-items:center;
+pointer-events:auto;
+}
+
+#joystickBase{
+position:relative;
+width:150px;
+height:150px;
+border-radius:50%;
+background:rgba(255,255,255,.08);
+border:2px solid rgba(255,255,255,.12);
+backdrop-filter:blur(8px);
+touch-action:none;
+}
+
+#joystickStick{
+position:absolute;
+left:50%;
+top:50%;
+width:70px;
+height:70px;
+transform:translate(-50%,-50%);
+border-radius:50%;
+background:linear-gradient(180deg,#eeeeee,#9a9a9a);
+box-shadow:0 0 20px rgba(255,255,255,.25);
+transition:transform .08s linear;
+}
+
+#rightControls{
+display:grid;
+grid-template-columns:repeat(2,80px);
+grid-template-rows:repeat(3,80px);
+gap:16px;
+pointer-events:auto;
+}
+
+.gameButton{
+width:80px;
+height:80px;
+border:none;
+border-radius:50%;
+font-size:30px;
+font-weight:bold;
+color:#fff;
+cursor:pointer;
+background:linear-gradient(180deg,#3b3b3b,#171717);
+border:2px solid rgba(255,255,255,.08);
+box-shadow:0 8px 20px rgba(0,0,0,.5);
+transition:transform .18s, background .2s;
+touch-action:none;
+}
+
+.gameButton:hover{transform:scale(1.08);}
+.gameButton:active{transform:scale(.92);}
+
+#attackButton{background:linear-gradient(180deg,#ff5b5b,#920000);}
+#dashButton{background:linear-gradient(180deg,#44d5ff,#005a87);}
+#skillButton{background:linear-gradient(180deg,#8e5eff,#3f1c96);}
+#interactButton{background:linear-gradient(180deg,#ffd966,#b8860b);color:#222;}
+#pauseButton{background:linear-gradient(180deg,#777777,#2b2b2b);}
+
+.menuOverlay{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+background:rgba(0,0,0,.75);
+backdrop-filter:blur(8px);
+z-index:7000;
+}
+
+.menuCard{
+width:min(500px,90vw);
+padding:35px;
+border-radius:24px;
+background:rgba(12,12,12,.96);
+border:2px solid rgba(255,255,255,.08);
+text-align:center;
+box-shadow:0 20px 60px rgba(0,0,0,.7);
+max-height:90vh;
+overflow-y:auto;
+}
+
+.menuCard h1{font-size:clamp(28px,6vw,42px);font-family:"Cinzel",serif;margin-bottom:12px;color:#ffffff;}
+.menuCard h2{font-size:clamp(22px,5vw,32px);margin-bottom:20px;color:#ffd966;}
+.menuCard p{font-size:17px;opacity:.9;margin-bottom:28px;}
+
+.menuCard button{
+width:100%;
+padding:16px;
+margin-top:12px;
+border:none;
+border-radius:14px;
+font-size:18px;
+font-weight:700;
+cursor:pointer;
+transition:.25s;
+background:linear-gradient(180deg,#8d0000,#4f0000);
+color:#fff;
+}
+
+.menuCard button:hover{background:linear-gradient(180deg,#d20000,#860000);transform:translateY(-2px);}
+
+.settingRow{margin:22px 0;text-align:left;}
+.settingRow label{display:block;margin-bottom:10px;font-size:15px;color:#ddd;}
+.settingRow input[type="range"]{width:100%;accent-color:#ff4444;cursor:pointer;}
+.settingRow input[type="checkbox"]{transform:scale(1.4);accent-color:#ff4444;cursor:pointer;}
+
+#audioControls{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+z-index:6500;
+}
+
+#muteButton{
+width:58px;
+height:58px;
+border:none;
+border-radius:50%;
+cursor:pointer;
+font-size:24px;
+background:rgba(0,0,0,.75);
+color:#fff;
+border:2px solid rgba(255,255,255,.08);
+}
+
+#debugPanel{
+position:fixed;
+top:10px;
+left:50%;
+transform:translateX(-50%);
+display:none;
+gap:18px;
+padding:10px 18px;
+border-radius:14px;
+background:rgba(0,0,0,.82);
+font-size:13px;
+font-family:monospace;
+color:#66ff99;
+z-index:9000;
+flex-wrap:wrap;
+justify-content:center;
+max-width:96vw;
+}
+
+#touchBlocker{
+position:fixed;
+inset:0;
+display:none;
+z-index:8000;
+background:transparent;
+}
+
+/*=========================================
+RESPONSIVE
+=========================================*/
+
+@media (max-width:992px){
+#mobileControls{display:flex;}
+#hud{transform:scale(.9);transform-origin:top left;}
+#missionPanel{width:280px;}
+#miniMap{width:170px;height:170px;}
+#playerStats{display:none;}
+}
+
+@media (max-width:768px){
+#missionPanel{display:none;}
+#compass{display:none;}
+#dialogueContainer{width:96vw;}
+#portrait{width:110px;}
+#dialogueText{font-size:16px;}
+#questPanel{width:230px;padding:14px;}
+#miniMap{width:140px;height:140px;}
+}
+
+@media (max-width:480px){
+#hud{gap:8px;left:10px;top:10px;}
+.hudCard{width:150px;padding:8px;}
+.gameButton{width:64px;height:64px;font-size:22px;}
+#rightControls{grid-template-columns:repeat(2,64px);grid-template-rows:repeat(3,64px);gap:8px;}
+#joystickBase{width:110px;height:110px;}
+#joystickStick{width:50px;height:50px;}
+#mobileControls{height:200px;padding:12px;}
+#questPanel{display:none;}
+#miniMap{display:none;}
+}
+
+@media (max-width:360px){
+.hudCard{width:130px;padding:6px;}
+.hudTitle{font-size:10px;}
+#healthText,#spiritText,#lanternCounter,#scoreCounter{font-size:12px;}
+.gameButton{width:56px;height:56px;font-size:19px;}
+#rightControls{grid-template-columns:repeat(2,56px);grid-template-rows:repeat(3,56px);gap:6px;}
+#joystickBase{width:96px;height:96px;}
+#joystickStick{width:44px;height:44px;}
+}
+
+@media (max-height:480px) and (orientation:landscape){
+#mobileControls{height:150px;padding:8px;}
+.gameButton{width:52px;height:52px;font-size:19px;}
+#rightControls{grid-template-columns:repeat(2,52px);grid-template-rows:repeat(3,52px);gap:6px;}
+#joystickBase{width:90px;height:90px;}
+#joystickStick{width:40px;height:40px;}
+#hud{transform:scale(.7);transform-origin:top left;}
+#missionPanel{display:none;}
+#playerStats{display:none;}
+}
+
+/*======================================================
+PART 7
+BOSS INTRO • VICTORY • GAME OVER • CUTSCENES
+======================================================*/
+
+.gameOverlay,
+.cinematicScreen{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+background:rgba(0,0,0,.88);
+backdrop-filter:blur(10px);
+z-index:10000;
+}
+
+.overlayCard{
+width:min(760px,92vw);
+padding:45px;
+text-align:center;
+border-radius:28px;
+background:linear-gradient(180deg,rgba(18,18,18,.98),rgba(8,8,8,.98));
+border:2px solid rgba(255,255,255,.08);
+box-shadow:0 25px 80px rgba(0,0,0,.75);
+animation:cardAppear .45s ease;
+max-height:90vh;
+overflow-y:auto;
+}
+
+#bossIntroScreen{
+background:radial-gradient(circle, rgba(120,0,0,.35), rgba(0,0,0,.96));
+}
+
+.cinematicBackground{
+position:absolute;
+inset:0;
+background:linear-gradient(180deg, rgba(0,0,0,.2), rgba(0,0,0,.95));
+}
+
+.cinematicFlash{
+position:absolute;
+inset:0;
+background:#ffffff;
+opacity:0;
+}
+
+.bossRevealContainer{position:relative;text-align:center;z-index:5;padding:0 20px;}
+
+#bossRevealImage{
+width:min(420px,70vw);
+filter:drop-shadow(0 0 35px crimson);
+animation:bossRevealFloat 3s ease-in-out infinite;
+}
+
+#bossRevealTitle{
+margin-top:20px;
+font-family:"Cinzel",serif;
+font-size:clamp(30px,7vw,60px);
+letter-spacing:5px;
+color:#ff4444;
+text-shadow:0 0 30px crimson;
+}
+
+#bossRevealSubtitle{margin-top:10px;font-size:clamp(16px,3.5vw,26px);color:#ffd966;}
+#bossRevealQuote{margin-top:25px;font-size:clamp(14px,3vw,20px);font-style:italic;opacity:.85;}
+
+#victoryScreen{background:linear-gradient(180deg,rgba(10,25,10,.95),rgba(0,0,0,.95));}
+.victoryIcon{font-size:80px;animation:victoryBounce 2s infinite;}
+
+.rewardGrid{margin:35px 0;display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+
+.rewardItem{
+padding:18px;
+border-radius:14px;
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.08);
+font-size:16px;
+}
+
+#gameOverScreen{background:linear-gradient(180deg,rgba(40,0,0,.96),rgba(0,0,0,.96));}
+.gameOverIcon{font-size:80px;animation:gameOverPulse 2s infinite;}
+
+#day6Portal{
+position:absolute;
+width:220px;
+height:320px;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:900;
+cursor:pointer;
+}
+
+#portalGlow{
+position:absolute;
+width:260px;
+height:260px;
+border-radius:50%;
+background:radial-gradient(circle, rgba(110,0,255,.7), transparent 70%);
+animation:portalGlow 2s infinite;
+}
+
+#portalImage{position:relative;width:180px;z-index:2;animation:portalFloat 3s ease-in-out infinite;}
+
+#portalText{
+margin-top:15px;
+font-size:22px;
+font-weight:700;
+color:#ffffff;
+text-shadow:0 0 12px #6d4cff;
+}
+
+#levelCompleteBanner{
+position:fixed;
+top:60px;
+left:50%;
+transform:translateX(-50%);
+padding:18px 40px;
+border-radius:40px;
+background:rgba(30,120,40,.9);
+font-size:clamp(16px,3vw,24px);
+font-weight:700;
+letter-spacing:2px;
+opacity:0;
+z-index:12000;
+}
+
+#screenFlash,
+#damageOverlay,
+#healOverlay,
+#lightningOverlay,
+#screenDarkness,
+#vignetteEffect{
+position:fixed;
+inset:0;
+pointer-events:none;
+opacity:0;
+z-index:9500;
+}
+
+#screenFlash{background:#ffffff;}
+#damageOverlay{background:rgba(255,0,0,.25);}
+#healOverlay{background:rgba(0,255,120,.18);}
+#lightningOverlay{background:rgba(255,255,255,.85);}
+#screenDarkness{background:rgba(0,0,0,.65);}
+#vignetteEffect{box-shadow:inset 0 0 250px rgba(0,0,0,.9);}
+
+#popupNotification{
+position:fixed;
+top:120px;
+left:50%;
+transform:translateX(-50%);
+display:flex;
+align-items:center;
+gap:14px;
+padding:16px 28px;
+border-radius:16px;
+background:rgba(15,15,15,.95);
+border:1px solid rgba(255,255,255,.08);
+opacity:0;
+z-index:13000;
+}
+
+#bossWarning{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+background:rgba(0,0,0,.75);
+z-index:14000;
+text-align:center;
+padding:0 20px;
+}
+
+#bossWarning h1{font-size:clamp(36px,8vw,70px);color:#ff2222;animation:warningBlink .7s infinite;}
+#bossWarning h2{margin-top:18px;font-size:clamp(18px,4vw,34px);color:#ffffff;letter-spacing:4px;}
+
+#bossIntroVideo,
+#endingVideo{width:100vw;height:100vh;object-fit:cover;background:#000;}
+
+#endingFade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;}
+
+#continueButton,
+#retryGameButton,
+#quitEventButton{
+margin-top:20px;
+padding:16px 36px;
+border:none;
+border-radius:14px;
+font-size:18px;
+font-weight:700;
+cursor:pointer;
+background:linear-gradient(180deg,#b40000,#640000);
+color:#fff;
+transition:.25s;
+}
+
+#continueButton:hover,
+#retryGameButton:hover,
+#quitEventButton:hover{
+transform:translateY(-3px);
+background:linear-gradient(180deg,#ff3030,#920000);
+}
+
+@keyframes cardAppear{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+@keyframes bossRevealFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+@keyframes portalFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+@keyframes portalGlow{0%,100%{transform:scale(1);opacity:.7;}50%{transform:scale(1.18);opacity:1;}}
+@keyframes victoryBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+@keyframes gameOverPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+@keyframes warningBlink{0%,100%{opacity:1;}50%{opacity:.2;}}
+
+/*======================================================
+PART 8
+GHOST HIT STATES + UTILITY
+======================================================*/
+
+#player.hurt{filter:brightness(2) drop-shadow(0 0 20px red);}
+#player.dash{filter:brightness(1.3) drop-shadow(0 0 25px cyan);}
+
+/* FIX: attack swing animations now actually apply. Previously the JS added
+   attack1 / attack2 / attack3 classes to #player on every hit, but no
+   matching CSS existed anywhere, so sword swings never had any motion. */
+#player.attack1 #playerSword,
+#player.attack2 #playerSword,
+#player.attack3 #playerSword{
+animation-duration:.22s;
+animation-timing-function:ease-out;
+animation-fill-mode:forwards;
+}
+#player.attack1 #playerSword{animation-name:swingRight;}
+#player.attack2 #playerSword{animation-name:swingLeft;}
+#player.attack3 #playerSword{animation-name:swingHeavy;}
+
+@keyframes swingRight{
+0%{transform:rotate(0deg);}
+50%{transform:rotate(-70deg);}
+100%{transform:rotate(0deg);}
+}
+@keyframes swingLeft{
+0%{transform:rotate(0deg);}
+50%{transform:rotate(60deg);}
+100%{transform:rotate(0deg);}
+}
+@keyframes swingHeavy{
+0%{transform:rotate(0deg) scale(1);}
+50%{transform:rotate(-110deg) scale(1.15);}
+100%{transform:rotate(0deg) scale(1);}
+}
+
+/* FIX: slash effect + dash trail now have visible "burst" animations,
+   triggered by the JS (see triggerSlashEffect / triggerDashTrail). These
+   elements existed in the HTML/CSS before but nothing in the JS ever
+   turned them on. */
+#slashEffect.play{
+animation:slashBurst .28s ease-out forwards;
+}
+@keyframes slashBurst{
+0%{opacity:.95;transform:translate(-50%,-50%) scale(.35);}
+100%{opacity:0;transform:translate(-50%,-50%) scale(1.4);}
+}
+
+#dashTrail.play{
+animation:dashBurst .4s ease-out forwards;
+}
+@keyframes dashBurst{
+0%{opacity:.85;transform:translateX(-50%) scaleX(1);}
+100%{opacity:0;transform:translateX(-50%) scaleX(2.2);}
+}
+
+.notification{
+padding:14px 22px;
+margin:12px;
+border-radius:14px;
+background:rgba(20,20,20,.92);
+border-left:5px solid #ff4444;
+box-shadow:0 12px 25px rgba(0,0,0,.45);
+animation:notificationSlide .45s ease;
+pointer-events:none;
+}
+
+@keyframes notificationSlide{from{opacity:0;transform:translateX(80px);}to{opacity:1;transform:translateX(0);}}
+
+.hidden{display:none !important;}
+.visible{display:block !important;}
+
+/*======================================================
+PART 9
+LANTERN PICKUP FIX
+(FIX: lanterns were only "brightened" on click and stayed on screen
+forever, and clicking required a pixel-perfect hit on a small element,
+which made them feel broken / not collectible, especially on mobile.
+Now: walking near a lantern auto-collects it, a pulsing "in range" ring
+shows up when you're close enough, and on collect the lantern plays a
+bright burst-and-vanish animation before being fully removed.)
+======================================================*/
+
+.lantern{
+will-change:transform,opacity;
+}
+
+.lantern.inRange:not(.collected){
+transform:scale(1.15);
+filter:drop-shadow(0 0 18px #fff4c2);
+}
+
+.lantern.inRange:not(.collected) .lanternGlow{
+animation:lanternGlowFast .6s infinite;
+}
+
+@keyframes lanternGlowFast{
+0%,100%{transform:scale(1.1);opacity:.9;}
+50%{transform:scale(1.4);opacity:1;}
+}
+
+.lantern.collected{
+pointer-events:none;
+animation:lanternVanish .55s cubic-bezier(.2,.8,.3,1) forwards;
+}
+
+@keyframes lanternVanish{
+0%{opacity:1;transform:scale(1) rotate(0deg);filter:brightness(1) drop-shadow(0 0 10px gold);}
+35%{opacity:1;transform:scale(1.5) rotate(8deg);filter:brightness(2.4) drop-shadow(0 0 40px #fff2b0);}
+100%{opacity:0;transform:scale(.15) rotate(20deg);filter:brightness(3) drop-shadow(0 0 0 transparent);}
+}
+
+/*======================================================
+PART 10
+BOSS HIT FEEDBACK + DAY 6 PORTAL
+(FIX: the Ghost King never reacted visually when hit, and #day6Portal had
+no positioning/visibility logic anywhere, so it could never be seen or
+entered. See activatePortal() / updatePortalProximity() in the JS.)
+======================================================*/
+
+#ghostKingSprite.hit{
+animation:bossHitFlash .18s ease-out;
+}
+
+@keyframes bossHitFlash{
+0%{filter:brightness(3) drop-shadow(0 0 50px #fff);}
+100%{filter:drop-shadow(0 0 40px crimson);}
+}
+
+#day6Portal{
+position:absolute;
+}
+
+#day6Portal.inRange #portalGlow{
+animation:portalGlow .9s infinite;
+}
+
+#day6Portal.inRange #portalText{
+color:#ffe9a8;
+text-shadow:0 0 18px #ffcf66;
+}
+
+.lanternSparkle{
+position:absolute;
+width:6px;
+height:6px;
+border-radius:50%;
+background:#ffe9a8;
+box-shadow:0 0 10px 2px #ffdd88;
+pointer-events:none;
+animation:lanternSparkleFly .6s ease-out forwards;
+}
+
+@keyframes lanternSparkleFly{
+0%{opacity:1;transform:translate(0,0) scale(1);}
+100%{opacity:0;transform:translate(var(--sx,0),var(--sy,-60px)) scale(.2);}
+}
+/*======================================================
 VIDLYRA HALLOWEEN FEST 2026 — DAY 5
 day5-mobile.css  (load AFTER day5-epic-game.css)
 
