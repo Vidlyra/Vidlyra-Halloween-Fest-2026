@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,9 +6,652 @@
   <meta name="theme-color" content="#080711">
   <meta name="description" content="Explore the seven chapters of Vidlyra Halloween Fest 2026.">
   <title>Haunted Realm | Vidlyra Halloween Fest 2026</title>
+
   <link rel="stylesheet" href="css/map.css">
+
+  <!-- Reward popup styles -->
+  <style>
+    .festival-rewards[hidden] {
+      display: none !important;
+    }
+
+    .festival-rewards {
+      position: fixed;
+      inset: 0;
+      z-index: 20000;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      overflow: auto;
+      background: rgba(3, 2, 9, .88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: rewardFadeIn .22s ease-out;
+    }
+
+    .reward-shell {
+      position: relative;
+      width: min(960px, 100%);
+      max-height: calc(100dvh - 36px);
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: clamp(16px, 3vw, 32px);
+      border: 1px solid #ff8a0070;
+      border-radius: 18px;
+      color: #f8f3ff;
+      background:
+        radial-gradient(ellipse at 50% 0%, #652b4a55, transparent 58%),
+        linear-gradient(145deg, #171126, #080711);
+      box-shadow: 0 30px 100px #000b, 0 0 55px #ff8a0015;
+      animation: rewardPopupIn .3s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .reward-close {
+      position: sticky;
+      top: 0;
+      z-index: 8;
+      float: right;
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      margin: -6px -5px 0 12px;
+      border: 1px solid #ff8a0077;
+      border-radius: 50%;
+      background: #100c1c;
+      color: #ffbd61;
+      font-size: 21px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .reward-close:hover {
+      transform: rotate(90deg);
+      background: #ff8a00;
+      color: #130b08;
+    }
+
+    .reward-heading {
+      clear: none;
+      padding: 0 28px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .reward-heading .eyebrow {
+      color: #ffbd61;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .reward-heading h2 {
+      margin: 13px 0;
+      color: #f8f3ff;
+      font: 700 clamp(23px, 4vw, 36px)/1.3 Cinzel, Georgia, serif;
+      letter-spacing: 1px;
+    }
+
+    .reward-heading > p:last-child {
+      color: #aaa4bd;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .reward-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      color: #ffbd61;
+      font-size: 9px;
+      letter-spacing: 1px;
+    }
+
+    .reward-viewport {
+      width: 100%;
+      overflow: hidden;
+      border: 1px solid #ffffff12;
+      border-radius: 13px;
+      background: #08071180;
+      outline: none;
+      touch-action: pan-y;
+    }
+
+    .reward-viewport:focus-visible {
+      outline: 2px solid #ff8a00;
+      outline-offset: 4px;
+    }
+
+    .reward-track {
+      display: flex;
+      width: 100%;
+      transition: transform 420ms cubic-bezier(.2,.75,.25,1);
+      will-change: transform;
+    }
+
+    .reward-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      min-width: 0;
+      padding: clamp(8px, 2vw, 18px);
+      box-sizing: border-box;
+    }
+
+    .reward-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 420px;
+      height: 100%;
+      padding: clamp(18px, 4vw, 40px);
+      border: 1px solid #a37cff30;
+      border-radius: 12px;
+      background:
+        radial-gradient(ellipse at top, #4d2b6833, transparent 65%),
+        linear-gradient(150deg, #191528, #0b0a15);
+      text-align: center;
+    }
+
+    .reward-kicker {
+      margin: 0 0 15px;
+      color: #ffbd61;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      line-height: 1.8;
+    }
+
+    .reward-card h3 {
+      max-width: 700px;
+      margin: 8px 0 14px;
+      color: #f8f3ff;
+      font: 700 clamp(21px, 4vw, 34px)/1.35 Cinzel, Georgia, serif;
+      overflow-wrap: anywhere;
+    }
+
+    .reward-copy {
+      max-width: 600px;
+      margin: 12px auto 18px;
+      color: #c5bdd5;
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    .reward-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      max-width: 100%;
+      margin-top: 12px;
+      padding: 12px 20px;
+      border: 1px solid #ff8a00;
+      border-radius: 6px;
+      background: #ff8a0012;
+      color: #ffbd61;
+      font: 800 10px/1.6 Inter, Arial, sans-serif;
+      letter-spacing: 1px;
+      text-align: center;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .reward-action:hover:not(:disabled) {
+      background: #ff8a00;
+      color: #130b08;
+      box-shadow: 0 0 25px #ff8a003b;
+      transform: translateY(-2px);
+    }
+
+    .reward-action:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .reward-status {
+      min-height: 20px;
+      max-width: 650px;
+      margin: 13px 0 0;
+      color: #aaa4bd;
+      font-size: 10px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    .rank-emblem {
+      display: grid;
+      place-items: center;
+      width: 70px;
+      height: 70px;
+      margin: 7px 0 15px;
+      border: 1px solid #ffbd6170;
+      border-radius: 50%;
+      color: #ffbd61;
+      font-size: 35px;
+      box-shadow: 0 0 30px #ff8a0020;
+    }
+
+    .rank-caption {
+      color: #aaa4bd;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 3px;
+    }
+
+    .rank-card h3 {
+      color: #ffbd61;
+    }
+
+    .rank-description,
+    .rank-footnote {
+      max-width: 600px;
+      color: #c5bdd5;
+      font-size: 11px;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .rank-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      width: 100%;
+      max-width: 650px;
+      gap: 9px;
+    }
+
+    .rank-metrics > div {
+      min-width: 0;
+      padding: 14px 10px;
+      border: 1px solid #ffffff13;
+      border-radius: 8px;
+      background: #ffffff05;
+    }
+
+    .rank-metrics span,
+    .rank-metrics strong {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .rank-metrics span {
+      color: #aaa4bd;
+      font-size: 8px;
+      line-height: 1.6;
+      letter-spacing: .8px;
+    }
+
+    .rank-metrics strong {
+      margin-top: 8px;
+      color: #ffbd61;
+      font: 700 clamp(14px, 2.5vw, 20px) Cinzel, Georgia, serif;
+    }
+
+    .wishes-symbol {
+      font-size: 52px;
+      filter: drop-shadow(0 0 18px #ff8a0044);
+    }
+
+    .wishes-card h3 {
+      color: #ffbd61;
+    }
+
+    .festival-quote {
+      max-width: 620px;
+      margin: 14px 0 18px;
+      padding: 16px 18px;
+      border-left: 2px solid #ff8a00;
+      background: #ff8a0009;
+      color: #f1d9ff;
+      font: italic 500 clamp(14px, 2.5vw, 19px)/1.8 Cinzel, Georgia, serif;
+    }
+
+    .reward-signature {
+      color: #ffbd61;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+    }
+
+    .event-avatar-frame {
+      display: grid;
+      place-items: center;
+      width: min(100%, 210px);
+      aspect-ratio: 1;
+      margin: 9px auto;
+      overflow: hidden;
+      border: 1px solid #ffbd6170;
+      border-radius: 14px;
+      background: #080711;
+      box-shadow: 0 0 30px #ff8a0015;
+    }
+
+    .event-avatar-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .love-invitation {
+      background:
+        radial-gradient(ellipse at 50% 25%, #a64d8d26, transparent 45%),
+        linear-gradient(145deg, #1c1124, #0b0a15);
+    }
+
+    .sharing-man-card {
+      background:
+        radial-gradient(ellipse at 50% 25%, #ff8a0022, transparent 45%),
+        linear-gradient(145deg, #1b1528, #0b0a15);
+    }
+
+    .story-poster-frame {
+      display: grid;
+      place-items: center;
+      width: min(100%, 245px);
+      height: clamp(150px, 28vh, 290px);
+      margin: 8px auto 14px;
+      overflow: hidden;
+      border: 1px solid #ffbd6155;
+      border-radius: 10px;
+      background: #07060e;
+      box-shadow: 0 12px 36px #0006;
+    }
+
+    .story-poster-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .story-label {
+      margin: 10px 0 0;
+      color: #d9add7;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+    }
+
+    .story-invite-line {
+      max-width: 580px;
+      color: #f0cde7;
+      font: italic 500 13px/1.8 Cinzel, Georgia, serif;
+    }
+
+    .release-date {
+      display: grid;
+      gap: 7px;
+      margin: 6px 0 10px;
+      padding: 13px 18px;
+      border: 1px solid #ff8a0050;
+      border-radius: 8px;
+      background: #ff8a000d;
+    }
+
+    .release-date span {
+      color: #aaa4bd;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+    }
+
+    .release-date strong {
+      color: #ffbd61;
+      font: 700 clamp(14px, 2.5vw, 19px)/1.5 Cinzel, Georgia, serif;
+    }
+
+    .story-symbol {
+      color: #ff8eae;
+      font-size: 55px;
+      text-shadow: 0 0 28px #ff5e9e55;
+    }
+
+    .coming-soon {
+      margin: 0;
+      color: #ffbd61;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 4px;
+    }
+
+    .multiverse-symbol {
+      color: #ff8a00;
+      font: 700 68px/1 Inter, Arial, sans-serif;
+      text-shadow: 0 0 30px #ff8a0050;
+    }
+
+    .multiverse-tagline {
+      color: #f4eaff;
+      font: 700 clamp(13px, 2vw, 18px)/1.7 Cinzel, Georgia, serif;
+      letter-spacing: 1px;
+    }
+
+    .festival-poster-frame {
+      display: grid;
+      place-items: center;
+      width: min(100%, 240px);
+      max-height: 250px;
+      margin: 8px auto;
+      overflow: hidden;
+      border: 1px solid #ffbd6150;
+      border-radius: 9px;
+      background: #080711;
+    }
+
+    .festival-poster-frame img {
+      display: block;
+      width: 100%;
+      max-height: 250px;
+      object-fit: contain;
+    }
+
+    .reward-navigation {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .reward-nav {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 38px;
+      padding: 10px 13px;
+      border: 1px solid #9c8ac34a;
+      border-radius: 5px;
+      background: #ffffff06;
+      color: #d9d0e9;
+      font: 800 9px/1.5 Inter, Arial, sans-serif;
+      letter-spacing: .8px;
+      cursor: pointer;
+    }
+
+    .reward-nav:hover {
+      border-color: #ff8a00;
+      color: #ffbd61;
+      background: #ff8a0014;
+    }
+
+    .reward-dots {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .reward-dots button {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 1px solid #7b6d91;
+      border-radius: 50%;
+      background: #ffffff05;
+      color: #c2b7d5;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .reward-dots button[aria-current="true"] {
+      border-color: #ff8a00;
+      background: #ff8a00;
+      color: #160b05;
+      box-shadow: 0 0 16px #ff8a003a;
+    }
+
+    .reward-carousel-status {
+      min-height: 18px;
+      margin: 12px 0 0;
+      color: #aaa4bd;
+      font-size: 10px;
+      text-align: center;
+    }
+
+    .reward-trigger {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .reward-trigger-copy {
+      display: block;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .reward-trigger-copy strong,
+    .reward-trigger-copy small,
+    .reward-trigger-copy em {
+      display: block;
+    }
+
+    .reward-trigger-copy small {
+      margin-top: 7px;
+      color: #aaa4bd;
+      font-size: 10px;
+      font-style: normal;
+      line-height: 1.7;
+    }
+
+    .reward-trigger-copy em {
+      margin-top: 8px;
+      color: #ffbd61;
+      font-size: 9px;
+      font-weight: 800;
+      font-style: normal;
+      letter-spacing: 1px;
+    }
+
+    .reward-trigger:hover {
+      border-color: #ff8a0088;
+      background-color: #ff8a000c;
+    }
+
+    .reward-action:focus-visible,
+    .reward-close:focus-visible,
+    .reward-nav:focus-visible,
+    .reward-dots button:focus-visible {
+      outline: 2px solid #ffbd61;
+      outline-offset: 4px;
+    }
+
+    @keyframes rewardFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes rewardPopupIn {
+      from { opacity: 0; transform: translateY(18px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      .festival-rewards {
+        padding: 8px;
+      }
+
+      .reward-shell {
+        width: 100%;
+        max-height: calc(100dvh - 16px);
+        padding: 14px 9px;
+        border-radius: 13px;
+      }
+
+      .reward-close {
+        width: 37px;
+        height: 37px;
+        margin: -2px 0 0 8px;
+      }
+
+      .reward-heading {
+        padding: 0 15px;
+      }
+
+      .reward-heading h2 {
+        font-size: 22px;
+      }
+
+      .reward-card {
+        min-height: 0;
+        padding: 20px 12px;
+      }
+
+      .rank-metrics {
+        gap: 7px;
+      }
+
+      .rank-metrics > div {
+        padding: 11px 7px;
+      }
+
+      .rank-metrics span {
+        font-size: 7px;
+      }
+
+      .reward-navigation {
+        grid-template-columns: 1fr 1fr;
+        row-gap: 14px;
+      }
+
+      .reward-dots {
+        grid-column: 1 / -1;
+        grid-row: 1;
+      }
+
+      #rewardPrevBtn {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      #rewardNextBtn {
+        grid-column: 2;
+        grid-row: 2;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .festival-rewards,
+      .reward-shell,
+      .reward-track {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+
   <script type="module" src="js/map.js"></script>
 </head>
+
 <body>
   <div class="world" aria-hidden="true">
     <div class="moon"></div>
@@ -24,8 +666,12 @@
   <header class="topbar">
     <a href="home.html" class="brand">
       <span class="brand-mark">V</span>
-      <span><strong>VIDLYRA</strong><small>HALLOWEEN FEST 2026</small></span>
+      <span>
+        <strong>VIDLYRA</strong>
+        <small>HALLOWEEN FEST 2026</small>
+      </span>
     </a>
+
     <span class="world-status"><i></i> THE VEIL IS OPEN</span>
     <a href="home.html" class="back-link">← HOME</a>
   </header>
@@ -34,21 +680,33 @@
     <section class="hero">
       <p class="eyebrow">✦ YOUR ANIME SUPERNATURAL ADVENTURE ✦</p>
       <h1>HAUNTED <span>REALM</span></h1>
+
       <p class="hero-copy">
         Seven chapters. Seven mysteries.<br>
         Your journey beyond the veil begins here.
       </p>
 
       <div class="stats">
-        <div><strong>07</strong><span>CHAPTERS</span></div>
-        <div><strong id="completedCount">00</strong><span>COMPLETED</span></div>
-        <div><strong id="percentCount">0%</strong><span>PROGRESS</span></div>
+        <div>
+          <strong>07</strong>
+          <span>CHAPTERS</span>
+        </div>
+        <div>
+          <strong id="completedCount">00</strong>
+          <span>COMPLETED</span>
+        </div>
+        <div>
+          <strong id="percentCount">0%</strong>
+          <span>PROGRESS</span>
+        </div>
       </div>
     </section>
 
     <section class="quest-section">
       <div class="section-heading">
-        <span></span><h2>THE FORBIDDEN JOURNEY</h2><span></span>
+        <span></span>
+        <h2>THE FORBIDDEN JOURNEY</h2>
+        <span></span>
       </div>
 
       <div class="map-layout">
@@ -56,107 +714,192 @@
           <p class="route-label">YOUR QUEST</p>
           <h3>Explore the unknown.</h3>
           <p>Complete each chapter to reveal the next destination.</p>
+
           <div class="mini-route">
-            <span>01</span><i></i><span>02</span><i></i><span>03</span>
-            <i></i><span>04</span><i></i><span>05</span><i></i>
-            <span>06</span><i></i><span>07</span>
+            <span>01</span><i></i>
+            <span>02</span><i></i>
+            <span>03</span><i></i>
+            <span>04</span><i></i>
+            <span>05</span><i></i>
+            <span>06</span><i></i>
+            <span>07</span>
           </div>
-          <div class="reward-note">
-            <span class="reward-icon">✧</span>
-            <div><strong>FINAL REWARD</strong><small>Complete the festival to unlock your avatar reward.</small></div>
-          </div>
+
+          <!-- Click this reward card to open the popup -->
+          <button
+            type="button"
+            class="reward-note reward-trigger"
+            id="openRewardsBtn"
+            aria-haspopup="dialog"
+            aria-controls="festivalRewardCarousel"
+          >
+            <span class="reward-icon" aria-hidden="true">✧</span>
+            <span class="reward-trigger-copy">
+              <strong>FESTIVAL REWARDS</strong>
+              <small id="mapRewardHint">
+                Complete all seven chapters to unlock your rewards.
+              </small>
+              <em>OPEN REWARDS ↗</em>
+            </span>
+          </button>
+
           <div class="progress-heading">
-            <span>FESTIVAL PROGRESS</span><strong id="progressText">0 / 7</strong>
+            <span>FESTIVAL PROGRESS</span>
+            <strong id="progressText">0 / 7</strong>
           </div>
-          <div class="progress-track" id="progressBar"
-               role="progressbar" aria-label="Festival progress"
-               aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
+
+          <div
+            class="progress-track"
+            id="progressBar"
+            role="progressbar"
+            aria-label="Festival progress"
+            aria-valuemin="0"
+            aria-valuemax="7"
+            aria-valuenow="0"
+          >
             <div id="progressFill"></div>
           </div>
-          <p class="sync-status" id="syncStatus" role="status">Connecting to the realm...</p>
+
+          <p class="sync-status" id="syncStatus" role="status">
+            Connecting to the realm...
+          </p>
         </aside>
 
         <div class="chapters" id="chapterList">
           <article class="chapter" data-day="1">
             <div class="node"><span>01</span><b>🎃</b></div>
             <div class="chapter-card">
-              <div class="card-meta"><span>CHAPTER 01</span><span class="chapter-state">LOADING</span></div>
+              <div class="card-meta">
+                <span>CHAPTER 01</span>
+                <span class="chapter-state">LOADING</span>
+              </div>
               <h3>The Haunted Beginning</h3>
               <p>The first signal calls you into the mysterious world.</p>
-              <div class="card-bottom"><span>THE FORGOTTEN GATE</span><a href="day1-video.html" class="chapter-button">ENTER ↗</a></div>
+              <div class="card-bottom">
+                <span>THE FORGOTTEN GATE</span>
+                <a href="day1-video.html" class="chapter-button">ENTER ↗</a>
+              </div>
             </div>
           </article>
 
           <article class="chapter" data-day="2">
             <div class="node"><span>02</span><b>🕯️</b></div>
             <div class="chapter-card">
-              <div class="card-meta"><span>CHAPTER 02</span><span class="chapter-state">LOADING</span></div>
+              <div class="card-meta">
+                <span>CHAPTER 02</span>
+                <span class="chapter-state">LOADING</span>
+              </div>
               <h3>The Haunted Well</h3>
               <p>A forgotten well whispers from beneath the moonlight.</p>
-              <div class="card-bottom"><span>THE CURSED WATERS</span><a href="day2-video.html" class="chapter-button">ENTER ↗</a></div>
+              <div class="card-bottom">
+                <span>THE CURSED WATERS</span>
+                <a href="day2-video.html" class="chapter-button">ENTER ↗</a>
+              </div>
             </div>
           </article>
 
           <article class="chapter" data-day="3">
             <div class="node"><span>03</span><b>👻</b></div>
             <div class="chapter-card">
-              <div class="card-meta"><span>CHAPTER 03</span><span class="chapter-state">LOADING</span></div>
+              <div class="card-meta">
+                <span>CHAPTER 03</span>
+                <span class="chapter-state">LOADING</span>
+              </div>
               <h3>Ghostly Shadows</h3>
               <p>Something watches from the edge of the forest.</p>
-              <div class="card-bottom"><span>SHADOW TERRITORY</span><a href="day3-video.html" class="chapter-button">ENTER ↗</a></div>
+              <div class="card-bottom">
+                <span>SHADOW TERRITORY</span>
+                <a href="day3-video.html" class="chapter-button">ENTER ↗</a>
+              </div>
             </div>
           </article>
 
           <article class="chapter" data-day="4">
             <div class="node"><span>04</span><b>🧙</b></div>
             <div class="chapter-card">
-              <div class="card-meta"><span>CHAPTER 04</span><span class="chapter-state">LOADING</span></div>
+              <div class="card-meta">
+                <span>CHAPTER 04</span>
+                <span class="chapter-state">LOADING</span>
+              </div>
               <h3>The Witch's Domain</h3>
               <p>Ancient magic awakens in the forbidden forest.</p>
-              <div class="card-bottom"><span>THE WITCHING WOODS</span><a href="day4-video.html" class="chapter-button">ENTER ↗</a></div>
+              <div class="card-bottom">
+                <span>THE WITCHING WOODS</span>
+                <a href="day4-video.html" class="chapter-button">ENTER ↗</a>
+              </div>
             </div>
           </article>
 
           <article class="chapter" data-day="5">
             <div class="node"><span>05</span><b>⚔️</b></div>
             <div class="chapter-card">
-              <div class="card-meta"><span>CHAPTER 05</span><span class="chapter-state">LOADING</span></div>
+              <div class="card-meta">
+                <span>CHAPTER 05</span>
+                <span class="chapter-state">LOADING</span>
+              </div>
               <h3>The Haunted Cemetery</h3>
               <p>Restore the lanterns and face the Ghost King.</p>
-              <div class="card-bottom"><span>THE LOST GRAVEYARD</span><a href="day5-video.html" class="chapter-button">ENTER ↗</a></div>
+              <div class="card-bottom">
+                <span>THE LOST GRAVEYARD</span>
+                <a href="day5-video.html" class="chapter-button">ENTER ↗</a>
+              </div>
             </div>
           </article>
 
           <article class="chapter" data-day="6">
             <div class="node"><span>06</span><b>🏚️</b></div>
             <div class="chapter-card">
-              <div class="card-meta"><span>CHAPTER 06</span><span class="chapter-state">LOADING</span></div>
+              <div class="card-meta">
+                <span>CHAPTER 06</span>
+                <span class="chapter-state">LOADING</span>
+              </div>
               <h3>The Haunted Mansion</h3>
               <p>Enter the abandoned mansion and uncover its secret.</p>
-              <div class="card-bottom"><span>THE FORGOTTEN HOUSE</span><a href="day6-video.html" class="chapter-button">ENTER ↗</a></div>
+              <div class="card-bottom">
+                <span>THE FORGOTTEN HOUSE</span>
+                <a href="day6-video.html" class="chapter-button">ENTER ↗</a>
+              </div>
             </div>
           </article>
 
           <article class="chapter" data-day="7">
             <div class="node"><span>07</span><b>🌑</b></div>
             <div class="chapter-card">
-              <div class="card-meta"><span>CHAPTER 07</span><span class="chapter-state">LOADING</span></div>
+              <div class="card-meta">
+                <span>CHAPTER 07</span>
+                <span class="chapter-state">LOADING</span>
+              </div>
               <h3>The Final Mystery</h3>
               <p>One last mystery stands between you and the finale.</p>
-              <div class="card-bottom"><span>BEYOND THE VEIL</span><a href="day7-quiz.html" class="chapter-button"> START DAY 7</a> </div>
+              <div class="card-bottom">
+                <span>BEYOND THE VEIL</span>
+                <a href="day7-quiz.html" class="chapter-button">START DAY 7</a>
+              </div>
             </div>
           </article>
         </div>
       </div>
     </section>
-    <!-- HALLOWEEN FEST REWARD CAROUSEL -->
+
+    <!-- SIX-SLIDE REWARD POPUP -->
     <section
       class="festival-rewards"
       id="festivalRewardCarousel"
       aria-labelledby="festivalRewardHeading"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
       hidden
     >
       <div class="reward-shell">
+        <button
+          type="button"
+          id="closeRewardsBtn"
+          class="reward-close"
+          aria-label="Close festival rewards"
+          title="Close rewards"
+        >✕</button>
+
         <div class="reward-heading">
           <p class="eyebrow">✦ YOU CROSSED BEYOND THE VEIL ✦</p>
           <h2 id="festivalRewardHeading">YOUR FESTIVAL REWARDS</h2>
@@ -176,14 +919,14 @@
         >
           <div class="reward-track" id="rewardTrack">
 
-            <!-- SLIDE 1: PERFORMANCE RANK -->
+            <!-- SLIDE 1: PERFORMANCE -->
             <article class="reward-slide" data-reward-slide="0">
               <div class="reward-card rank-card">
                 <p class="reward-kicker">YOUR FINAL PERFORMANCE</p>
                 <div class="rank-emblem" aria-hidden="true">✦</div>
-
                 <p class="rank-caption">YOUR SCARE RANK</p>
-                <h3 id="rankLabel">PHANTOM CHAMPION</h3>
+                <h3 id="rankLabel">VEIL CONQUEROR</h3>
+
                 <p class="rank-description" id="rankDescription">
                   Checking your recorded game performance...
                 </p>
@@ -208,13 +951,12 @@
                 </div>
 
                 <p class="rank-footnote" id="rankFootnote">
-                  Your rank uses recorded scores where available and verified
-                  chapter completion.
+                  Scores are shown only when recorded by the existing games.
                 </p>
               </div>
             </article>
 
-            <!-- SLIDE 2: FESTIVAL WISHES -->
+            <!-- SLIDE 2: WISHES -->
             <article class="reward-slide" data-reward-slide="1">
               <div class="reward-card wishes-card">
                 <p class="reward-kicker">A MESSAGE FROM VIDLYRA</p>
@@ -232,11 +974,13 @@
                   “Every shadow hides a story; every ending opens a new world.”
                 </blockquote>
 
-                <p class="reward-signature">WITH LOVE · VIDLYRA STORY WORKS</p>
+                <p class="reward-signature">
+                  WITH LOVE · VIDLYRA STORY WORKS
+                </p>
               </div>
             </article>
 
-            <!-- SLIDE 3: LIMITED EDITION EVENT AVATAR -->
+            <!-- SLIDE 3: EVENT AVATAR -->
             <article class="reward-slide" data-reward-slide="2">
               <div class="reward-card avatar-reward-card">
                 <p class="reward-kicker">YOUR LIMITED EDITION REWARD</p>
@@ -260,18 +1004,15 @@
                   type="button"
                   class="reward-action"
                   id="claimAvatarBtn"
-                >
-                  CLAIM EVENT AVATAR
-                </button>
+                  disabled
+                >CLAIM EVENT AVATAR</button>
 
                 <p
                   class="reward-status"
                   id="claimAvatarStatus"
                   role="status"
                   aria-live="polite"
-                >
-                  Checking your reward eligibility...
-                </p>
+                >Checking your reward eligibility...</p>
               </div>
             </article>
 
@@ -279,10 +1020,22 @@
             <article class="reward-slide" data-reward-slide="3">
               <div class="reward-card story-invitation love-invitation">
                 <p class="reward-kicker">A NEW EMOTIONAL JOURNEY</p>
-                <div class="story-symbol" aria-hidden="true">♡</div>
 
-                <p class="story-label">VIDLYRA STORY INVITATION</p>
+                <div class="story-poster-frame">
+                  <img
+                    src="assets/posters/Ghost%20of%20my%20only%20love.png"
+                    alt="Ghost of My Only Love official poster"
+                    loading="lazy"
+                  >
+                </div>
+
+                <p class="story-label">VIDLYRA ORIGINAL ANNOUNCEMENT</p>
                 <h3>Ghost of My Only Love</h3>
+
+                <div class="release-date">
+                  <span>OFFICIAL RELEASE DATE</span>
+                  <strong>NOVEMBER 08, 2026</strong>
+                </div>
 
                 <p class="reward-copy">
                   One love. One impossible loss. One dangerous journey beyond
@@ -290,28 +1043,34 @@
                 </p>
 
                 <p class="story-invite-line">
-                  Are you ready to discover a love that refuses to disappear?
+                  A love that refuses to disappear. A journey that may change
+                  everything.
                 </p>
 
                 <a
-                  class="reward-action reward-link"
+                  class="reward-action"
                   href="https://vidlyra.wordpress.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                >
-                  EXPLORE VIDLYRA STORIES ↗
-                </a>
+                >DISCOVER VIDLYRA STORIES ↗</a>
               </div>
             </article>
 
-            <!-- SLIDE 5: SHARING MAN -->
+            <!-- SLIDE 5: SHARIING MAN -->
             <article class="reward-slide" data-reward-slide="4">
               <div class="reward-card story-invitation sharing-man-card">
                 <p class="reward-kicker">THE NEXT SAGA IS APPROACHING</p>
-                <div class="multiverse-symbol" aria-hidden="true">∞</div>
+
+                <div class="story-poster-frame">
+                  <img
+                    src="assets/posters/Shariing%20man.png"
+                    alt="Sharing Man official poster"
+                    loading="lazy"
+                  >
+                </div>
 
                 <p class="story-label">VIDLYRA ORIGINAL</p>
-                <h3>Sharing Man</h3>
+                <h3>Shariing Man</h3>
                 <p class="coming-soon">COMING SOON</p>
 
                 <p class="reward-copy">
@@ -319,22 +1078,18 @@
                   the beginning.
                 </p>
 
-                <p class="multiverse-tagline">
-                  MULTIVERSE SAGA BEGINS.
-                </p>
+                <p class="multiverse-tagline">MULTIVERSE SAGA BEGINS.</p>
 
                 <a
-                  class="reward-action reward-link"
+                  class="reward-action"
                   href="https://vidlyra.wordpress.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                >
-                  FOLLOW THE NEXT SAGA ↗
-                </a>
+                >FOLLOW THE NEXT SAGA ↗</a>
               </div>
             </article>
 
-            <!-- SLIDE 6: SHARE FESTIVAL + POSTER -->
+            <!-- SLIDE 6: SHARE FESTIVAL -->
             <article class="reward-slide" data-reward-slide="5">
               <div class="reward-card share-reward-card">
                 <p class="reward-kicker">SHARE YOUR HAUNTED ADVENTURE</p>
@@ -343,8 +1098,8 @@
                 <div class="festival-poster-frame">
                   <img
                     id="festivalPosterPreview"
-                    src="assets/poster/Vidlyra%20halloween%20fest%202026.png"
-                    alt="VIDLYRA Halloween Fest 2026 festival poster"
+                    src="assets/posters/Vidlyra%20halloween%20fest%202026.png"
+                    alt="VIDLYRA Halloween Fest 2026 official poster"
                     loading="lazy"
                   >
                 </div>
@@ -358,21 +1113,16 @@
                   type="button"
                   class="reward-action"
                   id="shareFestivalBtn"
-                >
-                  SHARE FESTIVAL + POSTER
-                </button>
+                >SHARE FESTIVAL + POSTER</button>
 
                 <p
                   class="reward-status"
                   id="shareStatus"
                   role="status"
                   aria-live="polite"
-                >
-                  Your share message is ready.
-                </p>
+                >Your share message is ready.</p>
               </div>
             </article>
-
           </div>
         </div>
 
@@ -382,16 +1132,14 @@
             type="button"
             id="rewardPrevBtn"
             aria-label="Previous reward"
-          >
-            ← PREVIOUS
-          </button>
+          >← PREVIOUS</button>
 
           <div class="reward-dots" aria-label="Choose reward slide">
             <button type="button" data-reward-dot="0" aria-label="Slide 1: Performance" aria-current="true">1</button>
             <button type="button" data-reward-dot="1" aria-label="Slide 2: Wishes">2</button>
             <button type="button" data-reward-dot="2" aria-label="Slide 3: Avatar">3</button>
             <button type="button" data-reward-dot="3" aria-label="Slide 4: Ghost of My Only Love">4</button>
-            <button type="button" data-reward-dot="4" aria-label="Slide 5: Sharing Man">5</button>
+            <button type="button" data-reward-dot="4" aria-label="Slide 5: Shariing Man">5</button>
             <button type="button" data-reward-dot="5" aria-label="Slide 6: Share Festival">6</button>
           </div>
 
@@ -400,9 +1148,7 @@
             type="button"
             id="rewardNextBtn"
             aria-label="Next reward"
-          >
-            NEXT →
-          </button>
+          >NEXT →</button>
         </div>
 
         <p
@@ -410,22 +1156,34 @@
           id="rewardCarouselStatus"
           role="status"
           aria-live="polite"
-        >
-          Reward slides unlocked.
-        </p>
+        >Festival rewards</p>
       </div>
     </section>
+
+    <!-- FINALE -->
     <section class="finale" id="finaleCard">
       <span class="finale-symbol">✦</span>
       <p class="eyebrow">THE FINAL DESTINATION</p>
       <h2>Beyond the Veil</h2>
       <p>Complete all seven chapters to reveal your festival finale.</p>
-      <a class="chapter-button finale-button" id="finaleLink" href="end-credits.html">WATCH FINALE ↗</a>
-      <p class="sync-status" id="rewardStatus">Your avatar reward awaits your completion.</p>
+
+      <a
+        class="chapter-button finale-button"
+        id="finaleLink"
+        href="end-credits.html"
+      >WATCH FINALE ↗</a>
+
+      <p class="sync-status" id="rewardStatus">
+        Your avatar reward awaits your completion.
+      </p>
     </section>
   </main>
 
-  <footer><strong>VIDLYRA</strong><span>BEYOND THE VEIL · HALLOWEEN FEST 2026</span></footer>
+  <footer>
+    <strong>VIDLYRA</strong>
+    <span>BEYOND THE VEIL · HALLOWEEN FEST 2026</span>
+  </footer>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
