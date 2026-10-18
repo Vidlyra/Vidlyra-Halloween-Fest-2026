@@ -3,1095 +3,1196 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Haunted Well | Vidlyra Halloween Fest 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#080711">
+<meta name="description" content="VIDLYRA Halloween Fest 2026 — Day 2: The Haunted Well">
+<title>Day 2 — The Haunted Well | VIDLYRA</title>
+
 <style>
 :root {
- --orange:#ff8a26; --purple:#a66bff; --green:#8cff9c;
- --ink:#090912; --panel:#141421; --text:#f5f1ff;
+    --orange: #ff8a00;
+    --gold: #ffd166;
+    --purple: #a855f7;
+    --dark: #080711;
+    --panel: rgba(10, 9, 24, .92);
+    --u: 1px;
 }
-* { box-sizing:border-box }
-html,body {
- margin:0; min-height:100%; background:#07070d; color:var(--text);
- font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+* { box-sizing: border-box; }
+html, body {
+    width: 100%; height: 100%; margin: 0;
+    overflow: hidden; background: var(--dark); color: #fff;
+    font-family: Inter, system-ui, Arial, sans-serif;
+    user-select: none; -webkit-user-select: none;
+    overscroll-behavior: none;
 }
-body {
- padding:14px;
- background:radial-gradient(ellipse at top,#20112e 0,#090910 55%,#050508 100%);
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+#game {
+    position: relative; width: 100%; height: 100%;
+    overflow: hidden; isolation: isolate;
+    background:
+        radial-gradient(ellipse at 50% 34%, rgba(92, 36, 150, .32), transparent 40%),
+        linear-gradient(#100c25 0%, #17132c 48%, #080a14 100%);
 }
-.wrap { max-width:1100px; margin:auto }
-.top {
- display:flex; gap:12px; justify-content:space-between;
- align-items:center; flex-wrap:wrap; margin-bottom:10px;
+#sky {
+    position: absolute; inset: 0 0 20%;
+    background:
+        radial-gradient(circle at 76% 17%, #eee4ff 0 2px, #c6aaff 3px, transparent 31px),
+        radial-gradient(ellipse at 76% 18%, rgba(162, 104, 255, .18), transparent 28%),
+        linear-gradient(180deg, #100c22, #211738 70%, #19152b);
 }
-.brand {
- font-size:12px; letter-spacing:.2em; color:var(--orange); font-weight:900;
+#moon {
+    position: absolute; width: clamp(70px, 10vw, 135px);
+    aspect-ratio: 1; border-radius: 50%; top: 8%; right: 13%;
+    background: radial-gradient(circle at 36% 32%, #fff6d7, #c7a7ff 65%, #7e55b5);
+    box-shadow: 0 0 55px #a66bff66, 0 0 120px #a66bff22;
+    opacity: .9;
 }
-.title { font-size:clamp(22px,4vw,38px); font-weight:1000; line-height:1.05; margin:4px 0 }
-.sub { font-size:13px; color:#bcb5d1 }
-.actions { display:flex; gap:8px; flex-wrap:wrap }
-button {
- font:inherit; cursor:pointer; border:1px solid #514365; border-radius:10px;
- padding:9px 12px; background:#21192d; color:#fff; font-weight:750;
+.star {
+    position: absolute; width: 2px; height: 2px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 8px #fff;
+    animation: twinkle 2s ease-in-out infinite alternate;
 }
-button:hover { border-color:var(--orange); background:#33203e }
-.hud {
- display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
- gap:8px; margin:10px 0;
+@keyframes twinkle { to { opacity: .2; transform: scale(.5); } }
+#mountains {
+    position: absolute; inset: 23% 0 15%;
+    opacity: .85;
+    background:
+      linear-gradient(135deg, transparent 50%, #0c0b1a 50%) 0 100% / 34% 70% no-repeat,
+      linear-gradient(225deg, transparent 50%, #100d20 50%) 12% 100% / 42% 83% no-repeat,
+      linear-gradient(135deg, transparent 50%, #0c0b18 50%) 55% 100% / 38% 65% no-repeat,
+      linear-gradient(225deg, transparent 50%, #090b16 50%) 75% 100% / 40% 78% no-repeat;
 }
-.stat { background:#12111d; border:1px solid #30283f; border-radius:10px; padding:9px 11px; min-width:0 }
-.stat small { display:block; color:#a9a0c0; font-size:10px; letter-spacing:.12em; text-transform:uppercase }
-.stat strong { display:block; font-size:14px; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
-.bar { height:6px; border-radius:9px; background:#30283e; margin-top:6px; overflow:hidden }
-.fill { height:100%; width:100%; background:linear-gradient(90deg,#ff7c22,#ffc05b); transition:width .15s }
-.fill.hp { background:linear-gradient(90deg,#fa386b,#ff8b8b) }
-.fill.mp { background:linear-gradient(90deg,#8c54ff,#5fe7ff) }
-.gamebox {
- border:1px solid #40304f; border-radius:14px; overflow:hidden;
- background:#080811; box-shadow:0 18px 55px #0009; position:relative;
+.tree {
+    position: absolute; bottom: 14%; width: 18%; height: 64%;
+    background: #080a14; opacity: .95;
+    clip-path: polygon(48% 0, 63% 23%, 55% 20%, 76% 43%, 62% 40%, 92% 66%, 65% 62%, 100% 84%, 59% 79%, 55% 100%, 43% 100%, 41% 80%, 0 87%, 30% 65%, 8% 68%, 36% 43%, 25% 45%, 42% 23%, 36% 26%);
 }
-canvas { display:block; width:100%; height:auto; aspect-ratio:16/9; image-rendering:pixelated; touch-action:none }
+.tree.left { left: -2%; transform: scale(1.1); }
+.tree.right { right: -3%; transform: scaleX(-1) scale(1.2); }
+#ground {
+    position: absolute; bottom: 0; height: 28%; width: 100%;
+    background:
+      radial-gradient(ellipse at 50% 0%, #382342 0%, #181326 40%, #080a12 85%);
+    border-top: 2px solid #68417466;
+}
+#ground::before {
+    content: ""; position: absolute; inset: 0;
+    background: repeating-linear-gradient(170deg, transparent 0 48px, #9a69a40b 49px 51px);
+}
+.fog {
+    position: absolute; left: -20%; width: 140%; height: 18%;
+    background: linear-gradient(90deg, transparent, #a991d020, #c4b0dc16, transparent);
+    filter: blur(18px); pointer-events: none;
+    animation: fogDrift 18s ease-in-out infinite alternate;
+}
+.fog.one { bottom: 14%; }
+.fog.two { bottom: 31%; opacity: .55; animation-delay: -8s; }
+@keyframes fogDrift { to { transform: translateX(12%); } }
+
+#well {
+    position: absolute; width: clamp(150px, 23vw, 275px);
+    height: clamp(125px, 20vw, 215px);
+    left: 50%; bottom: 15%; transform: translateX(-50%);
+    z-index: 4; pointer-events: none;
+}
+.well-back {
+    position: absolute; width: 66%; height: 58%; left: 17%; top: 3%;
+    border-radius: 50%; border: 15px solid #51475e;
+    background: radial-gradient(ellipse, #05030b, #1b102a 70%);
+    box-shadow: inset 0 0 25px #000, 0 0 24px #a855f72a;
+}
+.well-body {
+    position: absolute; bottom: 0; left: 7%; width: 86%; height: 58%;
+    border: 4px solid #78617b;
+    background: repeating-linear-gradient(0deg, #393144 0 15px, #51445a 16px 19px);
+    clip-path: polygon(9% 0, 91% 0, 100% 100%, 0 100%);
+    box-shadow: 0 0 24px #000;
+}
+.well-rim {
+    position: absolute; top: 22%; left: 3%; width: 94%; height: 23%;
+    border-radius: 50%; border: 8px solid #88728e;
+    background: radial-gradient(ellipse, #05030b 0 55%, #35253e 58%);
+    box-shadow: 0 0 18px #b36bff66;
+}
+.well-runes {
+    position: absolute; bottom: 17%; left: 19%; right: 19%;
+    display: flex; justify-content: space-around; color: var(--orange);
+    font-size: 19px; text-shadow: 0 0 14px var(--orange);
+    animation: runeGlow 2s ease-in-out infinite alternate;
+}
+@keyframes runeGlow { to { opacity: .45; text-shadow: 0 0 3px var(--orange); } }
+
+#world {
+    position: absolute; inset: 0; overflow: hidden;
+    touch-action: none;
+}
+#player, .enemy, #boss, .pickup, .projectile {
+    position: absolute; display: flex; align-items: center; justify-content: center;
+    transform: translate(-50%, 50%);
+}
+#player {
+    z-index: 30; left: 15%; bottom: 18%;
+    width: clamp(40px, 5vw, 64px); height: clamp(55px, 7vw, 82px);
+    font-size: clamp(35px, 5vw, 54px);
+    filter: drop-shadow(0 0 9px #ff8a0066);
+    transition: filter .1s;
+}
+#player .shadow {
+    position: absolute; z-index: -1; width: 75%; height: 15%;
+    left: 12%; bottom: -1px; border-radius: 50%;
+    background: #0009; filter: blur(4px);
+}
+#player.attacking { filter: drop-shadow(0 0 18px #ff8a00); }
+#player.hurt { animation: hurtBlink .15s infinite alternate; }
+@keyframes hurtBlink { to { opacity: .25; } }
+.enemy {
+    z-index: 22; width: 46px; height: 54px; font-size: 35px;
+    filter: drop-shadow(0 0 8px #b75cff99);
+    animation: haunt 1.3s ease-in-out infinite alternate;
+}
+.enemy .hpbar {
+    position: absolute; top: -7px; width: 38px; height: 4px;
+    background: #3b263f; border-radius: 5px; overflow: hidden;
+}
+.enemy .hpfill { height: 100%; width: 100%; background: #f66; }
+@keyframes haunt { to { margin-top: -7px; } }
+#boss {
+    display: none; z-index: 26; left: 50%; bottom: 30%;
+    width: clamp(85px, 13vw, 150px); height: clamp(100px, 15vw, 170px);
+    font-size: clamp(70px, 11vw, 120px);
+    filter: drop-shadow(0 0 24px #b52aff);
+    animation: bossFloat 1.7s ease-in-out infinite alternate;
+}
+#boss.active { display: flex; }
+#boss.casting { filter: drop-shadow(0 0 35px #ff3d89); }
+@keyframes bossFloat { to { margin-bottom: 12px; } }
+.projectile {
+    z-index: 28; width: 24px; height: 24px; border-radius: 50%;
+    background: radial-gradient(circle, #fff 0 12%, #e879ff 35%, #8b2bff 70%);
+    box-shadow: 0 0 20px #d05cff;
+}
+.pickup {
+    z-index: 16; width: 38px; height: 38px; font-size: 27px;
+    cursor: pointer; filter: drop-shadow(0 0 12px #b15cff);
+    animation: pickupFloat 1.5s ease-in-out infinite alternate;
+}
+@keyframes pickupFloat { to { margin-bottom: 10px; } }
+.rune {
+    position: absolute; z-index: 15; width: 45px; height: 45px;
+    display: grid; place-items: center; border-radius: 50%;
+    font-size: 25px; color: var(--gold); cursor: pointer;
+    border: 1px solid #ffca6caa; background: #291638aa;
+    box-shadow: 0 0 18px #ff8a0055, inset 0 0 12px #a855f744;
+    animation: runePulse 1.6s ease-in-out infinite alternate;
+}
+.rune.found { opacity: 0; pointer-events: none; transform: scale(.2); transition: .35s; }
+@keyframes runePulse { to { box-shadow: 0 0 32px #ff8a00aa, inset 0 0 20px #a855f799; } }
+#rune1 { left: 19%; bottom: 45%; }
+#rune2 { left: 73%; bottom: 54%; }
+#rune3 { left: 43%; bottom: 70%; }
+#crystalReward {
+    display: none; position: absolute; z-index: 40;
+    left: 50%; bottom: 43%; transform: translate(-50%, 50%);
+    width: 86px; height: 100px; font-size: 70px;
+    border: 0; background: transparent; color: white;
+    filter: drop-shadow(0 0 25px #ff8a00);
+    animation: rewardPulse 1s ease-in-out infinite alternate;
+}
+#crystalReward.active { display: block; }
+@keyframes rewardPulse { to { transform: translate(-50%, 50%) scale(1.18); filter: drop-shadow(0 0 38px #ffd166); } }
+
+#atmosphere {
+    position: absolute; inset: 0; z-index: 50; pointer-events: none;
+    box-shadow: inset 0 0 100px #000a;
+}
+#particles { position: absolute; inset: 0; z-index: 45; pointer-events: none; }
+.particle {
+    position: absolute; width: 3px; height: 3px; border-radius: 50%;
+    background: #ff9a38; box-shadow: 0 0 9px #ff8a00;
+    animation: driftUp linear infinite;
+}
+@keyframes driftUp { from { transform: translateY(15vh); opacity: 0; } 15% { opacity: .8; } to { transform: translateY(-110vh); opacity: 0; } }
+#flash {
+    position: absolute; z-index: 100; inset: 0; opacity: 0;
+    background: #fff; pointer-events: none;
+}
+#flash.active { animation: flash .45s ease-out; }
+@keyframes flash { 0% { opacity: .85; } 100% { opacity: 0; } }
+.shake { animation: shake .3s linear; }
+@keyframes shake { 0%,100% { transform: translate(0); } 25% { transform: translate(5px,-3px); } 50% { transform: translate(-5px,3px); } 75% { transform: translate(3px,2px); } }
+
+#topbar {
+    position: absolute; z-index: 70; top: 0; left: 0; right: 0;
+    padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; background: linear-gradient(#080711d9, transparent);
+}
+.brand { font-weight: 900; letter-spacing: 2px; color: var(--orange); }
+.brand small { display: block; color: #d4c9e7; font-size: 9px; letter-spacing: 1.6px; margin-top: 3px; }
+#pauseBtn {
+    border: 1px solid #ffffff44; background: #130f23cc; border-radius: 10px;
+    padding: 8px 12px;
+}
+#hud {
+    position: absolute; z-index: 70; top: 65px; left: 14px;
+    width: min(340px, calc(100% - 28px)); padding: 12px;
+    border: 1px solid #ffffff24; border-radius: 12px;
+    background: #090713b8; backdrop-filter: blur(8px);
+}
+.hudrow { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; margin-bottom: 6px; }
+.bar { height: 8px; background: #30243c; border-radius: 20px; overflow: hidden; margin-bottom: 8px; }
+.bar > div { height: 100%; width: 100%; transition: width .15s; }
+#healthFill { background: linear-gradient(90deg, #f33, #ff9a71); }
+#bossFill { background: linear-gradient(90deg, #b526ff, #ff4d87); }
+#bossHUD {
+    display: none; position: absolute; z-index: 72; top: 65px; right: 14px;
+    width: min(300px, 38%); padding: 12px; background: #15091fe0;
+    border: 1px solid #b44cff77; border-radius: 12px;
+}
+#bossHUD.active { display: block; }
+#mission {
+    position: absolute; z-index: 70; right: 14px; top: 145px;
+    width: min(270px, 35%); padding: 12px;
+    background: #090713b8; border: 1px solid #ffffff24; border-radius: 12px;
+    font-size: 12px; line-height: 1.65;
+}
+#mission strong { display: block; color: var(--gold); letter-spacing: 1px; margin-bottom: 5px; }
+.missionItem { color: #a7a0b6; }
+.missionItem.done { color: #8cffbd; }
+#dialogBox {
+    position: absolute; z-index: 80; left: 50%; bottom: 9%;
+    transform: translateX(-50%); width: min(600px, 88%);
+    padding: 12px 18px; text-align: center; border-radius: 12px;
+    background: #090713e8; border: 1px solid #ff8a0077;
+    box-shadow: 0 0 24px #0009; opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+}
+#dialogBox.show { opacity: 1; }
+#dialogBox strong { color: var(--gold); }
+
 .overlay {
- position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
- padding:18px; background:#070710d9; backdrop-filter:blur(5px);
+    position: absolute; z-index: 120; inset: 0; display: none;
+    align-items: center; justify-content: center; padding: 18px;
+    background: #05040be8; backdrop-filter: blur(8px);
 }
-.dialog {
- max-width:560px; width:100%; background:#151321; border:1px solid #6d4b7e;
- border-radius:16px; padding:22px; box-shadow:0 15px 60px #000b;
+.overlay.show { display: flex; }
+.panel {
+    width: min(540px, 100%); max-height: 90%; overflow: auto;
+    text-align: center; padding: clamp(22px, 5vw, 40px);
+    border: 1px solid #ff8a0077; border-radius: 22px;
+    background: linear-gradient(145deg, #171026, #090711);
+    box-shadow: 0 0 65px #a855f722;
 }
-.dialog h2 { margin:0 0 8px; color:#ffb26b }
-.dialog p,.dialog li { color:#d5cde5; line-height:1.5; font-size:14px }
-.dialog button { background:#7c351d; border-color:#ff9d47 }
-.dialog .secondary { background:#21192d; border-color:#514365 }
-.hidden { display:none!important }
-.below { display:grid; grid-template-columns:1.2fr 1fr; gap:10px; margin-top:10px }
-.panel { background:#11101a; border:1px solid #30283f; border-radius:12px; padding:12px }
-.panel h3 { font-size:12px; letter-spacing:.12em; text-transform:uppercase; margin:0 0 8px; color:#ffb36d }
-.panel p { margin:4px 0; font-size:13px; color:#cfc6df; line-height:1.45 }
-.quest { display:flex; gap:8px; align-items:flex-start; font-size:13px; color:#ddd5e9; margin:6px 0 }
-.quest b { color:var(--green) }
-.log { height:106px; overflow:auto; font-size:12px; line-height:1.45; color:#c9bdd9 }
-.log div { padding:2px 0; border-bottom:1px solid #ffffff0b }
-.controls { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px }
-.keygroup { display:flex; gap:6px; flex-wrap:wrap }
-.key {
- display:inline-flex; align-items:center; justify-content:center; min-width:28px;
- height:26px; padding:0 7px; border:1px solid #514365; border-bottom-width:3px;
- border-radius:6px; background:#21192d; color:#fff; font-size:11px; font-weight:800;
+.eyebrow { color: var(--orange); font-size: 11px; letter-spacing: 3px; font-weight: 800; }
+h1 { font-size: clamp(29px, 6vw, 54px); margin: 12px 0; line-height: 1.05; }
+h1 span { display: block; color: var(--orange); }
+.subtitle { color: #c6bdd8; line-height: 1.6; font-size: 14px; }
+.bigIcon { font-size: 58px; margin: 8px; filter: drop-shadow(0 0 18px #ff8a00); }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px; }
+.primary, .secondary {
+    border-radius: 10px; padding: 12px 18px; font-weight: 800; letter-spacing: .4px;
 }
-.touch { display:none; gap:8px; justify-content:space-between; margin-top:10px }
-.touch .cluster { display:flex; gap:6px; flex-wrap:wrap }
-.touch button { min-width:46px; min-height:44px; touch-action:none; user-select:none }
-.foot { color:#8e849f; font-size:11px; text-align:center; margin:12px 0 }
-@media(max-width:650px) {
- body { padding:8px }
- .hud { grid-template-columns:repeat(2,minmax(0,1fr)) }
- .below,.controls { grid-template-columns:1fr }
- .touch { display:flex }
- .sub { max-width:95% }
- .panel { padding:10px }
+.primary { color: #160b08; border: 0; background: linear-gradient(100deg, #ff8a00, #ffd166); }
+.secondary { background: #171225; border: 1px solid #ffffff35; }
+.primary:disabled { opacity: .55; cursor: wait; }
+#stats { color: var(--gold); font-size: 13px; margin: 16px 0; }
+#notification {
+    position: absolute; z-index: 90; left: 50%; top: 24%;
+    transform: translate(-50%, -8px); opacity: 0; pointer-events: none;
+    padding: 10px 16px; border: 1px solid #ff8a0080; border-radius: 10px;
+    background: #0b0818ed; color: var(--gold); text-align: center;
+    font-size: 12px; font-weight: 800; transition: .2s;
+}
+#notification.show { opacity: 1; transform: translate(-50%, 0); }
+
+#touchControls { display: none; position: absolute; z-index: 75; inset: auto 0 18px; pointer-events: none; }
+#joystick {
+    position: absolute; left: 22px; bottom: 8px; width: 116px; height: 116px;
+    border-radius: 50%; border: 1px solid #ffffff55; background: #120e25aa;
+    pointer-events: auto; touch-action: none;
+}
+#stick {
+    position: absolute; left: 50%; top: 50%; width: 48px; height: 48px;
+    transform: translate(-50%,-50%); border-radius: 50%;
+    background: #ff8a0088; border: 2px solid #ffca6c;
+    box-shadow: 0 0 18px #ff8a0044;
+}
+.touchAction {
+    position: absolute; right: 22px; bottom: 13px; width: 66px; height: 66px;
+    border-radius: 50%; border: 1px solid #ff8a00aa; background: #21112bdc;
+    color: var(--gold); font-size: 24px; pointer-events: auto; touch-action: none;
+}
+#dashBtn { right: 98px; bottom: 2px; width: 54px; height: 54px; font-size: 20px; }
+#attackBtn { right: 20px; }
+@media (pointer: coarse), (max-width: 800px) {
+    #touchControls { display: block; }
+    #mission { top: auto; bottom: 148px; right: 10px; width: 170px; font-size: 10px; padding: 8px; }
+    #bossHUD { top: 70px; right: 10px; width: 170px; padding: 8px; }
+    #hud { top: 65px; width: 175px; padding: 9px; }
+    .hudrow { font-size: 10px; }
+    #dialogBox { bottom: 135px; font-size: 12px; }
+    #well { bottom: 17%; }
+}
+@media (max-height: 500px) {
+    #topbar { padding: 7px 12px; }
+    #hud { top: 48px; }
+    #bossHUD { top: 48px; }
+    #mission { top: 125px; }
+    #dialogBox { bottom: 10px; }
+    #touchControls { bottom: 5px; }
+    #joystick { width: 90px; height: 90px; }
+    #stick { width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
 </style>
 </head>
+
 <body>
-<div class="wrap">
- <header class="top">
-  <div>
-   <div class="brand">VIDLYRA STORY WORKS · HALLOWEEN FEST 2026 · DAY 2</div>
-   <div class="title">THE HAUNTED WELL</div>
-   <div class="sub">Curse of the Forgotten — explore, survive, awaken.</div>
-  </div>
-  <div class="actions">
-   <button id="saveBtn">Save Game</button>
-   <button id="soundBtn">Sound: Off</button>
-   <button id="resetBtn">Reset Run</button>
-  </div>
- </header>
+<div id="game">
+    <div id="sky"></div><div id="moon"></div><div id="mountains"></div>
+    <div class="tree left"></div><div class="tree right"></div>
+    <div id="ground"></div>
+    <div class="fog one"></div><div class="fog two"></div>
 
- <section class="hud">
-  <div class="stat">
-   <small>Vitality</small><strong id="hpText">100 / 100</strong>
-   <div class="bar"><div class="fill hp" id="hpBar"></div></div>
-  </div>
-  <div class="stat">
-   <small>Spirit Energy</small><strong id="mpText">100 / 100</strong>
-   <div class="bar"><div class="fill mp" id="mpBar"></div></div>
-  </div>
-  <div class="stat">
-   <small>Aura</small><strong id="auraText">Dormant</strong>
-   <div class="bar"><div class="fill" id="auraBar"></div></div>
-  </div>
-  <div class="stat">
-   <small>Discoveries</small><strong id="findText">0 / 12 relics</strong>
-   <div class="bar"><div class="fill" id="findBar"></div></div>
-  </div>
- </section>
+    <div id="world">
+        <div id="well" aria-label="The Haunted Well">
+            <div class="well-back"></div><div class="well-body"></div>
+            <div class="well-rim"></div>
+            <div class="well-runes"><span>ᚱ</span><span>ᛟ</span><span>ᚷ</span></div>
+        </div>
 
- <div class="gamebox">
-  <canvas id="game" width="960" height="540" aria-label="The Haunted Well side scrolling platform game"></canvas>
+        <div class="rune" id="rune1" role="button" aria-label="Ancient Rune 1">ᚱ</div>
+        <div class="rune" id="rune2" role="button" aria-label="Ancient Rune 2">ᛟ</div>
+        <div class="rune" id="rune3" role="button" aria-label="Ancient Rune 3">ᚷ</div>
 
-  <div class="overlay" id="startOverlay">
-   <div class="dialog">
-    <div class="brand">A VIDLYRA HALLOWEEN ADVENTURE</div>
-    <h2 id="dialogTitle">The Well Is Calling</h2>
-    <p id="dialogText">The village has fallen silent. Six regions separate you from the truth beneath the well. Search every path, uncover the lost memories, and do not trust every shadow.</p>
-    <ul>
-     <li>Find relics and keys to open sealed routes.</li>
-     <li>Use spells carefully; spirit energy regenerates slowly.</li>
-     <li>Checkpoints preserve your journey. Hidden paths reward patient explorers.</li>
-    </ul>
-    <p><b>Keyboard:</b> A/D or arrows move · Space/W jump · Shift sprint · S crouch/hide · J fire blast · K spirit seal · L shadow dash · E interact · Q aura.</p>
-    <div class="actions">
-     <button id="startBtn">Enter the Forgotten Forest</button>
-     <button class="secondary" id="continueBtn">Continue Saved Game</button>
+        <div id="player" aria-label="Player"><span>🧙🏻</span><i class="shadow"></i></div>
+        <div id="boss" aria-label="Haunted Well Guardian">👹</div>
+        <button id="crystalReward" aria-label="Collect the Cursed Soul Crystal">💎</button>
     </div>
-   </div>
-  </div>
 
-  <div class="overlay hidden" id="endOverlay">
-   <div class="dialog">
-    <div class="brand">VIDLYRA HALLOWEEN FEST 2026</div>
-    <h2 id="endTitle">The Well Falls Silent</h2>
-    <p id="endText">The curse is broken — but the last memory has not yet revealed who first opened the well.</p>
-    <button id="againBtn">Play Again</button>
-   </div>
-  </div>
- </div>
+    <div id="particles"></div>
+    <div id="atmosphere"></div>
+    <div id="flash"></div>
 
- <div class="touch" aria-label="Touch controls">
-  <div class="cluster">
-   <button data-hold="left">◀</button><button data-hold="right">▶</button><button data-hold="down">Hide</button>
-  </div>
-  <div class="cluster">
-   <button data-tap="jump">Jump</button><button data-tap="fire">Blast</button>
-   <button data-tap="seal">Seal</button><button data-tap="dash">Dash</button>
-   <button data-tap="aura">Aura</button><button data-tap="interact">Use</button>
-  </div>
- </div>
+    <header id="topbar">
+        <div class="brand">VIDLYRA <small>HALLOWEEN FEST 2026</small></div>
+        <button id="pauseBtn" type="button" aria-label="Pause game">Ⅱ PAUSE</button>
+    </header>
 
- <div class="below">
-  <section class="panel">
-   <h3>Current Objective</h3>
-   <div id="objective" class="quest"><b>◆</b><span>Find the first trail marker.</span></div>
-   <div id="regionText" class="quest"><b>MAP</b><span>Region 1: Forgotten Forest</span></div>
-   <p id="hint">Tip: press E near signs, sealed gates, checkpoints and suspicious objects.</p>
-  </section>
-  <section class="panel">
-   <h3>Field Journal</h3>
-   <div id="log" class="log" aria-live="polite"><div>The wind carries a whisper from below...</div></div>
-  </section>
- </div>
+    <section id="hud">
+        <div class="hudrow"><strong>❤️ VITALITY</strong><span id="healthText">100 / 100</span></div>
+        <div class="bar"><div id="healthFill"></div></div>
+        <div class="hudrow"><strong>🔷 ANCIENT RUNES</strong><span id="runeCounter">0 / 3</span></div>
+        <div class="bar"><div id="progressFill" style="background:linear-gradient(90deg,#a855f7,#ffd166);width:0%"></div></div>
+        <div class="hudrow"><strong>⭐ SCORE</strong><span id="score">000000</span></div>
+        <div class="hudrow"><strong>👻 WAVE</strong><span id="waveText">1 / 3</span></div>
+    </section>
 
- <div class="controls">
-  <section class="panel">
-   <h3>Keyboard & abilities</h3>
-   <div class="keygroup">
-    <span class="key">A/D</span><span class="key">←/→</span> Move
-    <span class="key">SPACE</span> Jump <span class="key">SHIFT</span> Sprint
-    <span class="key">S</span> Hide <span class="key">J</span> Fire Blast
-    <span class="key">K</span> Spirit Seal <span class="key">L</span> Shadow Dash
-    <span class="key">Q</span> Aura <span class="key">E</span> Interact
-   </div>
-  </section>
-  <section class="panel">
-   <h3>Survival notes</h3>
-   <p>Orange glow marks interactable objects. Purple sigils hint at secrets. A hidden character can evade some spirit hunters, but crouching will not protect you from floor traps. Reach glowing checkpoints often.</p>
-  </section>
- </div>
- <div class="foot">A self-contained browser game prototype · Progress is saved in this browser when local storage is available.</div>
+    <section id="bossHUD">
+        <div class="hudrow"><strong>☠ WELL GUARDIAN</strong><span id="bossText">100%</span></div>
+        <div class="bar"><div id="bossFill"></div></div>
+    </section>
+
+    <section id="mission">
+        <strong>✦ YOUR MISSION</strong>
+        <div class="missionItem" id="missionRunes">◇ Find 3 Ancient Runes</div>
+        <div class="missionItem" id="missionEnemies">◇ Banish the haunted spirits</div>
+        <div class="missionItem" id="missionBoss">◇ Defeat the Well Guardian</div>
+        <div class="missionItem" id="missionReward">◇ Claim the Cursed Soul Crystal</div>
+    </section>
+
+    <div id="dialogBox"><span id="dialogText"></span></div>
+    <div id="notification"></div>
+
+    <div id="touchControls">
+        <div id="joystick" aria-label="Movement joystick"><div id="stick"></div></div>
+        <button class="touchAction" id="dashBtn" type="button" aria-label="Dash">⚡</button>
+        <button class="touchAction" id="attackBtn" type="button" aria-label="Attack">✨</button>
+    </div>
+
+    <section class="overlay show" id="loadingScreen">
+        <div class="panel">
+            <div class="eyebrow">VIDLYRA ORIGINAL • CHAPTER 02</div>
+            <div class="bigIcon">🕯️</div>
+            <h1>THE HAUNTED <span>WELL</span></h1>
+            <p class="subtitle" id="loadingMessage">Checking your festival access...</p>
+        </div>
+    </section>
+
+    <section class="overlay" id="introScreen">
+        <div class="panel">
+            <div class="eyebrow">DAY 02 • THE FORBIDDEN JOURNEY</div>
+            <div class="bigIcon">🕳️</div>
+            <h1>THE HAUNTED <span>WELL</span></h1>
+            <p class="subtitle">
+                Three ancient runes seal the well. Haunted spirits guard their power.
+                Awaken the Well Guardian, defeat it, and claim the Cursed Soul Crystal.
+            </p>
+            <p class="subtitle"><strong>PC:</strong> WASD / Arrows · Space / E Attack · Shift Dash · P Pause</p>
+            <p class="subtitle"><strong>Mobile:</strong> Use the joystick, ✨ attack and ⚡ dash.</p>
+            <div class="actions"><button class="primary" id="startBtn" type="button">ENTER THE WELL</button></div>
+        </div>
+    </section>
+
+    <section class="overlay" id="pauseMenu">
+        <div class="panel">
+            <div class="eyebrow">THE VEIL IS WAITING</div>
+            <h1>GAME <span>PAUSED</span></h1>
+            <p class="subtitle">Catch your breath, then return to the haunted realm.</p>
+            <div class="actions">
+                <button class="primary" id="resumeBtn" type="button">RESUME</button>
+                <button class="secondary" id="restartBtn" type="button">RESTART</button>
+                <button class="secondary" id="homeBtn" type="button">RETURN TO MAP</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="overlay" id="gameOverScreen">
+        <div class="panel">
+            <div class="bigIcon">💀</div>
+            <h1>THE SPIRITS <span>PREVAIL</span></h1>
+            <p class="subtitle">The well has claimed another challenger. Gather your strength and try again.</p>
+            <div class="actions">
+                <button class="primary" id="retryBtn" type="button">TRY AGAIN</button>
+                <button class="secondary" id="gameOverMapBtn" type="button">RETURN TO MAP</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="overlay" id="victoryScreen">
+        <div class="panel">
+            <div class="eyebrow">VIDLYRA HALLOWEEN FEST 2026</div>
+            <div class="bigIcon">💎</div>
+            <h1>CURSED SOUL <span>CRYSTAL</span></h1>
+            <p class="subtitle">The guardian has fallen. The ancient well releases its forgotten treasure.</p>
+            <div id="stats"></div>
+            <p class="subtitle" id="saveStatus">Saving your Day 2 progress...</p>
+            <div class="actions">
+                <button class="primary" id="continueBtn" type="button" disabled>CONTINUE TO DAY 3</button>
+                <button class="secondary" id="victoryRetryBtn" type="button">PLAY AGAIN</button>
+                <button class="secondary" id="victoryMapBtn" type="button">FESTIVAL MAP</button>
+            </div>
+        </div>
+    </section>
 </div>
 
-<script>
-(() => {
-'use strict';
+<script type="module">
+import { supabase } from "./js/supabase.js";
+
+"use strict";
 
 const $ = id => document.getElementById(id);
-const canvas = $('game');
-const ctx = canvas.getContext('2d');
-const W = canvas.width, H = canvas.height;
-const SAVE_KEY = 'vidlyra_haunted_well_day2_v1';
-
-let running = false, last = 0, camX = 0, sound = false;
-let audioCtx = null, tick = 0;
-const keys = {}, pressed = {};
-const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
-const rand = (a,b) => a + Math.random()*(b-a);
+const FESTIVAL_ID = "halloween_2026";
+const MAP_URL = "map.html";
+const NEXT_URL = "map.html";
 
 const state = {
- hp:100, mp:100, aura:0, relics:[], clues:[], keys:0, region:0,
- bossHP:0, bossPhase:0, bossActive:false, won:false, dead:false,
- hidden:false,
- checkpoint:{x:80,y:390,region:0},
- kills:0, playtime:0, opened:[], flags:{},
- player:{x:80,y:390,vx:0,vy:0,w:26,h:40,face:1,onGround:false,inv:0,dash:0,attack:0,hide:false},
- projectiles:[], enemies:[], particles:[],
- toast:'The forest is listening.', toastTime:4
+    user: null, day1: false, day2: false, rowExists: false,
+    phase: "loading", started: false, paused: false,
+    x: 15, y: 18, vx: 0, vy: 0, facing: 1,
+    health: 100, maxHealth: 100, score: 0, kills: 0,
+    runes: 0, totalRunes: 3, wave: 1, waveKills: 0,
+    enemies: [], projectiles: [], boss: null,
+    keys: {}, joy: { x: 0, y: 0, id: null },
+    lastTime: 0, lastSpawn: 0, attackAt: 0, dashAt: 0,
+    invulnerableUntil: 0, startedAt: 0,
+    saving: false, saved: false, victory: false,
+    enemyTotal: 9, saveAttempts: 0
 };
-const player = state.player;
 
-const regions = [
- {name:'Forgotten Forest',width:3000,base:'#171329',far:'#302143',ground:'#302638',goal:'Find the trail sigils and reach the broken bridge.',tip:'Search behind tree roots. Violet runes may hide the way forward.'},
- {name:'Silent Village',width:3300,base:'#1b1424',far:'#382335',ground:'#3b2c32',goal:'Discover lost memories and open the bell tower.',tip:'Some villagers hid clues inside houses. Crouch to evade spirit sentries.'},
- {name:'Trap Labyrinth',width:3500,base:'#111322',far:'#20263d',ground:'#2d3044',goal:'Cross the trap halls and collect the iron key.',tip:'Watch the timing of floor spikes and moving blades. Wait for a safe opening.'},
- {name:'Awakening Chamber',width:2800,base:'#1a1024',far:'#3c1c43',ground:'#352441',goal:'Charge your aura and break the three cursed seals.',tip:'Spirit Seal can activate violet runes and stun armored enemies.'},
- {name:'The Drowned Catacombs',width:3600,base:'#0d1b24',far:'#183b43',ground:'#23404a',goal:'Collect ancient seals and uncover the final memory.',tip:'Look for hidden ledges above the water. The last seal is not on the main path.'},
- {name:'The Haunted Well',width:2400,base:'#170f22',far:'#342044',ground:'#38233d',goal:'Defeat the Well Guardian across all three phases.',tip:'Dodge the slam, jump the shockwave, then strike when the core glows.'}
+const enemyTypes = [
+    { icon: "👻", hp: 1, speed: 8, damage: 9, score: 80 },
+    { icon: "🦇", hp: 1, speed: 12, damage: 7, score: 100 },
+    { icon: "💀", hp: 2, speed: 6, damage: 13, score: 140 },
+    { icon: "🕷️", hp: 1, speed: 9, damage: 8, score: 90 }
 ];
 
-let maps = [];
+let audioContext = null;
+let messageTimer = null;
+let frameId = 0;
 
-function makeRegion(i) {
- // Stable level geometry keeps collectible locations consistent for this browser session.
- let seed = (i+1)*1234567;
- const layoutRand = (a,b) => {
-  seed = (seed*16807)%2147483647;
-  return a + ((seed-1)/2147483646)*(b-a);
- };
- const r = regions[i];
- const platforms=[], traps=[], items=[], enemies=[], signs=[], gates=[], checkpoints=[];
- let x=0;
-
- while(x<r.width-120) {
-  const gap=(x>300 && layoutRand(0,1)<.20)?layoutRand(55,110):0;
-  x+=gap;
-  const len=layoutRand(190,360);
-  platforms.push({x,y:444,w:Math.min(len,r.width-x),h:96,kind:'ground'});
-  if(layoutRand(0,1)<.72 && x>120)
-   platforms.push({x:x+layoutRand(30,Math.max(40,len-90)),y:layoutRand(290,380),w:layoutRand(70,150),h:14,kind:'ledge'});
-  x+=len;
- }
-
- platforms.push(
-  {x:0,y:444,w:260,h:96,kind:'ground'},
-  {x:r.width-300,y:444,w:300,h:96,kind:'ground'}
- );
-
- for(let n=0;n<2;n++) {
-  items.push({
-   id:`r${i}_${n}`,type:'relic',
-   x:layoutRand(230,r.width-260),y:layoutRand(260,395),
-   w:20,h:24,taken:false,label:['Moon Shard','Lost Memory'][n]
-  });
- }
-
- if(i===0) {
-  items.push({id:'key_forest',type:'key',x:2400,y:390,w:18,h:24,taken:false,label:'Old Gate Key'});
-  items.push({id:'clue_forest',type:'clue',x:1150,y:355,w:18,h:22,taken:false,label:'The First Whisper'});
- }
- if(i===1) {
-  for(let n=0;n<3;n++) items.push({
-   id:'village_clue_'+n,type:'clue',x:500+n*850,y:layoutRand(320,400),
-   w:18,h:22,taken:false,label:['A Name Scratched in Wood','A Broken Bell','A Child’s Drawing'][n]
-  });
-  items.push({id:'key_village',type:'key',x:2860,y:390,w:18,h:24,taken:false,label:'Bell Tower Key'});
- }
- if(i===2) {
-  items.push({id:'key_iron',type:'key',x:3040,y:390,w:18,h:24,taken:false,label:'Iron Labyrinth Key'});
-  items.push({id:'clue_trap',type:'clue',x:1650,y:330,w:18,h:22,taken:false,label:'The Safe Sequence'});
- }
- if(i===3) {
-  for(let n=0;n<3;n++) items.push({id:'seal_'+n,type:'seal',x:380+n*900,y:layoutRand(315,380),w:24,h:24,taken:false,label:'Cursed Seal'});
- }
- if(i===4) {
-  for(let n=0;n<3;n++) items.push({id:'ancient_'+n,type:'seal',x:500+n*1000,y:layoutRand(300,380),w:24,h:24,taken:false,label:'Ancient Seal'});
-  items.push({id:'final_memory',type:'clue',x:3200,y:370,w:18,h:22,taken:false,label:'The Final Memory'});
- }
-
- for(let n=0;n<Math.floor(r.width/270);n++) {
-  let tx=260+n*270+layoutRand(-35,45);
-  if(tx>r.width-170) continue;
-  const type=['spikes','blade','pit','ghostfire'][Math.floor(layoutRand(0,4))];
-  traps.push({
-   x:tx,y:type==='pit'?444:type==='spikes'?418:layoutRand(330,405),
-   w:type==='blade'?38:type==='pit'?70:54,
-   h:type==='pit'?100:type==='spikes'?26:50,
-   type,phase:layoutRand(0,6),active:false
-  });
- }
-
- for(let n=0;n<Math.floor(r.width/360);n++) {
-  const ex=350+n*350+layoutRand(-35,40);
-  if(ex>r.width-160) continue;
-  enemies.push({
-   x:ex,y:398,w:30,h:40,
-   hp:i===3?3:2,maxHp:i===3?3:2,
-   kind:['wisp','stalker','armored'][n%3],
-   dir:layoutRand(0,1)<.5?-1:1,origin:ex,
-   range:100+layoutRand(0,60),stun:0,attack:0,alive:true
-  });
- }
-
- signs.push({x:80,y:402,w:28,h:42,text:`${r.name}: ${r.goal}`,used:false});
- for(let n=1;n<Math.floor(r.width/850)+1;n++)
-  checkpoints.push({x:n*820,y:402,w:26,h:42,used:false});
-
- gates.push({x:r.width-90,y:360,w:48,h:84,open:false,region:i});
- return {platforms,traps,items,enemies,signs,gates,checkpoints,width:r.width};
+function sound(freq = 440, duration = .09, type = "sine") {
+    try {
+        audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === "suspended") audioContext.resume();
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+        gain.gain.setValueAtTime(.055, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(.001, audioContext.currentTime + duration);
+        osc.connect(gain); gain.connect(audioContext.destination);
+        osc.start(); osc.stop(audioContext.currentTime + duration);
+    } catch (_) {}
 }
 
-function buildMaps() { maps=regions.map((_,i)=>makeRegion(i)); }
-buildMaps();
-
-function currentMap() { return maps[state.region]; }
-
-function log(text) {
- const el=$('log'),d=document.createElement('div');
- d.textContent='› '+text;
- el.prepend(d);
- while(el.children.length>35) el.removeChild(el.lastChild);
+function showOverlay(id) {
+    document.querySelectorAll(".overlay").forEach(el => el.classList.remove("show"));
+    $(id)?.classList.add("show");
 }
-function toast(text,secs=3) { state.toast=text;state.toastTime=secs;log(text); }
-function beep(freq=330,dur=.08,type='sine') {
- if(!sound)return;
- try {
-  audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
-  const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-  o.type=type;o.frequency.value=freq;g.gain.value=.035;
-  o.connect(g);g.connect(audioCtx.destination);o.start();
-  g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);
-  o.stop(audioCtx.currentTime+dur);
- } catch(e) {}
-}
-function rect(x,y,w,h,color) { ctx.fillStyle=color;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h)); }
-function circle(x,y,r,color) { ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill(); }
-function glow(x,y,r,color) { ctx.save();ctx.globalAlpha=.35;circle(x,y,r,color);ctx.globalAlpha=.12;circle(x,y,r*1.8,color);ctx.restore(); }
-function overlap(a,b) { return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y; }
+function hideOverlay(id) { $(id)?.classList.remove("show"); }
 
-function nearestInteractable() {
- const m=currentMap(),p=player;
- let best=null,dist=1e9;
- const candidates=[...m.signs,...m.checkpoints,...m.gates,...m.items.filter(it=>!it.taken)];
- for(const o of candidates) {
-  const d=Math.abs((o.x+o.w/2)-(p.x+p.w/2))+Math.abs((o.y+o.h/2)-(p.y+p.h/2));
-  if(d<85&&d<dist) {best=o;dist=d;}
- }
- return best;
+function notify(message, duration = 2400) {
+    const el = $("notification");
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(messageTimer);
+    messageTimer = setTimeout(() => el.classList.remove("show"), duration);
 }
-
-function saveGame(show=true) {
- const data={
-  hp:state.hp,mp:state.mp,aura:state.aura,relics:state.relics,clues:state.clues,
-  keys:state.keys,region:state.region,checkpoint:state.checkpoint,
-  playtime:state.playtime,kills:state.kills,flags:state.flags,
-  opened:state.opened,player:{x:player.x,y:player.y},won:state.won
- };
- try {
-  localStorage.setItem(SAVE_KEY,JSON.stringify(data));
-  if(show)toast('Journey saved in this browser.',2);
-  return true;
- } catch(e) {
-  if(show)toast('Browser storage unavailable. Keep this tab open.',3);
-  return false;
- }
+function say(message, duration = 2800) {
+    $("dialogText").textContent = message;
+    $("dialogBox").classList.add("show");
+    clearTimeout(messageTimer);
+    messageTimer = setTimeout(() => $("dialogBox").classList.remove("show"), duration);
+}
+function flash(shake = false) {
+    $("flash").classList.remove("active");
+    void $("flash").offsetWidth;
+    $("flash").classList.add("active");
+    if (shake) {
+        $("game").classList.remove("shake");
+        void $("game").offsetWidth;
+        $("game").classList.add("shake");
+        setTimeout(() => $("game").classList.remove("shake"), 350);
+    }
+}
+function setMission(id, done) {
+    const el = $(id);
+    if (!el) return;
+    el.classList.toggle("done", done);
+    if (done) el.textContent = el.textContent.replace(/^◇/, "✓");
+}
+function renderHUD() {
+    $("healthFill").style.width = `${state.health / state.maxHealth * 100}%`;
+    $("healthText").textContent = `${Math.ceil(state.health)} / ${state.maxHealth}`;
+    $("progressFill").style.width = `${state.runes / state.totalRunes * 100}%`;
+    $("runeCounter").textContent = `${state.runes} / ${state.totalRunes}`;
+    $("score").textContent = String(state.score).padStart(6, "0");
+    $("waveText").textContent = `${Math.min(state.wave, 3)} / 3`;
+    if (state.boss) {
+        const pct = Math.max(0, state.boss.hp / state.boss.maxHp * 100);
+        $("bossFill").style.width = `${pct}%`;
+        $("bossText").textContent = `${Math.ceil(pct)}%`;
+    }
 }
 
-function loadGame() {
- try {
-  const d=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
-  if(!d)return false;
-  Object.assign(state,{
-   hp:d.hp??100,mp:d.mp??100,aura:d.aura??0,
-   relics:d.relics||[],clues:d.clues||[],keys:d.keys||0,
-   region:clamp(d.region||0,0,5),checkpoint:d.checkpoint||state.checkpoint,
-   playtime:d.playtime||0,kills:d.kills||0,flags:d.flags||{},
-   opened:d.opened||[],won:!!d.won
-  });
-  player.x=d.player?.x??state.checkpoint.x;
-  player.y=d.player?.y??state.checkpoint.y;
-  for(const m of maps) {
-   for(const it of m.items)
-    if(state.relics.includes(it.id)||state.clues.includes(it.id)||state.flags[it.id])it.taken=true;
-   for(const g of m.gates)
-    if(state.opened.includes('gate_'+g.region))g.open=true;
-  }
-  toast('Saved journey restored. The shadows remember.',3);
-  return true;
- } catch(e) { return false; }
+async function checkFestivalAccess() {
+    try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            alert("Please sign in to play VIDLYRA Halloween Fest 2026.");
+            location.href = "login.html";
+            return false;
+        }
+        state.user = user;
+
+        const { data, error } = await supabase
+            .from("festival_progress")
+            .select("day1,day2,day3")
+            .eq("user_id", user.id)
+            .eq("festival", FESTIVAL_ID)
+            .maybeSingle();
+
+        if (error) throw error;
+        if (!data) {
+            $("loadingMessage").textContent = "Festival progress was not found. Please return to the map.";
+            return false;
+        }
+        state.rowExists = true;
+        state.day1 = data.day1 === true;
+        state.day2 = data.day2 === true;
+
+        if (!state.day1) {
+            alert("🔒 Complete Day 1 — The Invitation — first!");
+            location.href = MAP_URL;
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error("Day 2 access verification failed:", error);
+        $("loadingMessage").textContent =
+            "Could not verify festival access. Check your connection and Supabase settings, then refresh.";
+        return false;
+    }
 }
 
+async function saveDay2() {
+    if (state.saved) return true;
+    if (!state.user || !state.rowExists) {
+        $("saveStatus").textContent = "Sign in to save your festival progress.";
+        return false;
+    }
+    if (state.saving) return false;
+
+    state.saving = true;
+    $("continueBtn").disabled = true;
+    $("continueBtn").textContent = "SAVING PROGRESS...";
+
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        state.saveAttempts = attempt;
+        try {
+            const { data, error } = await supabase
+                .from("festival_progress")
+                .update({ day2: true })
+                .eq("user_id", state.user.id)
+                .eq("festival", FESTIVAL_ID)
+                .eq("day1", true)
+                .select("day2")
+                .maybeSingle();
+
+            if (error) throw error;
+            if (data?.day2 === true) {
+                state.saved = true;
+                state.day2 = true;
+                try {
+                    localStorage.setItem("vidlyra_day2_complete", "true");
+                    localStorage.setItem("vidlyra_day2_score", String(state.score));
+                    localStorage.removeItem("vidlyra_day2_pending");
+                } catch (_) {}
+                $("saveStatus").textContent = "✓ Day 2 completion confirmed by Supabase. Day 3 is now unlocked on the festival map.";
+                $("continueBtn").disabled = false;
+                $("continueBtn").textContent = "CONTINUE TO DAY 3";
+                notify("DAY 2 COMPLETE — DAY 3 UNLOCKED");
+                state.saving = false;
+                return true;
+            }
+
+            // If RLS does not return the updated row, verify the stored value.
+            const { data: verify, error: verifyError } = await supabase
+                .from("festival_progress")
+                .select("day2")
+                .eq("user_id", state.user.id)
+                .eq("festival", FESTIVAL_ID)
+                .maybeSingle();
+
+            if (!verifyError && verify?.day2 === true) {
+                state.saved = true;
+                state.day2 = true;
+                try { localStorage.removeItem("vidlyra_day2_pending"); } catch (_) {}
+                $("saveStatus").textContent = "✓ Supabase confirms Day 2 completion.";
+                $("continueBtn").disabled = false;
+                $("continueBtn").textContent = "CONTINUE TO DAY 3";
+                state.saving = false;
+                return true;
+            }
+            throw new Error("Supabase did not confirm day2=true. Check table permissions and RLS policies.");
+        } catch (error) {
+            console.error(`Day 2 save attempt ${attempt} failed:`, error);
+            if (attempt < 3) await new Promise(resolve => setTimeout(resolve, 700 * attempt));
+        }
+    }
+
+    state.saving = false;
+    $("saveStatus").textContent = navigator.onLine
+        ? "⚠️ Save was not confirmed. Tap RETRY SAVE to try again."
+        : "⚠️ You are offline. Reconnect, then retry the save.";
+    $("continueBtn").disabled = true;
+    $("continueBtn").textContent = "RETRY SAVE";
+    return false;
+}
+
+function makeParticles() {
+    const layer = $("particles");
+    for (let i = 0; i < 42; i++) {
+        const p = document.createElement("i");
+        p.className = "particle";
+        p.style.left = `${Math.random() * 100}%`;
+        p.style.top = `${Math.random() * 100}%`;
+        p.style.animationDuration = `${5 + Math.random() * 10}s`;
+        p.style.animationDelay = `${-Math.random() * 10}s`;
+        p.style.opacity = `${.2 + Math.random() * .7}`;
+        layer.appendChild(p);
+    }
+    for (let i = 0; i < 34; i++) {
+        const s = document.createElement("i");
+        s.className = "star";
+        s.style.left = `${Math.random() * 100}%`;
+        s.style.top = `${Math.random() * 62}%`;
+        s.style.animationDelay = `${Math.random() * 2}s`;
+        $("sky").appendChild(s);
+    }
+}
+
+function playerCenter() {
+    const r = $("player").getBoundingClientRect();
+    const w = $("world").getBoundingClientRect();
+    return { x: r.left - w.left + r.width / 2, y: r.top - w.top + r.height / 2 };
+}
+function worldSize() {
+    const r = $("world").getBoundingClientRect();
+    return { w: r.width, h: r.height };
+}
+function position(el, x, y) {
+    el.style.left = `${x}%`;
+    el.style.bottom = `${y}%`;
+}
+function renderPlayer() {
+    position($("player"), state.x, state.y);
+    $("player").style.transform = `translate(-50%, 50%) scaleX(${state.facing})`;
+}
+function distance(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+function runePos(el) {
+    const r = el.getBoundingClientRect(), w = $("world").getBoundingClientRect();
+    return { x: (r.left + r.width / 2 - w.left) / w.width * 100,
+             y: (w.bottom - r.top - r.height / 2) / w.height * 100 };
+}
+
+function bindRunes() {
+    document.querySelectorAll(".rune").forEach(rune => {
+        rune.addEventListener("pointerdown", e => {
+            e.preventDefault();
+            if (state.phase !== "play" || state.paused) return;
+            collectRune(rune);
+        });
+    });
+}
+function collectRune(rune) {
+    if (state.phase !== "play" || rune.classList.contains("found")) return;
+    rune.classList.add("found");
+    state.runes++;
+    state.score += 250;
+    renderHUD();
+    sound(620 + state.runes * 130, .18, "triangle");
+    flash();
+    const messages = [
+        "The first rune awakens. Something moves beneath the stones...",
+        "The second rune burns. The spirits are growing stronger...",
+        "All three runes are awakened! Survive the spirits to summon the guardian."
+    ];
+    say(messages[state.runes - 1], 3300);
+    if (state.runes >= 3) {
+        setMission("missionRunes", true);
+        notify("ALL THREE ANCIENT RUNES COLLECTED!");
+    }
+}
+
+function spawnEnemy() {
+    if (state.kills + state.enemies.length >= state.enemyTotal) return;
+    const world = worldSize();
+    const t = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+    const side = Math.floor(Math.random() * 4);
+    let x = side === 0 ? 3 : side === 1 ? 97 : 8 + Math.random() * 84;
+    let y = side === 2 ? 8 : side === 3 ? 76 : 10 + Math.random() * 60;
+    if (distance({x, y}, {x: state.x, y: state.y}) < 28) {
+        x = state.x < 50 ? 90 : 10;
+        y = 30 + Math.random() * 35;
+    }
+    const el = document.createElement("div");
+    el.className = "enemy";
+    el.innerHTML = `<span>${t.icon}</span><div class="hpbar"><div class="hpfill"></div></div>`;
+    $("world").appendChild(el);
+    const enemy = { el, x, y, hp: t.hp, maxHp: t.hp, speed: t.speed, damage: t.damage, score: t.score, hitAt: 0, phase: Math.random() * 6 };
+    state.enemies.push(enemy);
+    renderEnemy(enemy);
+}
+function renderEnemy(e) {
+    position(e.el, e.x, e.y);
+    e.el.style.transform = "translate(-50%, 50%)";
+    e.el.querySelector(".hpfill").style.width = `${Math.max(0, e.hp / e.maxHp * 100)}%`;
+}
+function removeEnemy(e) {
+    e.el.remove();
+    state.enemies = state.enemies.filter(item => item !== e);
+}
+function damageEnemy(e, amount = 1) {
+    if (!state.enemies.includes(e)) return;
+    e.hp -= amount;
+    e.el.style.filter = "brightness(2)";
+    setTimeout(() => { if (e.el.isConnected) e.el.style.filter = ""; }, 120);
+    sound(210, .07, "square");
+    if (e.hp <= 0) {
+        removeEnemy(e);
+        state.kills++;
+        state.waveKills++;
+        state.score += e.score;
+        renderHUD();
+        if (state.kills >= 3) setMission("missionEnemies", true);
+        notify("SPIRIT BANISHED!");
+        if (state.kills >= state.enemyTotal) {
+            setMission("missionEnemies", true);
+            if (state.runes >= 3) activateBoss();
+            else say("The spirits are gone. Find all three Ancient Runes!");
+        } else {
+            state.wave = Math.min(3, Math.floor(state.kills / 3) + 1);
+        }
+    } else renderEnemy(e);
+}
+
+function attack() {
+    if (state.phase !== "play" || state.paused || performance.now() < state.attackAt) return;
+    state.attackAt = performance.now() + 460;
+    $("player").classList.add("attacking");
+    setTimeout(() => $("player").classList.remove("attacking"), 180);
+    sound(330, .1, "sawtooth");
+    const range = 15;
+    let hit = false;
+    for (const e of [...state.enemies]) {
+        const dx = e.x - state.x, dy = e.y - state.y;
+        if (Math.hypot(dx, dy) < range && (Math.sign(dx) === state.facing || Math.abs(dx) < 5)) {
+            damageEnemy(e);
+            hit = true;
+        }
+    }
+    if (state.boss && !state.boss.defeated) {
+        const b = state.boss;
+        if (Math.hypot(b.x - state.x, b.y - state.y) < 19 &&
+            (Math.sign(b.x - state.x) === state.facing || Math.abs(b.x - state.x) < 5) &&
+            performance.now() > b.hitAt) {
+            b.hp = Math.max(0, b.hp - 12);
+            b.hitAt = performance.now() + 260;
+            b.el.style.filter = "brightness(2)";
+            setTimeout(() => { if (b.el.isConnected) b.el.style.filter = ""; }, 120);
+            state.score += 50;
+            renderHUD();
+            sound(160, .13, "square");
+            if (b.hp <= 0) defeatBoss();
+        }
+    }
+    if (!hit) {
+        const pc = playerCenter();
+        for (let i = state.projectiles.length - 1; i >= 0; i--) {
+            const p = state.projectiles[i];
+            if (Math.hypot(p.x - pc.x, p.y - pc.y) < 65) {
+                p.el.remove(); state.projectiles.splice(i, 1); state.score += 15;
+            }
+        }
+    }
+}
+function dash() {
+    if (state.phase !== "play" || state.paused || performance.now() < state.dashAt) return;
+    state.dashAt = performance.now() + 1600;
+    const mv = getMovement();
+    const dx = mv.x || state.facing, dy = mv.y;
+    const len = Math.hypot(dx, dy) || 1;
+    state.x = clamp(state.x + dx / len * 13, 4, 96);
+    state.y = clamp(state.y + dy / len * 13, 7, 78);
+    state.invulnerableUntil = performance.now() + 450;
+    if (Math.abs(dx) > .1) state.facing = dx > 0 ? 1 : -1;
+    renderPlayer();
+    sound(750, .1, "triangle");
+    flash();
+}
+function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
+function getMovement() {
+    const k = state.keys;
+    let x = (k.d || k.arrowright ? 1 : 0) - (k.a || k.arrowleft ? 1 : 0);
+    let y = (k.w || k.arrowup ? 1 : 0) - (k.s || k.arrowdown ? 1 : 0);
+    if (!x && !y) { x = state.joy.x; y = state.joy.y; }
+    const len = Math.hypot(x, y);
+    if (len > 1) { x /= len; y /= len; }
+    return { x, y };
+}
+
+function hurtPlayer(amount) {
+    if (performance.now() < state.invulnerableUntil || state.phase !== "play") return;
+    state.health = Math.max(0, state.health - amount);
+    state.invulnerableUntil = performance.now() + 900;
+    $("player").classList.add("hurt");
+    setTimeout(() => $("player").classList.remove("hurt"), 420);
+    renderHUD();
+    sound(95, .2, "sawtooth");
+    flash(true);
+    if (state.health <= 0) gameOver();
+}
+
+function fireProjectile(x, y, targetX, targetY) {
+    const el = document.createElement("div");
+    el.className = "projectile";
+    $("world").appendChild(el);
+    const dx = targetX - x, dy = targetY - y, len = Math.hypot(dx, dy) || 1;
+    state.projectiles.push({ el, x, y, vx: dx / len * 24, vy: dy / len * 24, life: 3 });
+}
+function updateProjectiles(dt) {
+    const world = worldSize();
+    const pc = playerCenter();
+    for (const p of [...state.projectiles]) {
+        p.x += p.vx * dt / world.w * 100;
+        p.y += p.vy * dt / world.h * 100;
+        p.life -= dt;
+        position(p.el, p.x, 100 - p.y);
+        if (p.life <= 0 || p.x < -5 || p.x > 105 || p.y < -5 || p.y > 105) {
+            p.el.remove(); state.projectiles = state.projectiles.filter(x => x !== p);
+            continue;
+        }
+        const pr = p.el.getBoundingClientRect();
+        const dx = pr.left + pr.width / 2 - pc.x, dy = pr.top + pr.height / 2 - pc.y;
+        if (Math.hypot(dx, dy) < 30 && performance.now() > state.invulnerableUntil) {
+            p.el.remove(); state.projectiles = state.projectiles.filter(x => x !== p);
+            hurtPlayer(12);
+        }
+    }
+}
+
+function activateBoss() {
+    if (state.boss) return;
+    state.phase = "boss";
+    const el = $("boss");
+    el.classList.add("active");
+    const b = { el, x: 50, y: 37, hp: 180, maxHp: 180, hitAt: 0, attackAt: performance.now() + 1200, defeated: false };
+    state.boss = b;
+    $("bossHUD").classList.add("active");
+    say("THE WELL GUARDIAN AWAKENS! Strike when it approaches and evade its spirit bolts.", 4200);
+    sound(75, .7, "sawtooth");
+    state.phase = "play";
+    renderHUD();
+}
+function updateBoss(dt, now) {
+    const b = state.boss;
+    if (!b || b.defeated || state.phase !== "play") return;
+    const dx = state.x - b.x, dy = state.y - b.y, d = Math.hypot(dx, dy) || 1;
+    if (d > 14) {
+        b.x += dx / d * 5.5 * dt;
+        b.y += dy / d * 5.5 * dt;
+    }
+    position(b.el, b.x, b.y);
+    if (now > b.attackAt) {
+        fireProjectile(b.x, b.y, state.x, state.y);
+        if (b.hp < b.maxHp * .45) {
+            fireProjectile(b.x, b.y, state.x + 9, state.y + 5);
+            fireProjectile(b.x, b.y, state.x - 9, state.y - 5);
+        }
+        b.attackAt = now + (b.hp < b.maxHp * .45 ? 1200 : 1900);
+        b.el.classList.add("casting");
+        setTimeout(() => b.el.classList.remove("casting"), 250);
+        sound(140, .2, "triangle");
+    }
+    renderHUD();
+}
+function defeatBoss() {
+    const b = state.boss;
+    if (!b || b.defeated) return;
+    b.defeated = true;
+    b.el.classList.remove("active");
+    $("bossHUD").classList.remove("active");
+    state.score += 2000;
+    state.phase = "reward";
+    setMission("missionBoss", true);
+    state.enemies.forEach(e => e.el.remove());
+    state.enemies = [];
+    state.projectiles.forEach(p => p.el.remove());
+    state.projectiles = [];
+    $("crystalReward").classList.add("active");
+    say("The Guardian dissolves into mist. Claim the Cursed Soul Crystal!", 4500);
+    sound(880, .4, "triangle");
+    flash(true);
+}
+
+function collectReward() {
+    if (state.phase !== "reward") return;
+    state.phase = "saving";
+    $("crystalReward").classList.remove("active");
+    state.score += 1000;
+    setMission("missionReward", true);
+    sound(990, .45, "triangle");
+    flash(true);
+    state.victory = true;
+    state.started = false;
+    state.enemies.forEach(e => e.el.remove());
+    state.projectiles.forEach(p => p.el.remove());
+    $("stats").textContent =
+        `SCORE ${String(state.score).padStart(6, "0")} • SPIRITS BANISHED ${state.kills}/${state.enemyTotal} • TIME ${formatTime((performance.now() - state.startedAt) / 1000)}`;
+    showOverlay("victoryScreen");
+    try { localStorage.setItem("vidlyra_day2_pending", state.user?.id || "pending"); } catch (_) {}
+    saveDay2();
+}
+function formatTime(seconds) {
+    const s = Math.max(0, Math.floor(seconds));
+    return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+}
+function gameOver() {
+    state.phase = "over";
+    state.started = false;
+    state.paused = false;
+    state.keys = {};
+    showOverlay("gameOverScreen");
+    sound(75, .5, "sawtooth");
+}
+
+function gameLoop(now) {
+    frameId = requestAnimationFrame(gameLoop);
+    if (!state.started || state.paused || state.phase === "over" || state.victory) {
+        state.lastTime = now;
+        return;
+    }
+    if (!state.lastTime) state.lastTime = now;
+    const dt = Math.min(.04, (now - state.lastTime) / 1000);
+    state.lastTime = now;
+
+    if (state.phase === "play") {
+        const mv = getMovement();
+        state.x = clamp(state.x + mv.x * 23 * dt, 4, 96);
+        state.y = clamp(state.y + mv.y * 23 * dt, 7, 78);
+        if (Math.abs(mv.x) > .1) state.facing = mv.x > 0 ? 1 : -1;
+        renderPlayer();
+
+        for (const e of [...state.enemies]) {
+            const dx = state.x - e.x, dy = state.y - e.y, d = Math.hypot(dx, dy) || 1;
+            e.x += dx / d * e.speed * dt;
+            e.y += dy / d * e.speed * dt;
+            e.phase += dt * 4;
+            e.x += Math.cos(e.phase) * dt * 1.3;
+            renderEnemy(e);
+            if (d < 5.3) {
+                hurtPlayer(e.damage);
+                if (state.enemies.includes(e)) removeEnemy(e);
+            }
+        }
+
+        if (!state.boss && state.kills < state.enemyTotal && now - state.lastSpawn > 1700 &&
+            state.kills + state.enemies.length < Math.min(state.enemyTotal, 3 + Math.floor(state.kills / 3) * 2)) {
+            spawnEnemy();
+            state.lastSpawn = now;
+        }
+        if (state.runes >= 3 && state.kills >= state.enemyTotal && !state.boss) activateBoss();
+        updateBoss(dt, now);
+        updateProjectiles(dt);
+        renderHUD();
+    }
+}
+
+function startGame() {
+    if (state.day2 && !state.started) {
+        say("You have already completed Day 2. You can replay, but your saved progress remains complete.");
+    }
+    hideOverlay("introScreen");
+    state.started = true;
+    state.paused = false;
+    state.phase = "play";
+    state.startedAt = performance.now();
+    state.lastTime = performance.now();
+    state.lastSpawn = performance.now() - 1200;
+    sound(520, .12, "triangle");
+    if (!frameId) frameId = requestAnimationFrame(gameLoop);
+    notify("FIND THE THREE ANCIENT RUNES");
+}
 function resetGame() {
- try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
- location.reload();
-}
-function spawnParticles(x,y,color,count=10) {
- for(let i=0;i<count;i++)state.particles.push({
-  x,y,vx:rand(-180,180),vy:rand(-240,60),
-  life:rand(.25,.8),max:.8,color,r:rand(2,5)
- });
-}
-
-function hurt(amount,sourceX) {
- if(player.inv>0||state.won)return;
- if(state.flags.auraBurst)amount=Math.ceil(amount*.55);
- state.hp-=amount;player.inv=1.1;player.vy=-230;
- player.vx=(player.x<sourceX?-1:1)*180;
- spawnParticles(player.x+12,player.y+18,'#ff557d',12);
- beep(95,.16,'sawtooth');
- toast(`Hit! ${amount} vitality lost.`,1.8);
- if(state.hp<=0) {
-  state.hp=0;state.dead=true;
-  setTimeout(respawn,450);
- }
+    state.enemies.forEach(e => e.el.remove());
+    state.projectiles.forEach(p => p.el.remove());
+    state.enemies = []; state.projectiles = [];
+    state.x = 15; state.y = 18; state.health = 100; state.score = 0; state.kills = 0;
+    state.runes = 0; state.wave = 1; state.waveKills = 0; state.boss = null;
+    state.phase = "ready"; state.victory = false; state.paused = false; state.started = false;
+    state.lastTime = 0; state.lastSpawn = 0; state.attackAt = 0; state.dashAt = 0;
+    state.invulnerableUntil = 0; state.saved = state.day2;
+    state.keys = {}; state.joy = { x: 0, y: 0, id: null };
+    document.querySelectorAll(".rune").forEach(r => r.classList.remove("found"));
+    $("boss").classList.remove("active");
+    $("bossHUD").classList.remove("active");
+    $("crystalReward").classList.remove("active");
+    $("mission").querySelectorAll(".missionItem").forEach(el => {
+        el.classList.remove("done");
+        el.textContent = el.textContent.replace(/^✓/, "◇");
+    });
+    renderPlayer(); renderHUD();
+    showOverlay("introScreen");
 }
 
-function respawn() {
- state.dead=false;state.hp=70;state.mp=Math.max(35,state.mp);
- player.x=state.checkpoint.x;player.y=state.checkpoint.y;
- player.vx=player.vy=0;player.inv=1.8;player.dash=0;
- state.region=state.checkpoint.region;camX=0;
- toast('You return to the last checkpoint. The curse grows restless.',3);
- saveGame(false);
+function bindControls() {
+    window.addEventListener("keydown", e => {
+        const k = e.key.toLowerCase();
+        if (["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k)) e.preventDefault();
+        state.keys[k] = true;
+        if (k === " " || k === "e") attack();
+        if (k === "shift") dash();
+        if (k === "p" || k === "escape") togglePause();
+    });
+    window.addEventListener("keyup", e => { state.keys[e.key.toLowerCase()] = false; });
+    window.addEventListener("blur", () => { state.keys = {}; state.joy = { x: 0, y: 0, id: null }; });
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden && state.started && !state.paused) togglePause();
+    });
+
+    $("startBtn").addEventListener("click", startGame);
+    $("pauseBtn").addEventListener("click", togglePause);
+    $("resumeBtn").addEventListener("click", togglePause);
+    $("restartBtn").addEventListener("click", resetGame);
+    $("retryBtn").addEventListener("click", resetGame);
+    $("victoryRetryBtn").addEventListener("click", resetGame);
+    $("homeBtn").addEventListener("click", () => location.href = MAP_URL);
+    $("gameOverMapBtn").addEventListener("click", () => location.href = MAP_URL);
+    $("victoryMapBtn").addEventListener("click", () => location.href = MAP_URL);
+    $("continueBtn").addEventListener("click", async () => {
+        if (!state.saved) {
+            await saveDay2();
+            if (!state.saved) return;
+        }
+        location.href = NEXT_URL;
+    });
+    $("victoryRetryBtn").addEventListener("click", resetGame);
+    $("crystalReward").addEventListener("pointerdown", e => {
+        e.preventDefault();
+        collectReward();
+    });
+    $("attackBtn").addEventListener("pointerdown", e => { e.preventDefault(); attack(); });
+    $("dashBtn").addEventListener("pointerdown", e => { e.preventDefault(); dash(); });
+
+    const joy = $("joystick"), stick = $("stick");
+    const updateJoy = e => {
+        if (state.joy.id !== e.pointerId) return;
+        const r = joy.getBoundingClientRect();
+        const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        let dx = e.clientX - cx, dy = e.clientY - cy;
+        const max = r.width * .34, d = Math.hypot(dx, dy);
+        if (d > max) { dx *= max / d; dy *= max / d; }
+        state.joy.x = dx / max;
+        state.joy.y = -dy / max;
+        stick.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    };
+    const endJoy = e => {
+        if (state.joy.id !== e.pointerId) return;
+        state.joy = { x: 0, y: 0, id: null };
+        stick.style.transform = "translate(-50%,-50%)";
+    };
+    joy.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        state.joy.id = e.pointerId;
+        joy.setPointerCapture(e.pointerId);
+        updateJoy(e);
+    });
+    joy.addEventListener("pointermove", updateJoy);
+    joy.addEventListener("pointerup", endJoy);
+    joy.addEventListener("pointercancel", endJoy);
+
+    $("crystalReward").addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") collectReward();
+    });
+}
+function togglePause() {
+    if (!state.started || state.victory || state.phase === "over") return;
+    state.paused = !state.paused;
+    if (state.paused) {
+        state.keys = {};
+        showOverlay("pauseMenu");
+    } else {
+        hideOverlay("pauseMenu");
+        state.lastTime = performance.now();
+    }
 }
 
-function cast(type) {
- if(!running||state.dead||state.won)return;
- if(type==='fire') {
-  if(state.mp<12){toast('Not enough spirit energy for Fire Blast.',1.5);return;}
-  state.mp-=12;player.attack=.22;
-  state.projectiles.push({
-   x:player.x+(player.face>0?player.w:-16),y:player.y+15,
-   w:22,h:15,vx:player.face*460,life:1.25,type:'fire',damage:1
-  });
-  spawnParticles(player.x+player.w/2,player.y+18,'#ff9c40',5);
-  beep(540,.08,'triangle');
- } else if(type==='seal') {
-  if(state.mp<20){toast('Spirit Seal needs 20 energy.',1.5);return;}
-  state.mp-=20;player.attack=.3;
-  let hit=false;
-  for(const e of currentMap().enemies) {
-   if(e.alive&&Math.abs(e.x-player.x)<145&&Math.abs(e.y-player.y)<90) {
-    e.stun=2.1;e.hp-=1;hit=true;
-    if(e.hp<=0)killEnemy(e);
-   }
-  }
-  for(const it of currentMap().items) {
-   if(!it.taken&&it.type==='seal'&&Math.abs(it.x-player.x)<100) {
-    it.taken=true;state.flags[it.id]=true;
-    state.aura=clamp(state.aura+18,0,100);
-    toast(`${it.label} activated.`,2);hit=true;
-   }
-  }
-  if(!hit)toast('The seal ripples through the air. No spirit nearby.',1.4);
-  spawnParticles(player.x+player.w/2,player.y+18,'#b68bff',16);
-  beep(260,.18,'sine');
- } else if(type==='dash') {
-  if(state.mp<8){toast('Not enough energy to Shadow Dash.',1.3);return;}
-  state.mp-=8;player.dash=.22;player.inv=Math.max(player.inv,.28);
-  player.vx=player.face*650;
-  spawnParticles(player.x+12,player.y+20,'#9a6bff',12);
-  beep(700,.07,'triangle');
- } else if(type==='aura') {
-  if(state.aura<35){toast('Aura needs 35 charge. Defeat enemies and find seals.',2);return;}
-  if(state.aura>=100) {
-   state.aura=55;state.flags.auraBurst=Date.now();
-   toast('AURA RISING — awakened power for 12 seconds!',2.5);
-   spawnParticles(player.x+12,player.y+20,'#ff9d3d',28);
-   beep(760,.25,'sawtooth');
-  } else {
-   state.flags.auraBurst=Date.now();
-   toast('Aura awakened. Build charge to unleash its full form.',2);
-  }
- }
+async function init() {
+    makeParticles();
+    bindRunes();
+    bindControls();
+    renderPlayer();
+    renderHUD();
+
+    const allowed = await checkFestivalAccess();
+    if (!allowed) return;
+
+    $("loadingScreen").classList.remove("show");
+    if (state.day2) {
+        $("startBtn").textContent = "REPLAY THE HAUNTED WELL";
+        say("Day 2 is already completed. Replay the chapter any time.");
+    }
+    showOverlay("introScreen");
 }
-
-function killEnemy(e) {
- if(!e.alive)return;
- e.alive=false;state.kills++;
- state.aura=clamp(state.aura+13,0,100);
- state.mp=clamp(state.mp+7,0,100);
- spawnParticles(e.x+15,e.y+20,'#b58bff',18);
- toast('Spirit dispersed. Aura charge increased.',1.7);
- beep(180,.12,'triangle');
-}
-
-function interact() {
- const o=nearestInteractable();
- if(!o){toast('Nothing nearby. Search for glowing marks or hidden ledges.',1.6);return;}
- const m=currentMap();
- if(m.signs.includes(o)){toast(o.text,3.5);return;}
- if(m.checkpoints.includes(o)) {
-  state.checkpoint={x:o.x,y:390,region:state.region};
-  o.used=true;state.hp=100;state.mp=100;
-  toast('Checkpoint bound. Vitality and energy restored.',2.5);
-  saveGame(false);beep(440,.15);return;
- }
- if(m.items.includes(o)) {
-  if(o.taken)return;
-  o.taken=true;state.flags[o.id]=true;
-  if(o.type==='relic') {
-   state.relics.push(o.id);
-   state.aura=clamp(state.aura+9,0,100);
-   toast(`Relic found: ${o.label}. (${state.relics.length}/12 discoveries)`,2.5);
-  }
-  if(o.type==='clue') {
-   state.clues.push(o.id);
-   toast(`Mystery uncovered: ${o.label}. The journal remembers.`,2.5);
-  }
-  if(o.type==='key') {
-   state.keys++;toast(`Key acquired: ${o.label}. A sealed route may now open.`,2.5);
-  }
-  if(o.type==='seal') {
-   state.flags[o.id]=true;state.aura=clamp(state.aura+15,0,100);
-   toast(`${o.label} resonated with your aura.`,2);
-  }
-  saveGame(false);beep(600,.1,'sine');return;
- }
- if(m.gates.includes(o)) {
-  if(o.open){toast('The passage is already open.',1.5);return;}
-  let enough=false;
-  if(state.region===0)enough=state.keys>0;
-  if(state.region===1)enough=state.clues.length>=2||state.keys>0;
-  if(state.region===2)enough=state.keys>0;
-  if(state.region===3)enough=['seal_0','seal_1','seal_2'].every(k=>state.flags[k]);
-  if(state.region===4)enough=['ancient_0','ancient_1','ancient_2'].every(k=>state.flags[k]);
-  if(!enough) {
-   toast(state.region===3?'Three cursed seals are needed.':
-   state.region===4?'Three ancient seals are needed.':
-   'This gate is sealed. Search for keys, clues and hidden items.',2.5);
-   return;
-  }
-  o.open=true;state.opened.push('gate_'+o.region);
-  if(state.keys>0&&state.region<3)state.keys--;
-  toast('The cursed gate opens. A new region waits beyond it.',2.5);
-  saveGame(false);
- }
-}
-
-function enterNextRegion() {
- if(state.region>=5) {
-  if(state.bossHP<=0)finishGame();
-  return;
- }
- const gate=currentMap().gates[0];
- if(!gate.open) {
-  toast('The exit is sealed. Find its key or complete the region objective.',2);
-  return;
- }
- state.region++;
- player.x=55;player.y=390;player.vx=player.vy=0;camX=0;
- state.checkpoint={x:55,y:390,region:state.region};
- state.hp=clamp(state.hp+25,0,100);
- state.mp=clamp(state.mp+25,0,100);
- toast(`Region unlocked: ${regions[state.region].name}.`,3);
- log(regions[state.region].goal);
- saveGame(false);
- if(state.region===5) {
-  state.bossHP=100;state.bossPhase=1;state.bossActive=true;
-  toast('THE WELL GUARDIAN has awakened!',3);
-  spawnParticles(790,300,'#9b55ff',35);
- }
-}
-
-function finishGame() {
- state.won=true;running=false;
- $('endTitle').textContent='The Well Falls Silent';
- $('endText').textContent=
-  `You survived all six regions, defeated the Guardian and uncovered ${state.clues.length} memories. But one final inscription reads: “The first door was opened from the other side.” Your journey time: ${Math.floor(state.playtime/60)}m ${Math.floor(state.playtime%60)}s.`;
- $('endOverlay').classList.remove('hidden');
- saveGame(false);
-}
-
-function update(dt) {
- if(!running)return;
- tick+=dt;state.playtime+=dt;
- const p=player,m=currentMap();
- state.mp=clamp(state.mp+dt*3.3,0,100);
- state.aura=clamp(state.aura+dt*.7,0,100);
- if(state.flags.auraBurst) {
-  const elapsed=(Date.now()-state.flags.auraBurst)/1000;
-  if(elapsed>12) {
-   state.flags.auraBurst=0;
-   toast('Aura form fades. Your remaining charge can be rebuilt.',2);
-  }
- }
- p.inv=Math.max(0,p.inv-dt);
- p.attack=Math.max(0,p.attack-dt);
- p.dash=Math.max(0,p.dash-dt);
-
- const left=keys.ArrowLeft||keys.KeyA||keys.left;
- const right=keys.ArrowRight||keys.KeyD||keys.right;
- const down=keys.ArrowDown||keys.KeyS||keys.down;
- p.hide=!!down;p.h=p.hide?25:40;
-
- if(p.hide&&p.onGround)p.vx*=.78;
- const auraOn=!!state.flags.auraBurst;
- const speed=(keys.ShiftLeft||keys.ShiftRight?285:205)*(auraOn?1.18:1);
-
- if(p.dash<=0) {
-  if(left){p.vx=-speed;p.face=-1;}
-  else if(right){p.vx=speed;p.face=1;}
-  else p.vx*=Math.pow(p.onGround ? .001 : .12,dt);
- }
- p.vx=clamp(p.vx,-700,700);
-
- if(pressed.Space||pressed.KeyW||pressed.ArrowUp||pressed.jump) {
-  if(p.onGround){p.vy=-470;p.onGround=false;beep(280,.06);}
-  else if(state.flags.doubleJump&&!p.doubleUsed) {
-   p.vy=-430;p.doubleUsed=true;
-   spawnParticles(p.x+12,p.y+30,'#b68bff',7);
-  }
- }
- if(p.onGround)p.doubleUsed=false;
-
- p.vy+=1180*dt;p.vy=Math.min(p.vy,780);
- let nx=p.x+p.vx*dt,ny=p.y+p.vy*dt;
-
- for(const s of m.platforms) {
-  if(overlap({x:nx,y:p.y,w:p.w,h:p.h},s)) {
-   if(p.vx>0)nx=s.x-p.w;
-   else if(p.vx<0)nx=s.x+s.w;
-   p.vx=0;
-  }
- }
- p.x=clamp(nx,0,m.width-p.w);
- p.onGround=false;
- for(const s of m.platforms) {
-  if(overlap({x:p.x,y:ny,w:p.w,h:p.h},s)) {
-   if(p.vy>0){ny=s.y-p.h;p.onGround=true;}
-   else if(p.vy<0)ny=s.y+s.h;
-   p.vy=0;
-  }
- }
- p.y=ny;
- if(p.y>H+180)hurt(100,p.x);
-
- camX=clamp(p.x-W*.36,0,m.width-W);
-
- for(const t of m.traps) {
-  t.phase+=dt;
-  let active=t.type==='spikes'?Math.sin(t.phase*1.8)>.15:
-   t.type==='blade'?Math.sin(t.phase*2.1)>.1:
-   t.type==='ghostfire'?Math.sin(t.phase*2.6)>.05:true;
-  t.active=active;
-  if(t.type==='pit') {
-   if(p.x+p.w>t.x+8&&p.x<t.x+t.w-8&&p.y+p.h>t.y-5&&p.y<500)hurt(28,t.x);
-  } else if(active&&overlap({x:p.x,y:p.y,w:p.w,h:p.h},{x:t.x,y:t.y,w:t.w,h:t.h})&&!p.hide) {
-   hurt(t.type==='blade'?22:16,t.x);
-  }
- }
-
- for(const e of m.enemies) {
-  if(!e.alive)continue;
-  e.stun=Math.max(0,e.stun-dt);
-  e.attack=Math.max(0,e.attack-dt);
-  if(e.stun<=0) {
-   if(Math.abs(p.x-e.x)<250&&!p.hide) {
-    e.dir=p.x<e.x?-1:1;
-    e.x+=e.dir*(e.kind==='stalker'?85:52)*dt;
-   } else {
-    e.x+=e.dir*30*dt;
-    if(Math.abs(e.x-e.origin)>e.range)e.dir*=-1;
-   }
-  }
-  e.x=clamp(e.x,0,m.width-e.w);
-  if(overlap({x:p.x,y:p.y,w:p.w,h:p.h},e)&&e.stun<=0&&!p.hide) {
-   if(p.vy>100&&p.y+p.h<e.y+e.h*.55) {
-    e.hp-=1;p.vy=-300;
-    if(e.hp<=0)killEnemy(e);
-   } else hurt(e.kind==='armored'?20:13,e.x);
-  }
- }
-
- for(const b of state.projectiles) {
-  b.x+=b.vx*dt;b.life-=dt;
-  for(const e of m.enemies) {
-   if(e.alive&&overlap(b,e)) {
-    e.hp-=b.damage;e.stun=.25;
-    spawnParticles(b.x,b.y,'#ff9c40',5);b.life=0;
-    if(e.hp<=0)killEnemy(e);
-    break;
-   }
-  }
-  if(state.region===5&&state.bossActive&&overlap(b,bossRect())) {
-   bossHit(b.damage);b.life=0;
-  }
-  if(b.x<0||b.x>m.width)b.life=0;
- }
- state.projectiles=state.projectiles.filter(b=>b.life>0);
-
- for(const q of state.particles) {
-  q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=400*dt;q.life-=dt;
- }
- state.particles=state.particles.filter(q=>q.life>0);
-
- for(const c of m.checkpoints) {
-  if(!c.used&&Math.abs(p.x-c.x)<25&&Math.abs(p.y-c.y)<65) {
-   c.used=true;state.checkpoint={x:c.x,y:390,region:state.region};
-   state.hp=100;state.mp=100;
-   toast('Checkpoint activated. Progress secured.',2);
-   saveGame(false);
-  }
- }
-
- const gate=m.gates[0];
- if(p.x>m.width-55&&state.region<5) {
-  p.x=m.width-60;
-  if(gate.open)enterNextRegion();
-  else if(!gate.warned) {
-   gate.warned=true;
-   toast('The far gate is sealed. Press E nearby and meet its requirement.',2.5);
-  }
- }
-
- if(state.region===5&&state.bossActive)updateBoss(dt);
- if(state.toastTime>0)state.toastTime-=dt;
- updateHUD();
-}
-
-const boss={x:820,y:315,w:76,h:115,phase:1,attack:0,flash:0,dir:-1};
-function bossRect() { return {x:boss.x,y:boss.y,w:boss.w,h:boss.h}; }
-
-function updateBoss(dt) {
- boss.attack-=dt;
- boss.flash=Math.max(0,boss.flash-dt);
- if(state.bossHP<=0) {
-  state.bossActive=false;finishGame();return;
- }
- boss.x=clamp(boss.x+boss.dir*35*dt,camX+500,camX+850);
- if(Math.random()<.008)boss.dir*=-1;
- if(boss.attack<=0) {
-  boss.attack=state.bossPhase===1?2.4:state.bossPhase===2?1.8:1.25;
-  boss.dir=player.x<boss.x?-1:1;
-  if(state.bossPhase===1) {
-   toast('Guardian Slam! Jump before the shockwave.',1.7);
-   spawnParticles(boss.x+boss.w/2,440,'#a75bff',20);
-  } else if(state.bossPhase===2) {
-   toast('Soul bolts incoming — keep moving!',1.5);
-   for(let i=0;i<3;i++)state.projectiles.push({
-    x:boss.x,y:boss.y+30+i*18,w:15,h:15,
-    vx:(player.x<boss.x?-1:1)*(-250+i*250),life:2,type:'enemy',damage:1
-   });
-  } else {
-   toast('The Well collapses! The center is dangerous.',1.5);
-   spawnParticles(rand(camX+100,camX+850),445,'#5bffba',18);
-  }
- }
- const dist=Math.abs(player.x-boss.x);
- if(dist<75&&boss.attack>0&&boss.attack<.3&&!player.hide)
-  hurt(state.bossPhase===3?24:18,boss.x);
- if(state.bossPhase===1&&state.bossHP<=67) {
-  state.bossPhase=2;
-  toast('PHASE TWO — the Guardian splits into wandering souls!',3);
-  spawnParticles(boss.x,boss.y,'#8b63ff',32);
- }
- if(state.bossPhase===2&&state.bossHP<=33) {
-  state.bossPhase=3;
-  toast('FINAL PHASE — strike the exposed core after each attack!',3);
-  spawnParticles(boss.x,boss.y,'#ff7c35',38);
- }
-}
-function bossHit(dmg) {
- if(boss.flash>0)return;
- boss.flash=.2;
- state.bossHP=Math.max(0,state.bossHP-(state.flags.auraBurst?dmg*2:dmg));
- state.aura=clamp(state.aura+4,0,100);
- spawnParticles(boss.x+boss.w/2,boss.y+40,'#ffb15a',10);
- beep(120,.1,'sawtooth');
- if(state.bossHP<=0)toast('The Well Guardian has fallen!',3);
-}
-
-function drawBackground() {
- const r=regions[state.region];
- rect(0,0,W,H,r.base);
- glow(790-camX*.05,88,50,'#c6a2ff');
- circle(790-camX*.05,88,25,'#e5d9ff');
-
- for(let layer=0;layer<3;layer++) {
-  const par=.12+layer*.13;
-  ctx.fillStyle=layer===0?r.far:layer===1?'#171321':'#100e18';
-  ctx.beginPath();ctx.moveTo(0,H);
-  for(let x=-80;x<W+100;x+=80) {
-   let y=270+layer*52+Math.sin((x+camX*par)*.012)*32+
-    Math.sin((x+camX*par)*.026)*18;
-   ctx.lineTo(x,y);
-  }
-  ctx.lineTo(W,H);ctx.closePath();ctx.fill();
- }
-
- for(let x=-100;x<W+100;x+=115) {
-  let wx=x+(camX*.28%115);
-  const hh=110+((Math.floor((x+1000)/115)*37)%95);
-  rect(wx,360-hh,12,hh+84,'#0a0912');
-  ctx.fillStyle='#100b18';ctx.beginPath();
-  ctx.moveTo(wx-35,370-hh*.55);ctx.lineTo(wx+6,280-hh);
-  ctx.lineTo(wx+45,370-hh*.55);ctx.fill();
- }
- for(let x=35;x<W;x+=170) {
-  const y=390+Math.sin(x*.04+tick)*3;
-  glow(x,y,8,'#ff8a32');rect(x-2,y,4,10,'#ffb45d');
- }
- for(let i=0;i<24;i++) {
-  const x=((i*97-tick*13-camX*.04)%(W+20)+W+20)%(W+20);
-  const y=(i*67+Math.sin(tick+i)*12)%H;
-  circle(x,y,1.2,'#8c7aa8');
- }
-}
-
-function drawWorld() {
- const m=currentMap();
- for(const s of m.platforms) {
-  const x=s.x-camX;
-  if(x+s.w<0||x>W)continue;
-  rect(x,s.y,s.w,s.h,s.kind==='ground'?regions[state.region].ground:'#39304b');
-  rect(x,s.y,s.w,5,s.kind==='ground'?'#786078':'#9a78a6');
-  for(let bx=x+12;bx<x+s.w;bx+=42)
-   rect(bx,s.y+14,Math.min(18,s.x+s.w-bx),2,'#ffffff0c');
- }
-
- for(const t of m.traps) {
-  const x=t.x-camX;
-  if(x+t.w<0||x>W)continue;
-  if(t.type==='pit') {
-   rect(x,444,t.w,100,'#050508');
-   for(let k=0;k<4;k++) {
-    ctx.fillStyle='#ff5b54';ctx.beginPath();
-    ctx.moveTo(x+k*18,444);ctx.lineTo(x+9+k*18,462);
-    ctx.lineTo(x+18+k*18,444);ctx.fill();
-   }
-  } else if(t.type==='spikes') {
-   for(let k=0;k<t.w;k+=13) {
-    ctx.fillStyle=t.active?'#f35d76':'#736078';
-    ctx.beginPath();ctx.moveTo(x+k,t.y+t.h);
-    ctx.lineTo(x+k+7,t.y);ctx.lineTo(x+k+13,t.y+t.h);ctx.fill();
-   }
-  } else if(t.type==='blade') {
-   ctx.save();ctx.translate(x+t.w/2,t.y);
-   ctx.rotate(Math.sin(t.phase*2)*.9);
-   rect(-3,-30,6,60,'#b8b1ca');circle(0,0,7,'#ff8c46');ctx.restore();
-  } else if(t.active) {
-   glow(x+t.w/2,t.y+t.h/2,28,'#b04dff');
-   rect(x,t.y,t.w,t.h,'#8236a855');
-  }
- }
-
- for(const it of m.items) {
-  if(it.taken)continue;
-  const x=it.x-camX;
-  if(x<-40||x>W+40)continue;
-  const color=it.type==='key'?'#ffd36b':it.type==='clue'?'#6ee9ff':
-   it.type==='seal'?'#bc72ff':'#ff9e42';
-  glow(x+it.w/2,it.y+it.h/2,13,color);
-  ctx.save();ctx.translate(x+it.w/2,it.y+it.h/2);
-  ctx.rotate(Math.sin(tick*2+it.x)*.12);
-  rect(-it.w/2,-it.h/2,it.w,it.h,color);
-  rect(-it.w/2+4,-it.h/2+4,it.w-8,it.h-8,'#fff2ce');
-  ctx.restore();
-  if(Math.abs(player.x-it.x)<70&&Math.abs(player.y-it.y)<65) {
-   ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff';
-   ctx.fillText(it.label,x+it.w/2,it.y-8);
-  }
- }
-
- for(const s of m.signs) {
-  const x=s.x-camX;
-  rect(x+10,s.y,8,42,'#725039');rect(x,s.y,28,18,'#d8a45b');
-  rect(x+4,s.y+5,20,3,'#5b3140');
-  if(Math.abs(player.x-s.x)<75) {
-   ctx.font='12px system-ui';ctx.fillStyle='#fff';ctx.fillText('E: READ',x-8,s.y-9);
-  }
- }
-
- for(const c of m.checkpoints) {
-  const x=c.x-camX;
-  glow(x+13,c.y+10,18,c.used?'#8cff9c':'#ff8c46');
-  rect(x+10,c.y,6,42,'#8e6a99');
-  circle(x+13,c.y+7,7,c.used?'#8cff9c':'#ff9c46');
-  if(Math.abs(player.x-c.x)<65) {
-   ctx.font='11px system-ui';ctx.fillStyle='#fff';
-   ctx.fillText(c.used?'CHECKPOINT':'E: BIND',x-18,c.y-9);
-  }
- }
-
- for(const g of m.gates) {
-  const x=g.x-camX;
-  rect(x,g.y,g.w,g.h,g.open?'#8cff9c':'#4d2d60');
-  rect(x+6,g.y+6,g.w-12,g.h-12,g.open?'#182b24':'#130d1d');
-  for(let k=0;k<3;k++)
-   rect(x+10+k*12,g.y+10,4,g.h-20,g.open?'#8cff9c':'#9d59c6');
-  if(Math.abs(player.x-g.x)<110) {
-   ctx.font='12px system-ui';ctx.fillStyle='#fff';
-   ctx.fillText(g.open?'PASSAGE OPEN':'E: SEALED GATE',x-30,g.y-10);
-  }
- }
-
- for(const e of m.enemies) {
-  if(!e.alive)continue;
-  const x=e.x-camX;
-  if(x<-60||x>W+60)continue;
-  if(e.stun>0)glow(x+15,e.y+20,23,'#9f82ff');
-  const body=e.kind==='armored'?'#776d90':e.kind==='stalker'?'#6b3b65':'#6b8aa5';
-  glow(x+15,e.y+12,17,e.stun>0?'#c1a3ff':'#9e50c8');
-  circle(x+15,e.y+13,13,body);rect(x+5,e.y+22,20,18,body);
-  circle(x+10,e.y+12,2,'#ff5f85');circle(x+20,e.y+12,2,'#ff5f85');
-  rect(x+5,e.y+39,6,5,'#2a2138');rect(x+19,e.y+39,6,5,'#2a2138');
-  rect(x,e.y-8,30,4,'#31283d');
-  rect(x,e.y-8,30*e.hp/e.maxHp,4,'#ff6584');
- }
-
- for(const b of state.projectiles) {
-  const x=b.x-camX;
-  if(b.type==='fire') {
-   glow(x+8,b.y+7,18,'#ff792e');
-   rect(x,b.y,b.w,b.h,'#ff8b31');rect(x+5,b.y+3,9,6,'#fff0a3');
-  } else {
-   glow(x+7,b.y+7,16,'#b44dff');circle(x+7,b.y+7,7,'#d99cff');
-  }
- }
-
- drawPlayer();
- if(state.region===5&&state.bossActive)drawBoss();
-
- for(const q of state.particles) {
-  ctx.globalAlpha=clamp(q.life/q.max,0,1);
-  circle(q.x-camX,q.y,q.r,q.color);
-  ctx.globalAlpha=1;
- }
-}
-
-function drawPlayer() {
- const x=player.x-camX,y=player.y,aura=!!state.flags.auraBurst;
- if(player.inv>0&&Math.floor(tick*18)%2===0)return;
- if(aura) {glow(x+13,y+19,37,'#ff8c35');glow(x+13,y+19,22,'#a66bff');}
- if(player.hide) {
-  rect(x+1,y+12,25,13,'#242031');rect(x+7,y+4,14,12,'#d8a6bd');
-  rect(x+8,y+7,11,4,'#17121e');
- } else {
-  rect(x+5,y+9,17,19,aura?'#ff9b42':'#6d4e8d');
-  rect(x+3,y+27,8,12,'#28243a');rect(x+16,y+27,8,12,'#28243a');
-  rect(x+3,y+37,10,4,'#b1a0c7');rect(x+15,y+37,11,4,'#b1a0c7');
-  circle(x+13,y+6,10,'#d8b1be');rect(x+3,y+1,20,6,'#22162d');
-  rect(x+8,y+7,12,3,'#f3a8bc');
-  rect(x+(player.face>0?16:5),y+10,4,3,'#fff');
- }
- if(player.attack>0) {
-  const sx=x+(player.face>0?player.w:-20);
-  glow(sx+10,y+18,18,'#ff9d43');
-  rect(sx,y+12,20,7,'#ffb65d');
- }
-}
-
-function drawBoss() {
- const x=boss.x-camX,y=boss.y;
- glow(x+boss.w/2,y+45,55,state.bossPhase===3?'#ff733a':'#9d4fff');
- const c=boss.flash>0?'#fff2b8':state.bossPhase===3?'#b34c35':'#4d3c69';
- circle(x+38,y+23,28,c);rect(x+10,y+44,56,58,c);
- rect(x+14,y+98,17,17,'#34263f');rect(x+47,y+98,17,17,'#34263f');
- circle(x+27,y+22,5,'#ff5d87');circle(x+49,y+22,5,'#ff5d87');
- rect(x+27,y+38,24,4,'#211326');
- for(let i=0;i<5;i++) {
-  const ax=x+Math.sin(tick*3+i)*45+38,ay=y+45+i*8;
-  circle(ax,ay,4,'#b88aff');
- }
- rect(25,24,240,10,'#241b31');
- rect(25,24,240*state.bossHP/100,10,'#bd5aff');
- ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';
- ctx.fillText(`WELL GUARDIAN · PHASE ${state.bossPhase}`,25,18);
-}
-
-function drawOverlayText() {
- if(state.toastTime>0) {
-  ctx.font='bold 15px system-ui';
-  const width=Math.min(700,ctx.measureText(state.toast).width+40);
-  rect((W-width)/2,80,width,34,'#0a0813dd');
-  ctx.strokeStyle='#79538c';ctx.strokeRect((W-width)/2,80,width,34);
-  ctx.fillStyle='#fff0df';ctx.textAlign='center';
-  ctx.fillText(state.toast,W/2,102);ctx.textAlign='left';
- }
- ctx.font='bold 12px system-ui';ctx.fillStyle='#fff';
- ctx.fillText(regions[state.region].name.toUpperCase(),18,28);
- ctx.font='11px system-ui';ctx.fillStyle='#c7badc';
- ctx.fillText(`DISTANCE ${Math.floor(player.x)} / ${regions[state.region].width}`,18,44);
- if(player.hide){ctx.fillStyle='#8cff9c';ctx.fillText('HIDDEN',W-75,28);}
-}
-function render() {drawBackground();drawWorld();drawOverlayText();}
-
-function updateHUD() {
- $('hpText').textContent=`${Math.ceil(state.hp)} / 100`;
- $('hpBar').style.width=state.hp+'%';
- $('mpText').textContent=`${Math.ceil(state.mp)} / 100`;
- $('mpBar').style.width=state.mp+'%';
- $('auraText').textContent=state.flags.auraBurst?'AWAKENED':
-  state.aura>=100?'FULL':state.aura>=35?'READY':'Charging';
- $('auraBar').style.width=state.aura+'%';
- $('findText').textContent=`${state.relics.length} / 12 relics`;
- $('findBar').style.width=Math.min(100,state.relics.length/12*100)+'%';
- $('objective').innerHTML='<b>◆</b><span>'+regions[state.region].goal+'</span>';
- $('regionText').innerHTML='<b>MAP</b><span>Region '+(state.region+1)+' / 6: '+regions[state.region].name+'</span>';
- $('hint').textContent=regions[state.region].tip;
-}
-
-function frame(now) {
- const dt=Math.min(.033,(now-last)/1000||0);
- last=now;
- if(running)update(dt);
- render();
- for(const k in pressed)delete pressed[k];
- requestAnimationFrame(frame);
-}
-
-function start(continueSave=false) {
- if(continueSave&&!loadGame())toast('No saved journey found. Starting a new adventure.',2);
- $('startOverlay').classList.add('hidden');
- running=true;state.dead=false;last=performance.now();
- if(state.won){state.won=false;state.region=0;}
- log('The journey begins. Find the trail marker and follow the lanterns.');
- beep(330,.12);
- requestAnimationFrame(frame);
-}
-
-function keyDown(e) {
- const k=e.code;
- if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();
- if(!keys[k])pressed[k]=true;
- keys[k]=true;
- if(e.repeat)return;
- if(k==='KeyJ')cast('fire');
- if(k==='KeyK')cast('seal');
- if(k==='KeyL')cast('dash');
- if(k==='KeyQ')cast('aura');
- if(k==='KeyE')interact();
-}
-function keyUp(e) {keys[e.code]=false;}
-window.addEventListener('keydown',keyDown);
-window.addEventListener('keyup',keyUp);
-
-document.querySelectorAll('[data-hold]').forEach(b=>{
- const k=b.dataset.hold;
- b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;});
- ['pointerup','pointercancel','pointerleave'].forEach(ev=>
-  b.addEventListener(ev,()=>keys[k]=false)
- );
+window.addEventListener("online", () => {
+    if (state.victory && !state.saved && !state.saving) saveDay2();
 });
-document.querySelectorAll('[data-tap]').forEach(b=>b.addEventListener('click',()=>{
- const a=b.dataset.tap;
- if(a==='jump')pressed.jump=true;
- else if(a==='fire')cast('fire');
- else if(a==='seal')cast('seal');
- else if(a==='dash')cast('dash');
- else if(a==='aura')cast('aura');
- else if(a==='interact')interact();
-}));
-
-$('startBtn').onclick=()=>start(false);
-$('continueBtn').onclick=()=>start(true);
-$('saveBtn').onclick=()=>saveGame(true);
-$('resetBtn').onclick=()=>{
- if(confirm('Reset all Haunted Well progress in this browser?'))resetGame();
-};
-$('soundBtn').onclick=()=>{
- sound=!sound;$('soundBtn').textContent='Sound: '+(sound?'On':'Off');
- if(sound)beep(440,.1);
-};
-$('againBtn').onclick=()=>resetGame();
-window.addEventListener('beforeunload',()=>saveGame(false));
-document.addEventListener('visibilitychange',()=>{
- if(document.hidden&&running)saveGame(false);
-});
-
-updateHUD();
-render();
-requestAnimationFrame(frame);
-})();
+init();
 </script>
 </body>
 </html>
