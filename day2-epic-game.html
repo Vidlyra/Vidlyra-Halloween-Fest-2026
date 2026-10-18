@@ -1,0 +1,1097 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Haunted Well | Vidlyra Halloween Fest 2026</title>
+<style>
+:root {
+ --orange:#ff8a26; --purple:#a66bff; --green:#8cff9c;
+ --ink:#090912; --panel:#141421; --text:#f5f1ff;
+}
+* { box-sizing:border-box }
+html,body {
+ margin:0; min-height:100%; background:#07070d; color:var(--text);
+ font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+}
+body {
+ padding:14px;
+ background:radial-gradient(ellipse at top,#20112e 0,#090910 55%,#050508 100%);
+}
+.wrap { max-width:1100px; margin:auto }
+.top {
+ display:flex; gap:12px; justify-content:space-between;
+ align-items:center; flex-wrap:wrap; margin-bottom:10px;
+}
+.brand {
+ font-size:12px; letter-spacing:.2em; color:var(--orange); font-weight:900;
+}
+.title { font-size:clamp(22px,4vw,38px); font-weight:1000; line-height:1.05; margin:4px 0 }
+.sub { font-size:13px; color:#bcb5d1 }
+.actions { display:flex; gap:8px; flex-wrap:wrap }
+button {
+ font:inherit; cursor:pointer; border:1px solid #514365; border-radius:10px;
+ padding:9px 12px; background:#21192d; color:#fff; font-weight:750;
+}
+button:hover { border-color:var(--orange); background:#33203e }
+.hud {
+ display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:8px; margin:10px 0;
+}
+.stat { background:#12111d; border:1px solid #30283f; border-radius:10px; padding:9px 11px; min-width:0 }
+.stat small { display:block; color:#a9a0c0; font-size:10px; letter-spacing:.12em; text-transform:uppercase }
+.stat strong { display:block; font-size:14px; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.bar { height:6px; border-radius:9px; background:#30283e; margin-top:6px; overflow:hidden }
+.fill { height:100%; width:100%; background:linear-gradient(90deg,#ff7c22,#ffc05b); transition:width .15s }
+.fill.hp { background:linear-gradient(90deg,#fa386b,#ff8b8b) }
+.fill.mp { background:linear-gradient(90deg,#8c54ff,#5fe7ff) }
+.gamebox {
+ border:1px solid #40304f; border-radius:14px; overflow:hidden;
+ background:#080811; box-shadow:0 18px 55px #0009; position:relative;
+}
+canvas { display:block; width:100%; height:auto; aspect-ratio:16/9; image-rendering:pixelated; touch-action:none }
+.overlay {
+ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+ padding:18px; background:#070710d9; backdrop-filter:blur(5px);
+}
+.dialog {
+ max-width:560px; width:100%; background:#151321; border:1px solid #6d4b7e;
+ border-radius:16px; padding:22px; box-shadow:0 15px 60px #000b;
+}
+.dialog h2 { margin:0 0 8px; color:#ffb26b }
+.dialog p,.dialog li { color:#d5cde5; line-height:1.5; font-size:14px }
+.dialog button { background:#7c351d; border-color:#ff9d47 }
+.dialog .secondary { background:#21192d; border-color:#514365 }
+.hidden { display:none!important }
+.below { display:grid; grid-template-columns:1.2fr 1fr; gap:10px; margin-top:10px }
+.panel { background:#11101a; border:1px solid #30283f; border-radius:12px; padding:12px }
+.panel h3 { font-size:12px; letter-spacing:.12em; text-transform:uppercase; margin:0 0 8px; color:#ffb36d }
+.panel p { margin:4px 0; font-size:13px; color:#cfc6df; line-height:1.45 }
+.quest { display:flex; gap:8px; align-items:flex-start; font-size:13px; color:#ddd5e9; margin:6px 0 }
+.quest b { color:var(--green) }
+.log { height:106px; overflow:auto; font-size:12px; line-height:1.45; color:#c9bdd9 }
+.log div { padding:2px 0; border-bottom:1px solid #ffffff0b }
+.controls { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px }
+.keygroup { display:flex; gap:6px; flex-wrap:wrap }
+.key {
+ display:inline-flex; align-items:center; justify-content:center; min-width:28px;
+ height:26px; padding:0 7px; border:1px solid #514365; border-bottom-width:3px;
+ border-radius:6px; background:#21192d; color:#fff; font-size:11px; font-weight:800;
+}
+.touch { display:none; gap:8px; justify-content:space-between; margin-top:10px }
+.touch .cluster { display:flex; gap:6px; flex-wrap:wrap }
+.touch button { min-width:46px; min-height:44px; touch-action:none; user-select:none }
+.foot { color:#8e849f; font-size:11px; text-align:center; margin:12px 0 }
+@media(max-width:650px) {
+ body { padding:8px }
+ .hud { grid-template-columns:repeat(2,minmax(0,1fr)) }
+ .below,.controls { grid-template-columns:1fr }
+ .touch { display:flex }
+ .sub { max-width:95% }
+ .panel { padding:10px }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header class="top">
+  <div>
+   <div class="brand">VIDLYRA STORY WORKS · HALLOWEEN FEST 2026 · DAY 2</div>
+   <div class="title">THE HAUNTED WELL</div>
+   <div class="sub">Curse of the Forgotten — explore, survive, awaken.</div>
+  </div>
+  <div class="actions">
+   <button id="saveBtn">Save Game</button>
+   <button id="soundBtn">Sound: Off</button>
+   <button id="resetBtn">Reset Run</button>
+  </div>
+ </header>
+
+ <section class="hud">
+  <div class="stat">
+   <small>Vitality</small><strong id="hpText">100 / 100</strong>
+   <div class="bar"><div class="fill hp" id="hpBar"></div></div>
+  </div>
+  <div class="stat">
+   <small>Spirit Energy</small><strong id="mpText">100 / 100</strong>
+   <div class="bar"><div class="fill mp" id="mpBar"></div></div>
+  </div>
+  <div class="stat">
+   <small>Aura</small><strong id="auraText">Dormant</strong>
+   <div class="bar"><div class="fill" id="auraBar"></div></div>
+  </div>
+  <div class="stat">
+   <small>Discoveries</small><strong id="findText">0 / 12 relics</strong>
+   <div class="bar"><div class="fill" id="findBar"></div></div>
+  </div>
+ </section>
+
+ <div class="gamebox">
+  <canvas id="game" width="960" height="540" aria-label="The Haunted Well side scrolling platform game"></canvas>
+
+  <div class="overlay" id="startOverlay">
+   <div class="dialog">
+    <div class="brand">A VIDLYRA HALLOWEEN ADVENTURE</div>
+    <h2 id="dialogTitle">The Well Is Calling</h2>
+    <p id="dialogText">The village has fallen silent. Six regions separate you from the truth beneath the well. Search every path, uncover the lost memories, and do not trust every shadow.</p>
+    <ul>
+     <li>Find relics and keys to open sealed routes.</li>
+     <li>Use spells carefully; spirit energy regenerates slowly.</li>
+     <li>Checkpoints preserve your journey. Hidden paths reward patient explorers.</li>
+    </ul>
+    <p><b>Keyboard:</b> A/D or arrows move · Space/W jump · Shift sprint · S crouch/hide · J fire blast · K spirit seal · L shadow dash · E interact · Q aura.</p>
+    <div class="actions">
+     <button id="startBtn">Enter the Forgotten Forest</button>
+     <button class="secondary" id="continueBtn">Continue Saved Game</button>
+    </div>
+   </div>
+  </div>
+
+  <div class="overlay hidden" id="endOverlay">
+   <div class="dialog">
+    <div class="brand">VIDLYRA HALLOWEEN FEST 2026</div>
+    <h2 id="endTitle">The Well Falls Silent</h2>
+    <p id="endText">The curse is broken — but the last memory has not yet revealed who first opened the well.</p>
+    <button id="againBtn">Play Again</button>
+   </div>
+  </div>
+ </div>
+
+ <div class="touch" aria-label="Touch controls">
+  <div class="cluster">
+   <button data-hold="left">◀</button><button data-hold="right">▶</button><button data-hold="down">Hide</button>
+  </div>
+  <div class="cluster">
+   <button data-tap="jump">Jump</button><button data-tap="fire">Blast</button>
+   <button data-tap="seal">Seal</button><button data-tap="dash">Dash</button>
+   <button data-tap="aura">Aura</button><button data-tap="interact">Use</button>
+  </div>
+ </div>
+
+ <div class="below">
+  <section class="panel">
+   <h3>Current Objective</h3>
+   <div id="objective" class="quest"><b>◆</b><span>Find the first trail marker.</span></div>
+   <div id="regionText" class="quest"><b>MAP</b><span>Region 1: Forgotten Forest</span></div>
+   <p id="hint">Tip: press E near signs, sealed gates, checkpoints and suspicious objects.</p>
+  </section>
+  <section class="panel">
+   <h3>Field Journal</h3>
+   <div id="log" class="log" aria-live="polite"><div>The wind carries a whisper from below...</div></div>
+  </section>
+ </div>
+
+ <div class="controls">
+  <section class="panel">
+   <h3>Keyboard & abilities</h3>
+   <div class="keygroup">
+    <span class="key">A/D</span><span class="key">←/→</span> Move
+    <span class="key">SPACE</span> Jump <span class="key">SHIFT</span> Sprint
+    <span class="key">S</span> Hide <span class="key">J</span> Fire Blast
+    <span class="key">K</span> Spirit Seal <span class="key">L</span> Shadow Dash
+    <span class="key">Q</span> Aura <span class="key">E</span> Interact
+   </div>
+  </section>
+  <section class="panel">
+   <h3>Survival notes</h3>
+   <p>Orange glow marks interactable objects. Purple sigils hint at secrets. A hidden character can evade some spirit hunters, but crouching will not protect you from floor traps. Reach glowing checkpoints often.</p>
+  </section>
+ </div>
+ <div class="foot">A self-contained browser game prototype · Progress is saved in this browser when local storage is available.</div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+const $ = id => document.getElementById(id);
+const canvas = $('game');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const SAVE_KEY = 'vidlyra_haunted_well_day2_v1';
+
+let running = false, last = 0, camX = 0, sound = false;
+let audioCtx = null, tick = 0;
+const keys = {}, pressed = {};
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+const rand = (a,b) => a + Math.random()*(b-a);
+
+const state = {
+ hp:100, mp:100, aura:0, relics:[], clues:[], keys:0, region:0,
+ bossHP:0, bossPhase:0, bossActive:false, won:false, dead:false,
+ hidden:false,
+ checkpoint:{x:80,y:390,region:0},
+ kills:0, playtime:0, opened:[], flags:{},
+ player:{x:80,y:390,vx:0,vy:0,w:26,h:40,face:1,onGround:false,inv:0,dash:0,attack:0,hide:false},
+ projectiles:[], enemies:[], particles:[],
+ toast:'The forest is listening.', toastTime:4
+};
+const player = state.player;
+
+const regions = [
+ {name:'Forgotten Forest',width:3000,base:'#171329',far:'#302143',ground:'#302638',goal:'Find the trail sigils and reach the broken bridge.',tip:'Search behind tree roots. Violet runes may hide the way forward.'},
+ {name:'Silent Village',width:3300,base:'#1b1424',far:'#382335',ground:'#3b2c32',goal:'Discover lost memories and open the bell tower.',tip:'Some villagers hid clues inside houses. Crouch to evade spirit sentries.'},
+ {name:'Trap Labyrinth',width:3500,base:'#111322',far:'#20263d',ground:'#2d3044',goal:'Cross the trap halls and collect the iron key.',tip:'Watch the timing of floor spikes and moving blades. Wait for a safe opening.'},
+ {name:'Awakening Chamber',width:2800,base:'#1a1024',far:'#3c1c43',ground:'#352441',goal:'Charge your aura and break the three cursed seals.',tip:'Spirit Seal can activate violet runes and stun armored enemies.'},
+ {name:'The Drowned Catacombs',width:3600,base:'#0d1b24',far:'#183b43',ground:'#23404a',goal:'Collect ancient seals and uncover the final memory.',tip:'Look for hidden ledges above the water. The last seal is not on the main path.'},
+ {name:'The Haunted Well',width:2400,base:'#170f22',far:'#342044',ground:'#38233d',goal:'Defeat the Well Guardian across all three phases.',tip:'Dodge the slam, jump the shockwave, then strike when the core glows.'}
+];
+
+let maps = [];
+
+function makeRegion(i) {
+ // Stable level geometry keeps collectible locations consistent for this browser session.
+ let seed = (i+1)*1234567;
+ const layoutRand = (a,b) => {
+  seed = (seed*16807)%2147483647;
+  return a + ((seed-1)/2147483646)*(b-a);
+ };
+ const r = regions[i];
+ const platforms=[], traps=[], items=[], enemies=[], signs=[], gates=[], checkpoints=[];
+ let x=0;
+
+ while(x<r.width-120) {
+  const gap=(x>300 && layoutRand(0,1)<.20)?layoutRand(55,110):0;
+  x+=gap;
+  const len=layoutRand(190,360);
+  platforms.push({x,y:444,w:Math.min(len,r.width-x),h:96,kind:'ground'});
+  if(layoutRand(0,1)<.72 && x>120)
+   platforms.push({x:x+layoutRand(30,Math.max(40,len-90)),y:layoutRand(290,380),w:layoutRand(70,150),h:14,kind:'ledge'});
+  x+=len;
+ }
+
+ platforms.push(
+  {x:0,y:444,w:260,h:96,kind:'ground'},
+  {x:r.width-300,y:444,w:300,h:96,kind:'ground'}
+ );
+
+ for(let n=0;n<2;n++) {
+  items.push({
+   id:`r${i}_${n}`,type:'relic',
+   x:layoutRand(230,r.width-260),y:layoutRand(260,395),
+   w:20,h:24,taken:false,label:['Moon Shard','Lost Memory'][n]
+  });
+ }
+
+ if(i===0) {
+  items.push({id:'key_forest',type:'key',x:2400,y:390,w:18,h:24,taken:false,label:'Old Gate Key'});
+  items.push({id:'clue_forest',type:'clue',x:1150,y:355,w:18,h:22,taken:false,label:'The First Whisper'});
+ }
+ if(i===1) {
+  for(let n=0;n<3;n++) items.push({
+   id:'village_clue_'+n,type:'clue',x:500+n*850,y:layoutRand(320,400),
+   w:18,h:22,taken:false,label:['A Name Scratched in Wood','A Broken Bell','A Child’s Drawing'][n]
+  });
+  items.push({id:'key_village',type:'key',x:2860,y:390,w:18,h:24,taken:false,label:'Bell Tower Key'});
+ }
+ if(i===2) {
+  items.push({id:'key_iron',type:'key',x:3040,y:390,w:18,h:24,taken:false,label:'Iron Labyrinth Key'});
+  items.push({id:'clue_trap',type:'clue',x:1650,y:330,w:18,h:22,taken:false,label:'The Safe Sequence'});
+ }
+ if(i===3) {
+  for(let n=0;n<3;n++) items.push({id:'seal_'+n,type:'seal',x:380+n*900,y:layoutRand(315,380),w:24,h:24,taken:false,label:'Cursed Seal'});
+ }
+ if(i===4) {
+  for(let n=0;n<3;n++) items.push({id:'ancient_'+n,type:'seal',x:500+n*1000,y:layoutRand(300,380),w:24,h:24,taken:false,label:'Ancient Seal'});
+  items.push({id:'final_memory',type:'clue',x:3200,y:370,w:18,h:22,taken:false,label:'The Final Memory'});
+ }
+
+ for(let n=0;n<Math.floor(r.width/270);n++) {
+  let tx=260+n*270+layoutRand(-35,45);
+  if(tx>r.width-170) continue;
+  const type=['spikes','blade','pit','ghostfire'][Math.floor(layoutRand(0,4))];
+  traps.push({
+   x:tx,y:type==='pit'?444:type==='spikes'?418:layoutRand(330,405),
+   w:type==='blade'?38:type==='pit'?70:54,
+   h:type==='pit'?100:type==='spikes'?26:50,
+   type,phase:layoutRand(0,6),active:false
+  });
+ }
+
+ for(let n=0;n<Math.floor(r.width/360);n++) {
+  const ex=350+n*350+layoutRand(-35,40);
+  if(ex>r.width-160) continue;
+  enemies.push({
+   x:ex,y:398,w:30,h:40,
+   hp:i===3?3:2,maxHp:i===3?3:2,
+   kind:['wisp','stalker','armored'][n%3],
+   dir:layoutRand(0,1)<.5?-1:1,origin:ex,
+   range:100+layoutRand(0,60),stun:0,attack:0,alive:true
+  });
+ }
+
+ signs.push({x:80,y:402,w:28,h:42,text:`${r.name}: ${r.goal}`,used:false});
+ for(let n=1;n<Math.floor(r.width/850)+1;n++)
+  checkpoints.push({x:n*820,y:402,w:26,h:42,used:false});
+
+ gates.push({x:r.width-90,y:360,w:48,h:84,open:false,region:i});
+ return {platforms,traps,items,enemies,signs,gates,checkpoints,width:r.width};
+}
+
+function buildMaps() { maps=regions.map((_,i)=>makeRegion(i)); }
+buildMaps();
+
+function currentMap() { return maps[state.region]; }
+
+function log(text) {
+ const el=$('log'),d=document.createElement('div');
+ d.textContent='› '+text;
+ el.prepend(d);
+ while(el.children.length>35) el.removeChild(el.lastChild);
+}
+function toast(text,secs=3) { state.toast=text;state.toastTime=secs;log(text); }
+function beep(freq=330,dur=.08,type='sine') {
+ if(!sound)return;
+ try {
+  audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+  const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+  o.type=type;o.frequency.value=freq;g.gain.value=.035;
+  o.connect(g);g.connect(audioCtx.destination);o.start();
+  g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);
+  o.stop(audioCtx.currentTime+dur);
+ } catch(e) {}
+}
+function rect(x,y,w,h,color) { ctx.fillStyle=color;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h)); }
+function circle(x,y,r,color) { ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill(); }
+function glow(x,y,r,color) { ctx.save();ctx.globalAlpha=.35;circle(x,y,r,color);ctx.globalAlpha=.12;circle(x,y,r*1.8,color);ctx.restore(); }
+function overlap(a,b) { return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y; }
+
+function nearestInteractable() {
+ const m=currentMap(),p=player;
+ let best=null,dist=1e9;
+ const candidates=[...m.signs,...m.checkpoints,...m.gates,...m.items.filter(it=>!it.taken)];
+ for(const o of candidates) {
+  const d=Math.abs((o.x+o.w/2)-(p.x+p.w/2))+Math.abs((o.y+o.h/2)-(p.y+p.h/2));
+  if(d<85&&d<dist) {best=o;dist=d;}
+ }
+ return best;
+}
+
+function saveGame(show=true) {
+ const data={
+  hp:state.hp,mp:state.mp,aura:state.aura,relics:state.relics,clues:state.clues,
+  keys:state.keys,region:state.region,checkpoint:state.checkpoint,
+  playtime:state.playtime,kills:state.kills,flags:state.flags,
+  opened:state.opened,player:{x:player.x,y:player.y},won:state.won
+ };
+ try {
+  localStorage.setItem(SAVE_KEY,JSON.stringify(data));
+  if(show)toast('Journey saved in this browser.',2);
+  return true;
+ } catch(e) {
+  if(show)toast('Browser storage unavailable. Keep this tab open.',3);
+  return false;
+ }
+}
+
+function loadGame() {
+ try {
+  const d=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
+  if(!d)return false;
+  Object.assign(state,{
+   hp:d.hp??100,mp:d.mp??100,aura:d.aura??0,
+   relics:d.relics||[],clues:d.clues||[],keys:d.keys||0,
+   region:clamp(d.region||0,0,5),checkpoint:d.checkpoint||state.checkpoint,
+   playtime:d.playtime||0,kills:d.kills||0,flags:d.flags||{},
+   opened:d.opened||[],won:!!d.won
+  });
+  player.x=d.player?.x??state.checkpoint.x;
+  player.y=d.player?.y??state.checkpoint.y;
+  for(const m of maps) {
+   for(const it of m.items)
+    if(state.relics.includes(it.id)||state.clues.includes(it.id)||state.flags[it.id])it.taken=true;
+   for(const g of m.gates)
+    if(state.opened.includes('gate_'+g.region))g.open=true;
+  }
+  toast('Saved journey restored. The shadows remember.',3);
+  return true;
+ } catch(e) { return false; }
+}
+
+function resetGame() {
+ try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+ location.reload();
+}
+function spawnParticles(x,y,color,count=10) {
+ for(let i=0;i<count;i++)state.particles.push({
+  x,y,vx:rand(-180,180),vy:rand(-240,60),
+  life:rand(.25,.8),max:.8,color,r:rand(2,5)
+ });
+}
+
+function hurt(amount,sourceX) {
+ if(player.inv>0||state.won)return;
+ if(state.flags.auraBurst)amount=Math.ceil(amount*.55);
+ state.hp-=amount;player.inv=1.1;player.vy=-230;
+ player.vx=(player.x<sourceX?-1:1)*180;
+ spawnParticles(player.x+12,player.y+18,'#ff557d',12);
+ beep(95,.16,'sawtooth');
+ toast(`Hit! ${amount} vitality lost.`,1.8);
+ if(state.hp<=0) {
+  state.hp=0;state.dead=true;
+  setTimeout(respawn,450);
+ }
+}
+
+function respawn() {
+ state.dead=false;state.hp=70;state.mp=Math.max(35,state.mp);
+ player.x=state.checkpoint.x;player.y=state.checkpoint.y;
+ player.vx=player.vy=0;player.inv=1.8;player.dash=0;
+ state.region=state.checkpoint.region;camX=0;
+ toast('You return to the last checkpoint. The curse grows restless.',3);
+ saveGame(false);
+}
+
+function cast(type) {
+ if(!running||state.dead||state.won)return;
+ if(type==='fire') {
+  if(state.mp<12){toast('Not enough spirit energy for Fire Blast.',1.5);return;}
+  state.mp-=12;player.attack=.22;
+  state.projectiles.push({
+   x:player.x+(player.face>0?player.w:-16),y:player.y+15,
+   w:22,h:15,vx:player.face*460,life:1.25,type:'fire',damage:1
+  });
+  spawnParticles(player.x+player.w/2,player.y+18,'#ff9c40',5);
+  beep(540,.08,'triangle');
+ } else if(type==='seal') {
+  if(state.mp<20){toast('Spirit Seal needs 20 energy.',1.5);return;}
+  state.mp-=20;player.attack=.3;
+  let hit=false;
+  for(const e of currentMap().enemies) {
+   if(e.alive&&Math.abs(e.x-player.x)<145&&Math.abs(e.y-player.y)<90) {
+    e.stun=2.1;e.hp-=1;hit=true;
+    if(e.hp<=0)killEnemy(e);
+   }
+  }
+  for(const it of currentMap().items) {
+   if(!it.taken&&it.type==='seal'&&Math.abs(it.x-player.x)<100) {
+    it.taken=true;state.flags[it.id]=true;
+    state.aura=clamp(state.aura+18,0,100);
+    toast(`${it.label} activated.`,2);hit=true;
+   }
+  }
+  if(!hit)toast('The seal ripples through the air. No spirit nearby.',1.4);
+  spawnParticles(player.x+player.w/2,player.y+18,'#b68bff',16);
+  beep(260,.18,'sine');
+ } else if(type==='dash') {
+  if(state.mp<8){toast('Not enough energy to Shadow Dash.',1.3);return;}
+  state.mp-=8;player.dash=.22;player.inv=Math.max(player.inv,.28);
+  player.vx=player.face*650;
+  spawnParticles(player.x+12,player.y+20,'#9a6bff',12);
+  beep(700,.07,'triangle');
+ } else if(type==='aura') {
+  if(state.aura<35){toast('Aura needs 35 charge. Defeat enemies and find seals.',2);return;}
+  if(state.aura>=100) {
+   state.aura=55;state.flags.auraBurst=Date.now();
+   toast('AURA RISING — awakened power for 12 seconds!',2.5);
+   spawnParticles(player.x+12,player.y+20,'#ff9d3d',28);
+   beep(760,.25,'sawtooth');
+  } else {
+   state.flags.auraBurst=Date.now();
+   toast('Aura awakened. Build charge to unleash its full form.',2);
+  }
+ }
+}
+
+function killEnemy(e) {
+ if(!e.alive)return;
+ e.alive=false;state.kills++;
+ state.aura=clamp(state.aura+13,0,100);
+ state.mp=clamp(state.mp+7,0,100);
+ spawnParticles(e.x+15,e.y+20,'#b58bff',18);
+ toast('Spirit dispersed. Aura charge increased.',1.7);
+ beep(180,.12,'triangle');
+}
+
+function interact() {
+ const o=nearestInteractable();
+ if(!o){toast('Nothing nearby. Search for glowing marks or hidden ledges.',1.6);return;}
+ const m=currentMap();
+ if(m.signs.includes(o)){toast(o.text,3.5);return;}
+ if(m.checkpoints.includes(o)) {
+  state.checkpoint={x:o.x,y:390,region:state.region};
+  o.used=true;state.hp=100;state.mp=100;
+  toast('Checkpoint bound. Vitality and energy restored.',2.5);
+  saveGame(false);beep(440,.15);return;
+ }
+ if(m.items.includes(o)) {
+  if(o.taken)return;
+  o.taken=true;state.flags[o.id]=true;
+  if(o.type==='relic') {
+   state.relics.push(o.id);
+   state.aura=clamp(state.aura+9,0,100);
+   toast(`Relic found: ${o.label}. (${state.relics.length}/12 discoveries)`,2.5);
+  }
+  if(o.type==='clue') {
+   state.clues.push(o.id);
+   toast(`Mystery uncovered: ${o.label}. The journal remembers.`,2.5);
+  }
+  if(o.type==='key') {
+   state.keys++;toast(`Key acquired: ${o.label}. A sealed route may now open.`,2.5);
+  }
+  if(o.type==='seal') {
+   state.flags[o.id]=true;state.aura=clamp(state.aura+15,0,100);
+   toast(`${o.label} resonated with your aura.`,2);
+  }
+  saveGame(false);beep(600,.1,'sine');return;
+ }
+ if(m.gates.includes(o)) {
+  if(o.open){toast('The passage is already open.',1.5);return;}
+  let enough=false;
+  if(state.region===0)enough=state.keys>0;
+  if(state.region===1)enough=state.clues.length>=2||state.keys>0;
+  if(state.region===2)enough=state.keys>0;
+  if(state.region===3)enough=['seal_0','seal_1','seal_2'].every(k=>state.flags[k]);
+  if(state.region===4)enough=['ancient_0','ancient_1','ancient_2'].every(k=>state.flags[k]);
+  if(!enough) {
+   toast(state.region===3?'Three cursed seals are needed.':
+   state.region===4?'Three ancient seals are needed.':
+   'This gate is sealed. Search for keys, clues and hidden items.',2.5);
+   return;
+  }
+  o.open=true;state.opened.push('gate_'+o.region);
+  if(state.keys>0&&state.region<3)state.keys--;
+  toast('The cursed gate opens. A new region waits beyond it.',2.5);
+  saveGame(false);
+ }
+}
+
+function enterNextRegion() {
+ if(state.region>=5) {
+  if(state.bossHP<=0)finishGame();
+  return;
+ }
+ const gate=currentMap().gates[0];
+ if(!gate.open) {
+  toast('The exit is sealed. Find its key or complete the region objective.',2);
+  return;
+ }
+ state.region++;
+ player.x=55;player.y=390;player.vx=player.vy=0;camX=0;
+ state.checkpoint={x:55,y:390,region:state.region};
+ state.hp=clamp(state.hp+25,0,100);
+ state.mp=clamp(state.mp+25,0,100);
+ toast(`Region unlocked: ${regions[state.region].name}.`,3);
+ log(regions[state.region].goal);
+ saveGame(false);
+ if(state.region===5) {
+  state.bossHP=100;state.bossPhase=1;state.bossActive=true;
+  toast('THE WELL GUARDIAN has awakened!',3);
+  spawnParticles(790,300,'#9b55ff',35);
+ }
+}
+
+function finishGame() {
+ state.won=true;running=false;
+ $('endTitle').textContent='The Well Falls Silent';
+ $('endText').textContent=
+  `You survived all six regions, defeated the Guardian and uncovered ${state.clues.length} memories. But one final inscription reads: “The first door was opened from the other side.” Your journey time: ${Math.floor(state.playtime/60)}m ${Math.floor(state.playtime%60)}s.`;
+ $('endOverlay').classList.remove('hidden');
+ saveGame(false);
+}
+
+function update(dt) {
+ if(!running)return;
+ tick+=dt;state.playtime+=dt;
+ const p=player,m=currentMap();
+ state.mp=clamp(state.mp+dt*3.3,0,100);
+ state.aura=clamp(state.aura+dt*.7,0,100);
+ if(state.flags.auraBurst) {
+  const elapsed=(Date.now()-state.flags.auraBurst)/1000;
+  if(elapsed>12) {
+   state.flags.auraBurst=0;
+   toast('Aura form fades. Your remaining charge can be rebuilt.',2);
+  }
+ }
+ p.inv=Math.max(0,p.inv-dt);
+ p.attack=Math.max(0,p.attack-dt);
+ p.dash=Math.max(0,p.dash-dt);
+
+ const left=keys.ArrowLeft||keys.KeyA||keys.left;
+ const right=keys.ArrowRight||keys.KeyD||keys.right;
+ const down=keys.ArrowDown||keys.KeyS||keys.down;
+ p.hide=!!down;p.h=p.hide?25:40;
+
+ if(p.hide&&p.onGround)p.vx*=.78;
+ const auraOn=!!state.flags.auraBurst;
+ const speed=(keys.ShiftLeft||keys.ShiftRight?285:205)*(auraOn?1.18:1);
+
+ if(p.dash<=0) {
+  if(left){p.vx=-speed;p.face=-1;}
+  else if(right){p.vx=speed;p.face=1;}
+  else p.vx*=Math.pow(p.onGround ? .001 : .12,dt);
+ }
+ p.vx=clamp(p.vx,-700,700);
+
+ if(pressed.Space||pressed.KeyW||pressed.ArrowUp||pressed.jump) {
+  if(p.onGround){p.vy=-470;p.onGround=false;beep(280,.06);}
+  else if(state.flags.doubleJump&&!p.doubleUsed) {
+   p.vy=-430;p.doubleUsed=true;
+   spawnParticles(p.x+12,p.y+30,'#b68bff',7);
+  }
+ }
+ if(p.onGround)p.doubleUsed=false;
+
+ p.vy+=1180*dt;p.vy=Math.min(p.vy,780);
+ let nx=p.x+p.vx*dt,ny=p.y+p.vy*dt;
+
+ for(const s of m.platforms) {
+  if(overlap({x:nx,y:p.y,w:p.w,h:p.h},s)) {
+   if(p.vx>0)nx=s.x-p.w;
+   else if(p.vx<0)nx=s.x+s.w;
+   p.vx=0;
+  }
+ }
+ p.x=clamp(nx,0,m.width-p.w);
+ p.onGround=false;
+ for(const s of m.platforms) {
+  if(overlap({x:p.x,y:ny,w:p.w,h:p.h},s)) {
+   if(p.vy>0){ny=s.y-p.h;p.onGround=true;}
+   else if(p.vy<0)ny=s.y+s.h;
+   p.vy=0;
+  }
+ }
+ p.y=ny;
+ if(p.y>H+180)hurt(100,p.x);
+
+ camX=clamp(p.x-W*.36,0,m.width-W);
+
+ for(const t of m.traps) {
+  t.phase+=dt;
+  let active=t.type==='spikes'?Math.sin(t.phase*1.8)>.15:
+   t.type==='blade'?Math.sin(t.phase*2.1)>.1:
+   t.type==='ghostfire'?Math.sin(t.phase*2.6)>.05:true;
+  t.active=active;
+  if(t.type==='pit') {
+   if(p.x+p.w>t.x+8&&p.x<t.x+t.w-8&&p.y+p.h>t.y-5&&p.y<500)hurt(28,t.x);
+  } else if(active&&overlap({x:p.x,y:p.y,w:p.w,h:p.h},{x:t.x,y:t.y,w:t.w,h:t.h})&&!p.hide) {
+   hurt(t.type==='blade'?22:16,t.x);
+  }
+ }
+
+ for(const e of m.enemies) {
+  if(!e.alive)continue;
+  e.stun=Math.max(0,e.stun-dt);
+  e.attack=Math.max(0,e.attack-dt);
+  if(e.stun<=0) {
+   if(Math.abs(p.x-e.x)<250&&!p.hide) {
+    e.dir=p.x<e.x?-1:1;
+    e.x+=e.dir*(e.kind==='stalker'?85:52)*dt;
+   } else {
+    e.x+=e.dir*30*dt;
+    if(Math.abs(e.x-e.origin)>e.range)e.dir*=-1;
+   }
+  }
+  e.x=clamp(e.x,0,m.width-e.w);
+  if(overlap({x:p.x,y:p.y,w:p.w,h:p.h},e)&&e.stun<=0&&!p.hide) {
+   if(p.vy>100&&p.y+p.h<e.y+e.h*.55) {
+    e.hp-=1;p.vy=-300;
+    if(e.hp<=0)killEnemy(e);
+   } else hurt(e.kind==='armored'?20:13,e.x);
+  }
+ }
+
+ for(const b of state.projectiles) {
+  b.x+=b.vx*dt;b.life-=dt;
+  for(const e of m.enemies) {
+   if(e.alive&&overlap(b,e)) {
+    e.hp-=b.damage;e.stun=.25;
+    spawnParticles(b.x,b.y,'#ff9c40',5);b.life=0;
+    if(e.hp<=0)killEnemy(e);
+    break;
+   }
+  }
+  if(state.region===5&&state.bossActive&&overlap(b,bossRect())) {
+   bossHit(b.damage);b.life=0;
+  }
+  if(b.x<0||b.x>m.width)b.life=0;
+ }
+ state.projectiles=state.projectiles.filter(b=>b.life>0);
+
+ for(const q of state.particles) {
+  q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=400*dt;q.life-=dt;
+ }
+ state.particles=state.particles.filter(q=>q.life>0);
+
+ for(const c of m.checkpoints) {
+  if(!c.used&&Math.abs(p.x-c.x)<25&&Math.abs(p.y-c.y)<65) {
+   c.used=true;state.checkpoint={x:c.x,y:390,region:state.region};
+   state.hp=100;state.mp=100;
+   toast('Checkpoint activated. Progress secured.',2);
+   saveGame(false);
+  }
+ }
+
+ const gate=m.gates[0];
+ if(p.x>m.width-55&&state.region<5) {
+  p.x=m.width-60;
+  if(gate.open)enterNextRegion();
+  else if(!gate.warned) {
+   gate.warned=true;
+   toast('The far gate is sealed. Press E nearby and meet its requirement.',2.5);
+  }
+ }
+
+ if(state.region===5&&state.bossActive)updateBoss(dt);
+ if(state.toastTime>0)state.toastTime-=dt;
+ updateHUD();
+}
+
+const boss={x:820,y:315,w:76,h:115,phase:1,attack:0,flash:0,dir:-1};
+function bossRect() { return {x:boss.x,y:boss.y,w:boss.w,h:boss.h}; }
+
+function updateBoss(dt) {
+ boss.attack-=dt;
+ boss.flash=Math.max(0,boss.flash-dt);
+ if(state.bossHP<=0) {
+  state.bossActive=false;finishGame();return;
+ }
+ boss.x=clamp(boss.x+boss.dir*35*dt,camX+500,camX+850);
+ if(Math.random()<.008)boss.dir*=-1;
+ if(boss.attack<=0) {
+  boss.attack=state.bossPhase===1?2.4:state.bossPhase===2?1.8:1.25;
+  boss.dir=player.x<boss.x?-1:1;
+  if(state.bossPhase===1) {
+   toast('Guardian Slam! Jump before the shockwave.',1.7);
+   spawnParticles(boss.x+boss.w/2,440,'#a75bff',20);
+  } else if(state.bossPhase===2) {
+   toast('Soul bolts incoming — keep moving!',1.5);
+   for(let i=0;i<3;i++)state.projectiles.push({
+    x:boss.x,y:boss.y+30+i*18,w:15,h:15,
+    vx:(player.x<boss.x?-1:1)*(-250+i*250),life:2,type:'enemy',damage:1
+   });
+  } else {
+   toast('The Well collapses! The center is dangerous.',1.5);
+   spawnParticles(rand(camX+100,camX+850),445,'#5bffba',18);
+  }
+ }
+ const dist=Math.abs(player.x-boss.x);
+ if(dist<75&&boss.attack>0&&boss.attack<.3&&!player.hide)
+  hurt(state.bossPhase===3?24:18,boss.x);
+ if(state.bossPhase===1&&state.bossHP<=67) {
+  state.bossPhase=2;
+  toast('PHASE TWO — the Guardian splits into wandering souls!',3);
+  spawnParticles(boss.x,boss.y,'#8b63ff',32);
+ }
+ if(state.bossPhase===2&&state.bossHP<=33) {
+  state.bossPhase=3;
+  toast('FINAL PHASE — strike the exposed core after each attack!',3);
+  spawnParticles(boss.x,boss.y,'#ff7c35',38);
+ }
+}
+function bossHit(dmg) {
+ if(boss.flash>0)return;
+ boss.flash=.2;
+ state.bossHP=Math.max(0,state.bossHP-(state.flags.auraBurst?dmg*2:dmg));
+ state.aura=clamp(state.aura+4,0,100);
+ spawnParticles(boss.x+boss.w/2,boss.y+40,'#ffb15a',10);
+ beep(120,.1,'sawtooth');
+ if(state.bossHP<=0)toast('The Well Guardian has fallen!',3);
+}
+
+function drawBackground() {
+ const r=regions[state.region];
+ rect(0,0,W,H,r.base);
+ glow(790-camX*.05,88,50,'#c6a2ff');
+ circle(790-camX*.05,88,25,'#e5d9ff');
+
+ for(let layer=0;layer<3;layer++) {
+  const par=.12+layer*.13;
+  ctx.fillStyle=layer===0?r.far:layer===1?'#171321':'#100e18';
+  ctx.beginPath();ctx.moveTo(0,H);
+  for(let x=-80;x<W+100;x+=80) {
+   let y=270+layer*52+Math.sin((x+camX*par)*.012)*32+
+    Math.sin((x+camX*par)*.026)*18;
+   ctx.lineTo(x,y);
+  }
+  ctx.lineTo(W,H);ctx.closePath();ctx.fill();
+ }
+
+ for(let x=-100;x<W+100;x+=115) {
+  let wx=x+(camX*.28%115);
+  const hh=110+((Math.floor((x+1000)/115)*37)%95);
+  rect(wx,360-hh,12,hh+84,'#0a0912');
+  ctx.fillStyle='#100b18';ctx.beginPath();
+  ctx.moveTo(wx-35,370-hh*.55);ctx.lineTo(wx+6,280-hh);
+  ctx.lineTo(wx+45,370-hh*.55);ctx.fill();
+ }
+ for(let x=35;x<W;x+=170) {
+  const y=390+Math.sin(x*.04+tick)*3;
+  glow(x,y,8,'#ff8a32');rect(x-2,y,4,10,'#ffb45d');
+ }
+ for(let i=0;i<24;i++) {
+  const x=((i*97-tick*13-camX*.04)%(W+20)+W+20)%(W+20);
+  const y=(i*67+Math.sin(tick+i)*12)%H;
+  circle(x,y,1.2,'#8c7aa8');
+ }
+}
+
+function drawWorld() {
+ const m=currentMap();
+ for(const s of m.platforms) {
+  const x=s.x-camX;
+  if(x+s.w<0||x>W)continue;
+  rect(x,s.y,s.w,s.h,s.kind==='ground'?regions[state.region].ground:'#39304b');
+  rect(x,s.y,s.w,5,s.kind==='ground'?'#786078':'#9a78a6');
+  for(let bx=x+12;bx<x+s.w;bx+=42)
+   rect(bx,s.y+14,Math.min(18,s.x+s.w-bx),2,'#ffffff0c');
+ }
+
+ for(const t of m.traps) {
+  const x=t.x-camX;
+  if(x+t.w<0||x>W)continue;
+  if(t.type==='pit') {
+   rect(x,444,t.w,100,'#050508');
+   for(let k=0;k<4;k++) {
+    ctx.fillStyle='#ff5b54';ctx.beginPath();
+    ctx.moveTo(x+k*18,444);ctx.lineTo(x+9+k*18,462);
+    ctx.lineTo(x+18+k*18,444);ctx.fill();
+   }
+  } else if(t.type==='spikes') {
+   for(let k=0;k<t.w;k+=13) {
+    ctx.fillStyle=t.active?'#f35d76':'#736078';
+    ctx.beginPath();ctx.moveTo(x+k,t.y+t.h);
+    ctx.lineTo(x+k+7,t.y);ctx.lineTo(x+k+13,t.y+t.h);ctx.fill();
+   }
+  } else if(t.type==='blade') {
+   ctx.save();ctx.translate(x+t.w/2,t.y);
+   ctx.rotate(Math.sin(t.phase*2)*.9);
+   rect(-3,-30,6,60,'#b8b1ca');circle(0,0,7,'#ff8c46');ctx.restore();
+  } else if(t.active) {
+   glow(x+t.w/2,t.y+t.h/2,28,'#b04dff');
+   rect(x,t.y,t.w,t.h,'#8236a855');
+  }
+ }
+
+ for(const it of m.items) {
+  if(it.taken)continue;
+  const x=it.x-camX;
+  if(x<-40||x>W+40)continue;
+  const color=it.type==='key'?'#ffd36b':it.type==='clue'?'#6ee9ff':
+   it.type==='seal'?'#bc72ff':'#ff9e42';
+  glow(x+it.w/2,it.y+it.h/2,13,color);
+  ctx.save();ctx.translate(x+it.w/2,it.y+it.h/2);
+  ctx.rotate(Math.sin(tick*2+it.x)*.12);
+  rect(-it.w/2,-it.h/2,it.w,it.h,color);
+  rect(-it.w/2+4,-it.h/2+4,it.w-8,it.h-8,'#fff2ce');
+  ctx.restore();
+  if(Math.abs(player.x-it.x)<70&&Math.abs(player.y-it.y)<65) {
+   ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff';
+   ctx.fillText(it.label,x+it.w/2,it.y-8);
+  }
+ }
+
+ for(const s of m.signs) {
+  const x=s.x-camX;
+  rect(x+10,s.y,8,42,'#725039');rect(x,s.y,28,18,'#d8a45b');
+  rect(x+4,s.y+5,20,3,'#5b3140');
+  if(Math.abs(player.x-s.x)<75) {
+   ctx.font='12px system-ui';ctx.fillStyle='#fff';ctx.fillText('E: READ',x-8,s.y-9);
+  }
+ }
+
+ for(const c of m.checkpoints) {
+  const x=c.x-camX;
+  glow(x+13,c.y+10,18,c.used?'#8cff9c':'#ff8c46');
+  rect(x+10,c.y,6,42,'#8e6a99');
+  circle(x+13,c.y+7,7,c.used?'#8cff9c':'#ff9c46');
+  if(Math.abs(player.x-c.x)<65) {
+   ctx.font='11px system-ui';ctx.fillStyle='#fff';
+   ctx.fillText(c.used?'CHECKPOINT':'E: BIND',x-18,c.y-9);
+  }
+ }
+
+ for(const g of m.gates) {
+  const x=g.x-camX;
+  rect(x,g.y,g.w,g.h,g.open?'#8cff9c':'#4d2d60');
+  rect(x+6,g.y+6,g.w-12,g.h-12,g.open?'#182b24':'#130d1d');
+  for(let k=0;k<3;k++)
+   rect(x+10+k*12,g.y+10,4,g.h-20,g.open?'#8cff9c':'#9d59c6');
+  if(Math.abs(player.x-g.x)<110) {
+   ctx.font='12px system-ui';ctx.fillStyle='#fff';
+   ctx.fillText(g.open?'PASSAGE OPEN':'E: SEALED GATE',x-30,g.y-10);
+  }
+ }
+
+ for(const e of m.enemies) {
+  if(!e.alive)continue;
+  const x=e.x-camX;
+  if(x<-60||x>W+60)continue;
+  if(e.stun>0)glow(x+15,e.y+20,23,'#9f82ff');
+  const body=e.kind==='armored'?'#776d90':e.kind==='stalker'?'#6b3b65':'#6b8aa5';
+  glow(x+15,e.y+12,17,e.stun>0?'#c1a3ff':'#9e50c8');
+  circle(x+15,e.y+13,13,body);rect(x+5,e.y+22,20,18,body);
+  circle(x+10,e.y+12,2,'#ff5f85');circle(x+20,e.y+12,2,'#ff5f85');
+  rect(x+5,e.y+39,6,5,'#2a2138');rect(x+19,e.y+39,6,5,'#2a2138');
+  rect(x,e.y-8,30,4,'#31283d');
+  rect(x,e.y-8,30*e.hp/e.maxHp,4,'#ff6584');
+ }
+
+ for(const b of state.projectiles) {
+  const x=b.x-camX;
+  if(b.type==='fire') {
+   glow(x+8,b.y+7,18,'#ff792e');
+   rect(x,b.y,b.w,b.h,'#ff8b31');rect(x+5,b.y+3,9,6,'#fff0a3');
+  } else {
+   glow(x+7,b.y+7,16,'#b44dff');circle(x+7,b.y+7,7,'#d99cff');
+  }
+ }
+
+ drawPlayer();
+ if(state.region===5&&state.bossActive)drawBoss();
+
+ for(const q of state.particles) {
+  ctx.globalAlpha=clamp(q.life/q.max,0,1);
+  circle(q.x-camX,q.y,q.r,q.color);
+  ctx.globalAlpha=1;
+ }
+}
+
+function drawPlayer() {
+ const x=player.x-camX,y=player.y,aura=!!state.flags.auraBurst;
+ if(player.inv>0&&Math.floor(tick*18)%2===0)return;
+ if(aura) {glow(x+13,y+19,37,'#ff8c35');glow(x+13,y+19,22,'#a66bff');}
+ if(player.hide) {
+  rect(x+1,y+12,25,13,'#242031');rect(x+7,y+4,14,12,'#d8a6bd');
+  rect(x+8,y+7,11,4,'#17121e');
+ } else {
+  rect(x+5,y+9,17,19,aura?'#ff9b42':'#6d4e8d');
+  rect(x+3,y+27,8,12,'#28243a');rect(x+16,y+27,8,12,'#28243a');
+  rect(x+3,y+37,10,4,'#b1a0c7');rect(x+15,y+37,11,4,'#b1a0c7');
+  circle(x+13,y+6,10,'#d8b1be');rect(x+3,y+1,20,6,'#22162d');
+  rect(x+8,y+7,12,3,'#f3a8bc');
+  rect(x+(player.face>0?16:5),y+10,4,3,'#fff');
+ }
+ if(player.attack>0) {
+  const sx=x+(player.face>0?player.w:-20);
+  glow(sx+10,y+18,18,'#ff9d43');
+  rect(sx,y+12,20,7,'#ffb65d');
+ }
+}
+
+function drawBoss() {
+ const x=boss.x-camX,y=boss.y;
+ glow(x+boss.w/2,y+45,55,state.bossPhase===3?'#ff733a':'#9d4fff');
+ const c=boss.flash>0?'#fff2b8':state.bossPhase===3?'#b34c35':'#4d3c69';
+ circle(x+38,y+23,28,c);rect(x+10,y+44,56,58,c);
+ rect(x+14,y+98,17,17,'#34263f');rect(x+47,y+98,17,17,'#34263f');
+ circle(x+27,y+22,5,'#ff5d87');circle(x+49,y+22,5,'#ff5d87');
+ rect(x+27,y+38,24,4,'#211326');
+ for(let i=0;i<5;i++) {
+  const ax=x+Math.sin(tick*3+i)*45+38,ay=y+45+i*8;
+  circle(ax,ay,4,'#b88aff');
+ }
+ rect(25,24,240,10,'#241b31');
+ rect(25,24,240*state.bossHP/100,10,'#bd5aff');
+ ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';
+ ctx.fillText(`WELL GUARDIAN · PHASE ${state.bossPhase}`,25,18);
+}
+
+function drawOverlayText() {
+ if(state.toastTime>0) {
+  ctx.font='bold 15px system-ui';
+  const width=Math.min(700,ctx.measureText(state.toast).width+40);
+  rect((W-width)/2,80,width,34,'#0a0813dd');
+  ctx.strokeStyle='#79538c';ctx.strokeRect((W-width)/2,80,width,34);
+  ctx.fillStyle='#fff0df';ctx.textAlign='center';
+  ctx.fillText(state.toast,W/2,102);ctx.textAlign='left';
+ }
+ ctx.font='bold 12px system-ui';ctx.fillStyle='#fff';
+ ctx.fillText(regions[state.region].name.toUpperCase(),18,28);
+ ctx.font='11px system-ui';ctx.fillStyle='#c7badc';
+ ctx.fillText(`DISTANCE ${Math.floor(player.x)} / ${regions[state.region].width}`,18,44);
+ if(player.hide){ctx.fillStyle='#8cff9c';ctx.fillText('HIDDEN',W-75,28);}
+}
+function render() {drawBackground();drawWorld();drawOverlayText();}
+
+function updateHUD() {
+ $('hpText').textContent=`${Math.ceil(state.hp)} / 100`;
+ $('hpBar').style.width=state.hp+'%';
+ $('mpText').textContent=`${Math.ceil(state.mp)} / 100`;
+ $('mpBar').style.width=state.mp+'%';
+ $('auraText').textContent=state.flags.auraBurst?'AWAKENED':
+  state.aura>=100?'FULL':state.aura>=35?'READY':'Charging';
+ $('auraBar').style.width=state.aura+'%';
+ $('findText').textContent=`${state.relics.length} / 12 relics`;
+ $('findBar').style.width=Math.min(100,state.relics.length/12*100)+'%';
+ $('objective').innerHTML='<b>◆</b><span>'+regions[state.region].goal+'</span>';
+ $('regionText').innerHTML='<b>MAP</b><span>Region '+(state.region+1)+' / 6: '+regions[state.region].name+'</span>';
+ $('hint').textContent=regions[state.region].tip;
+}
+
+function frame(now) {
+ const dt=Math.min(.033,(now-last)/1000||0);
+ last=now;
+ if(running)update(dt);
+ render();
+ for(const k in pressed)delete pressed[k];
+ requestAnimationFrame(frame);
+}
+
+function start(continueSave=false) {
+ if(continueSave&&!loadGame())toast('No saved journey found. Starting a new adventure.',2);
+ $('startOverlay').classList.add('hidden');
+ running=true;state.dead=false;last=performance.now();
+ if(state.won){state.won=false;state.region=0;}
+ log('The journey begins. Find the trail marker and follow the lanterns.');
+ beep(330,.12);
+ requestAnimationFrame(frame);
+}
+
+function keyDown(e) {
+ const k=e.code;
+ if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k))e.preventDefault();
+ if(!keys[k])pressed[k]=true;
+ keys[k]=true;
+ if(e.repeat)return;
+ if(k==='KeyJ')cast('fire');
+ if(k==='KeyK')cast('seal');
+ if(k==='KeyL')cast('dash');
+ if(k==='KeyQ')cast('aura');
+ if(k==='KeyE')interact();
+}
+function keyUp(e) {keys[e.code]=false;}
+window.addEventListener('keydown',keyDown);
+window.addEventListener('keyup',keyUp);
+
+document.querySelectorAll('[data-hold]').forEach(b=>{
+ const k=b.dataset.hold;
+ b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;});
+ ['pointerup','pointercancel','pointerleave'].forEach(ev=>
+  b.addEventListener(ev,()=>keys[k]=false)
+ );
+});
+document.querySelectorAll('[data-tap]').forEach(b=>b.addEventListener('click',()=>{
+ const a=b.dataset.tap;
+ if(a==='jump')pressed.jump=true;
+ else if(a==='fire')cast('fire');
+ else if(a==='seal')cast('seal');
+ else if(a==='dash')cast('dash');
+ else if(a==='aura')cast('aura');
+ else if(a==='interact')interact();
+}));
+
+$('startBtn').onclick=()=>start(false);
+$('continueBtn').onclick=()=>start(true);
+$('saveBtn').onclick=()=>saveGame(true);
+$('resetBtn').onclick=()=>{
+ if(confirm('Reset all Haunted Well progress in this browser?'))resetGame();
+};
+$('soundBtn').onclick=()=>{
+ sound=!sound;$('soundBtn').textContent='Sound: '+(sound?'On':'Off');
+ if(sound)beep(440,.1);
+};
+$('againBtn').onclick=()=>resetGame();
+window.addEventListener('beforeunload',()=>saveGame(false));
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden&&running)saveGame(false);
+});
+
+updateHUD();
+render();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
