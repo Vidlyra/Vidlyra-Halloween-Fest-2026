@@ -1,59 +1,41 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#05030D">
-    <meta
-        name="description"
-        content="VIDLYRA Halloween Fest 2026 - Day 4: The Witch's Curse"
-    >
+    <meta name="description" content="VIDLYRA Halloween Fest 2026 - Day 4: The Witch's Curse">
 
     <title>VIDLYRA HALLOWEEN FEST 2026 | DAY 4</title>
 
-    <!-- External CSS only -->
     <link rel="stylesheet" href="css/day4-video.css">
 </head>
 
 <body>
 
-    <!-- ==========================================
-         BACKGROUND INTRO VIDEO
-    =========================================== -->
-
+    <!-- Intro video: NO autoplay and NO loop.
+         "loop" would stop the "ended" event from ever firing,
+         and "autoplay" would run the intro behind the start screen. -->
     <video
         id="bgVideo"
         class="bg-video"
-        autoplay
         muted
-        loop
         playsinline
         preload="auto"
+        disablepictureinpicture
         aria-hidden="true"
     >
-        <source
-            src="assets/video/day4.mp4"
-            type="video/mp4"
-        >
-        Your browser does not support HTML video.
+        <source src="assets/video/day4.mp4" type="video/mp4">
     </video>
 
-    <!-- ==========================================
-         START SCREEN
-    =========================================== -->
-
+    <!-- START SCREEN -->
     <div id="startScreen">
-
         <div class="start-content">
 
-            <div class="festival-label">
-                VIDLYRA HALLOWEEN FEST 2026
-            </div>
+            <div class="festival-label">VIDLYRA HALLOWEEN FEST 2026</div>
 
             <h1>DAY 4</h1>
-
             <h2>The Witch's Curse</h2>
 
             <p>
@@ -62,39 +44,26 @@
                 Only their light can reveal the Witch...
             </p>
 
-            <button id="startBtn" type="button">
-                ▶ Start Experience
+            <!-- Disabled until JS has verified login + Day 3 -->
+            <button id="startBtn" type="button" disabled>
+                Checking access…
             </button>
 
-        </div>
+            <div id="statusMsg" class="status-msg" role="status" aria-live="polite"></div>
 
+        </div>
     </div>
 
-    <!-- ==========================================
-         SKIP INTRO BUTTON
-    =========================================== -->
+    <!-- SKIP INTRO -->
+    <button id="skipBtn" type="button">Skip Intro</button>
 
-    <button
-        id="skipBtn"
-        type="button"
-    >
-        Skip Intro
-    </button>
-
-    <!-- ==========================================
-         VIDEO INTRO OVERLAY
-    =========================================== -->
-
+    <!-- VIDEO ENDING OVERLAY -->
     <div id="videoOverlay" hidden>
-
         <div class="overlay-content">
 
-            <div class="overlay-label">
-                VIDLYRA HALLOWEEN FEST 2026
-            </div>
+            <div class="overlay-label">VIDLYRA HALLOWEEN FEST 2026</div>
 
             <h1>DAY 4</h1>
-
             <h2>The Witch's Curse</h2>
 
             <p>
@@ -102,70 +71,28 @@
                 and break the Witch's spell.
             </p>
 
-            <button id="enterGame" type="button">
-                Enter The Forest
-            </button>
+            <button id="enterGame" type="button">Enter The Forest</button>
 
         </div>
-
     </div>
 
-    <!-- ==========================================
-         ATMOSPHERIC EFFECTS
-    =========================================== -->
-
+    <!-- ATMOSPHERIC EFFECTS -->
     <div id="lightning" aria-hidden="true"></div>
-
     <div id="fogLayer" aria-hidden="true"></div>
-
     <div id="magicParticles" aria-hidden="true"></div>
 
-    <!-- ==========================================
-         BACKGROUND MUSIC
-    =========================================== -->
-
-    <audio
-        id="bgMusic"
-        loop
-        preload="auto"
-    >
-        <source
-            src="assets/witch-forest.mp3"
-            type="audio/mpeg"
-        >
+    <!-- AUDIO -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="assets/witch-forest.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- ==========================================
-         THUNDER SOUND
-    =========================================== -->
-
-    <audio
-        id="thunderSound"
-        preload="auto"
-    >
-        <source
-            src="assets/thunder.mp3"
-            type="audio/mpeg"
-        >
+    <audio id="thunderSound" preload="auto">
+        <source src="assets/thunder.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- ==========================================
-         WITCH LAUGH SOUND
-    =========================================== -->
-
-    <audio
-        id="witchLaugh"
-        preload="auto"
-    >
-        <source
-            src="assets/witch-laugh.mp3"
-            type="audio/mpeg"
-        >
+    <audio id="witchLaugh" preload="auto">
+        <source src="assets/witch-laugh.mp3" type="audio/mpeg">
     </audio>
-
-    <!-- ==========================================
-         EXTERNAL JAVASCRIPT ONLY
-    =========================================== -->
 
     <script type="module" src="js/day4-video.js"></script>
 
