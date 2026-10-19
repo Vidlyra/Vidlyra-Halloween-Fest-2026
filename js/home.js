@@ -1,1083 +1,337 @@
-/* =========================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   HOME — CINEMATIC WORLD CONTROLLER
-
-   Handles:
-   • Atmosphere particles
-   • Bats
-   • Lightning
-   • Ambient audio
-   • Story panel
-   • Mobile menu
-   • Navigation
-   • Smooth page transitions
-   • Keyboard controls
-   • Responsive behavior
-========================================================= */
 
 "use strict";
 
+document.addEventListener("DOMContentLoaded", () => {
+  const $ = (selector, root = document) => root.querySelector(selector);
 
-/* =========================================================
-   DOM
-========================================================= */
+  const page = $("#homePage");
+  const video = $("#backgroundVideo");
+  const character = $("#heroCharacter");
+  const characterImage = $("#characterImage");
+  const characterCaption = $("#characterCaptionText");
+  const menuButton = $("#menuButton");
+  const navigation = $("#mainNavigation");
+  const mobileMenu = $("#mobileMenu");
+  const storyPanel = $("#storyPanel");
+  const storyButton = $("#storyButton");
+  const closeStory = $("#closeStory");
+  const storyEnter = $("#storyEnter");
+  const enterButton = $("#enterFestival");
+  const soundButton = $("#soundButton");
+  const soundText = $("#soundText");
+  const ambient = $("#ambient");
+  const thunder = $("#thunder");
+  const transition = $("#transition");
+  const particles = $("#particles");
 
-const $ = (selector, parent = document) =>
-    parent.querySelector(selector);
+  let transformed = false;
+  let lastTap = 0;
+  let soundEnabled = false;
+  let transitionBusy = false;
 
-const $$ = (selector, parent = document) =>
-    [...parent.querySelectorAll(selector)];
+  // Create floating magical particles.
+  if (particles && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const count = window.matchMedia("(max-width: 700px)").matches ? 14 : 30;
+    const fragment = document.createDocumentFragment();
 
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const homePage =
-    $("#homePage");
-
-const lightning =
-    $(".lightning");
-
-const particles =
-    $(".particles");
-
-const bats =
-    $(".bats");
-
-const storyPanel =
-    $(".sidePanel");
-
-const mobileMenu =
-    $(".mobileMenu");
-
-const menuButton =
-    $(".menuButton");
-
-const closePanel =
-    $(".closePanel");
-
-const soundButton =
-    $(".soundStatus button");
-
-const transition =
-    $(".transition");
-
-const ambient =
-    $("#ambient");
-
-
-/* =========================================================
-   CONFIGURATION
-========================================================= */
-
-const CONFIG = {
-
-    particleCount: 42,
-
-    batCount: 8,
-
-    lightningMinDelay: 6500,
-
-    lightningMaxDelay: 15000,
-
-    transitionDelay: 650,
-
-    ambientVolume: 0.28,
-
-    audioFadeDuration: 1200
-
-};
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-const state = {
-
-    audioEnabled: false,
-
-    transitioning: false,
-
-    panelOpen: false,
-
-    menuOpen: false
-
-};
-
-
-/* =========================================================
-   RANDOM
-========================================================= */
-
-function random(min, max) {
-
-    return Math.random() *
-        (max - min) + min;
-
-}
-
-
-/* =========================================================
-   CREATE PARTICLES
-========================================================= */
-
-function createParticles() {
-
-    if (!particles) return;
-
-    const fragment =
-        document.createDocumentFragment();
-
-    for (
-        let i = 0;
-        i < CONFIG.particleCount;
-        i++
-    ) {
-
-        const particle =
-            document.createElement("span");
-
-        particle.className =
-            "particle";
-
-        particle.style.left =
-            `${random(0, 100)}%`;
-
-        particle.style.animationDuration =
-            `${random(10, 24)}s`;
-
-        particle.style.animationDelay =
-            `${random(-20, 0)}s`;
-
-        const size =
-            random(1, 3);
-
-        particle.style.width =
-            `${size}px`;
-
-        particle.style.height =
-            `${size}px`;
-
-        fragment.appendChild(
-            particle
-        );
-
+    for (let i = 0; i < count; i++) {
+      const particle = document.createElement("span");
+      particle.className = "particle";
+      particle.style.left = `${Math.random() * 100}%`;
+      particle.style.animationDuration = `${7 + Math.random() * 12}s`;
+      particle.style.animationDelay = `${Math.random() * 12}s`;
+      particle.style.width = `${1 + Math.random() * 3}px`;
+      particle.style.height = particle.style.width;
+      fragment.appendChild(particle);
     }
 
-    particles.appendChild(
-        fragment
-    );
+    particles.appendChild(fragment);
+  }
 
-}
+  // Background video: autoplay must be muted in most browsers.
+  if (video) {
+    video.muted = true;
+    video.playsInline = true;
 
+    const playVideo = () => {
+      const promise = video.play();
+      if (promise && typeof promise.catch === "function") {
+        promise.catch(() => {
+          // A browser may block autoplay; keep the visual background intact.
+        });
+      }
+    };
 
-/* =========================================================
-   CREATE BATS
-========================================================= */
+    if (video.readyState >= 2) playVideo();
+    else video.addEventListener("canplay", playVideo, { once: true });
 
-function createBats() {
+    video.addEventListener("error", () => {
+      video.classList.add("videoUnavailable");
+      if (page) page.classList.add("noVideo");
+    });
+  }
 
-    if (!bats) return;
+  // Navigation menu.
+  function setMenu(open) {
+    if (!menuButton || !mobileMenu) return;
 
-    const fragment =
-        document.createDocumentFragment();
+    menuButton.setAttribute("aria-expanded", String(open));
+    menuButton.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    mobileMenu.classList.toggle("open", open);
+    mobileMenu.setAttribute("aria-hidden", String(!open));
+  }
 
-    for (
-        let i = 0;
-        i < CONFIG.batCount;
-        i++
-    ) {
+  menuButton?.addEventListener("click", () => {
+    setMenu(menuButton.getAttribute("aria-expanded") !== "true");
+  });
 
-        const bat =
-            document.createElement("span");
+  document.addEventListener("click", (event) => {
+    if (!mobileMenu?.classList.contains("open")) return;
 
-        bat.className =
-            "bat";
+    const insideMenu = mobileMenu.contains(event.target);
+    const isMenuButton = menuButton?.contains(event.target);
 
-        bat.style.top =
-            `${random(7, 43)}%`;
+    if (!insideMenu && !isMenuButton) setMenu(false);
+  });
 
-        bat.style.left =
-            `${random(-10, 90)}%`;
+  // Story panel.
+  function openStory() {
+    setMenu(false);
+    if (!storyPanel) return;
 
-        bat.style.animationDuration =
-            `${random(15, 28)}s`;
+    storyPanel.classList.add("open");
+    storyPanel.setAttribute("aria-hidden", "false");
+    storyPanel.removeAttribute("inert");
+    closeStory?.focus();
+  }
 
-        bat.style.animationDelay =
-            `${random(-25, 0)}s`;
+  function hideStory() {
+    if (!storyPanel) return;
 
-        const scale =
-            random(.55, 1.1);
+    storyPanel.classList.remove("open");
+    storyPanel.setAttribute("aria-hidden", "true");
+    storyPanel.setAttribute("inert", "");
+    storyButton?.focus();
+  }
 
-        bat.style.transform =
-            `scale(${scale})`;
+  storyButton?.addEventListener("click", openStory);
+  closeStory?.addEventListener("click", hideStory);
 
-        fragment.appendChild(
-            bat
-        );
+  storyPanel?.addEventListener("click", (event) => {
+    if (event.target === storyPanel) hideStory();
+  });
 
+  // Character transformation: double-click on desktop, double-tap on touch.
+  function transformCharacter() {
+    if (!character) return;
+
+    transformed = !transformed;
+    character.classList.toggle("is-transformed", transformed);
+    character.classList.remove("transforming");
+
+    // Restart the flash animation.
+    void character.offsetWidth;
+    character.classList.add("transforming");
+
+    if (characterCaption) {
+      characterCaption.textContent = transformed
+        ? "VEIL AWAKENED"
+        : "UNKNOWN PRESENCE";
     }
 
-    bats.appendChild(
-        fragment
-    );
-
-}
-
-
-/* =========================================================
-   LIGHTNING
-========================================================= */
-
-let lightningTimer = null;
-
-
-function triggerLightning() {
-
-    if (!lightning) return;
-
-    lightning.classList.remove(
-        "flash"
-    );
-
-    /*
-       Force browser to restart
-       animation.
-    */
-    void lightning.offsetWidth;
-
-    lightning.classList.add(
-        "flash"
-    );
-
-    /*
-       Occasional double flash.
-    */
-
-    if (Math.random() < .28) {
-
-        setTimeout(() => {
-
-            lightning.classList.remove(
-                "flash"
-            );
-
-            void lightning.offsetWidth;
-
-            lightning.classList.add(
-                "flash"
-            );
-
-        }, 170);
-
+    if (transformed && soundEnabled && thunder) {
+      thunder.currentTime = 0;
+      thunder.play().catch(() => {});
     }
 
-    scheduleLightning();
+    window.setTimeout(() => {
+      character.classList.remove("transforming");
+    }, 750);
+  }
 
-}
+  if (character) {
+    character.addEventListener("dblclick", (event) => {
+      event.preventDefault();
+      transformCharacter();
+    });
 
+    character.addEventListener("pointerup", (event) => {
+      if (event.pointerType === "mouse") return;
 
-function scheduleLightning() {
+      const now = Date.now();
+      if (now - lastTap < 360) {
+        lastTap = 0;
+        transformCharacter();
+      } else {
+        lastTap = now;
+      }
+    });
 
-    clearTimeout(
-        lightningTimer
-    );
+    // Also support keyboard users.
+    character.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        transformCharacter();
+      }
+    });
+  }
 
-    const delay =
-        random(
-            CONFIG.lightningMinDelay,
-            CONFIG.lightningMaxDelay
-        );
-
-    lightningTimer =
-        setTimeout(
-            triggerLightning,
-            delay
-        );
-
-}
-
-
-/* =========================================================
-   AUDIO
-========================================================= */
-
-function setAudioIcon() {
-
-    if (!soundButton) return;
-
-    const icon =
-        $(".soundIcon", soundButton);
-
-    const text =
-        $(".soundText", soundButton);
-
-    if (icon) {
-
-        icon.textContent =
-            state.audioEnabled
-                ? "🔊"
-                : "🔇";
-
-    }
-
-    if (text) {
-
-        text.textContent =
-            state.audioEnabled
-                ? "SOUND ON"
-                : "SOUND OFF";
-
-    }
-
-}
-
-
-function fadeAudio(
-    targetVolume,
-    duration = CONFIG.audioFadeDuration
-) {
-
-    if (!ambient) return;
-
-    const start =
-        ambient.volume;
-
-    const difference =
-        targetVolume - start;
-
-    const startTime =
-        performance.now();
-
-
-    function update(now) {
-
-        const elapsed =
-            now - startTime;
-
-        const progress =
-            Math.min(
-                elapsed / duration,
-                1
-            );
-
-        const eased =
-            1 -
-            Math.pow(
-                1 - progress,
-                3
-            );
-
-        ambient.volume =
-            start +
-            difference * eased;
-
-        if (progress < 1) {
-
-            requestAnimationFrame(
-                update
-            );
-
-        }
-
-    }
-
-    requestAnimationFrame(
-        update
-    );
-
-}
-
-
-async function enableAudio() {
-
+  // Ambient sound is opt-in because browsers block autoplay audio.
+  async function enableSound() {
     if (!ambient) return;
 
     try {
-
-        ambient.volume = 0;
-
-        await ambient.play();
-
-        state.audioEnabled = true;
-
-        fadeAudio(
-            CONFIG.ambientVolume
-        );
-
-        setAudioIcon();
-
-    } catch (error) {
-
-        /*
-           Browser autoplay policies may
-           block audio until user interaction.
-        */
-
-        state.audioEnabled = false;
-
-        setAudioIcon();
-
+      ambient.volume = 0.35;
+      await ambient.play();
+      soundEnabled = true;
+      soundButton?.setAttribute("aria-pressed", "true");
+      if (soundText) soundText.textContent = "SOUND ON";
+    } catch {
+      soundEnabled = false;
+      soundButton?.setAttribute("aria-pressed", "false");
+      if (soundText) soundText.textContent = "TAP TO ENABLE";
     }
-
-}
-
-
-function disableAudio() {
-
-    if (!ambient) return;
-
-    fadeAudio(
-        0,
-        500
-    );
-
-    setTimeout(() => {
-
-        ambient.pause();
-
-        state.audioEnabled = false;
-
-        setAudioIcon();
-
-    }, 520);
-
-}
-
-
-function toggleAudio() {
-
-    if (state.audioEnabled) {
-
-        disableAudio();
-
-    } else {
-
-        enableAudio();
-
-    }
-
-}
-
-
-/* =========================================================
-   STORY PANEL
-========================================================= */
-
-function openStory() {
-
-    if (!storyPanel) return;
-
-    state.panelOpen = true;
-
-    storyPanel.classList.add(
-        "open"
-    );
-
-    document.body.classList.add(
-        "panel-open"
-    );
-
-}
-
-
-function closeStory() {
-
-    if (!storyPanel) return;
-
-    state.panelOpen = false;
-
-    storyPanel.classList.remove(
-        "open"
-    );
-
-    document.body.classList.remove(
-        "panel-open"
-    );
-
-}
-
-
-/* =========================================================
-   MOBILE MENU
-========================================================= */
-
-function openMobileMenu() {
-
-    if (!mobileMenu) return;
-
-    state.menuOpen = true;
-
-    mobileMenu.classList.add(
-        "open"
-    );
-
-    menuButton?.setAttribute(
-        "aria-expanded",
-        "true"
-    );
-
-}
-
-
-function closeMobileMenu() {
-
-    if (!mobileMenu) return;
-
-    state.menuOpen = false;
-
-    mobileMenu.classList.remove(
-        "open"
-    );
-
-    menuButton?.setAttribute(
-        "aria-expanded",
-        "false"
-    );
-
-}
-
-
-function toggleMobileMenu() {
-
-    if (state.menuOpen) {
-
-        closeMobileMenu();
-
-    } else {
-
-        openMobileMenu();
-
-    }
-
-}
-
-
-/* =========================================================
-   PAGE TRANSITION
-========================================================= */
-
-function goToPage(url) {
-
-    if (!url) return;
-
-    if (state.transitioning) return;
-
-    state.transitioning = true;
-
-    closeMobileMenu();
-
-    closeStory();
+  }
+
+  function disableSound() {
+    ambient?.pause();
+    if (thunder) thunder.pause();
+
+    soundEnabled = false;
+    soundButton?.setAttribute("aria-pressed", "false");
+    if (soundText) soundText.textContent = "SOUND OFF";
+  }
+
+  soundButton?.addEventListener("click", () => {
+    if (soundEnabled) disableSound();
+    else enableSound();
+  });
+
+  // Cinematic transition and safe local navigation.
+  function enterRealm(destination) {
+    if (transitionBusy || !destination) return;
+    transitionBusy = true;
+
+    setMenu(false);
+    hideStory();
 
     if (transition) {
-
-        transition.classList.add(
-            "active"
-        );
-
+      transition.classList.add("active");
+      transition.setAttribute("aria-hidden", "false");
     }
 
-    /*
-       Give the cinematic transition
-       time to appear before navigation.
-    */
-
-    setTimeout(() => {
-
-        window.location.href =
-            url;
-
-    }, CONFIG.transitionDelay);
-
-}
-
-
-/* =========================================================
-   NAVIGATION HELPERS
-========================================================= */
-
-function bindNavigation(
-    selector
-) {
-
-    $$(selector).forEach(
-        element => {
-
-            element.addEventListener(
-                "click",
-                () => {
-
-                    const url =
-                        element.dataset.url;
-
-                    if (url) {
-
-                        goToPage(url);
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   ENTER BUTTON
-========================================================= */
-
-const enterButton =
-    $(".enterButton");
-
-if (enterButton) {
-
-    enterButton.addEventListener(
-        "click",
-        () => {
-
-            /*
-               Start music because the user
-               has now interacted with page.
-            */
-
-            if (!state.audioEnabled) {
-
-                enableAudio();
-
-            }
-
-            const target =
-                enterButton.dataset.url ||
-                "map.html";
-
-            goToPage(target);
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   STORY BUTTON
-========================================================= */
-
-const storyButton =
-    $(".storyButton");
-
-if (storyButton) {
-
-    storyButton.addEventListener(
-        "click",
-        () => {
-
-            openStory();
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   CLOSE STORY
-========================================================= */
-
-if (closePanel) {
-
-    closePanel.addEventListener(
-        "click",
-        closeStory
-    );
-
-}
-
-
-/* =========================================================
-   MENU
-========================================================= */
-
-if (menuButton) {
-
-    menuButton.addEventListener(
-        "click",
-        toggleMobileMenu
-    );
-
-}
-
-
-/* =========================================================
-   MOBILE MENU LINKS
-========================================================= */
-
-$$(
-    ".mobileMenu button"
-).forEach(
-    button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                const action =
-                    button.dataset.action;
-
-                if (action === "story") {
-
-                    closeMobileMenu();
-
-                    openStory();
-
-                    return;
-
-                }
-
-                const url =
-                    button.dataset.url;
-
-                if (url) {
-
-                    goToPage(url);
-
-                }
-
-            }
-        );
-
-    }
-);
-
-
-/* =========================================================
-   SOUND
-========================================================= */
-
-if (soundButton) {
-
-    soundButton.addEventListener(
-        "click",
-        toggleAudio
-    );
-
-}
-
-
-/* =========================================================
-   FIRST USER INTERACTION
-========================================================= */
-
-document.addEventListener(
-    "pointerdown",
-    () => {
-
-        /*
-           Do not automatically force audio.
-           Only prepare the browser after interaction.
-        */
-
-        if (
-            !state.audioEnabled &&
-            ambient &&
-            ambient.paused
-        ) {
-
-            /*
-               Audio remains OFF until the
-               user explicitly enables it.
-            */
-
-        }
-
-    },
-    {
-        once: true,
-        passive: true
-    }
-);
-
-
-/* =========================================================
-   KEYBOARD
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        switch (
-            event.key.toLowerCase()
-        ) {
-
-            case "escape":
-
-                if (state.panelOpen) {
-
-                    closeStory();
-
-                }
-
-                if (state.menuOpen) {
-
-                    closeMobileMenu();
-
-                }
-
-                break;
-
-
-            case "m":
-
-                toggleAudio();
-
-                break;
-
-
-            case "enter":
-
-                if (
-                    document.activeElement ===
-                    enterButton
-                ) {
-
-                    enterButton.click();
-
-                }
-
-                break;
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   CLICK OUTSIDE STORY PANEL
-========================================================= */
-
-document.addEventListener(
-    "click",
-    event => {
-
-        if (!state.panelOpen) return;
-
-        if (
-            storyPanel &&
-            storyPanel.contains(event.target)
-        ) {
-
-            return;
-
-        }
-
-        if (
-            storyButton &&
-            storyButton.contains(event.target)
-        ) {
-
-            return;
-
-        }
-
-        closeStory();
-
-    }
-);
-
-
-/* =========================================================
-   RESPONSIVE CLEANUP
-========================================================= */
-
-window.addEventListener(
-    "resize",
-    () => {
-
-        /*
-           Close mobile navigation when
-           returning to desktop.
-        */
-
-        if (
-            window.innerWidth > 760 &&
-            state.menuOpen
-        ) {
-
-            closeMobileMenu();
-
-        }
-
-    },
-    {
-        passive: true
-    }
-);
-
-
-/* =========================================================
-   VISIBILITY
-========================================================= */
-
-document.addEventListener(
-    "visibilitychange",
-    () => {
-
-        if (!ambient) return;
-
-        if (
-            document.hidden
-        ) {
-
-            if (
-                state.audioEnabled
-            ) {
-
-                ambient.pause();
-
-            }
-
-        } else {
-
-            if (
-                state.audioEnabled
-            ) {
-
-                ambient.play()
-                    .catch(() => {});
-
-            }
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   INITIALIZATION
-========================================================= */
-
-function initializeHome() {
-
-    createParticles();
-
-    createBats();
-
-    scheduleLightning();
-
-    setAudioIcon();
-
-    bindNavigation(
-        "[data-url]"
-    );
-
-    /*
-       Small entrance class.
-    */
-
-    if (homePage) {
-
-        requestAnimationFrame(
-            () => {
-
-                homePage.classList.add(
-                    "loaded"
-                );
-
-            }
-        );
-
+    if (soundEnabled && thunder) {
+      thunder.currentTime = 0;
+      thunder.play().catch(() => {});
     }
 
-}
+    window.setTimeout(() => {
+      window.location.href = destination;
+    }, 850);
+  }
 
+  enterButton?.addEventListener("click", () => {
+    enterRealm(enterButton.dataset.url || "map.html");
+  });
 
-/* =========================================================
-   START
-========================================================= */
+  storyEnter?.addEventListener("click", () => {
+    enterRealm("map.html");
+  });
 
-if (
-    document.readyState ===
-    "loading"
-) {
+  // Support both desktop and mobile navigation buttons.
+  document.querySelectorAll("[data-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = button.dataset.target;
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeHome
-    );
-
-} else {
-
-    initializeHome();
-
-}
-
-
-/* =========================================================
-   PUBLIC DEBUG API
-   Useful during development.
-========================================================= */
-
-window.VidlyraHome = {
-
-    lightning:
-        triggerLightning,
-
-    openStory,
-
-    closeStory,
-
-    enableAudio,
-
-    disableAudio,
-
-    goToPage
-
-};
-
-/* =========================================================
-   HERO CHARACTER — SUBTLE PARALLAX
-========================================================= */
-
-(() => {
-    const character = document.getElementById("heroCharacter");
-
-    if (!character) return;
-
-    const reducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-    );
-
-    const finePointer = window.matchMedia(
-        "(hover: hover) and (pointer: fine)"
-    );
-
-    if (reducedMotion.matches || !finePointer.matches) return;
-
-    let frame = 0;
-
-    window.addEventListener("pointermove", (event) => {
-        if (frame) cancelAnimationFrame(frame);
-
-        frame = requestAnimationFrame(() => {
-            const x = (event.clientX / window.innerWidth - 0.5) * 10;
-            const y = (event.clientY / window.innerHeight - 0.5) * 10;
-
-            character.style.setProperty("--character-x", `${x}px`);
-            character.style.setProperty("--character-y", `${y}px`);
-
-            frame = 0;
-        });
-    }, { passive: true });
-
-    window.addEventListener("pointerleave", () => {
-        character.style.setProperty("--character-x", "0px");
-        character.style.setProperty("--character-y", "0px");
+      if (target === "story") {
+        openStory();
+      } else if (target === "map") {
+        enterRealm("map.html");
+      } else if (target === "rewards") {
+        enterRealm("rewards.html");
+      } else if (target === "credits") {
+        enterRealm("credits.html");
+      }
     });
-})();
+  });
+
+  // Keyboard shortcuts.
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setMenu(false);
+      if (storyPanel?.classList.contains("open")) hideStory();
+      return;
+    }
+
+    const tag = event.target?.tagName;
+    if (event.altKey || event.ctrlKey || event.metaKey ||
+        tag === "INPUT" || tag === "TEXTAREA" || tag === "BUTTON" ||
+        tag === "A") return;
+
+    if (event.key === "Enter") {
+      enterRealm("map.html");
+    }
+  });
+
+  // Avoid leaving the page stuck in transition if navigation is interrupted.
+  window.addEventListener("pageshow", () => {
+    transitionBusy = false;
+    transition?.classList.remove("active");
+    transition?.setAttribute("aria-hidden", "true");
+  });
+
+  // A mobile orientation hint: browsers generally require a user gesture
+  // before fullscreen or orientation lock can be requested.
+  async function requestLandscapeMode() {
+    if (!window.matchMedia("(max-width: 900px)").matches) return;
+
+    try {
+      if (document.documentElement.requestFullscreen &&
+          !document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      }
+
+      if (screen.orientation?.lock) {
+        await screen.orientation.lock("landscape");
+      }
+    } catch {
+      // Unsupported or denied: responsive CSS still adapts to the device.
+    }
+  }
+
+  // Long-press brand is not required; orientation is optional via double-tap.
+  // Keep normal single-tap navigation unchanged.
+  const brand = $("#brandHome");
+  let brandTap = 0;
+
+  brand?.addEventListener("pointerup", (event) => {
+    if (event.pointerType === "mouse") return;
+
+    const now = Date.now();
+    if (now - brandTap < 360) {
+      requestLandscapeMode();
+      brandTap = 0;
+    } else {
+      brandTap = now;
+    }
+  });
+
+  // Preserve existing progress display if another feature populates it.
+  const questCounter = $("#questCounter");
+  const secretCounter = $("#secretCounter");
+
+  try {
+    const completed = Number(localStorage.getItem("vidlyraCompletedQuests") || 0);
+    const secrets = Number(localStorage.getItem("vidlyraSecretsFound") || 0);
+
+    if (questCounter && questCounter.textContent.trim() === "0 / 13") {
+      questCounter.textContent = `${Math.min(13, Math.max(0, completed))} / 13`;
+    }
+
+    if (secretCounter && secretCounter.textContent.trim() === "0") {
+      secretCounter.textContent = String(Math.max(0, secrets));
+    }
+  } catch {
+    // Storage may be disabled; default HUD values remain visible.
+  }
+});
