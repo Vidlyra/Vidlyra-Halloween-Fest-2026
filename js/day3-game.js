@@ -1,548 +1,518 @@
-
-/* ==========================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   DAY 3 — THE CURSED FOREST
-   Supabase-integrated game controller
-========================================================== */
-
 import { supabase } from "./supabase.js";
 
-"use strict";
+/* ==========================================
+   CONFIG
+========================================== */
+
+const FESTIVAL = "halloween_2026";
+const LOGIN_URL = "login.html";
+const MAP_URL = "map.html";
+const NEXT_URL = "day4-video.html";   // change to MAP_URL to return to the map instead
+
+const TOTAL = 5;
+const SPEED = 30;        // % of screen per second (same on every refresh rate)
+const INTRO_MS = 4000;
+const SAVE_ATTEMPTS = 3;
+
+const KEY_DIRS = {
+    arrowleft: "left", a: "left",
+    arrowright: "right", d: "right",
+    arrowup: "up", w: "up",
+    arrowdown: "down", s: "down"
+};
+
+const MESSAGES = {
+    1: "The forest whispers...",
+    2: "Something is watching you.",
+    3: "Three crystals awakened.",
+    4: "Only one crystal remains...",
+    5: "The Ancient Gate is awakening..."
+};
+
+const $ = (id) => document.getElementById(id);
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/* ==========================================
+   GAME
+========================================== */
 
 const Game = {
-    crystalsFound: 0,
-    totalCrystals: 5,
+    found: 0,
+    x: 50,
+    y: 8,
+    dir: { left: false, right: false, up: false, down: false },
+
     user: null,
-    festivalReady: false,
-    day3Completed: false,
-    gameStarted: false,
-    canMove: false,
-    playerX: 50,
-    playerY: 18,
-    moveSpeed: 0.35,
-    keys: {},
-    dialogTimer: null,
-    gateOpened: false,
-    portalActivated: false,
-    completionInProgress: false,
-    animationFrame: null,
+    running: false,
+    sequenceStarted: false,
+    saved: false,
+    saving: false,
+    booting: false,
 
-    cache() {
-        const get = id => document.getElementById(id);
+    last: 0,
+    timers: {},
 
-        this.introScreen = get("introScreen");
-        this.player = get("player");
-        this.crystals = document.querySelectorAll(".crystal");
-        this.progressFill = get("progressFill");
-        this.crystalCounter = get("crystalCounter");
-        this.dialogBox = get("dialogBox");
-        this.dialogText = get("dialogText");
-        this.gate = get("ancientGate");
-        this.portal = get("magicPortal");
-        this.dracula = get("dracula");
-        this.missionComplete = get("missionComplete");
-        this.nextBtn = get("nextBtn");
-        this.flash = get("flash");
-        this.lightning = get("lightningFlash");
-        this.screenGlow = get("screenGlow");
-        this.shakeLayer = get("shakeLayer");
-        this.loadingOverlay = get("loadingOverlay");
-        this.loadingFill = get("loadingFill");
+    /* ---------- setup ---------- */
 
-        this.bgMusic = get("bgMusic");
-        this.rainSound = get("rainSound");
-        this.thunderSound = get("thunderSound");
-        this.batSound = get("batSound");
-        this.crystalSound = get("crystalSound");
-        this.gateSound = get("gateSound");
-        this.portalSound = get("portalSound");
-        this.draculaLaugh = get("draculaLaugh");
-        this.missionSound = get("missionSound");
+    init() {
+        this.world = $("gameWorld");
+        this.player = $("player");
+        this.crystals = [...document.querySelectorAll(".crystal")];
+        this.progressFill = $("progressFill");
+        this.counter = $("crystalCounter");
+        this.dialogBox = $("dialogBox");
+        this.dialogText = $("dialogText");
+        this.gate = $("ancientGate");
+        this.portal = $("magicPortal");
+        this.dracula = $("dracula");
+        this.flash = $("flash");
+        this.lightning = $("lightningFlash");
+        this.particles = $("particleContainer");
+        this.intro = $("introScreen");
+        this.introStatus = $("introStatus");
+        this.introHint = $("introHint");
+        this.retryBtn = $("retryBtn");
+        this.complete = $("missionComplete");
+        this.completeText = $("completeText");
+        this.nextBtn = $("nextBtn");
+        this.loading = $("loadingOverlay");
+        this.loadingFill = $("loadingFill");
+
+        this.snd = {
+            music: $("bgMusic"), rain: $("rainSound"), thunder: $("thunderSound"),
+            bats: $("batSound"), crystal: $("crystalSound"), gate: $("gateSound"),
+            portal: $("portalSound"), laugh: $("draculaLaugh"), mission: $("missionSound")
+        };
+
+        if (!this.player || !this.world) {
+            console.error("Day 3: #player or #gameWorld not found.");
+            return;
+        }
+
+        this.render();
+        this.bind();
+        this.boot();
     },
 
-    async init() {
-        this.cache();
-        this.bindEvents();
+    bind() {
+        this.crystals.forEach((crystal) => {
+            crystal.addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.collect(crystal);
+            });
+            crystal.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    this.collect(crystal);
+                }
+            });
+        });
 
-        const allowed = await this.checkFestivalAccess();
+        document.addEventListener("keydown", (e) => {
+            const dir = KEY_DIRS[e.key.toLowerCase()];
+            if (!dir) return;
+            if (e.key.startsWith("Arrow")) e.preventDefault();
+            this.dir[dir] = true;
+        });
 
-        if (!allowed) return;
+        document.addEventListener("keyup", (e) => {
+            const dir = KEY_DIRS[e.key.toLowerCase()];
+            if (dir) this.dir[dir] = false;
+        });
 
-        this.startIntro();
-    },
+        document.querySelectorAll("#dpad button").forEach((btn) => {
+            const dir = btn.dataset.dir;
+            const release = () => {
+                this.dir[dir] = false;
+                btn.classList.remove("pressed");
+            };
 
-    /* ======================================================
-       SUPABASE ACCESS
-    ====================================================== */
+            btn.addEventListener("pointerdown", (e) => {
+                e.preventDefault();
+                this.dir[dir] = true;
+                btn.classList.add("pressed");
+                btn.setPointerCapture?.(e.pointerId);
+            });
+            btn.addEventListener("pointerup", release);
+            btn.addEventListener("pointercancel", release);
+            btn.addEventListener("lostpointercapture", release);
+            btn.addEventListener("contextmenu", (e) => e.preventDefault());
+        });
 
-    async checkFestivalAccess() {
-        try {
-            const {
-                data: { user },
-                error: authError
-            } = await supabase.auth.getUser();
+        const stopAll = () => {
+            Object.keys(this.dir).forEach((k) => (this.dir[k] = false));
+            document.querySelectorAll("#dpad .pressed").forEach((b) => b.classList.remove("pressed"));
+        };
+        window.addEventListener("blur", stopAll);
 
-            if (authError || !user) {
-                window.location.href = "login.html";
-                return false;
+        // Tap the intro to skip it.
+        this.intro.addEventListener("pointerdown", () => {
+            if (this.running) this.hideIntro();
+        });
+
+        // Browsers block audio until a gesture: retry on each gesture until it plays.
+        const gesture = () => {
+            if (!this.running) return;
+            this.ambience(true);
+            if (this.snd.music && !this.snd.music.paused) {
+                ["pointerdown", "keydown"].forEach((t) => document.removeEventListener(t, gesture));
             }
+        };
+        ["pointerdown", "keydown"].forEach((t) => document.addEventListener(t, gesture));
+
+        document.addEventListener("visibilitychange", () => {
+            if (this.running) this.ambience(!document.hidden);
+            if (document.hidden) stopAll();
+        });
+
+        window.addEventListener("pageshow", (e) => { if (e.persisted) location.reload(); });
+
+        this.retryBtn.addEventListener("click", () => this.boot());
+        this.nextBtn.addEventListener("click", () => this.onNext());
+    },
+
+    /* ---------- supabase ---------- */
+
+    async checkAccess() {
+        try {
+            const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+            if (authError || !user) return "login";
 
             this.user = user;
 
             const { data, error } = await supabase
                 .from("festival_progress")
-                .select("day1, day2, day3")
+                .select("day2, day3")
                 .eq("user_id", user.id)
-                .eq("festival", "halloween_2026")
+                .eq("festival", FESTIVAL)
                 .maybeSingle();
 
             if (error) {
                 console.error("Festival progress error:", error);
-                alert("Unable to load festival progress.");
-                window.location.href = "map.html";
-                return false;
+                return "error";
             }
 
-            if (!data) {
-                alert("Festival progress not found.");
-                window.location.href = "map.html";
-                return false;
-            }
+            if (!data || data.day2 !== true) return "locked";
 
-            if (data.day2 !== true) {
-                alert("🔒 Complete Day 2 before entering Day 3.");
-                window.location.href = "map.html";
-                return false;
-            }
+            this.saved = data.day3 === true;
+            return "ok";
 
-            this.day3Completed = data.day3 === true;
-            this.festivalReady = true;
-
-            console.log("🌲 Day 3 access granted.");
-            return true;
         } catch (error) {
             console.error("Day 3 access check failed:", error);
-            alert("Unable to verify festival access.");
-            window.location.href = "map.html";
-            return false;
+            return "error";
         }
     },
 
-    /* ======================================================
-       EVENTS
-    ====================================================== */
+    async boot() {
+        if (this.booting) return;
+        this.booting = true;
 
-    bindEvents() {
-        window.addEventListener("keydown", event => {
-            const key = event.key.toLowerCase();
-            this.keys[key] = true;
+        this.retryBtn.hidden = true;
+        this.setStatus("Checking access…");
 
-            if (
-                ["arrowup", "arrowdown", "arrowleft", "arrowright", " "]
-                    .includes(key)
-            ) {
-                event.preventDefault();
-            }
-        });
+        const status = await this.checkAccess();
 
-        window.addEventListener("keyup", event => {
-            this.keys[event.key.toLowerCase()] = false;
-        });
+        this.booting = false;
 
-        window.addEventListener("blur", () => {
-            this.keys = {};
-        });
-
-        this.crystals.forEach(crystal => {
-            crystal.addEventListener("click", () => {
-                this.collectCrystal(crystal);
-            });
-        });
-
-        if (this.nextBtn) {
-            this.nextBtn.addEventListener("click", () => {
-                this.goToMap();
-            });
-        }
-
-        this.enableTouchControls();
-    },
-
-    /* ======================================================
-       INTRO
-    ====================================================== */
-
-    startIntro() {
-        this.showMessage("Enter the Cursed Forest...");
-
-        setTimeout(() => {
-            if (this.introScreen) {
-                this.introScreen.classList.add("hide");
-            }
-
-            this.startGame();
-        }, 4500);
-    },
-
-    /* ======================================================
-       START GAME
-    ====================================================== */
-
-    startGame() {
-        if (this.gameStarted) return;
-
-        this.gameStarted = true;
-        this.canMove = true;
-
-        if (this.bgMusic) {
-            this.bgMusic.volume = 0.3;
-            this.bgMusic.play().catch(() => {});
-        }
-
-        if (this.rainSound) {
-            this.rainSound.volume = 0.15;
-            this.rainSound.play().catch(() => {});
-        }
-
-        this.showMessage("Collect all five Dark Crystals.");
-        this.gameLoop();
-    },
-
-    /* ======================================================
-       GAME LOOP
-    ====================================================== */
-
-    gameLoop() {
-        if (!this.gameStarted) return;
-
-        if (this.canMove) {
-            this.updatePlayer();
-        }
-
-        this.animationFrame = requestAnimationFrame(() => {
-            this.gameLoop();
-        });
-    },
-
-    /* ======================================================
-       PLAYER MOVEMENT
-    ====================================================== */
-
-    updatePlayer() {
-        if (!this.canMove || !this.player) return;
-
-        if (this.keys.arrowleft || this.keys.a) {
-            this.playerX -= this.moveSpeed;
-        }
-
-        if (this.keys.arrowright || this.keys.d) {
-            this.playerX += this.moveSpeed;
-        }
-
-        if (this.keys.arrowup || this.keys.w) {
-            this.playerY += this.moveSpeed;
-        }
-
-        if (this.keys.arrowdown || this.keys.s) {
-            this.playerY -= this.moveSpeed;
-        }
-
-        this.playerX = Math.max(3, Math.min(96, this.playerX));
-        this.playerY = Math.max(5, Math.min(82, this.playerY));
-
-        this.player.style.left = `${this.playerX}%`;
-        this.player.style.bottom = `${this.playerY}%`;
-    },
-
-    /* ======================================================
-       CRYSTAL COLLECTION
-    ====================================================== */
-
-    collectCrystal(crystal) {
-        if (!crystal || !this.canMove) return;
-        if (crystal.classList.contains("collected")) return;
-
-        crystal.classList.add("collected");
-        crystal.style.pointerEvents = "none";
-        crystal.style.opacity = "0";
-        crystal.style.transform = "scale(0)";
-
-        if (this.crystalSound) {
-            this.crystalSound.currentTime = 0;
-            this.crystalSound.play().catch(() => {});
-        }
-
-        this.crystalsFound++;
-
-        const percentage =
-            (this.crystalsFound / this.totalCrystals) * 100;
-
-        if (this.progressFill) {
-            this.progressFill.style.width = `${percentage}%`;
-        }
-
-        if (this.crystalCounter) {
-            this.crystalCounter.textContent =
-                `💎 Dark Crystals : ${this.crystalsFound} / ${this.totalCrystals}`;
-        }
-
-        const messages = {
-            1: "The forest whispers...",
-            2: "Something is watching you.",
-            3: "Three crystals awakened.",
-            4: "Only one crystal remains...",
-            5: "The Ancient Gate is awakening..."
-        };
-
-        this.showMessage(messages[this.crystalsFound] || "");
-
-        if (this.crystalsFound >= this.totalCrystals) {
-            setTimeout(() => this.openAncientGate(), 1800);
+        if (status === "ok") {
+            this.setStatus("");
+            this.introHint.hidden = false;
+            this.start();
+        } else if (status === "login") {
+            this.setStatus("Please log in to continue…", true);
+            setTimeout(() => location.replace(LOGIN_URL), 1500);
+        } else if (status === "locked") {
+            this.setStatus("🔒 Complete Day 2 before entering Day 3.", true);
+            setTimeout(() => location.replace(MAP_URL), 1800);
+        } else {
+            this.setStatus("Unable to load your progress. Check your connection.", true);
+            this.retryBtn.hidden = false;
         }
     },
 
-    /* ======================================================
-       ANCIENT GATE
-    ====================================================== */
+    // Update only matches a row where Day 2 is done; .select() confirms a row really changed
+    // (a blocked RLS update returns no error and no rows).
+    async save() {
+        if (this.saved) return true;
+        if (this.saving || !this.user) return false;
 
-    openAncientGate() {
-        if (this.gateOpened) return;
-
-        this.gateOpened = true;
-        this.canMove = false;
-
-        if (this.gateSound) {
-            this.gateSound.currentTime = 0;
-            this.gateSound.play().catch(() => {});
-        }
-
-        this.flashScreen();
-        this.shakeScreen();
-
-        if (this.gate) {
-            this.gate.classList.add("open");
-        }
-
-        this.showMessage("THE ANCIENT GATE HAS OPENED.");
-
-        setTimeout(() => this.showDracula(), 2200);
-    },
-
-    /* ======================================================
-       DRACULA
-    ====================================================== */
-
-    showDracula() {
-        if (this.dracula) {
-            this.dracula.classList.add("show");
-        }
-
-        if (this.draculaLaugh) {
-            this.draculaLaugh.currentTime = 0;
-            this.draculaLaugh.play().catch(() => {});
-        }
-
-        this.showMessage("A dark presence guards the path...");
-
-        setTimeout(() => this.activatePortal(), 2500);
-    },
-
-    /* ======================================================
-       PORTAL
-    ====================================================== */
-
-    activatePortal() {
-        if (this.portalActivated) return;
-
-        this.portalActivated = true;
-
-        if (this.portal) {
-            this.portal.classList.add("active");
-        }
-
-        if (this.portalSound) {
-            this.portalSound.currentTime = 0;
-            this.portalSound.play().catch(() => {});
-        }
-
-        this.showMessage("The path to the next chapter is open.");
-
-        setTimeout(() => this.completeDay3(), 2500);
-    },
-
-    /* ======================================================
-       COMPLETE DAY 3 — SUPABASE SAVE
-    ====================================================== */
-
-    async completeDay3() {
-        if (this.completionInProgress) return;
-
-        if (this.day3Completed) {
-            this.showMissionComplete();
-            return;
-        }
-
-        this.completionInProgress = true;
-        this.canMove = false;
-
-        if (!this.user) {
-            this.completionInProgress = false;
-            window.location.href = "login.html";
-            return;
-        }
+        this.saving = true;
 
         try {
-            const { data, error } = await supabase
-                .from("festival_progress")
-                .update({ day3: true })
-                .eq("user_id", this.user.id)
-                .eq("festival", "halloween_2026")
-                .select("day3");
+            for (let attempt = 1; attempt <= SAVE_ATTEMPTS; attempt++) {
+                const { data, error } = await supabase
+                    .from("festival_progress")
+                    .update({ day3: true })
+                    .eq("user_id", this.user.id)
+                    .eq("festival", FESTIVAL)
+                    .eq("day2", true)
+                    .select("day3");
 
-            if (error) {
-                throw error;
+                if (!error && data && data.length > 0) {
+                    this.saved = true;
+                    break;
+                }
+
+                console.error(`Save attempt ${attempt} failed:`, error || "no row updated");
+                await wait(700 * attempt);
             }
-
-            if (!data || data.length === 0) {
-                throw new Error(
-                    "No progress row was updated. Check the row and RLS policies."
-                );
-            }
-
-            this.day3Completed = true;
-
-            if (this.missionSound) {
-                this.missionSound.currentTime = 0;
-                this.missionSound.play().catch(() => {});
-            }
-
-            this.showMessage("🌲 DAY 3 COMPLETE!");
-
-            setTimeout(() => {
-                this.showMissionComplete();
-            }, 1200);
         } catch (error) {
-            console.error("DAY 3 SAVE ERROR:", error);
-            this.showMessage("⚠️ Could not save Day 3 progress.");
+            console.error("Save crashed:", error);
+        } finally {
+            this.saving = false;
+        }
 
-            // Allow the save attempt to be retried.
-            this.completionInProgress = false;
+        return this.saved;
+    },
+
+    /* ---------- start ---------- */
+
+    start() {
+        this.running = true;
+        this.createParticles();
+        this.ambience(true);
+        this.startWeather();
+
+        this.timers.intro = setTimeout(() => this.hideIntro(), INTRO_MS);
+        this.last = performance.now();
+        requestAnimationFrame((t) => this.frame(t));
+    },
+
+    hideIntro() {
+        clearTimeout(this.timers.intro);
+        this.intro.classList.add("hide");
+        this.message(
+            this.saved
+                ? "✨ Day 3 already complete. Replay if you like!"
+                : "Collect all five Dark Crystals.",
+            3500
+        );
+    },
+
+    setStatus(text, isError = false) {
+        this.introStatus.textContent = text;
+        this.introStatus.classList.toggle("error", isError);
+    },
+
+    /* ---------- game loop ---------- */
+
+    frame(now) {
+        const dt = Math.min((now - this.last) / 1000, 0.05);
+        this.last = now;
+
+        if (this.running && !this.sequenceStarted && !document.hidden) {
+            const dx = this.dir.right - this.dir.left;
+            const dy = this.dir.up - this.dir.down;
+
+            if (dx || dy) {
+                const step = (SPEED * dt) / Math.hypot(dx, dy);
+
+                this.x = Math.max(3, Math.min(96, this.x + dx * step));
+                this.y = Math.max(5, Math.min(82, this.y + dy * step));
+
+                this.render();
+                this.checkTouching();
+            }
+        }
+
+        requestAnimationFrame((t) => this.frame(t));
+    },
+
+    render() {
+        this.player.style.left = `${this.x}%`;
+        this.player.style.bottom = `${this.y}%`;
+    },
+
+    // Walking into a crystal collects it (tapping works too).
+    checkTouching() {
+        const p = this.player.getBoundingClientRect();
+        const px = p.left + p.width / 2;
+        const py = p.top + p.height / 2;
+
+        for (const crystal of this.crystals) {
+            if (crystal.classList.contains("collected")) continue;
+
+            const r = crystal.getBoundingClientRect();
+            const dist = Math.hypot(px - (r.left + r.width / 2), py - (r.top + r.height / 2));
+
+            if (dist < (p.width + r.width) * 0.4) this.collect(crystal);
         }
     },
 
-    /* ======================================================
-       MISSION COMPLETE SCREEN
-    ====================================================== */
+    /* ---------- crystals ---------- */
 
-    showMissionComplete() {
-        if (this.missionComplete) {
-            this.missionComplete.classList.add("show");
+    collect(crystal) {
+        if (!this.running || this.sequenceStarted || crystal.classList.contains("collected")) return;
+
+        crystal.classList.add("collected");
+        this.play(this.snd.crystal);
+
+        this.found = Math.min(this.found + 1, TOTAL);
+        this.progressFill.style.width = `${(this.found / TOTAL) * 100}%`;
+        this.counter.textContent = `💎 Dark Crystals : ${this.found} / ${TOTAL}`;
+        this.message(MESSAGES[this.found] || "");
+
+        if (this.found >= TOTAL) {
+            this.sequenceStarted = true;
+            Object.keys(this.dir).forEach((k) => (this.dir[k] = false));
+            this.finalSequence();
         }
     },
 
-    /* ======================================================
-       DIALOG
-    ====================================================== */
+    /* ---------- final sequence ---------- */
 
-    showMessage(message) {
-        if (!this.dialogBox || !this.dialogText) return;
+    async finalSequence() {
+        await wait(1800);
 
-        this.dialogText.textContent = message;
+        this.play(this.snd.gate);
+        this.flashScreen();
+        this.shakeScreen();
+        this.gate?.classList.add("open");
+        this.message("THE ANCIENT GATE HAS OPENED.");
+        await wait(2200);
+
+        this.dracula?.classList.add("active");
+        this.play(this.snd.laugh);
+        this.message("A dark presence guards the path...");
+        await wait(2500);
+
+        this.portal?.classList.add("active");
+        this.play(this.snd.portal);
+        this.message("The path to the next chapter is open.");
+        await wait(2500);
+
+        await this.finish();
+    },
+
+    async finish() {
+        const ok = await this.save();
+
+        this.completeText.textContent = ok
+            ? "The Ancient Gate has opened."
+            : "The gate is open, but your progress could not be saved. Check your connection and retry.";
+
+        this.nextBtn.textContent = ok ? "Continue to Day 4" : "↻ Retry Saving";
+        this.nextBtn.disabled = false;
+
+        this.complete.classList.add("show");
+        this.complete.setAttribute("aria-hidden", "false");
+
+        if (ok) {
+            this.play(this.snd.mission);
+            this.message("🌲 DAY 3 COMPLETE!", 3000);
+        }
+    },
+
+    async onNext() {
+        if (this.saved) {
+            this.navigate(NEXT_URL);
+            return;
+        }
+
+        this.nextBtn.disabled = true;
+        this.nextBtn.textContent = "Saving…";
+        await this.finish();
+    },
+
+    navigate(url) {
+        this.nextBtn.disabled = true;
+        this.loading.classList.add("show");
+        void this.loading.offsetWidth;
+        this.loadingFill.style.width = "100%";
+        setTimeout(() => { location.href = url; }, 1000);
+    },
+
+    /* ---------- effects ---------- */
+
+    message(text, duration = 2800) {
+        if (!text) return;
+
+        this.dialogText.textContent = text;
         this.dialogBox.classList.add("show");
 
-        clearTimeout(this.dialogTimer);
-
-        this.dialogTimer = setTimeout(() => {
-            this.dialogBox.classList.remove("show");
-        }, 2800);
+        clearTimeout(this.timers.msg);
+        this.timers.msg = setTimeout(() => this.dialogBox.classList.remove("show"), duration);
     },
-
-    /* ======================================================
-       SCREEN EFFECTS
-    ====================================================== */
 
     flashScreen() {
-        if (!this.flash) return;
-
         this.flash.classList.add("active");
-
-        setTimeout(() => {
-            this.flash.classList.remove("active");
-        }, 500);
-    },
-
-    lightningFlash() {
-        if (!this.lightning) return;
-
-        this.lightning.classList.add("active");
-
-        if (this.thunderSound) {
-            this.thunderSound.currentTime = 0;
-            this.thunderSound.play().catch(() => {});
-        }
-
-        setTimeout(() => {
-            this.lightning.classList.remove("active");
-        }, 350);
+        setTimeout(() => this.flash.classList.remove("active"), 500);
     },
 
     shakeScreen() {
-        if (!this.shakeLayer) return;
-
-        this.shakeLayer.classList.add("active");
-
-        setTimeout(() => {
-            this.shakeLayer.classList.remove("active");
-        }, 900);
+        this.world.classList.add("shake");
+        setTimeout(() => this.world.classList.remove("shake"), 1300);
     },
 
-    /* ======================================================
-       MOBILE TOUCH
-    ====================================================== */
+    strike() {
+        this.lightning.classList.remove("active");
+        void this.lightning.offsetWidth;
+        this.lightning.classList.add("active");
+        this.play(this.snd.thunder);
+        setTimeout(() => this.lightning.classList.remove("active"), 500);
+    },
 
-    enableTouchControls() {
-        let startX = 0;
-        let startY = 0;
-
-        window.addEventListener("touchstart", event => {
-            if (!event.touches || !event.touches[0]) return;
-
-            startX = event.touches[0].clientX;
-            startY = event.touches[0].clientY;
-        }, { passive: true });
-
-        window.addEventListener("touchmove", event => {
-            if (!this.canMove || !event.touches || !event.touches[0]) {
-                return;
+    startWeather() {
+        const loop = () => {
+            if (this.running && !document.hidden && !this.sequenceStarted && Math.random() > 0.4) {
+                this.strike();
             }
+            this.timers.weather = setTimeout(loop, 9000 + Math.random() * 10000);
+        };
 
-            const currentX = event.touches[0].clientX;
-            const currentY = event.touches[0].clientY;
-
-            this.playerX += (currentX - startX) * 0.012;
-            this.playerY -= (currentY - startY) * 0.012;
-
-            this.playerX = Math.max(3, Math.min(96, this.playerX));
-            this.playerY = Math.max(5, Math.min(82, this.playerY));
-
-            startX = currentX;
-            startY = currentY;
-        }, { passive: true });
+        clearTimeout(this.timers.weather);
+        this.timers.weather = setTimeout(loop, 6000);
     },
 
-    /* ======================================================
-       RETURN TO MAP
-    ====================================================== */
+    createParticles() {
+        const frag = document.createDocumentFragment();
 
-    goToMap() {
-        window.location.href = "map.html";
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement("span");
+            const size = 2 + Math.random() * 4;
+
+            p.className = "day3-particle";
+            p.style.cssText =
+                `left:${Math.random() * 100}%;top:${Math.random() * 100}%;` +
+                `width:${size}px;height:${size}px;opacity:${0.25 + Math.random() * 0.6};` +
+                `animation:day3ParticleFloat ${4 + Math.random() * 8}s ease-in-out infinite alternate`;
+
+            frag.appendChild(p);
+        }
+
+        this.particles.replaceChildren(frag);
+    },
+
+    /* ---------- audio ---------- */
+
+    play(audio) {
+        if (!audio) return;
+
+        try {
+            audio.currentTime = 0;
+            audio.play()?.catch((e) => console.warn(`Audio blocked: ${audio.id}`, e.message));
+        } catch (e) {
+            console.warn("Audio error:", e);
+        }
+    },
+
+    ambience(on) {
+        [[this.snd.music, 0.3], [this.snd.rain, 0.15]].forEach(([audio, volume]) => {
+            if (!audio) return;
+
+            if (on) {
+                audio.volume = volume;
+                audio.play()?.catch(() => {});   // retried on the next tap/key
+            } else {
+                audio.pause();
+            }
+        });
     }
 };
 
-/* ==========================================================
-   START
-========================================================== */
-
-document.addEventListener("DOMContentLoaded", () => {
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => Game.init(), { once: true });
+} else {
     Game.init();
-});
+}
