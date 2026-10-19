@@ -1,65 +1,121 @@
 
-/* =========================================================
-   VIDLYRA HALLOWEEN FEST 2026
-   REAL CHARACTER INTEGRATION
-   File: js/vidlyra-character.js
-   ========================================================= */
+/* ==========================================================
+   VIDLYRA CHARACTER ENGINE
+   Halloween Fest 2026
+   Double-tap transformation + responsive visual effects
+   ========================================================== */
 
 (() => {
     "use strict";
 
-    const CONFIG = {
-        mainImage: "assets/character/vidlyra-main.png",
-        awakenedImage: "assets/character/vidlyra-awakened.png",
-        rageImage: "assets/character/vidlyra-rage.png",
-        portraitImage: "assets/character/vidlyra-portrait.png",
-        enableMouseParallax: true,
-        enableParticles: true
+    const ASSETS = {
+        character: {
+            idle: "assets/character/vidlyra-main.png",
+            awakened: "assets/character/vidlyra-awakened.png",
+            rage: "assets/character/vidlyra-rage.png",
+            left: "assets/character/vidlyra-left.png",
+            right: "assets/character/vidlyra-right.png",
+            portrait: "assets/character/vidlyra-portrait.png",
+            sprites: "assets/character/vidlyra-sprites.png"
+        },
+
+        backgrounds: {
+            video: "assets/backgrounds/vidlyra-background.mp4",
+            poster: "assets/backgrounds/vidlyra-poster.png",
+            castle: "assets/backgrounds/haunted-castle.png",
+            overlay: "assets/backgrounds/dark-overlay.png"
+        },
+
+        effects: {
+            blueAura: "assets/effects/blue-aura.png",
+            orangeAura: "assets/effects/orange-aura.png",
+            rageBurst: "assets/effects/rage-burst.png",
+            magicCircle: "assets/effects/magic-circle.png",
+            lightning: "assets/effects/lightning.png",
+            ember: "assets/effects/ember.png",
+            fog: "assets/effects/fog.png",
+            particles: "assets/effects/energy-particles.png"
+        },
+
+        ui: {
+            logo: "assets/ui/vidlyra-logo.png",
+            avatar: "assets/ui/default-avatar.png",
+            transformIcon: "assets/ui/transformation-icon.png",
+            cursor: "assets/ui/cursor-glow.png"
+        },
+
+        audio: {
+            ambient: "assets/audio/ambient.mp3",
+            awakening: "assets/audio/awakening.mp3",
+            rage: "assets/audio/rage.mp3",
+            transform: "assets/audio/transformation.mp3",
+            click: "assets/audio/button-click.mp3"
+        }
     };
 
-    const MODES = {
+    const STATES = ["idle", "awakened", "rage"];
+
+    const SETTINGS = {
+        doubleTapWindow: 360,
+        effectDuration: 1100,
+        particleCount: 24,
+        audioEnabled: true,
+        particlesEnabled: true,
+        parallaxEnabled: true
+    };
+
+    let root = null;
+    let character = null;
+    let effectLayer = null;
+    let aura = null;
+    let caption = null;
+    let controls = null;
+    let stateLabel = null;
+    let lastTapTime = 0;
+    let currentState = "idle";
+    let transformTimer = null;
+    let pointerFrame = null;
+    let initialized = false;
+
+    const audioPlayers = {};
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    );
+
+    const stateInfo = {
         idle: {
-            label: "IDLE",
-            image: CONFIG.mainImage,
-            aura: "blue",
-            description: "THE UNKNOWN PRESENCE"
+            title: "THE UNKNOWN PRESENCE",
+            color: "blue",
+            image: ASSETS.character.idle,
+            sound: ASSETS.audio.ambient
         },
         awakened: {
-            label: "AWAKENED",
-            image: CONFIG.awakenedImage,
-            aura: "blue",
-            description: "AN ANCIENT POWER AWAKENS"
+            title: "AN ANCIENT POWER AWAKENS",
+            color: "blue",
+            image: ASSETS.character.awakened,
+            sound: ASSETS.audio.awakening
         },
         rage: {
-            label: "RAGE",
-            image: CONFIG.rageImage,
-            aura: "orange",
-            description: "UNLEASH THE FORBIDDEN POWER"
+            title: "UNLEASH THE FORBIDDEN POWER",
+            color: "orange",
+            image: ASSETS.character.rage,
+            sound: ASSETS.audio.rage
         }
     };
 
-    let root;
-    let image;
-    let aura;
-    let modeLabel;
-    let caption;
-    let particleLayer;
-    let activeMode = "idle";
-    let mouseFrame = null;
-
-    function injectStyles() {
-        if (document.getElementById("vidlyra-character-styles")) {
-            return;
-        }
+    function addStyles() {
+        if (document.getElementById("vl-engine-styles")) return;
 
         const style = document.createElement("style");
-        style.id = "vidlyra-character-styles";
+        style.id = "vl-engine-styles";
 
         style.textContent = `
             .heroCharacter {
-                overflow: visible !important;
-                pointer-events: none;
+                position: relative;
                 isolation: isolate;
+                overflow: visible !important;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
             }
 
             .heroCharacter .characterFigure,
@@ -69,286 +125,307 @@
             .heroCharacter .characterNeck,
             .heroCharacter .characterCloak,
             .heroCharacter .cloakShoulder,
-            .heroCharacter .cloakPendant,
-            .heroCharacter .characterHalo {
+            .heroCharacter .cloakPendant {
                 display: none !important;
             }
 
-            .heroCharacter .characterAura {
-                border-color: rgba(60, 190, 255, .35);
-                box-shadow:
-                    0 0 55px rgba(30, 140, 255, .22),
-                    inset 0 0 45px rgba(30, 140, 255, .13);
-            }
-
-            .heroCharacter.vl-mode-orange .characterAura {
-                border-color: rgba(255, 105, 0, .42);
-                box-shadow:
-                    0 0 65px rgba(255, 80, 0, .28),
-                    inset 0 0 45px rgba(255, 80, 0, .15);
-            }
-
-            .vl-character-image {
-                position: absolute;
-                z-index: 4;
-                left: 50%;
-                bottom: 2%;
-                width: 100%;
-                height: 96%;
-                object-fit: contain;
-                object-position: center bottom;
-                transform: translateX(-50%);
-                filter:
-                    drop-shadow(0 0 18px rgba(36, 155, 255, .24));
-                animation: vlCharacterFloat 5s ease-in-out infinite;
-                transition:
-                    filter .5s ease,
-                    opacity .35s ease,
-                    transform .5s ease;
-                user-select: none;
-                -webkit-user-drag: none;
-            }
-
-            .heroCharacter.vl-mode-orange .vl-character-image {
-                filter:
-                    drop-shadow(0 0 22px rgba(255, 75, 0, .48));
-            }
-
-            .heroCharacter.vl-switching .vl-character-image {
-                opacity: .15;
-                transform: translateX(-50%) scale(.96);
-            }
-
-            .vl-character-aura {
-                position: absolute;
-                z-index: 2;
-                left: 50%;
-                top: 38%;
-                width: 86%;
-                aspect-ratio: 1;
-                border-radius: 50%;
-                transform: translate(-50%, -50%);
-                background: radial-gradient(
-                    circle,
-                    rgba(40, 145, 255, .2),
-                    rgba(40, 145, 255, .07) 38%,
-                    transparent 72%
-                );
-                filter: blur(16px);
-                pointer-events: none;
-                animation: vlAuraPulse 4s ease-in-out infinite;
-            }
-
-            .heroCharacter.vl-mode-orange .vl-character-aura {
-                background: radial-gradient(
-                    circle,
-                    rgba(255, 95, 0, .27),
-                    rgba(255, 45, 0, .08) 42%,
-                    transparent 72%
-                );
-            }
-
-            .vl-character-particles {
+            .vl-engine-character {
                 position: absolute;
                 z-index: 5;
                 inset: 0;
-                overflow: hidden;
-                pointer-events: none;
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                object-position: center bottom;
+                user-select: none;
+                -webkit-user-drag: none;
+                cursor: pointer;
+                outline: none;
+                filter: drop-shadow(0 0 18px rgba(50,160,255,.25));
+                transform-origin: center bottom;
+                animation: vl-float 4.8s ease-in-out infinite;
+                transition:
+                    opacity .22s ease,
+                    filter .35s ease,
+                    transform .35s ease;
             }
 
-            .vl-character-particle {
+            .vl-engine-character:focus-visible {
+                filter:
+                    drop-shadow(0 0 24px #38aaff)
+                    drop-shadow(0 0 4px #fff);
+            }
+
+            .vl-engine-character:active {
+                transform: scale(.985);
+            }
+
+            .heroCharacter.vl-orange .vl-engine-character {
+                filter:
+                    drop-shadow(0 0 24px rgba(255,95,0,.65))
+                    drop-shadow(0 0 7px rgba(255,150,30,.4));
+            }
+
+            .heroCharacter.vl-transforming .vl-engine-character {
+                opacity: .15;
+                transform: scale(.90);
+            }
+
+            .vl-engine-aura {
                 position: absolute;
-                bottom: 4%;
-                width: 3px;
-                height: 3px;
+                z-index: 2;
+                width: 95%;
+                aspect-ratio: 1;
+                left: 50%;
+                top: 42%;
+                transform: translate(-50%, -50%);
+                pointer-events: none;
                 border-radius: 50%;
-                background: #8bdcff;
-                box-shadow: 0 0 10px #299fff;
-                animation: vlParticleRise var(--duration, 5s) linear infinite;
-                animation-delay: var(--delay, 0s);
+                background: radial-gradient(
+                    circle,
+                    rgba(35,155,255,.25) 0%,
+                    rgba(25,105,255,.09) 42%,
+                    transparent 72%
+                );
+                animation: vl-aura 3.5s ease-in-out infinite;
+            }
+
+            .heroCharacter.vl-orange .vl-engine-aura {
+                background: radial-gradient(
+                    circle,
+                    rgba(255,80,0,.34) 0%,
+                    rgba(255,40,0,.12) 42%,
+                    transparent 72%
+                );
+            }
+
+            .vl-engine-effect {
+                position: absolute;
+                z-index: 8;
+                inset: -10%;
+                overflow: hidden;
+                pointer-events: none;
                 opacity: 0;
             }
 
-            .heroCharacter.vl-mode-orange .vl-character-particle {
-                background: #ff8a00;
-                box-shadow: 0 0 12px #ff5200;
+            .vl-engine-effect.vl-flash {
+                animation: vl-flash .9s ease-out both;
             }
 
-            .vl-character-controls {
+            .vl-engine-effect img {
                 position: absolute;
-                z-index: 80;
-                right: 0;
-                bottom: 28px;
-                display: flex;
-                justify-content: flex-end;
-                flex-wrap: wrap;
-                gap: 6px;
-                pointer-events: auto;
+                width: 100%;
+                height: 100%;
+                inset: 0;
+                object-fit: contain;
+                opacity: .85;
             }
 
-            .vl-character-mode {
-                min-width: 76px;
-                padding: 9px 11px;
-                color: rgba(255,255,255,.72);
-                background: rgba(3,8,18,.78);
-                border: 1px solid rgba(100,170,255,.28);
-                font: 600 8px/1.2 "Segoe UI", Arial, sans-serif;
-                letter-spacing: .12em;
-                cursor: pointer;
-                backdrop-filter: blur(10px);
-                transition: .25s ease;
-            }
-
-            .vl-character-mode:hover,
-            .vl-character-mode[aria-pressed="true"] {
-                color: #fff;
-                border-color: #48bfff;
-                background: rgba(20,95,155,.42);
-                box-shadow: 0 0 18px rgba(35,145,255,.2);
-            }
-
-            .heroCharacter.vl-mode-orange .vl-character-mode[aria-pressed="true"] {
-                border-color: #ff7a18;
-                background: rgba(130,40,0,.42);
-                box-shadow: 0 0 18px rgba(255,80,0,.22);
-            }
-
-            .vl-character-caption {
+            .vl-engine-particle {
                 position: absolute;
-                z-index: 6;
+                left: var(--x);
+                bottom: 8%;
+                width: var(--size);
+                height: var(--size);
+                border-radius: 50%;
+                background: #75d7ff;
+                box-shadow: 0 0 12px #269cff;
+                opacity: 0;
+                animation: vl-rise var(--duration) ease-out var(--delay) infinite;
+            }
+
+            .heroCharacter.vl-orange .vl-engine-particle {
+                background: #ff9b38;
+                box-shadow: 0 0 12px #ff4c00;
+            }
+
+            .vl-engine-caption {
+                position: absolute;
+                z-index: 12;
                 left: 50%;
                 bottom: 4px;
                 transform: translateX(-50%);
                 width: max-content;
                 max-width: 100%;
-                color: rgba(180,220,255,.82);
-                font: 600 7px/1.4 "Segoe UI", Arial, sans-serif;
-                letter-spacing: .18em;
                 text-align: center;
-                text-shadow: 0 0 12px rgba(40,145,255,.6);
+                font: 700 8px/1.5 system-ui, sans-serif;
+                letter-spacing: .16em;
+                color: #b8e5ff;
+                text-shadow: 0 0 12px #249bff;
                 pointer-events: none;
             }
 
-            .heroCharacter.vl-mode-orange .vl-character-caption {
-                color: rgba(255,175,115,.9);
-                text-shadow: 0 0 12px rgba(255,75,0,.65);
+            .heroCharacter.vl-orange .vl-engine-caption {
+                color: #ffc18c;
+                text-shadow: 0 0 12px #ff5a00;
             }
 
-            .vl-character-caption::before {
-                content: "";
-                display: inline-block;
-                width: 5px;
-                height: 5px;
-                margin-right: 7px;
-                border-radius: 50%;
-                background: currentColor;
-                box-shadow: 0 0 8px currentColor;
-                vertical-align: 1px;
+            .vl-engine-controls {
+                position: absolute;
+                z-index: 20;
+                bottom: 28px;
+                right: 0;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                gap: 5px;
+                pointer-events: auto;
             }
 
-            .heroCharacter .characterGroundGlow {
+            .vl-engine-button {
+                border: 1px solid rgba(85,175,255,.36);
+                padding: 9px 10px;
+                color: #d8efff;
+                background: rgba(5,10,22,.82);
+                font: 700 8px/1.2 system-ui, sans-serif;
+                letter-spacing: .12em;
+                cursor: pointer;
+                touch-action: manipulation;
+                backdrop-filter: blur(8px);
+                transition: background .2s, border-color .2s;
+            }
+
+            .vl-engine-button[aria-pressed="true"],
+            .vl-engine-button:hover {
+                border-color: #55bdff;
+                background: rgba(20,100,170,.55);
+            }
+
+            .heroCharacter.vl-orange .vl-engine-button[aria-pressed="true"] {
+                border-color: #ff7b19;
+                background: rgba(130,45,0,.55);
+            }
+
+            .vl-engine-hint {
+                position: absolute;
+                z-index: 15;
+                top: 4px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: max-content;
+                max-width: 100%;
+                color: rgba(190,220,255,.72);
+                font: 600 7px/1.4 system-ui, sans-serif;
+                letter-spacing: .12em;
+                text-align: center;
+                pointer-events: none;
+            }
+
+            .vl-engine-logo {
+                max-width: 100%;
+                height: auto;
+                object-fit: contain;
+            }
+
+            .vl-engine-cursor {
+                position: fixed;
+                z-index: 9999;
+                width: 24px;
+                height: 24px;
+                pointer-events: none;
+                transform: translate(-50%,-50%);
                 background: radial-gradient(
-                    ellipse,
-                    rgba(35,145,255,.24),
+                    circle,
+                    rgba(50,170,255,.25),
                     transparent 70%
-                ) !important;
+                );
             }
 
-            .heroCharacter.vl-mode-orange .characterGroundGlow {
-                background: radial-gradient(
-                    ellipse,
-                    rgba(255,75,0,.28),
-                    transparent 70%
-                ) !important;
+            @keyframes vl-float {
+                0%,100% { translate: 0 0; }
+                50% { translate: 0 -6px; }
             }
 
-            @keyframes vlCharacterFloat {
-                0%, 100% {
-                    margin-bottom: 0;
-                    translate: 0 0;
-                }
-                50% {
-                    margin-bottom: 7px;
-                    translate: 0 -3px;
-                }
-            }
-
-            @keyframes vlAuraPulse {
-                0%, 100% { opacity: .55; scale: .96; }
+            @keyframes vl-aura {
+                0%,100% { opacity: .55; scale: .96; }
                 50% { opacity: 1; scale: 1.06; }
             }
 
-            @keyframes vlParticleRise {
+            @keyframes vl-flash {
                 0% {
                     opacity: 0;
-                    transform: translate(0, 0) scale(.6);
+                    transform: scale(.35) rotate(-12deg);
                 }
-                15% { opacity: .85; }
-                85% { opacity: .65; }
+                25% { opacity: 1; }
+                65% {
+                    opacity: .75;
+                    transform: scale(1.05) rotate(4deg);
+                }
                 100% {
                     opacity: 0;
-                    transform: translate(var(--drift, 18px), -420px) scale(0);
+                    transform: scale(1.3) rotate(10deg);
+                }
+            }
+
+            @keyframes vl-rise {
+                0% {
+                    opacity: 0;
+                    transform: translate(0,0) scale(.5);
+                }
+                20% { opacity: .9; }
+                100% {
+                    opacity: 0;
+                    transform: translate(var(--drift),-240px) scale(0);
                 }
             }
 
             @media (max-width: 760px) {
                 .heroCharacter {
-                    right: -2% !important;
-                    bottom: 9% !important;
-                    width: clamp(155px, 43vw, 245px) !important;
-                    height: 48vh !important;
-                    opacity: .88 !important;
+                    max-width: 48vw;
+                    max-height: 54vh;
                 }
 
-                .vl-character-controls {
+                .vl-engine-controls {
                     right: 0;
-                    bottom: 17px;
+                    bottom: 16px;
                     gap: 4px;
                 }
 
-                .vl-character-mode {
-                    min-width: 0;
-                    padding: 7px 8px;
+                .vl-engine-button {
+                    padding: 8px;
                     font-size: 7px;
                 }
 
-                .vl-character-caption {
-                    display: none;
+                .vl-engine-caption {
+                    font-size: 6px;
+                    letter-spacing: .1em;
                 }
             }
 
             @media (max-width: 420px) {
-                .heroCharacter {
-                    right: -5% !important;
-                    bottom: 10% !important;
-                    width: 165px !important;
-                    height: 40vh !important;
-                    opacity: .72 !important;
+                .vl-engine-hint {
+                    font-size: 6px;
+                    letter-spacing: .07em;
                 }
 
-                .vl-character-controls {
-                    bottom: 12px;
+                .vl-engine-controls {
+                    bottom: 10px;
+                }
+
+                .vl-engine-button {
+                    padding: 7px 6px;
                 }
             }
 
-            @media (max-height: 520px) and (orientation: landscape) {
+            @media (orientation: landscape) and (max-height: 520px) {
                 .heroCharacter {
-                    right: 1% !important;
-                    bottom: 5% !important;
-                    width: 135px !important;
-                    height: 70vh !important;
+                    max-height: 75vh;
                 }
 
-                .vl-character-mode {
-                    padding: 6px 8px;
+                .vl-engine-controls {
+                    bottom: 8px;
                 }
             }
 
             @media (prefers-reduced-motion: reduce) {
-                .vl-character-image,
-                .vl-character-aura,
-                .vl-character-particle {
+                .vl-engine-character,
+                .vl-engine-aura,
+                .vl-engine-particle {
                     animation: none !important;
+                }
+
+                .vl-engine-effect.vl-flash {
+                    animation-duration: .15s;
                 }
             }
         `;
@@ -362,183 +439,388 @@
         return element;
     }
 
-    function setImageSource(src) {
-        image.src = src;
-        image.onerror = () => {
-            image.onerror = null;
+    function loadImage(src, callback) {
+        const test = new Image();
 
-            if (activeMode !== "idle") {
-                setMode("idle");
+        test.onload = () => callback(true, src);
+        test.onerror = () => callback(false, src);
+
+        test.src = src;
+    }
+
+    function preloadAssets() {
+        Object.values(ASSETS.character).forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
+    }
+
+    function getAvailableCharacterImage(state, callback) {
+        const requested = stateInfo[state].image;
+
+        loadImage(requested, (success) => {
+            if (success) {
+                callback(requested);
                 return;
             }
 
-            caption.textContent =
-                "IMAGE NOT FOUND — CHECK assets/character/vidlyra-main.png";
+            if (state === "idle") {
+                callback(null);
+                return;
+            }
 
-            console.error(
-                "[VIDLYRA] Character image could not load:",
-                src
-            );
-        };
+            loadImage(ASSETS.character.idle, (fallbackSuccess) => {
+                callback(fallbackSuccess ? ASSETS.character.idle : null);
+            });
+        });
     }
 
-    function setMode(mode) {
-        if (!MODES[mode] || !image || !root) return;
+    function playSound(src) {
+        if (!SETTINGS.audioEnabled) return;
 
-        activeMode = mode;
-        const settings = MODES[mode];
+        if (src === ASSETS.audio.ambient) {
+            // Ambient playback is optional and can be blocked until
+            // the visitor interacts with the page.
+        }
 
-        root.classList.add("vl-switching");
+        try {
+            let player = audioPlayers[src];
 
-        window.setTimeout(() => {
-            root.classList.toggle(
-                "vl-mode-orange",
-                settings.aura === "orange"
+            if (!player) {
+                player = new Audio(src);
+                player.preload = "none";
+                audioPlayers[src] = player;
+            }
+
+            player.pause();
+            player.currentTime = 0;
+
+            const result = player.play();
+
+            if (result && typeof result.catch === "function") {
+                result.catch(() => {
+                    // Missing audio or browser autoplay restrictions.
+                });
+            }
+        } catch (error) {
+            console.warn("[VIDLYRA] Audio unavailable:", error);
+        }
+    }
+
+    function createParticles() {
+        if (!SETTINGS.particlesEnabled || reducedMotion.matches) return;
+
+        for (let i = 0; i < SETTINGS.particleCount; i++) {
+            const particle = makeElement("span", "vl-engine-particle");
+
+            particle.style.setProperty("--x", `${Math.random() * 100}%`);
+            particle.style.setProperty(
+                "--size",
+                `${2 + Math.random() * 3}px`
+            );
+            particle.style.setProperty(
+                "--duration",
+                `${2.5 + Math.random() * 4}s`
+            );
+            particle.style.setProperty(
+                "--delay",
+                `${-Math.random() * 6}s`
+            );
+            particle.style.setProperty(
+                "--drift",
+                `${Math.round(Math.random() * 100 - 50)}px`
             );
 
-            setImageSource(settings.image);
-            caption.textContent = settings.description;
-            modeLabel.textContent = settings.label;
+            effectLayer.appendChild(particle);
+        }
+    }
 
-            root.querySelectorAll(".vl-character-mode").forEach(button => {
-                const selected = button.dataset.mode === mode;
-                button.setAttribute("aria-pressed", String(selected));
+    function playTransformEffect(state) {
+        effectLayer.classList.remove("vl-flash");
+        effectLayer.replaceChildren();
+
+        const effectSrc = state === "rage"
+            ? ASSETS.effects.rageBurst
+            : ASSETS.effects.magicCircle;
+
+        const img = document.createElement("img");
+        img.alt = "";
+        img.setAttribute("aria-hidden", "true");
+        img.src = effectSrc;
+
+        img.onerror = () => {
+            img.remove();
+        };
+
+        effectLayer.appendChild(img);
+
+        void effectLayer.offsetWidth;
+        effectLayer.classList.add("vl-flash");
+
+        window.clearTimeout(transformTimer);
+
+        transformTimer = window.setTimeout(() => {
+            effectLayer.classList.remove("vl-flash");
+        }, SETTINGS.effectDuration);
+    }
+
+    function setMode(nextState) {
+        if (!STATES.includes(nextState)) return;
+
+        currentState = nextState;
+
+        root.classList.add("vl-transforming");
+
+        getAvailableCharacterImage(nextState, (src) => {
+            if (src) {
+                character.src = src;
+                character.dataset.state = nextState;
+            }
+
+            const info = stateInfo[nextState];
+
+            root.classList.toggle("vl-orange", info.color === "orange");
+
+            caption.textContent = info.title;
+            stateLabel.textContent = info.title;
+
+            controls.querySelectorAll("button").forEach(button => {
+                button.setAttribute(
+                    "aria-pressed",
+                    String(button.dataset.state === nextState)
+                );
             });
 
-            root.classList.remove("vl-switching");
+            playTransformEffect(nextState);
+            playSound(info.sound);
 
-            root.dispatchEvent(new CustomEvent("vidlyra:charactermode", {
+            root.dispatchEvent(new CustomEvent("vidlyra:transform", {
                 bubbles: true,
-                detail: { mode }
+                detail: { state: nextState }
             }));
-        }, 160);
+
+            window.setTimeout(() => {
+                root.classList.remove("vl-transforming");
+            }, 240);
+        });
+    }
+
+    function transformNext() {
+        const index = STATES.indexOf(currentState);
+        const next = STATES[(index + 1) % STATES.length];
+        setMode(next);
+    }
+
+    function handleDoubleTap(event) {
+        if (event.target.closest(".vl-engine-controls")) return;
+
+        const now = performance.now();
+        const elapsed = now - lastTapTime;
+
+        if (elapsed > 0 && elapsed < SETTINGS.doubleTapWindow) {
+            lastTapTime = 0;
+            transformNext();
+        } else {
+            lastTapTime = now;
+        }
+    }
+
+    function handleKeyboard(event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            transformNext();
+        }
     }
 
     function createControls() {
-        const controls = makeElement("div", "vl-character-controls");
-        controls.setAttribute("aria-label", "Character transformation modes");
+        controls = makeElement("div", "vl-engine-controls");
+        controls.setAttribute("aria-label", "Character transformation");
 
-        Object.entries(MODES).forEach(([key, mode]) => {
+        STATES.forEach(state => {
             const button = document.createElement("button");
             button.type = "button";
-            button.className = "vl-character-mode";
-            button.dataset.mode = key;
-            button.textContent = mode.label;
-            button.setAttribute("aria-pressed", String(key === activeMode));
-            button.setAttribute("aria-label", `Switch character to ${mode.label}`);
+            button.className = "vl-engine-button";
+            button.dataset.state = state;
+            button.textContent = state.toUpperCase();
+            button.setAttribute("aria-pressed", String(state === currentState));
 
-            button.addEventListener("click", () => setMode(key));
+            button.addEventListener("click", () => {
+                setMode(state);
+                playSound(ASSETS.audio.click);
+            });
+
             controls.appendChild(button);
         });
 
         root.appendChild(controls);
     }
 
-    function createParticles() {
-        if (!CONFIG.enableParticles) return;
+    function setupOptionalAssets() {
+        // Logo: only replaces an existing logo if the image loads.
+        const existingLogo = document.querySelector(
+            ".brand img, .logo img, img[data-vidlyra-logo]"
+        );
 
-        particleLayer = makeElement("div", "vl-character-particles");
-        particleLayer.setAttribute("aria-hidden", "true");
-
-        for (let i = 0; i < 20; i++) {
-            const particle = makeElement("span", "vl-character-particle");
-
-            particle.style.left = `${8 + Math.random() * 84}%`;
-            particle.style.setProperty(
-                "--duration",
-                `${3.5 + Math.random() * 5}s`
-            );
-            particle.style.setProperty(
-                "--delay",
-                `${-Math.random() * 7}s`
-            );
-            particle.style.setProperty(
-                "--drift",
-                `${Math.round(Math.random() * 70 - 35)}px`
-            );
-
-            particleLayer.appendChild(particle);
+        if (existingLogo) {
+            loadImage(ASSETS.ui.logo, success => {
+                if (success) {
+                    existingLogo.src = ASSETS.ui.logo;
+                    existingLogo.classList.add("vl-engine-logo");
+                }
+            });
         }
 
-        root.appendChild(particleLayer);
+        // A background video is optional; preserve the existing scene.
+        const world = document.querySelector("#world");
+
+        if (world && !world.querySelector(".vl-background-video")) {
+            const video = document.createElement("video");
+
+            video.className = "vl-background-video";
+            video.src = ASSETS.backgrounds.video;
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true;
+            video.playsInline = true;
+            video.setAttribute("aria-hidden", "true");
+
+            Object.assign(video.style, {
+                position: "absolute",
+                inset: "0",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                zIndex: "0",
+                pointerEvents: "none",
+                opacity: "0"
+            });
+
+            video.addEventListener("canplay", () => {
+                video.style.opacity = ".22";
+            }, { once: true });
+
+            video.addEventListener("error", () => video.remove(), {
+                once: true
+            });
+
+            world.prepend(video);
+
+            const promise = video.play();
+            if (promise) promise.catch(() => {});
+        }
     }
 
-    function addMouseParallax() {
-        if (!CONFIG.enableMouseParallax ||
-            !window.matchMedia("(pointer: fine)").matches) {
-            return;
-        }
+    function setupParallax() {
+        if (!SETTINGS.parallaxEnabled || reducedMotion.matches) return;
+        if (!window.matchMedia("(pointer: fine)").matches) return;
 
-        const home = document.querySelector("#homePage");
-        if (!home) return;
+        root.addEventListener("pointermove", event => {
+            if (pointerFrame) cancelAnimationFrame(pointerFrame);
 
-        home.addEventListener("mousemove", event => {
-            if (mouseFrame !== null) {
-                cancelAnimationFrame(mouseFrame);
-            }
+            pointerFrame = requestAnimationFrame(() => {
+                const bounds = root.getBoundingClientRect();
 
-            mouseFrame = requestAnimationFrame(() => {
-                const rect = root.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
+                if (!bounds.width || !bounds.height) return;
 
-                const x = (event.clientX - centerX) / Math.max(innerWidth, 1);
-                const y = (event.clientY - centerY) / Math.max(innerHeight, 1);
+                const dx = (event.clientX - bounds.left) / bounds.width - .5;
+                const dy = (event.clientY - bounds.top) / bounds.height - .5;
 
-                image.style.marginLeft = `${x * 12}px`;
-                image.style.marginTop = `${y * 10}px`;
+                character.style.setProperty("--vl-x", `${dx * 8}px`);
+                character.style.setProperty("--vl-y", `${dy * 6}px`);
 
-                mouseFrame = null;
+                character.style.translate =
+                    `${dx * 8}px ${dy * 6}px`;
+
+                pointerFrame = null;
             });
         }, { passive: true });
 
-        home.addEventListener("mouseleave", () => {
-            image.style.marginLeft = "0";
-            image.style.marginTop = "0";
+        root.addEventListener("pointerleave", () => {
+            character.style.translate = "0 0";
         });
     }
 
     function init() {
+        if (initialized) return;
+
         root = document.querySelector(".heroCharacter");
 
         if (!root) {
             console.warn(
-                "[VIDLYRA] .heroCharacter was not found. Character integration skipped."
+                "[VIDLYRA] .heroCharacter not found. Integration skipped."
             );
             return;
         }
 
-        if (root.dataset.vidlyraIntegrated === "true") return;
-        root.dataset.vidlyraIntegrated = "true";
+        initialized = true;
+        addStyles();
+        preloadAssets();
 
-        injectStyles();
+        root.querySelectorAll(
+            ".vl-engine-character, .vl-engine-aura, " +
+            ".vl-engine-effect, .vl-engine-caption, " +
+            ".vl-engine-controls, .vl-engine-hint"
+        ).forEach(element => element.remove());
 
-        aura = makeElement("div", "vl-character-aura");
+        aura = makeElement("div", "vl-engine-aura");
         aura.setAttribute("aria-hidden", "true");
         root.appendChild(aura);
 
-        image = document.createElement("img");
-        image.className = "vl-character-image";
-        image.alt = "VIDLYRA dark fantasy anime character";
-        image.draggable = false;
-        image.decoding = "async";
-        image.fetchPriority = "high";
-        root.appendChild(image);
+        character = document.createElement("img");
+        character.className = "vl-engine-character";
+        character.src = ASSETS.character.idle;
+        character.alt = "VIDLYRA dark fantasy character. Double tap to transform.";
+        character.draggable = false;
+        character.tabIndex = 0;
+        character.setAttribute("role", "button");
+        character.setAttribute(
+            "aria-label",
+            "Double tap or press Enter to transform the VIDLYRA character"
+        );
 
-        modeLabel = makeElement("span", "vl-character-mode-label");
-        modeLabel.hidden = true;
-        root.appendChild(modeLabel);
+        character.addEventListener("error", () => {
+            console.error(
+                "[VIDLYRA] Main character image missing:",
+                ASSETS.character.idle
+            );
+            character.alt =
+                "Character image missing. Check assets/character/vidlyra-main.png";
+        });
 
-        caption = makeElement("div", "vl-character-caption");
-        caption.textContent = MODES.idle.description;
+        character.addEventListener("pointerup", handleDoubleTap);
+        character.addEventListener("keydown", handleKeyboard);
+
+        root.appendChild(character);
+
+        effectLayer = makeElement("div", "vl-engine-effect");
+        effectLayer.setAttribute("aria-hidden", "true");
+        root.appendChild(effectLayer);
+
+        caption = makeElement("div", "vl-engine-caption");
+        caption.textContent = stateInfo.idle.title;
         root.appendChild(caption);
+
+        stateLabel = document.createElement("span");
+        stateLabel.hidden = true;
+        root.appendChild(stateLabel);
+
+        const hint = makeElement("div", "vl-engine-hint");
+        hint.textContent = "DOUBLE TAP TO TRANSFORM";
+        root.appendChild(hint);
 
         createParticles();
         createControls();
-        addMouseParallax();
-        setMode("idle");
+        setupParallax();
+        setupOptionalAssets();
 
-        console.info("[VIDLYRA] Character integration initialized.");
+        console.info("[VIDLYRA] Character engine ready.");
+
+        window.VidlyraCharacter = {
+            setMode,
+            transformNext,
+            getMode: () => currentState,
+            assets: ASSETS
+        };
     }
 
     if (document.readyState === "loading") {
@@ -546,11 +828,4 @@
     } else {
         init();
     }
-
-    // Optional console controls:
-    // window.VidlyraCharacter.setMode("idle" | "awakened" | "rage")
-    window.VidlyraCharacter = {
-        setMode,
-        getMode: () => activeMode
-    };
 })();
