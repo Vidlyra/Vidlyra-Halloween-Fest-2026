@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,28 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#05070d">
   <meta name="description" content="VIDLYRA Halloween Fest 2026 — Beyond the Veil.">
+  <meta property="og:image" content="assets/character/vidlyra-sprites.png">
   <title>VIDLYRA — Halloween Fest 2026</title>
+  <link rel="icon" href="assets/ui/vidlyra-logo.png">
+  <link rel="preload" as="image" href="assets/character/vidlyra-main.png">
   <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/home-extras.css">
+  <!-- Supabase: paste your project URL and anon key. Leave empty to use local demo accounts. -->
+  <script>window.VIDLYRA_SUPABASE = { url: "", key: "" };</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" defer></script>
   <script src="js/home.js" defer></script>
 </head>
 <body>
   <div id="homePage">
     <div class="world" aria-hidden="true">
-      <video id="backgroundVideo" class="backgroundVideo" autoplay muted loop playsinline preload="auto">
-        <!-- Set this to the real video filename from your assets folder. -->
+      <video id="backgroundVideo" class="backgroundVideo" autoplay muted loop playsinline preload="auto"
+        poster="assets/backgrounds/vidlyra-poster.png">
         <source src="assets/backgrounds/vidlyra-background.mp4" type="video/mp4">
       </video>
       <div class="videoShade"></div>
+      <div class="darkOverlay"></div>
       <div class="ambientGlow"></div>
       <div class="worldGrid"></div>
+      <div class="fx fogA"></div>
+      <div class="fx fogB"></div>
+      <div class="fx energy"></div>
       <div id="particles" class="particles"></div>
+      <div id="lightning" class="lightning"></div>
       <div class="vignette"></div>
       <div class="filmGrain"></div>
     </div>
+    <div id="cursorGlow" class="cursorGlow" aria-hidden="true"></div>
 
     <header class="topNavigation">
-      <a href="index.html" class="brand" aria-label="VIDLYRA home">
-        <span class="brandSymbol">V</span>
+      <a href="index.html" id="brandHome" class="brand" aria-label="VIDLYRA home">
+        <span class="brandSymbol"><img src="assets/ui/vidlyra-logo.png" alt="" onerror="this.replaceWith('V')"></span>
         <span class="brandInformation">
           <strong>VIDLYRA</strong>
           <small>HALLOWEEN FEST 2026</small>
@@ -39,17 +51,29 @@
         <span>THE VEIL IS OPEN</span>
       </div>
 
-      <button id="menuButton" class="menuButton" type="button"
-        aria-label="Open navigation" aria-expanded="false" aria-controls="mainNavigation">
-        <span></span><span></span><span></span>
-      </button>
-
       <nav id="mainNavigation" class="mainNavigation" aria-label="Main navigation">
         <button type="button" data-target="story">STORY</button>
         <a href="map.html">FESTIVAL MAP</a>
         <a href="reward.html">REWARDS</a>
         <a href="end-credits.html">CREDITS</a>
       </nav>
+
+      <div class="authArea" id="authArea">
+        <div class="authButtons" id="authButtons">
+          <button type="button" class="authBtn" id="signInBtn">Sign in</button>
+          <button type="button" class="authBtn primary" id="signUpBtn">Sign up</button>
+        </div>
+        <div class="userBox" id="userBox" hidden>
+          <img id="userAvatar" class="userAvatar" src="assets/ui/default-avatar.png" alt="Your avatar" width="38" height="38">
+          <span id="userName" class="userName">Player</span>
+          <button type="button" class="authBtn" id="logoutBtn">Log out</button>
+        </div>
+      </div>
+
+      <button id="menuButton" class="menuButton" type="button"
+        aria-label="Open navigation" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
     </header>
 
     <main class="hero" id="hero">
@@ -94,11 +118,18 @@
       <button class="heroCharacter" id="heroCharacter" type="button"
         aria-label="Transform the mysterious character" title="Double-click or double-tap to transform">
         <span class="characterAura"></span>
+        <img class="fxImg orangeAura" src="assets/effects/orange-aura.png" alt="" aria-hidden="true">
+        <img class="fxImg blueAura" src="assets/effects/blue-aura.png" alt="" aria-hidden="true">
+        <img class="fxImg magicCircle" src="assets/effects/magic-circle.png" alt="" aria-hidden="true">
         <span class="characterHalo"></span>
-        <img id="characterImage" src="assets/character/vidlyra-main.png"
+        <img id="characterImage" class="characterImage" src="assets/character/vidlyra-main.png"
           alt="VIDLYRA dark fantasy character" draggable="false">
+        <img class="fxImg rageBurst" src="assets/effects/rage-burst.png" alt="" aria-hidden="true">
         <span class="characterGroundGlow"></span>
-        <span class="characterCaption"><span id="characterCaptionText">UNKNOWN PRESENCE</span><i></i></span>
+        <span class="characterCaption">
+          <img src="assets/ui/transformation-icon.png" alt="" class="captionIcon" onerror="this.remove()">
+          <span id="characterCaptionText">UNKNOWN PRESENCE</span><i></i>
+        </span>
         <span class="transformFlash"></span>
       </button>
 
@@ -117,7 +148,7 @@
       </section>
     </main>
 
-    <div id="mobileMenu" class="mobileMenu" aria-hidden="true">
+    <div id="mobileMenu" class="mobileMenu" aria-hidden="true" inert>
       <button type="button" data-target="story">STORY</button>
       <a href="map.html">FESTIVAL MAP</a>
       <a href="reward.html">REWARDS</a>
@@ -127,6 +158,7 @@
     <section id="storyPanel" class="sidePanel" aria-hidden="true" inert>
       <button id="closeStory" class="closePanel" type="button" aria-label="Close story">×</button>
       <div class="panelInner">
+        <img class="panelPortrait" src="assets/character/vidlyra-portrait.png" alt="" onerror="this.remove()">
         <span class="panelEyebrow">THE LEGEND</span>
         <h2>BEYOND<br>THE VEIL</h2>
         <div class="panelLine"></div>
@@ -137,6 +169,28 @@
         <button id="storyEnter" class="panelAction" type="button">BEGIN THE JOURNEY →</button>
       </div>
     </section>
+
+    <dialog id="authModal" class="authModal" aria-labelledby="authTitle">
+      <button type="button" class="closePanel" id="authClose" aria-label="Close">×</button>
+      <div class="authTabs" role="tablist">
+        <button type="button" role="tab" id="tabIn" data-mode="signin">Sign in</button>
+        <button type="button" role="tab" id="tabUp" data-mode="signup">Sign up</button>
+      </div>
+      <h2 id="authTitle">Welcome back</h2>
+      <form id="authForm" novalidate>
+        <label id="nameRow">Player name
+          <input id="authName" type="text" autocomplete="nickname" maxlength="24" placeholder="Your name in the realm">
+        </label>
+        <label>Email
+          <input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com">
+        </label>
+        <label>Password
+          <input id="authPass" type="password" autocomplete="current-password" required minlength="6" placeholder="At least 6 characters">
+        </label>
+        <p id="authMsg" class="authMsg" role="alert"></p>
+        <button type="submit" class="panelAction" id="authSubmit">Sign in</button>
+      </form>
+    </dialog>
 
     <footer class="bottomBar">
       <div class="copyright">© 2026 VIDLYRA STUDIO</div>
@@ -155,12 +209,7 @@
       <div class="transitionSub">PREPARING YOUR JOURNEY...</div>
     </div>
 
-    <audio id="ambient" loop preload="none">
-      <source src="assets/audio/ambience.mp3.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="thunder" preload="none">
-      <source src="assets/thunder.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="ambient" loop preload="none"><source src="assets/audio/ambient.mp3" type="audio/mpeg"></audio>
   </div>
 </body>
 </html>
