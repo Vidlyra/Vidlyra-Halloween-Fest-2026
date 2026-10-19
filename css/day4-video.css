@@ -740,3 +740,23 @@ body::before {
         line-height: 1.6;
     }
 }
+/* Status message (access errors / redirects) */
+.status-msg {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+.status-msg:empty { display: none; }
+.status-msg.error { color: #ff8f8f; }
+
+/* Fade-out when entering the game */
+body.leaving {
+    opacity: 0;
+    transition: opacity 1.2s ease;
+}
+
+#startBtn:disabled:hover {
+    transform: none;
+    filter: none;
+}
