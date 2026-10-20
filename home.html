@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#05070d">
   <meta name="description" content="VIDLYRA Halloween Fest 2026 — Beyond the Veil.">
-  <meta property="og:image" content="assets/character/vidlyra-sprites.png">
+  <meta property="og:image" content="assets/character/vidlyra-main.png">
   <title>VIDLYRA — Halloween Fest 2026</title>
   <link rel="icon" href="assets/ui/vidlyra-logo.png">
   <link rel="preload" as="image" href="assets/character/vidlyra-main.png">
@@ -24,14 +24,9 @@
         <source src="assets/backgrounds/vidlyra-background.mp4" type="video/mp4">
       </video>
       <div class="videoShade"></div>
-      <div class="darkOverlay"></div>
       <div class="ambientGlow"></div>
       <div class="worldGrid"></div>
-      <div class="fx fogA"></div>
-      <div class="fx fogB"></div>
-      <div class="fx energy"></div>
       <div id="particles" class="particles"></div>
-      <div id="lightning" class="lightning"></div>
       <div class="vignette"></div>
       <div class="filmGrain"></div>
     </div>
@@ -118,16 +113,11 @@
       <button class="heroCharacter" id="heroCharacter" type="button"
         aria-label="Transform the mysterious character" title="Double-click or double-tap to transform">
         <span class="characterAura"></span>
-        <img class="fxImg orangeAura" src="assets/effects/orange-aura.png" alt="" aria-hidden="true">
-        <img class="fxImg blueAura" src="assets/effects/blue-aura.png" alt="" aria-hidden="true">
-        <img class="fxImg magicCircle" src="assets/effects/magic-circle.png" alt="" aria-hidden="true">
         <span class="characterHalo"></span>
         <img id="characterImage" class="characterImage" src="assets/character/vidlyra-main.png"
           alt="VIDLYRA dark fantasy character" draggable="false">
-        <img class="fxImg rageBurst" src="assets/effects/rage-burst.png" alt="" aria-hidden="true">
         <span class="characterGroundGlow"></span>
         <span class="characterCaption">
-          <img src="assets/ui/transformation-icon.png" alt="" class="captionIcon" onerror="this.remove()">
           <span id="characterCaptionText">UNKNOWN PRESENCE</span><i></i>
         </span>
         <span class="transformFlash"></span>
