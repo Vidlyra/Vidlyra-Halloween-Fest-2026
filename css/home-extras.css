@@ -1,15 +1,5 @@
 /* Load AFTER home.css. Overrides and additions only. */
 .world { background: #03050a url("../assets/backgrounds/haunted-castle.png") center/cover no-repeat; }
-.darkOverlay { position: absolute; inset: 0; background: url("../assets/backgrounds/dark-overlay.png") center/cover; opacity: .5; mix-blend-mode: multiply; pointer-events: none; }
-.fx { position: absolute; inset: 0; pointer-events: none; }
-.fogA, .fogB { background: url("../assets/effects/fog.png") repeat-x center bottom / auto 70%; opacity: .22; animation: fogDrift 70s linear infinite; }
-.fogB { opacity: .14; animation-duration: 110s; animation-direction: reverse; background-position: center 30%; }
-.energy { background: url("../assets/effects/energy-particles.png") center/cover; opacity: .28; mix-blend-mode: screen; animation: glowPulse 6s ease-in-out infinite alternate; }
-@keyframes fogDrift { to { background-position-x: 1600px; } }
-.lightning { position: absolute; inset: 0; background: url("../assets/effects/lightning.png") 70% 0/ auto 80% no-repeat; opacity: 0; mix-blend-mode: screen; pointer-events: none; }
-.lightning.strike { animation: strike .6s steps(1, end); }
-@keyframes strike { 0%{opacity:.9} 15%{opacity:0} 30%{opacity:.7} 60%,100%{opacity:0} }
-.particle { background: url("../assets/effects/ember.png") center/contain no-repeat !important; box-shadow: none !important; border-radius: 0 !important; }
 .cursorGlow { position: fixed; z-index: 90; left: 0; top: 0; width: 90px; height: 90px; margin: -45px 0 0 -45px; background: url("../assets/ui/cursor-glow.png") center/contain no-repeat; pointer-events: none; opacity: 0; transition: opacity .3s; mix-blend-mode: screen; }
 .cursorGlow.on { opacity: .8; }
 @media (hover: none), (pointer: coarse) { .cursorGlow { display: none; } }
@@ -23,16 +13,6 @@
 .heroCharacter img.characterImage { filter: drop-shadow(0 0 22px rgba(0,166,255,.23)); }
 .heroCharacter.is-transformed img.characterImage { filter: drop-shadow(0 0 30px rgba(255,116,0,.65)); transform: scale(1.04); }
 .heroCharacter.is-rage img.characterImage { filter: drop-shadow(0 0 36px rgba(255,40,0,.8)); transform: scale(1.07); }
-.fxImg { position: absolute; pointer-events: none; object-fit: contain; opacity: 0; transition: opacity .6s; }
-.heroCharacter img.blueAura { z-index: 0; inset: 5% -5% 0; width: 110%; height: 95%; opacity: .55; animation: auraPulse 4s ease-in-out infinite alternate; }
-.heroCharacter img.orangeAura { z-index: 0; inset: 5% -5% 0; width: 110%; height: 95%; }
-.heroCharacter img.magicCircle { z-index: 0; left: 50%; bottom: 0; width: 95%; aspect-ratio: 1; transform: translateX(-50%) rotateX(62deg); opacity: .5; animation: circleSpin 24s linear infinite; }
-@keyframes circleSpin { to { transform: translateX(-50%) rotateX(62deg) rotateZ(360deg); } }
-.heroCharacter img.rageBurst { z-index: 3; inset: 0; width: 100%; height: 100%; }
-.heroCharacter.is-transformed img.orangeAura { opacity: .75; }
-.heroCharacter.is-transformed img.blueAura { opacity: 0; }
-.heroCharacter.is-rage img.rageBurst { opacity: .85; animation: auraPulse .6s ease-in-out infinite alternate; }
-.captionIcon { width: 14px; height: 14px; object-fit: contain; }
 .panelPortrait { display: block; width: 100%; max-height: 220px; object-fit: contain; object-position: center top; margin-bottom: 8px; }
 
 /* Header layout: brand | status | nav | auth | menu */
@@ -95,6 +75,3 @@
   .bottomBar { padding-bottom: max(9px, env(safe-area-inset-bottom)); }
   .festivalHUD { bottom: calc(54px + env(safe-area-inset-bottom)); }
 }
-@media (prefers-reduced-motion: reduce) { .fogA, .fogB, .magicCircle, .lightning { animation: none !important; } }
-.heroCharacter img.fxImg, .heroCharacter.is-transformed img.fxImg, .heroCharacter.is-rage img.fxImg { filter: none; position: absolute; }
-.heroCharacter img.blueAura, .heroCharacter img.orangeAura { left: -5%; right: auto; top: 5%; bottom: auto; }
