@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuButton = $("#menuButton"), mobileMenu = $("#mobileMenu");
   const storyPanel = $("#storyPanel"), storyButton = $("#storyButton"), closeStory = $("#closeStory");
   const enterButton = $("#enterFestival"), soundButton = $("#soundButton"), soundText = $("#soundText");
-  const ambient = $("#ambient"), transition = $("#transition"), lightning = $("#lightning");
+  const ambient = $("#ambient"), transition = $("#transition");
   const authModal = $("#authModal");
 
   let soundEnabled = false, transitionBusy = false, lastTap = 0, stage = 0, hoverPose = "", user = null;
@@ -33,34 +33,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.closest("button, a") && !e.target.closest("#soundButton")) play("button-click", 0.35);
   });
 
-  // ---------- Ember particles ----------
+  // ---------- Glowing dust particles (CSS dots from home.css) ----------
   const particles = $("#particles");
   if (particles && !reduceMotion) {
     const count = matchMedia("(max-width: 700px)").matches ? 12 : 26;
     const frag = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
       const p = document.createElement("span");
-      const size = 8 + Math.random() * 14;
+      const size = 2 + Math.random() * 3;
       p.className = "particle";
       p.style.cssText = `left:${Math.random() * 100}%;width:${size}px;height:${size}px;` +
         `animation-duration:${7 + Math.random() * 12}s;animation-delay:${Math.random() * 12}s`;
       frag.appendChild(p);
     }
     particles.appendChild(frag);
-  }
-
-  // ---------- Random lightning ----------
-  if (lightning && !reduceMotion) {
-    (function strike() {
-      setTimeout(() => {
-        if (!document.hidden) {
-          lightning.classList.remove("strike");
-          void lightning.offsetWidth;
-          lightning.classList.add("strike");
-        }
-        strike();
-      }, 6000 + Math.random() * 9000);
-    })();
   }
 
   // ---------- Cursor glow ----------
@@ -118,14 +104,13 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#storyEnter")?.addEventListener("click", () => enterRealm("map.html"));
   document.querySelectorAll('[data-target="story"]').forEach((b) => b.addEventListener("click", openStory));
 
-  // ---------- Character: states, blink, look left/right ----------
+  // ---------- Character: states, breathing, look left/right ----------
   const poses = {
-    main: "vidlyra-main", idle: "vidlyra-idle", blink: "vidlyra-blink",
+    main: "vidlyra-main", idle: "vidlyra-idle",
     left: "vidlyra-left", right: "vidlyra-right", awakened: "vidlyra-awakened", rage: "vidlyra-rage",
   };
   Object.values(poses).forEach((n) => { new Image().src = `${A}character/${n}.png`; });
-  [ "effects/orange-aura", "effects/blue-aura", "effects/rage-burst", "backgrounds/haunted-castle" ]
-    .forEach((n) => { new Image().src = `${A}${n}.png`; });
+  new Image().src = `${A}backgrounds/haunted-castle.png`;
 
   const setPose = (key) => {
     const src = `${A}character/${poses[key]}.png`;
@@ -164,23 +149,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); transformCharacter(); }
     });
 
-    // Idle <-> main breathing, and blinking (only in the base stage)
     if (!reduceMotion) {
+      // Idle <-> main breathing (only in the base stage)
       let breathe = false;
       setInterval(() => {
         if (stage || hoverPose || document.hidden) return;
         breathe = !breathe;
         setPose(breathe ? "idle" : "main");
       }, 2600);
-      (function blink() {
-        setTimeout(() => {
-          if (!stage && !hoverPose && !document.hidden) {
-            setPose("blink");
-            setTimeout(() => !stage && !hoverPose && setPose("main"), 140);
-          }
-          blink();
-        }, 3000 + Math.random() * 4000);
-      })();
 
       // Character glances toward the cursor
       let raf = 0;
